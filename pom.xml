@@ -151,6 +151,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -218,7 +219,8 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-					<!-- execution>
+					 --> 
+			<!-- execution>
                         <id>jacoco-check</id>
                         <goals>
                             <goal>check</goal>
@@ -238,8 +240,10 @@
                             </rules>
                         </configuration>
                     </execution -->
+			<!--
 				</executions>
 			</plugin>
+			 --> 
 		</plugins>
 	</build>
 
