@@ -17,7 +17,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    env:
+      TEST: ${{secrets.DB_ADDRESS}}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
@@ -26,8 +27,9 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Prepare maven
-      run: mvn install
     - name: Run unitary tests
-      run: mvn test
+      run: |
+        echo "$TEST"
+        mvn test
+
 
