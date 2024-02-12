@@ -18,7 +18,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      TEST: ${{secrets.DB_ADDRESS}}
+      DB_ADDRESS: ${{secrets.DB_ADDRESS}}
+      DB_USERNAME: ${{secrets.DB_USERNAME}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
@@ -29,7 +31,10 @@ jobs:
         cache: maven
     - name: Run unitary tests
       run: |
-        echo "$TEST"
+        echo "Hello CI !"
+        export DB_ADDRESS=$DB_ADDRESS
+        export DB_USERNAME=$DB_USERNAME
+        export DB_PASSWORD=$DB_PASSWORD
         mvn test
 
 
