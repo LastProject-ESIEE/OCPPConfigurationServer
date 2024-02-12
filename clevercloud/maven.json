@@ -1,0 +1,5 @@
+{
+  "deploy": {
+    "goal": "mvn spring-boot:run"
+  }
+}
