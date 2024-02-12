@@ -2,9 +2,9 @@ package fr.uge.chargepointconfiguration.entities;
 
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Primary;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity
 @Table(name = "chargepoint")
@@ -18,7 +18,7 @@ public class Chargepoint {
   @Column(name = "serial_number_chargepoint", nullable = false, length = 45)
   private String serialNumberChargepoint;
 
-  @Column(name = "type",nullable = false, length = 45)
+  @Column(name = "type", nullable = false, length = 45)
   private String type;
 
   @Column(name = "constructor", nullable = false, length = 45)
@@ -40,7 +40,8 @@ public class Chargepoint {
   @JoinColumn(name = "id_status", referencedColumnName = "id_status", nullable = false)
   private Status status;
 
-  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
+  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
 
@@ -121,18 +122,31 @@ public class Chargepoint {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Chargepoint that = (Chargepoint) o;
+    return id == that.id && Objects.equals(serialNumberChargepoint, that.serialNumberChargepoint) && Objects.equals(type, that.type) && Objects.equals(constructor, that.constructor) && Objects.equals(clientId, that.clientId) && Objects.equals(serverAddress, that.serverAddress) && Objects.equals(configuration, that.configuration) && Objects.equals(lastEdit, that.lastEdit) && Objects.equals(status, that.status) && Objects.equals(firmware, that.firmware);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, serialNumberChargepoint, type, constructor, clientId, serverAddress, configuration, lastEdit, status, firmware);
+  }
+
+  @Override
   public String toString() {
     return "Chargepoint{" +
-      "id=" + id +
-      ", serialNumberChargepoint='" + serialNumberChargepoint + '\'' +
-      ", type='" + type + '\'' +
-      ", constructor='" + constructor + '\'' +
-      ", clientId='" + clientId + '\'' +
-      ", serverAddress='" + serverAddress + '\'' +
-      ", configuration='" + configuration + '\'' +
-      ", lastEdit=" + lastEdit +
-      ", status=" + status +
-      ", firmware=" + firmware +
-      '}';
+           "id=" + id +
+           ", serialNumberChargepoint='" + serialNumberChargepoint + '\'' +
+           ", type='" + type + '\'' +
+           ", constructor='" + constructor + '\'' +
+           ", clientId='" + clientId + '\'' +
+           ", serverAddress='" + serverAddress + '\'' +
+           ", configuration='" + configuration + '\'' +
+           ", lastEdit=" + lastEdit +
+           ", status=" + status +
+           ", firmware=" + firmware +
+           '}';
   }
 }

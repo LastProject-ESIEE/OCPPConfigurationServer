@@ -2,8 +2,7 @@ package fr.uge.chargepointconfiguration.entities;
 
 import jakarta.persistence.*;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -31,10 +30,10 @@ public class Firmware {
 //  private List<Chargepoint> chargepoints;
 
   @ManyToMany
-  @JoinTable (name = "compatibility",
-              joinColumns = @JoinColumn(name = "id_firmware"),
-              inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
-  Set<TypeAllowed> typesAllowed;
+  @JoinTable(name = "compatibility",
+          joinColumns = @JoinColumn(name = "id_firmware"),
+          inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
+  private Set<TypeAllowed> typesAllowed;
 
 //  public int getId() {
 //    return id;
@@ -86,5 +85,30 @@ public class Firmware {
 
   public void setTypesAllowed(Set<TypeAllowed> typesAllowed) {
     this.typesAllowed = typesAllowed;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Firmware firmware = (Firmware) o;
+    return id == firmware.id && majorVersion == firmware.majorVersion && minorVersion == firmware.minorVersion && Objects.equals(url, firmware.url) && Objects.equals(constructor, firmware.constructor) && Objects.equals(typesAllowed, firmware.typesAllowed);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, url, majorVersion, minorVersion, constructor, typesAllowed);
+  }
+
+  @Override
+  public String toString() {
+    return "Firmware{" +
+           "id=" + id +
+           ", url='" + url + '\'' +
+           ", majorVersion=" + majorVersion +
+           ", minorVersion=" + minorVersion +
+           ", constructor='" + constructor + '\'' +
+           ", typesAllowed=" + typesAllowed +
+           '}';
   }
 }

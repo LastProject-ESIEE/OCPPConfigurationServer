@@ -2,7 +2,7 @@ package fr.uge.chargepointconfiguration.entities;
 
 import jakarta.persistence.*;
 
-import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Table(name = "type_allowed")
@@ -48,4 +48,27 @@ public class TypeAllowed {
 //  public void setFirmwaresAllowed(Set<Firmware> firmwaresAllowed) {
 //    this.firmwaresAllowed = firmwaresAllowed;
 //  }
+
+
+  @Override
+  public String toString() {
+    return "TypeAllowed{" +
+           "id=" + id +
+           ", constructor='" + constructor + '\'' +
+           ", type='" + type + '\'' +
+           '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    TypeAllowed that = (TypeAllowed) o;
+    return id == that.id && Objects.equals(constructor, that.constructor) && Objects.equals(type, that.type);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, constructor, type);
+  }
 }
