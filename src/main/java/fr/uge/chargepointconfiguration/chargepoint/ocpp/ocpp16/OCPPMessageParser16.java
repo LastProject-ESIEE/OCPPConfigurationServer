@@ -1,14 +1,14 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPMessageParser;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 
 public class OCPPMessageParser16 implements OCPPMessageParser {
 
     @Override
-    public OCPPMessage parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
+    public OcppMessage parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
         return switch (webSocketRequestMessage.messageName()){
             case "BootNotification" -> JsonParser.stringToObject(BootNotificationRequest.class, webSocketRequestMessage.data());
             default -> throw new IllegalArgumentException("Message not recognized: " + webSocketRequestMessage);
@@ -16,7 +16,7 @@ public class OCPPMessageParser16 implements OCPPMessageParser {
     }
 
     @Override
-    public String transform(OCPPMessage message) {
+    public String transform(OcppMessage message) {
         return JsonParser.objectToJsonString(message);
     }
 }
