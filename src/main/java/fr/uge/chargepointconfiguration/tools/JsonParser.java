@@ -2,13 +2,15 @@ package fr.uge.chargepointconfiguration.tools;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Objects;
 
+/**
+ * Parses a JSON.
+ */
 public class JsonParser {
 
   /**
-   * Transform object to formatted JSON string
+   * Transform object to formatted JSON string.
    *
    * @param object object to transform
    * @param <T>    type of the object to transform
@@ -25,7 +27,7 @@ public class JsonParser {
   }
 
   /**
-   * Transform a JSON string to object
+   * Transform a JSON string to object.
    *
    * @param type    type of the object
    * @param content json string that represent the object
