@@ -8,19 +8,27 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+/**
+ * Defines the web socket configuration.
+ */
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-	@Override
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(new MyHandler(), "/myHandler")
-				.addInterceptors(new HttpSessionHandshakeInterceptor());
-	}
+  @Override
+  public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+    registry.addHandler(new MyHandler(), "/myHandler")
+            .addInterceptors(new HttpSessionHandshakeInterceptor());
+  }
 
-	@Bean
-	public WebSocketHandler myHandler() {
-		return new MyHandler();
-	}
+  /**
+   * Returns the web socket current handler.
+   *
+   * @return WebSocketHandler.
+   */
+  @Bean
+  public WebSocketHandler myHandler() {
+    return new MyHandler();
+  }
 
 }
