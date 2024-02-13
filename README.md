@@ -31,3 +31,4 @@ A web application to update or configure an electrical terminal via OCCP protoco
 ## Installation
 
 TODO : Explain the installation process !
+
