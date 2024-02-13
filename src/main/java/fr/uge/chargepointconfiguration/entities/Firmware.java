@@ -1,10 +1,22 @@
 package fr.uge.chargepointconfiguration.entities;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Firmware class represents a firmware in the database via JPA.<br>
+ * A Firmware has an ID, a URL, a majorVersion, a minorVersion, a constructor,
+ * and some {@link TypeAllowed}.
+ */
 @Entity
 @Table(name = "firmware")
 public class Firmware {
@@ -26,8 +38,8 @@ public class Firmware {
   @Column(name = "constructor", nullable = false, length = 45)
   private String constructor;
 
-//  @OneToMany(cascade = CascadeType.ALL, mappedBy = "firmware")
-//  private List<Chargepoint> chargepoints;
+  //  @OneToMany(cascade = CascadeType.ALL, mappedBy = "firmware")
+  //  private List<Chargepoint> chargepoints;
 
   @ManyToMany
   @JoinTable(name = "compatibility",
@@ -35,9 +47,9 @@ public class Firmware {
           inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
   private Set<TypeAllowed> typesAllowed;
 
-//  public int getId() {
-//    return id;
-//  }
+  public int getId() {
+    return id;
+  }
 
   public String getUrl() {
     return url;
@@ -71,13 +83,13 @@ public class Firmware {
     this.constructor = constructor;
   }
 
-//  public List<Chargepoint> getChargepoints() {
-//    return chargepoints;
-//  }
-//
-//  public void setChargepoints(List<Chargepoint> chargepoints) {
-//    this.chargepoints = chargepoints;
-//  }
+  //  public List<Chargepoint> getChargepoints() {
+  //    return chargepoints;
+  //  }
+  //
+  //  public void setChargepoints(List<Chargepoint> chargepoints) {
+  //    this.chargepoints = chargepoints;
+  //  }
 
   public Set<TypeAllowed> getTypesAllowed() {
     return typesAllowed;
@@ -89,10 +101,19 @@ public class Firmware {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     Firmware firmware = (Firmware) o;
-    return id == firmware.id && majorVersion == firmware.majorVersion && minorVersion == firmware.minorVersion && Objects.equals(url, firmware.url) && Objects.equals(constructor, firmware.constructor) && Objects.equals(typesAllowed, firmware.typesAllowed);
+    return id == firmware.id
+           && majorVersion == firmware.majorVersion
+           && minorVersion == firmware.minorVersion
+           && Objects.equals(url, firmware.url)
+           && Objects.equals(constructor, firmware.constructor)
+           && Objects.equals(typesAllowed, firmware.typesAllowed);
   }
 
   @Override
@@ -102,13 +123,13 @@ public class Firmware {
 
   @Override
   public String toString() {
-    return "Firmware{" +
-           "id=" + id +
-           ", url='" + url + '\'' +
-           ", majorVersion=" + majorVersion +
-           ", minorVersion=" + minorVersion +
-           ", constructor='" + constructor + '\'' +
-           ", typesAllowed=" + typesAllowed +
-           '}';
+    return "Firmware{"
+           + "id=" + id
+           + ", url='" + url + '\''
+           + ", majorVersion=" + majorVersion
+           + ", minorVersion=" + minorVersion
+           + ", constructor='" + constructor + '\''
+           + ", typesAllowed=" + typesAllowed
+           + '}';
   }
 }

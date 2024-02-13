@@ -1,18 +1,30 @@
 package fr.uge.chargepointconfiguration.entities;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+/**
+ * Status class represents a status in the database via JPA.<br>
+ * A Status has an ID, a last_update, an error, a state, a {@link Step},
+ * and a {@link Status}.
+ */
 @Entity
 @Table(name = "status")
 public class Status {
-  private enum Step {firmware, configuration}
+  private enum Step { firmware, configuration }
 
-  private enum StatusProcess {pending, processing, finished, failed}// corresponds à l'attribut status de la table Status (il ya avait un conflit entre
+  // corresponds à l'attribut status de la table Status (il ya avait un conflit entre le nom de
+  // la classe et le nom de l'enum)
+  private enum StatusProcess { pending, processing, finished, failed }
 
-  // le nom de la classe et le nom de l'enum)
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id_status")
@@ -35,12 +47,12 @@ public class Status {
   @Enumerated(EnumType.STRING)
   private StatusProcess status;
 
-//    @OneToOne(mappedBy = "status")
-//    private Chargepoint chargepoint;
+  //    @OneToOne(mappedBy = "status")
+  //    private Chargepoint chargepoint;
 
-//    public int getId() {
-//    return id;
-//  }
+  //    public int getId() {
+  //    return id;
+  //  }
 
   public String getError() {
     return error;
@@ -82,32 +94,40 @@ public class Status {
     this.status = status;
   }
 
-//  public Chargepoint getChargepoint() {
-//    return chargepoint;
-//  }
-//
-//  public void setChargepoint(Chargepoint chargepoint) {
-//    this.chargepoint = chargepoint;
-//  }
+  //  public Chargepoint getChargepoint() {
+  //    return chargepoint;
+  //  }
+  //
+  //  public void setChargepoint(Chargepoint chargepoint) {
+  //    this.chargepoint = chargepoint;
+  //  }
 
   @Override
   public String toString() {
-    return "Status{" +
-           ", lastUpdate=" + lastUpdate +
-           ", error='" + error + '\'' +
-           ", state=" + state +
-           ", step=" + step +
-           ", status=" + status +
-//      ", chargepoint=" + chargepoint +
-           '}';
+    return "Status{"
+           + ", lastUpdate=" + lastUpdate
+           + ", error='" + error + '\''
+           + ", state=" + state
+           + ", step=" + step
+           + ", status=" + status
+           + '}';
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     Status status1 = (Status) o;
-    return id == status1.id && state == status1.state && Objects.equals(lastUpdate, status1.lastUpdate) && Objects.equals(error, status1.error) && step == status1.step && status == status1.status;
+    return id == status1.id
+           && state == status1.state
+           && Objects.equals(lastUpdate, status1.lastUpdate)
+           && Objects.equals(error, status1.error)
+           && step == status1.step
+           && status == status1.status;
   }
 
   @Override
