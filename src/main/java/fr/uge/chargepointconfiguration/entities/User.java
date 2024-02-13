@@ -1,98 +1,177 @@
-//package fr.uge.chargepointconfiguration.entities;
-//
-//import jakarta.persistence.*;
-////import jakarta.validation.constraints.NotNull;
-////import org.jetbrains.annotations.NotNull;
-//
-//@Entity
-//@Table(name = "user")
-//public class User {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private int id;
-//    @Column(name = "contributor_email", nullable = false)
-//    private String email;
-//   // @NotNull(message = "the lastName of the user is required, can not be null")
-//    private String lastName;
-//    //@NotNull(message = "the firstName of the user is required, can not be null")
-//    private String firstName;
-//   // @NotNull(message = "the password of the user is required, can not be null")
-//    private String password;
-//
-//    public User() {
-//        lastName = null;
-//    }
-//
-//    private enum Role{
-//       VISUALIZER, EDITOR, ADMINISTRATOR;
-//    };
-//    //@NotNull(message = "the role of the user is required, can not be null")
-//    private Role role;
-//
-//
-//
-//
-//
-//    /*public User(String name, String email) {
-//        this.name = name;
-//        this.email = email;
-//    }*/
-//
-//    //SETTER
-//    public void setEmail(String email){
-//        this.email = email;
-//    }
-//    public void setLastName(String lastName){
-//        this.lastName = lastName;
-//    }
-//
-//    public void setFirstName(String firstName){
-//        this.firstName = firstName;
-//    }
-//    public void setPassword(String password){
-//        this.password= password;
-//    }
-//
-//    private void setRole(Role role){
-//        this.role = role;
-//    }
-//
-//    //GETTER
-//    public String getEmail(){
-//        return email;
-//    }
-//
-//
-//    public int getId(){
-//        return id;
-//    }
-//    public String getPassword(){
-//        return password;
-//    }
-//    public String getLastName(){
-//        return lastName;
-//    }
-//
-//    public String getFirstName(){
-//        return firstName;
-//    }
-//
-//    public Role getRole(){
-//        return role;
-//    }
-//
-//    /*public User() {
-//        this(null, null);
-//    }*/
-//
-//    @Override
-//    public String toString(){
-//        return id + " - " + lastName + " " + firstName + " - " + email;
-//    }
-//
-//    // standard constructors / setters / getters / toString
-//
-//
-//
-//}
+package fr.uge.chargepointconfiguration.entities;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.Objects;
+
+/**
+ * User class represents a User in the database via JPA.<br>
+ * A user has an ID, an email, a lastname, a firstname, a password and a role.
+ */
+@Entity
+@Table(name = "user")
+public class User {
+
+  /**
+   * Role enum represents different roles that a User can have in the application.<br>
+   * The role can be :<br>
+   * - VISUALIZER ;<br>
+   * - EDITOR :<br>
+   * - ADMINISTRATOR.
+   */
+  public enum Role {
+    VISUALIZER, EDITOR, ADMINISTRATOR
+  }
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(name = "id")
+  private int id;
+
+  @Column(name = "email", nullable = false, length = 45)
+  private String email;
+
+  @Column(name = "lastname", nullable = false, length = 45)
+  private String lastName;
+
+  @Column(name = "firstname", nullable = false, length = 45)
+  private String firstName;
+
+  @Column(name = "password", nullable = false)
+  private String password;
+
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "role", nullable = false)
+  private Role role;
+
+  /**
+   * Returns the user's ID.
+   *
+   * @return id, int.
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * Sets the user's id.
+   *
+   * @param id An int.
+   */
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  /**
+   * Returns the user's email.
+   *
+   * @return email, String.
+   */
+  public String getEmail() {
+    return email;
+  }
+
+  /**
+   * Sets the user's email.
+   *
+   * @param email A String.
+   */
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  /**
+   * Returns the user's lastname.
+   *
+   * @return lastName, String.
+   */
+  public String getLastName() {
+    return lastName;
+  }
+
+  /**
+   * Sets the user's lastname.
+   *
+   * @param lastName a String.
+   */
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  /**
+   * Returns the user's firstname.
+   *
+   * @return firstname, String.
+   */
+  public String getFirstName() {
+    return firstName;
+  }
+
+  /**
+   * Sets the user's firstName.
+   *
+   * @param firstName String.
+   */
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  /**
+   * Returns the user's password.
+   *
+   * @return password, String.
+   */
+  public String getPassword() {
+    return password;
+  }
+
+  /**
+   * Sets the user's password.
+   *
+   * @param password String.
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  /**
+   * Returns the user's role.<br>
+   *
+   * @return role, Role.
+   */
+  public Role getRole() {
+    return role;
+  }
+
+  /**
+   * Sets the user's role.
+   *
+   * @param role Role.
+   */
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return id == user.id && Objects.equals(email, user.email);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, email, lastName, firstName, password, role);
+  }
+}
