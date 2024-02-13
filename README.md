@@ -1,12 +1,13 @@
-# ChargePointAutoConfigurationServer
+# OCCPConfigurationServer
 
+## Requirements
 
+### Back
 
-# Requirement 
-## Back
-- java 21.0.1
+- java 21.0.1 ;
 - maven 3.9.6
 
-## Front
+### Front
+
 - npm 10.2.3
 - nodejs 20.10.0
