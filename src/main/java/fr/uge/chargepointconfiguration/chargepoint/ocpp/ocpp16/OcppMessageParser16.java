@@ -14,8 +14,10 @@ public class OcppMessageParser16 implements OcppMessageParser {
   public OcppMessage parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
     return switch (webSocketRequestMessage.messageName()) {
       case "BootNotification" ->
-              JsonParser.stringToObject(BootNotificationRequest.class, webSocketRequestMessage.data());
-      default -> throw new IllegalArgumentException("Message not recognized: " + webSocketRequestMessage);
+              JsonParser.stringToObject(BootNotificationRequest.class,
+                      webSocketRequestMessage.data());
+      default -> throw new IllegalArgumentException("Message not recognized: "
+              + webSocketRequestMessage);
     };
   }
 
