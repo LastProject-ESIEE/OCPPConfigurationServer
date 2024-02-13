@@ -51,6 +51,39 @@ public class User {
   private Role role;
 
   /**
+   * User's constructor.
+   *
+   * @param firstName String.
+   * @param lastName String.
+   * @param email String.
+   * @param password String.
+   * @param role Role.
+   */
+  public User(String firstName,
+              String lastName,
+              String email,
+              String password,
+              Role role) {
+    Objects.requireNonNull(firstName);
+    Objects.requireNonNull(lastName);
+    Objects.requireNonNull(email);
+    Objects.requireNonNull(password);
+    Objects.requireNonNull(role);
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+  }
+
+  /**
+   * No args User's constructor.<br>
+   * It should not be called.
+   */
+  public User() {
+  }
+
+  /**
    * Returns the user's ID.
    *
    * @return id, int.
