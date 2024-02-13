@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration;
 
 import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
+import fr.uge.chargepointconfiguration.repository.UserRepository;
 import org.java_websocket.server.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

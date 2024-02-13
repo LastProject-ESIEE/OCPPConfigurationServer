@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.UserRepository;
+import fr.uge.chargepointconfiguration.repository.UserRepository;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPVersion;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
