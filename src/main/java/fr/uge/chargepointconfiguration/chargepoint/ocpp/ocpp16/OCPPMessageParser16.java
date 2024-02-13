@@ -2,10 +2,10 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPMessageParser;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 
-public class OCPPMessageParser16 implements OCPPMessageParser {
+public class OCPPMessageParser16 implements OcppMessageParser {
 
     @Override
     public OcppMessage parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
