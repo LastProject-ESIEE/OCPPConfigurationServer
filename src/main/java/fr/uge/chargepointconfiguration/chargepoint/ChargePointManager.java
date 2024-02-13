@@ -5,7 +5,7 @@ import fr.uge.chargepointconfiguration.entities.User;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OCPPMessageParser16;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageParser16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.RegistrationStatus;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 
@@ -19,7 +19,7 @@ public class ChargePointManager {
 
     public ChargePointManager(OcppVersion ocppVersion, MessageSender messageSender, UserRepository userRepository){
         this.ocppVersion = ocppVersion;
-        this.ocppMessageParser = new OCPPMessageParser16(); // TODO add a static method in the interface
+        this.ocppMessageParser = new OcppMessageParser16(); // TODO add a static method in the interface
         this.messageSender = messageSender;
         this.userRepository = userRepository;
     }
