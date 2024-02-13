@@ -1,9 +1,17 @@
 package fr.uge.chargepointconfiguration.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.Objects;
 
-import java.util.Set;
-
+/**
+ * TypeAllowed class represents a type allowed in the database via JPA.<br>
+ * A TypeAllowed has an ID, a constructor, and a type.
+ */
 @Entity
 @Table(name = "type_allowed")
 public class TypeAllowed {
@@ -17,13 +25,6 @@ public class TypeAllowed {
 
   @Column(name = "type", nullable = false, length = 45)
   private String type;
-
-//  @ManyToMany(mappedBy = "typesAllowed")  // TODO boucle infini entre firmware et typeallowed (normal)
-//  Set<Firmware> firmwaresAllowed;
-
-//  public int getId() {
-//    return id;
-//  }
 
   public String getConstructor() {
     return constructor;
@@ -41,11 +42,31 @@ public class TypeAllowed {
     this.type = type;
   }
 
-//  public Set<Firmware> getFirmwaresAllowed() {
-//    return firmwaresAllowed;
-//  }
-//
-//  public void setFirmwaresAllowed(Set<Firmware> firmwaresAllowed) {
-//    this.firmwaresAllowed = firmwaresAllowed;
-//  }
+  @Override
+  public String toString() {
+    return "TypeAllowed{"
+           + "id=" + id
+           + ", constructor='" + constructor + '\''
+           + ", type='" + type + '\''
+           + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    TypeAllowed that = (TypeAllowed) o;
+    return id == that.id
+           && Objects.equals(constructor, that.constructor)
+           && Objects.equals(type, that.type);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, constructor, type);
+  }
 }
