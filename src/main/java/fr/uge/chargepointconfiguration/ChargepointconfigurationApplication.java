@@ -17,22 +17,22 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
 
 	private final UserRepository userRepository;
 
-  /**
-   * The class's constructor.<br>
-   * It requires the UserRepository, but it is auto-wired thanks to Spring Boot.
-   *
-   * @param userRepository UserRepository.
-   */
+	/**
+	 * The class's constructor.<br>
+	 * It requires the UserRepository, but it is auto-wired thanks to Spring Boot.
+	 *
+	 * @param userRepository UserRepository.
+	 */
 	@Autowired
 	public ChargepointconfigurationApplication(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
-  /**
-   * Launches the server by instantiating the application and running it.
-   *
-   * @param args String[].
-   */
+	/**
+	 * Launches the server by instantiating the application and running it.
+	 *
+	 * @param args String[].
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(ChargepointconfigurationApplication.class, args);
 	}
