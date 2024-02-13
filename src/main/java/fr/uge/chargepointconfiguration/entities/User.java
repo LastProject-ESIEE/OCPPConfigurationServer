@@ -81,7 +81,6 @@ public class User {
    * It should not be called.
    */
   public User() {
-    throw new IllegalArgumentException("User cannot be null");
   }
 
   /**
