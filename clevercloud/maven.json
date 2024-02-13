@@ -1,5 +1,0 @@
-{
-  "deploy": {
-    "goal": "mvnw spring-boot:run"
-  }
-}
