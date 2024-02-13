@@ -15,6 +15,7 @@ on:
     branches: [ "main" ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
     env:
@@ -31,7 +32,9 @@ jobs:
         cache: maven
     - name: Run unitary tests
       run: |
-        echo "Hello CI !"
+        echo "Process Check Style..."
+        $MAVEN_HOME/bin/mvn validate
+        echo "Process test..."
         export DB_ADDRESS=$DB_ADDRESS
         export DB_USERNAME=$DB_USERNAME
         export DB_PASSWORD=$DB_PASSWORD
