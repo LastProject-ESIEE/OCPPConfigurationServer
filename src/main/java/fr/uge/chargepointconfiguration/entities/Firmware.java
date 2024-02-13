@@ -38,9 +38,6 @@ public class Firmware {
   @Column(name = "constructor", nullable = false, length = 45)
   private String constructor;
 
-  //  @OneToMany(cascade = CascadeType.ALL, mappedBy = "firmware")
-  //  private List<Chargepoint> chargepoints;
-
   @ManyToMany
   @JoinTable(name = "compatibility",
           joinColumns = @JoinColumn(name = "id_firmware"),
@@ -82,14 +79,6 @@ public class Firmware {
   public void setConstructor(String constructor) {
     this.constructor = constructor;
   }
-
-  //  public List<Chargepoint> getChargepoints() {
-  //    return chargepoints;
-  //  }
-  //
-  //  public void setChargepoints(List<Chargepoint> chargepoints) {
-  //    this.chargepoints = chargepoints;
-  //  }
 
   public Set<TypeAllowed> getTypesAllowed() {
     return typesAllowed;

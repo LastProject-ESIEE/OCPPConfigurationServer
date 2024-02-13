@@ -26,15 +26,6 @@ public class TypeAllowed {
   @Column(name = "type", nullable = false, length = 45)
   private String type;
 
-  // TODO boucle infini entre firmware et typeallowed (normal)
-
-  //  @ManyToMany(mappedBy = "typesAllowed")
-  //  Set<Firmware> firmwaresAllowed;
-
-  //  public int getId() {
-  //    return id;
-  //  }
-
   public String getConstructor() {
     return constructor;
   }
@@ -50,15 +41,6 @@ public class TypeAllowed {
   public void setType(String type) {
     this.type = type;
   }
-
-  //  public Set<Firmware> getFirmwaresAllowed() {
-  //    return firmwaresAllowed;
-  //  }
-  //
-  //  public void setFirmwaresAllowed(Set<Firmware> firmwaresAllowed) {
-  //    this.firmwaresAllowed = firmwaresAllowed;
-  //  }
-
 
   @Override
   public String toString() {

@@ -21,8 +21,6 @@ import java.util.Objects;
 public class Status {
   private enum Step { firmware, configuration }
 
-  // corresponds à l'attribut status de la table Status (il ya avait un conflit entre le nom de
-  // la classe et le nom de l'enum)
   private enum StatusProcess { pending, processing, finished, failed }
 
   @Id
@@ -46,13 +44,6 @@ public class Status {
   @Column(name = "step_status", nullable = false)
   @Enumerated(EnumType.STRING)
   private StatusProcess status;
-
-  //    @OneToOne(mappedBy = "status")
-  //    private Chargepoint chargepoint;
-
-  //    public int getId() {
-  //    return id;
-  //  }
 
   public String getError() {
     return error;
@@ -93,14 +84,6 @@ public class Status {
   public void setStatus(StatusProcess status) {
     this.status = status;
   }
-
-  //  public Chargepoint getChargepoint() {
-  //    return chargepoint;
-  //  }
-  //
-  //  public void setChargepoint(Chargepoint chargepoint) {
-  //    this.chargepoint = chargepoint;
-  //  }
 
   @Override
   public String toString() {
