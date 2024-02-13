@@ -177,12 +177,13 @@ public class User {
 
   @Override
   public String toString() {
-    return "User{" +
-            "id=" + id +
-            ", email='" + email + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", role=" + role +
-            '}';
+    return "User{"
+            +
+            "id=" + id
+            + ", email='" + email + '\''
+            + ", lastName='" + lastName + '\''
+            + ", firstName='" + firstName + '\''
+            + ", role=" + role
+            + '}';
   }
 }
