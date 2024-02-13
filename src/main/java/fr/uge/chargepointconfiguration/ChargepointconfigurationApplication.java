@@ -40,12 +40,22 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    Thread.ofPlatform().start(() -> {
-      var host = "192.168.0.5";
-      var port = 8887;
-      WebSocketServer server = new ConfigurationServer(new InetSocketAddress(host, port),
-              userRepository);
-      server.run();
-    });
+    var websocketUrl = System.getenv("WEBSOCKET_URL");
+    var websocketPortString = System.getenv("WEBSOCKET_PORT");
+    if (websocketUrl == null || websocketPortString == null) {
+      throw new IllegalStateException("Missing websocket configuration url and/or port.");
+    }
+    try {
+      var websocketPort = Integer.parseInt(websocketPortString);
+      Thread.ofPlatform().start(() -> {
+        WebSocketServer server = new ConfigurationServer(
+                new InetSocketAddress(websocketUrl, websocketPort),
+                userRepository
+        );
+        server.run();
+      });
+    } catch (NumberFormatException e) {
+      throw new IllegalStateException("Websocket port invalid value: " + websocketPortString);
+    }
   }
 }

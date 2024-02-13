@@ -35,13 +35,18 @@ TODO : Explain the installation process !
 
 ## Running program
 You must set those environment variables in IntelliJ in the edit project configuration:
-DB_ADDRESS=<*test database url*>;
-DB_USERNAME=<*test database usernanme*>;
-DB_PASSWORD=<*test database password*>;
-MYSQL_DB_ADDRESS=<*database url*>;
-MYSQL_ADDON_USER=<*database username*>;
-MYSQL_DB_PASSWORD=<*database password*>;
+- DB_ADDRESS=<*test database url*>;
+- DB_USERNAME=<*test database username*>;
+- DB_PASSWORD=<*test database password*>;
+- MYSQL_DB_ADDRESS=<*database url*>;
+- MYSQL_ADDON_USER=<*database username*>;
+- MYSQL_DB_PASSWORD=<*database password*>;
+- WEBSOCKET_URL=<*websocket ip address*>;
+- WEBSOCKET_PORT=<*websocket port*>;
 
+## Running check style
+You should install the plugin in IntelliJ CheckStyle-IDEA and set the *checkstyle.xml* in the plugin configuration.
+Then check style could be executed locally through the plugin menu.
 
 ## Running tests
 
