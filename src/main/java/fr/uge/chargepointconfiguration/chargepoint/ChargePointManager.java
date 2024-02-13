@@ -3,7 +3,7 @@ package fr.uge.chargepointconfiguration.chargepoint;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import fr.uge.chargepointconfiguration.entities.User;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPVersion;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OCPPMessageParser16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.RegistrationStatus;
@@ -12,12 +12,12 @@ import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.time.LocalDateTime;
 
 public class ChargePointManager {
-    private final OCPPVersion ocppVersion;
+    private final OcppVersion ocppVersion;
     private final OcppMessageParser ocppMessageParser;
     private final MessageSender messageSender;
     private final UserRepository userRepository;
 
-    public ChargePointManager(OCPPVersion ocppVersion, MessageSender messageSender, UserRepository userRepository){
+    public ChargePointManager(OcppVersion ocppVersion, MessageSender messageSender, UserRepository userRepository){
         this.ocppVersion = ocppVersion;
         this.ocppMessageParser = new OCPPMessageParser16(); // TODO add a static method in the interface
         this.messageSender = messageSender;

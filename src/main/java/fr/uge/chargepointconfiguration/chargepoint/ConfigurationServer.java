@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OCPPVersion;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -31,7 +31,7 @@ public class ConfigurationServer extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     //conn.send("Welcome to the server!");
     System.out.println("new connection to " + conn.getRemoteSocketAddress());
-    var ocppVersion = OCPPVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
+    var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     chargePoints.put(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
                     message -> conn.send(message.toString()), userRepository));
