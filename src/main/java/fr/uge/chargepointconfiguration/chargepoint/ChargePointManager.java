@@ -48,7 +48,7 @@ public class ChargePointManager {
               "toBeALive",
               webSocketRequestMessage.messageName(),
               "g00d p4ssw0rd",
-              User.Role.VISUALIZER));
+              User.Role.Visualizer));
       var resp = new BootNotificationResponse(LocalDateTime.now().toString(),
               60,
               RegistrationStatus.Accepted);
