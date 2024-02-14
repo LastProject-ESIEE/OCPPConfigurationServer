@@ -3,7 +3,6 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 
 /**
