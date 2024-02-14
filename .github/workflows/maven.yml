@@ -22,6 +22,8 @@ jobs:
       DB_ADDRESS: ${{secrets.DB_ADDRESS}}
       DB_USERNAME: ${{secrets.DB_USERNAME}}
       DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      WEBSOCKET_URL: ${{secrets.WEBSOCKET_URL}}
+      WEBSOCKET_PORT: ${{secrets.WEBSOCKET_PORT}}
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 21
@@ -30,15 +32,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Building front
-      run: |
-        echo "Process Check Style..."
-        $MAVEN_HOME/bin/mvn validate
-        echo "Process test..."
-        export DB_ADDRESS=$DB_ADDRESS
-        export DB_USERNAME=$DB_USERNAME
-        export DB_PASSWORD=$DB_PASSWORD
-        mvn test
     - name: Run unitary tests
       run: |
         echo "Process Check Style..."
@@ -47,6 +40,8 @@ jobs:
         export DB_ADDRESS=$DB_ADDRESS
         export DB_USERNAME=$DB_USERNAME
         export DB_PASSWORD=$DB_PASSWORD
+        export WEBSOCKET_URL=$WEBSOCKET_URL
+        export WEBSOCKET_PORT=$WEBSOCKET_PORT
         mvn test
 
 
