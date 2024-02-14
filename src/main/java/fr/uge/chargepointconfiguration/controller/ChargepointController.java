@@ -2,6 +2,11 @@ package fr.uge.chargepointconfiguration.controller;
 
 import fr.uge.chargepointconfiguration.entities.Chargepoint;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,10 +39,16 @@ public class ChargepointController {
    *
    * @return A list of all the chargepoint.
    */
-  @GetMapping(value = "/chargepoints")
+  @Operation(summary = "Get all the chargepoints")
+  @ApiResponse(responseCode = "200",
+      description = "Found all the chargepoints",
+      content = { @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = Chargepoint.class)) })
+  @GetMapping(value = "/chargepoint/all")
   public List<Chargepoint> getAllChargepoints() {
     return StreamSupport.stream(chargepointRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+        .collect(Collectors.toList());
   }
 
   /**
@@ -47,7 +58,18 @@ public class ChargepointController {
    * @param id An int.
    * @return An optional of chargepoint.
    */
-  @GetMapping(value = "/chargepoints/{id}")
+  @Operation(summary = "Get a chargepoint by its id")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200",
+          description = "Found the chargepoint",
+          content = { @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = Chargepoint.class)) }),
+      @ApiResponse(responseCode = "404",
+          description = "This chargepoint does not exist",
+          content = @Content)
+  })
+  @GetMapping(value = "/chargepoint/{id}")
   public Optional<Chargepoint> getChargepointById(@PathVariable int id) {
     return chargepointRepository.findById(id);
   }
