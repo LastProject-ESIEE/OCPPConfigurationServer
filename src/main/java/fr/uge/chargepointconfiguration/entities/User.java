@@ -26,7 +26,7 @@ public class User {
    * - ADMINISTRATOR.
    */
   public enum Role {
-    VISUALIZER, EDITOR, ADMINISTRATOR
+    Visualizer, Editor, Administrator
   }
 
   @Id
@@ -46,7 +46,7 @@ public class User {
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Enumerated(EnumType.ORDINAL)
+  @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
   private Role role;
 
