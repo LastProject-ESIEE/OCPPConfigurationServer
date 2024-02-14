@@ -30,7 +30,7 @@ public class ChargePointManager {
                             MessageSender messageSender,
                             UserRepository userRepository) {
     this.ocppVersion = ocppVersion;
-    this.ocppMessageParser = new OcppMessageParser16(); // TODO add a static method in the interface
+    this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.messageSender = messageSender;
     this.userRepository = userRepository;
   }
