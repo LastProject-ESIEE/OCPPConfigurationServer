@@ -17,8 +17,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(new MyHandler(), "/myHandler")
-            .addInterceptors(new HttpSessionHandshakeInterceptor());
+    registry.addHandler(new MyHandlerGood(), "/myHandler")
+            .addInterceptors(new MyHandshakeHandler())
+            .setAllowedOrigins("*"); //TODO: maybe check CORS
   }
 
   /**
@@ -28,7 +29,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
    */
   @Bean
   public WebSocketHandler myHandler() {
-    return new MyHandler();
+    return new MyHandlerGood();
   }
+
 
 }
