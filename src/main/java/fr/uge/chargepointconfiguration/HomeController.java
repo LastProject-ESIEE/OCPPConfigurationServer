@@ -1,12 +1,12 @@
 package fr.uge.chargepointconfiguration;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for the standard index.
  */
-@Controller
+@RestController
 public class HomeController {
 
   /**
@@ -17,6 +17,11 @@ public class HomeController {
   @RequestMapping(value = "/")
   public String index() {
     return "index";
+  }
+
+  @RequestMapping(value = "/api")
+  public String api() {
+    return "api";
   }
 
 }
