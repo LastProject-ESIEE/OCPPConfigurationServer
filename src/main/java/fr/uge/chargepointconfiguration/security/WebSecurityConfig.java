@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Security configuration for endpoints of backend.
+ */
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -43,13 +46,12 @@ public class WebSecurityConfig {
                     authorize.requestMatchers("/api").authenticated()
                             .anyRequest().permitAll()
             )
-            .formLogin(formLogin -> {
-              formLogin.loginPage("/testLogin")
-                      .failureUrl("/authentication/login?failed")
-                      .loginProcessingUrl("/authentication/login/process");
-            })
+            .formLogin(formLogin -> formLogin.loginPage("/testLogin")
+                    .failureUrl("/authentication/login?failed")
+                    .loginProcessingUrl("/authentication/login/process"))
             .httpBasic(Customizer.withDefaults())
-            .headers(headers -> headers.cacheControl(HeadersConfigurer.CacheControlConfig::disable));
+            .headers(headers ->
+                    headers.cacheControl(HeadersConfigurer.CacheControlConfig::disable));
     return http.build();
   }
 
@@ -77,9 +79,9 @@ public class WebSecurityConfig {
   //    return http.build();
   //  }
 
-//  @Bean
-//  public PasswordEncoder passwordEncoder() {
-//    return new BCryptPasswordEncoder();
-//  }
+  //  @Bean
+  //  public PasswordEncoder passwordEncoder() {
+  //    return new BCryptPasswordEncoder();
+  //  }
 
 }
