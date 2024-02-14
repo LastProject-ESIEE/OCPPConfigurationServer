@@ -15,7 +15,7 @@ import java.util.Objects;
  * A user has an ID, an email, a lastname, a firstname, a password and a role.
  */
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
 public class User {
 
   /**

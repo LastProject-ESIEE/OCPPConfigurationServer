@@ -4,8 +4,6 @@ import fr.uge.chargepointconfiguration.entities.Firmware;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +34,7 @@ public class FirmwareController {
    */
   @GetMapping(value = "/firmwares")
   public List<Firmware> getAllChargepoints() {
-    return StreamSupport.stream(firmwareRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+    return firmwareRepository.findAll();
   }
 
   /**
