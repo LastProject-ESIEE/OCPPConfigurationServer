@@ -46,12 +46,14 @@ public class WebSecurityConfig {
   SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
             .authorizeHttpRequests(authorize ->
-                    authorize.requestMatchers("/api/**").authenticated()
-                            .requestMatchers("/login.html").permitAll()
-                            .anyRequest().authenticated()
+                    //                    authorize.requestMatchers("/api/**").authenticated()
+                    //                            .requestMatchers("/login").permitAll()
+                    //                            .requestMatchers("/index.html").permitAll()
+                    //                            .anyRequest().authenticated()
+                    authorize.anyRequest().permitAll()
             )
-            .formLogin(formLogin -> formLogin.loginPage("/login.html")
-                    .failureUrl("/login.html?failed")
+            .formLogin(formLogin -> formLogin.loginPage("/login")
+                    .failureUrl("/login?failed")
                     .defaultSuccessUrl("/youpii")
                     // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
                     .loginProcessingUrl("/authentication/login/process"))

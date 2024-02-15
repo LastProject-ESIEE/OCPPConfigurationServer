@@ -9,16 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HomeController {
 
-  /**
-   * Standard index controller.
-   *
-   * @return String.
-   */
-  @RequestMapping(value = "/")
-  public String index() {
-    return "index";
-  }
-
   @RequestMapping(value = "/api")
   public String api() {
     return "api";
