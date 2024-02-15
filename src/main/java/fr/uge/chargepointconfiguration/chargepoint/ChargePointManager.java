@@ -47,9 +47,6 @@ public class ChargePointManager {
       messageSender.sendMessage(new WebSocketResponseMessage(3,
               webSocketRequestMessage.messageId(),
               JsonParser.objectToJsonString(resp)));
-      messageSender.sendMessage(new WebSocketResponseMessage(3,
-              webSocketRequestMessage.messageId(),
-              JsonParser.objectToJsonString(new ChangeConfigurationRequest(new ArrayList<>()))));
       return JsonParser.objectToJsonString(resp);
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
