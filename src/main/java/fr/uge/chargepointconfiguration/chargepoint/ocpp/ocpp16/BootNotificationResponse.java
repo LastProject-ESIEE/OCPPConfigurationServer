@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
 
 /**
  * Defines a response to a BootNotification message.
