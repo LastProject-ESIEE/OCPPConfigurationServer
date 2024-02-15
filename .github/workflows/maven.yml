@@ -34,6 +34,8 @@ jobs:
           cache: maven
       - name: Run unitary tests
         run: |
+          echo "Cleaning the project..."
+          mvn clean
           echo "Process Check Style..."
           $MAVEN_HOME/bin/mvn validate
           echo "Process test..."
@@ -42,4 +44,5 @@ jobs:
           export DB_PASSWORD=$DB_PASSWORD
           export WEBSOCKET_URL=$WEBSOCKET_URL
           export WEBSOCKET_PORT=$WEBSOCKET_PORT
-          mvn test
+          echo "Installing the project..."
+          mvn install
