@@ -1,16 +1,17 @@
 package fr.uge.chargepointconfiguration.security;
 
+import fr.uge.chargepointconfiguration.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -61,19 +62,25 @@ public class WebSecurityConfig {
   }
 
   @Bean
-  InMemoryUserDetailsManager userDetailsService() {
-    UserDetails admin = User.withUsername("admin")
-            .passwordEncoder(passwordEncoder()::encode)
-            .password("password")
-            .roles("ADMIN")
-            .build();
-    UserDetails user = User.withUsername("user")
-            .passwordEncoder(passwordEncoder()::encode)
-            .password("password")
-            .roles("USER")
-            .build();
-    return new InMemoryUserDetailsManager(admin, user);
+  UserDetailsService userDetailsService(UserRepository userRepository) {
+    return new UserDetailsServiceImpl(userRepository);
   }
+
+  /**
+   * Provides the authentication service for the app to let users connects thanks to their username.
+   *
+   * @param userRepository The user's repository.
+   * @return An authentication provider for the user.
+   */
+  @Autowired
+  @Bean
+  public DaoAuthenticationProvider authenticationProvider(UserRepository userRepository) {
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    authProvider.setUserDetailsService(userDetailsService(userRepository));
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
+
 
   @Bean
   public PasswordEncoder passwordEncoder() {
