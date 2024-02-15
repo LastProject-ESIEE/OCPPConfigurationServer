@@ -43,7 +43,6 @@ public class ChargePointManager {
   public void processMessage(WebSocketRequestMessage webSocketRequestMessage) {
     try {
       var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-      System.out.println("Received message: " + message);
       userRepository.save(new User("Borne",
               "toBeALive",
               webSocketRequestMessage.messageName(),
