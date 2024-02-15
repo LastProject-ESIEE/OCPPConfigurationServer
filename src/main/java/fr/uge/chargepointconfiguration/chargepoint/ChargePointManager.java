@@ -1,14 +1,12 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageParser16;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.RegistrationStatus;
-import fr.uge.chargepointconfiguration.entities.User;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.ChangeConfigurationRequest;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -16,6 +14,7 @@ import java.time.LocalDateTime;
 public class ChargePointManager {
   private final OcppVersion ocppVersion;
   private final OcppMessageParser ocppMessageParser;
+  private final OcppMessageBuilder ocppMessageBuilder;
   private final MessageSender messageSender;
   private final UserRepository userRepository;
 
@@ -31,6 +30,7 @@ public class ChargePointManager {
                             UserRepository userRepository) {
     this.ocppVersion = ocppVersion;
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
+    this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
     this.messageSender = messageSender;
     this.userRepository = userRepository;
   }
@@ -40,22 +40,20 @@ public class ChargePointManager {
    *
    * @param webSocketRequestMessage WebSocketRequestMessage.
    */
-  public void processMessage(WebSocketRequestMessage webSocketRequestMessage) {
+  public String processMessage(WebSocketRequestMessage webSocketRequestMessage) {
     try {
       var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-      userRepository.save(new User("Borne",
-              "toBeALive",
-              webSocketRequestMessage.messageName(),
-              "g00d p4ssw0rd",
-              User.Role.Visualizer));
-      var resp = new BootNotificationResponse(LocalDateTime.now().toString(),
-              60,
-              RegistrationStatus.Accepted);
+      var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
       messageSender.sendMessage(new WebSocketResponseMessage(3,
               webSocketRequestMessage.messageId(),
               JsonParser.objectToJsonString(resp)));
+      messageSender.sendMessage(new WebSocketResponseMessage(3,
+              webSocketRequestMessage.messageId(),
+              JsonParser.objectToJsonString(new ChangeConfigurationRequest(new ArrayList<>()))));
+      return JsonParser.objectToJsonString(resp);
     } catch (IllegalArgumentException e) {
       System.out.println(e.getMessage());
+      return "ERROR";
     }
   }
 

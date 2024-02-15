@@ -58,7 +58,10 @@ public class ConfigurationServer extends WebSocketServer {
             + ": "
             + message);
     var webSocketMessage = WebSocketRequestMessage.parse(message);
-    chargePoints.get(conn.getRemoteSocketAddress()).processMessage(webSocketMessage);
+    LOGGER.info("sent message to "
+            + conn.getRemoteSocketAddress()
+            + ": "
+            + chargePoints.get(conn.getRemoteSocketAddress()).processMessage(webSocketMessage));
   }
 
   @Override
