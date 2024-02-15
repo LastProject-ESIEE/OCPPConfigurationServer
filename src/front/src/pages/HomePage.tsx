@@ -8,7 +8,7 @@ export function displayHomePage(): React.ReactNode {
 
                 <div className="logo">
                     {/* Contenu de la zone "Logo" */}
-                    <img src={logo} alt="BRS Logo" className="brs-logo" />
+                    <img src={logo} alt="BRS Logo" className="brs-logo"/>
                 </div>
 
                 <div className="action">
