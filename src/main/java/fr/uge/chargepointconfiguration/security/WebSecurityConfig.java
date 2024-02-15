@@ -50,6 +50,10 @@ public class WebSecurityConfig {
                     authorize.requestMatchers("/api/**").authenticated()
                             .requestMatchers("/login").permitAll()
                             .requestMatchers("/index.html").permitAll()
+                            // allow React to access its files
+                            .requestMatchers("/static/**").permitAll()
+                            // allow React to access its files
+                            .requestMatchers("/manifest.json").permitAll()
                             .requestMatchers("/").permitAll()
                             .anyRequest().authenticated()
             )
