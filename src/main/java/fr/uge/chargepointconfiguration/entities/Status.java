@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Status class represents a status in the database via JPA.<br>
@@ -28,22 +29,27 @@ public class Status {
   @Column(name = "id_status")
   private int id;
 
-  @Column(name = "last_update", nullable = false)
+  @Column(name = "last_update", nullable = false,
+      columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp lastUpdate;
 
   @Column(name = "error", nullable = false, length = 65_535)
   private String error;
 
-  @Column(name = "state", nullable = false)
-  private boolean state;
+  @Column(name = "state", nullable = false,
+      columnDefinition = "boolean default false")
+  private boolean state = false;
 
-  @Column(name = "step", nullable = false)
+  @Column(name = "step", nullable = false,
+      columnDefinition = "varchar(32) default 'firmware'")
   @Enumerated(EnumType.STRING)
-  private Step step;
+  private Step step = Step.firmware;
 
-  @Column(name = "step_status", nullable = false)
+  @Column(name = "step_status", nullable = false,
+      columnDefinition = "varchar(32) default 'pending'")
   @Enumerated(EnumType.STRING)
-  private StatusProcess status;
+  private StatusProcess status = StatusProcess.pending;
 
   public String getError() {
     return error;

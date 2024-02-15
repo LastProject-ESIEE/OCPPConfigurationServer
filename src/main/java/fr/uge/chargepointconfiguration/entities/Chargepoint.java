@@ -14,6 +14,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Chargepoint class represents a charge point in the database via JPA.<br>
@@ -47,7 +48,9 @@ public class Chargepoint {
   @Column(name = "configuration", nullable = false)
   private String configuration;
 
-  @Column(name = "last_edit", nullable = false)
+  @Column(name = "last_edit", nullable = false,
+      columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp lastEdit;
 
   @OneToOne(cascade = CascadeType.ALL)
