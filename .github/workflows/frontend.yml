@@ -1,0 +1,32 @@
+- name: Set Node Version from eirslett plugin
+  run: |
+    pom_files=$(find . -type f -name "pom.xml")
+
+    for file in $pom_files; do
+      node_version=$(grep -m 1 '<nodeVersion>' "$file" | sed -n 's/.*<nodeVersion>\(.*\)<\/nodeVersion>.*/\1/p')
+      if [ -n "$node_version" ]; then
+        echo "node version is $node_version"
+        echo "NODE_VERSION=$node_version" >>${GITHUB_ENV}
+        exit 0
+      fi
+    done
+
+- name: Set up Node
+  if: ${{ vars.NODE_VERSION != '' || env.NODE_VERSION != '' }}
+  uses: actions/setup-node@v3
+  with:
+    node-version: ${{ vars.NODE_VERSION || env.NODE_VERSION }}
+
+- name: Use github installed node for eirslett plugin
+  run: |
+    pom_files=$(find . -type f -name "pom.xml")
+    node=$(which node)
+    for file in $pom_files; do
+      node_version=$(grep -m 1 '<nodeVersion>' "$file" | sed -n 's/.*<nodeVersion>\(.*\)<\/nodeVersion>.*/\1/p')
+      if [ -n "$node_version" ]; then
+        directory=$(dirname "$file")
+        rm -rf $directory/node
+        mkdir $directory/node
+        ln -s $node $directory/node/node
+      fi
+    done
