@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.RegistrationStatusEnumType;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
 
 /**
  * Defines a response to a BootNotification message.
@@ -12,5 +12,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.RegistrationS
  */
 public record BootNotificationResponse(String currentTime,
                                        int interval,
-                                       RegistrationStatusEnumType status) implements OcppMessage {
+                                       RegistrationStatus status) implements OcppMessage {
 }

@@ -19,7 +19,7 @@ public class OcppMessageBuilder2 implements OcppMessageBuilder {
       case "BootNotification" ->
               new BootNotificationResponse(LocalDateTime.now().toString(),
                       5,
-                      new RegistrationStatusEnumType(RegistrationStatus.Accepted));
+                      RegistrationStatus.Accepted);
       default -> throw new IllegalArgumentException("Message not recognized: "
               + webSocketRequestMessage);
     };
