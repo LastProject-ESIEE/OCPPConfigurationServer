@@ -46,15 +46,15 @@ public class WebSecurityConfig {
   SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
             .authorizeHttpRequests(authorize ->
-                    //                    authorize.requestMatchers("/api/**").authenticated()
-                    //                            .requestMatchers("/login").permitAll()
-                    //                            .requestMatchers("/index.html").permitAll()
-                    //                            .anyRequest().authenticated()
-                    authorize.anyRequest().permitAll()
+                    authorize.requestMatchers("/api/**").authenticated()
+                            .requestMatchers("/login").permitAll()
+                            .requestMatchers("/index.html").permitAll()
+                            .requestMatchers("/").permitAll()
+                            .anyRequest().authenticated()
             )
             .formLogin(formLogin -> formLogin.loginPage("/login")
                     .failureUrl("/login?failed")
-                    .defaultSuccessUrl("/youpii")
+                    .defaultSuccessUrl("/api", true)
                     // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
                     .loginProcessingUrl("/authentication/login/process"))
             .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre

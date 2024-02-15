@@ -202,7 +202,7 @@
 					<npmVersion>10.2.3</npmVersion>
 					<nodeVersion>v20.10.0</nodeVersion>
 					<environmentVariables>
-						<BUILD_PATH>../main/resources/static</BUILD_PATH>
+						<BUILD_PATH>${basedir}/target/classes/static</BUILD_PATH>
 					</environmentVariables>
 				</configuration>
 			</plugin>
