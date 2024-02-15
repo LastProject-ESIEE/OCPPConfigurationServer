@@ -61,14 +61,13 @@ public class WebSecurityConfig {
     return http.build();
   }
 
-  @Autowired
   @Bean
   UserDetailsService userDetailsService(UserRepository userRepository) {
     return new UserDetailsServiceImpl(userRepository);
   }
 
   /**
-   * SHOULD BE REFACTORED, CALLING TWO AUTOWIRED FOR A REPOSITORY :(.
+   * Provides the authentication service for the app to let users connects thanks to their username.
    *
    * @param userRepository The user's repository.
    * @return An authentication provider for the user.
