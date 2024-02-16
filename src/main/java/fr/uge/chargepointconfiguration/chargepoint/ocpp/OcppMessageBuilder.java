@@ -7,7 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Interface used to define an OCPP message builder.
+ * Interface used to define an OCPP message builder.<br>
+ * TODO : We could use an Observer to avoid redundancy.
  */
 public interface OcppMessageBuilder {
 

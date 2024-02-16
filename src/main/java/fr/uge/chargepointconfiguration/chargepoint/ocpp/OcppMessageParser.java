@@ -7,7 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Interface used to define an OCPP message parser.
+ * Interface used to define an OCPP message parser.<br>
+ * TODO : We could use an Observer to avoid redundancy.
  */
 public interface OcppMessageParser {
 
