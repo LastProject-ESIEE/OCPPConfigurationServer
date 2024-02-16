@@ -58,13 +58,14 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
+    var remote = conn.getRemoteSocketAddress();
     LOGGER.info("received message from "
-            + conn.getRemoteSocketAddress()
+            + remote
             + ": "
             + message);
     var webSocketMessage = WebSocketRequestMessage.parse(message);
     LOGGER.info("sent message to "
-            + conn.getRemoteSocketAddress()
+            + remote
             + ": "
             + chargePoints.get(conn.getRemoteSocketAddress())
             .processMessage(webSocketMessage).toString());
