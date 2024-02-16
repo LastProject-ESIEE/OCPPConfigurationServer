@@ -54,7 +54,6 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       Thread.ofPlatform().start(() -> {
         WebSocketServer server = new ConfigurationServer(
                 new InetSocketAddress(websocketUrl, websocketPort),
-                userRepository,
                 chargepointRepository
         );
         server.run();

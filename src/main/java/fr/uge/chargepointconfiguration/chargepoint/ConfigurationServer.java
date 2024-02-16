@@ -18,20 +18,16 @@ import org.java_websocket.server.WebSocketServer;
 public class ConfigurationServer extends WebSocketServer {
   private static final Logger LOGGER = LogManager.getLogger(ConfigurationServer.class);
   private final HashMap<InetSocketAddress, ChargePointManager> chargePoints = new HashMap<>();
-  private final UserRepository userRepository;
   private final ChargepointRepository chargepointRepository;
 
   /**
    * ConfigurationServer's constructor.
    *
    * @param address InetSocketAddress.
-   * @param userRepository UserRepository.
    */
   public ConfigurationServer(InetSocketAddress address,
-                             UserRepository userRepository,
                              ChargepointRepository chargepointRepository) {
     super(address);
-    this.userRepository = userRepository;
     this.chargepointRepository = chargepointRepository;
   }
 
