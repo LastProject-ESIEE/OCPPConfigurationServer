@@ -3,7 +3,7 @@ package fr.uge.chargepointconfiguration.chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.util.Objects;
 
@@ -15,23 +15,23 @@ public class ChargePointManager {
   private final OcppMessageParser ocppMessageParser;
   private final OcppMessageBuilder ocppMessageBuilder;
   private final MessageSender messageSender;
-  private final UserRepository userRepository;
+  private final ChargepointRepository chargepointRepository;
 
   /**
    * ChargePointManager's constructor.
    *
-   * @param ocppVersion OcppVersion.
-   * @param messageSender MessageSender.
-   * @param userRepository UserRepository.
+   * @param ocppVersion The version of the OCPP protocol (1.6 or 2.0.1).
+   * @param messageSender The websocket connection used to send data.
+   * @param chargepointRepository The chargepoint's repository for database queries.
    */
   public ChargePointManager(OcppVersion ocppVersion,
                             MessageSender messageSender,
-                            UserRepository userRepository) {
+                            ChargepointRepository chargepointRepository) {
     this.ocppVersion = ocppVersion;
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
     this.messageSender = messageSender;
-    this.userRepository = userRepository;
+    this.chargepointRepository = chargepointRepository;
   }
 
   /**

@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
+import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -18,6 +19,7 @@ public class ConfigurationServer extends WebSocketServer {
   private static final Logger LOGGER = LogManager.getLogger(ConfigurationServer.class);
   private final HashMap<InetSocketAddress, ChargePointManager> chargePoints = new HashMap<>();
   private final UserRepository userRepository;
+  private final ChargepointRepository chargepointRepository;
 
   /**
    * ConfigurationServer's constructor.
@@ -25,9 +27,12 @@ public class ConfigurationServer extends WebSocketServer {
    * @param address InetSocketAddress.
    * @param userRepository UserRepository.
    */
-  public ConfigurationServer(InetSocketAddress address, UserRepository userRepository) {
+  public ConfigurationServer(InetSocketAddress address,
+                             UserRepository userRepository,
+                             ChargepointRepository chargepointRepository) {
     super(address);
     this.userRepository = userRepository;
+    this.chargepointRepository = chargepointRepository;
   }
 
   @Override
@@ -37,7 +42,7 @@ public class ConfigurationServer extends WebSocketServer {
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     chargePoints.put(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
-                    message -> conn.send(message.toString()), userRepository));
+                    message -> conn.send(message.toString()), chargepointRepository));
   }
 
   @Override
