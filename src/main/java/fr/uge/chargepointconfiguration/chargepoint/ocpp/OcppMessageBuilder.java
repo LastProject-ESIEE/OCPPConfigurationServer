@@ -10,8 +10,21 @@ import java.util.Objects;
  */
 public interface OcppMessageBuilder {
 
+  /**
+   * Build the correct response to the received WebSocketMessage.<br>
+   * For example, a BootNotificationRequest should be answered by a BootNotificationResponse.
+   *
+   * @param webSocketRequestMessage The received message from the remote host.
+   * @return The answer to the received WebSocket message.
+   */
   OcppMessage buildMessage(WebSocketRequestMessage webSocketRequestMessage);
 
+  /**
+   * Transforms the built message into a String to be sent.
+   *
+   * @param message The created message by the builder to be sent.
+   * @return The OCPP message into a readable String.
+   */
   String transform(OcppMessage message);
 
   /**
