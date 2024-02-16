@@ -4,11 +4,17 @@ import fr.uge.chargepointconfiguration.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,52 +25,53 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
-
-  /*
-  @Bean
-  public UserDetailsService userDetailsService() {
-    InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-    manager.createUser(User.withUsername("user")
-      .password(passwordEncoder().encode("password"))
-      .roles("USER")
-      .build());
-    manager.createUser(User.withUsername("admin")
-      .password(passwordEncoder().encode("admin"))
-      .roles("USER", "ADMIN")
-      .build());
-    return manager;
-  }*/
-
-
-  //  @Bean
-  //  UserDetailsManager users(DataSource dataSource) {
-  //    JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-  //    return users;
-  //  }
 
   @Bean
   SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
-            .authorizeHttpRequests(authorize ->
-                    authorize.requestMatchers("/api/**").authenticated()
-                            .requestMatchers("/login").permitAll()
-                            .requestMatchers("/index.html").permitAll()
-                            // allow React to access its files
-                            .requestMatchers("/static/**").permitAll()
-                            // allow React to access its files
-                            .requestMatchers("/manifest.json").permitAll()
-                            .requestMatchers("/").permitAll()
-                            .anyRequest().authenticated()
-            )
-            .formLogin(formLogin -> formLogin.loginPage("/login")
-                    .failureUrl("/login?failed")
-                    .defaultSuccessUrl("/api", true)
-                    // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
-                    .loginProcessingUrl("/authentication/login/process"))
-            .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre
-            .httpBasic(Customizer.withDefaults());
+          .authorizeHttpRequests(authorize ->
+                authorize.requestMatchers("/api/**").authenticated()
+                      // allow React to access its files
+                      .requestMatchers("/index.html", "/static/**", "/manifest.json").permitAll()
+                      .requestMatchers("/").permitAll()
+                      .anyRequest().authenticated()
+          )
+          .formLogin(formLogin -> formLogin.loginPage("/login").permitAll()
+                .failureUrl("/login?failed")
+                .defaultSuccessUrl("/", true)
+                // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
+                .loginProcessingUrl("/authentication/login/process"))
+          .formLogin(Customizer.withDefaults())
+          .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre
+          .httpBasic(Customizer.withDefaults());
     return http.build();
+  }
+
+  @Bean
+  static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    return new GrantedAuthorityDefaults(""); // none
+  }
+
+  @Bean
+  static RoleHierarchy roleHierarchy() {
+    var hierarchy = new RoleHierarchyImpl();
+    hierarchy.setHierarchy("""
+          ROLE_Administrator > ROLE_Editor
+          ROLE_Editor > ROLE_Visualizer
+          """);
+    return hierarchy;
+  }
+
+  // required because using method security
+  @Bean
+  static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+        RoleHierarchy roleHierarchy) {
+    DefaultMethodSecurityExpressionHandler expressionHandler =
+          new DefaultMethodSecurityExpressionHandler();
+    expressionHandler.setRoleHierarchy(roleHierarchy);
+    return expressionHandler;
   }
 
   @Bean
