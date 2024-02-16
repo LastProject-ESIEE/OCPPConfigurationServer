@@ -3,10 +3,8 @@ package fr.uge.chargepointconfiguration.chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.ChangeConfigurationRequest;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
-import java.util.ArrayList;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -36,9 +34,14 @@ public class ChargePointManager {
   }
 
   /**
-   * Processes the message from the sender in OCPP.
+   * Processes the received websocket message according to the OCPP protocol and
+   * returns the response we've sent to the sender.<br>
+   * According to the message, we send (or not) a message.<br>
+   * For example :<br>
+   * If the message is BootNotificationRequest, the response should be BootNotificationResponse.
    *
-   * @param webSocketRequestMessage WebSocketRequestMessage.
+   * @param webSocketRequestMessage The websocket message sent to our server.
+   * @return A String representing the response we've sent to the sender.
    */
   public String processMessage(WebSocketRequestMessage webSocketRequestMessage) {
     try {
