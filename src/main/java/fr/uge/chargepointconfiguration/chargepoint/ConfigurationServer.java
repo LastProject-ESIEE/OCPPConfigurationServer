@@ -2,7 +2,6 @@ package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
