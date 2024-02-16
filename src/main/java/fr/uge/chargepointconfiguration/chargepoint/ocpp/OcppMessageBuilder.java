@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageBuilder16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.OcppMessageBuilder2;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Interface used to define an OCPP message builder.
@@ -17,7 +18,7 @@ public interface OcppMessageBuilder {
    * @param webSocketRequestMessage The received message from the remote host.
    * @return The answer to the received WebSocket message.
    */
-  OcppMessage buildMessage(WebSocketRequestMessage webSocketRequestMessage);
+  Optional<OcppMessage> buildMessage(WebSocketRequestMessage webSocketRequestMessage);
 
   /**
    * Transforms the built message into a String to be sent.

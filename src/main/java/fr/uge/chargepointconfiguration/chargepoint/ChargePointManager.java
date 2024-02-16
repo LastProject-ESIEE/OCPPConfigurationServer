@@ -6,6 +6,7 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -47,16 +48,20 @@ public class ChargePointManager {
    * @param webSocketRequestMessage The websocket message sent to our server.
    * @return A String representing the response we've sent to the sender.
    */
-  public WebSocketResponseMessage processMessage(WebSocketRequestMessage webSocketRequestMessage) {
+  public Optional<WebSocketResponseMessage> processMessage(
+          WebSocketRequestMessage webSocketRequestMessage) {
     Objects.requireNonNull(webSocketRequestMessage);
     var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
     // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
     var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
-    var webSocketResponseMessage = new WebSocketResponseMessage(3,
-            webSocketRequestMessage.messageId(),
-            JsonParser.objectToJsonString(resp));
-    messageSender.sendMessage(webSocketResponseMessage);
-    return webSocketResponseMessage;
+    if (resp.isPresent()) {
+      var webSocketResponseMessage = new WebSocketResponseMessage(3,
+              webSocketRequestMessage.messageId(),
+              JsonParser.objectToJsonString(resp.orElseThrow()));
+      messageSender.sendMessage(webSocketResponseMessage);
+      return Optional.of(webSocketResponseMessage);
+    }
+    return Optional.empty();
   }
 
   /**
