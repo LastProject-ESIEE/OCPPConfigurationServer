@@ -64,11 +64,19 @@ public class ConfigurationServer extends WebSocketServer {
             + ": "
             + message);
     var webSocketMessage = WebSocketRequestMessage.parse(message);
-    LOGGER.info("sent message to "
-            + remote
-            + ": "
-            + chargePoints.get(conn.getRemoteSocketAddress())
-            .processMessage(webSocketMessage).toString());
+    var processed = chargePoints.get(conn.getRemoteSocketAddress())
+            .processMessage(webSocketMessage);
+    if (processed.isPresent()) {
+      LOGGER.info("sent message to "
+              + remote
+              + ": "
+              + processed.orElseThrow());
+    } else {
+      LOGGER.info("sent message to "
+              + remote
+              + ": "
+              + "IGNORING MESSAGE");
+    }
   }
 
   @Override
