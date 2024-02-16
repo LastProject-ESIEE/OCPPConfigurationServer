@@ -11,6 +11,6 @@ public record WebSocketResponseMessage(int callType, String messageId, String da
 
   @Override
   public String toString() {
-    return "[" + callType + ",\"" + messageId + "\"," + data + "]";
+    return "[" + callType + "," + messageId + "," + data + "]";
   }
 }

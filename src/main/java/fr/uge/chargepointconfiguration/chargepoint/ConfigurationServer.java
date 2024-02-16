@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -17,17 +17,17 @@ import org.java_websocket.server.WebSocketServer;
 public class ConfigurationServer extends WebSocketServer {
   private static final Logger LOGGER = LogManager.getLogger(ConfigurationServer.class);
   private final HashMap<InetSocketAddress, ChargePointManager> chargePoints = new HashMap<>();
-  private final UserRepository userRepository;
+  private final ChargepointRepository chargepointRepository;
 
   /**
    * ConfigurationServer's constructor.
    *
    * @param address InetSocketAddress.
-   * @param userRepository UserRepository.
    */
-  public ConfigurationServer(InetSocketAddress address, UserRepository userRepository) {
+  public ConfigurationServer(InetSocketAddress address,
+                             ChargepointRepository chargepointRepository) {
     super(address);
-    this.userRepository = userRepository;
+    this.chargepointRepository = chargepointRepository;
   }
 
   @Override
@@ -35,9 +35,9 @@ public class ConfigurationServer extends WebSocketServer {
     //conn.send("Welcome to the server!");
     LOGGER.info("new connection to " + conn.getRemoteSocketAddress());
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
-    chargePoints.put(conn.getRemoteSocketAddress(),
+    chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
-                    message -> conn.send(message.toString()), userRepository));
+                    message -> conn.send(message.toString()), chargepointRepository));
   }
 
   @Override
@@ -53,12 +53,25 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
+    var remote = conn.getRemoteSocketAddress();
     LOGGER.info("received message from "
-            + conn.getRemoteSocketAddress()
+            + remote
             + ": "
             + message);
     var webSocketMessage = WebSocketRequestMessage.parse(message);
-    chargePoints.get(conn.getRemoteSocketAddress()).processMessage(webSocketMessage);
+    var processed = chargePoints.get(conn.getRemoteSocketAddress())
+            .processMessage(webSocketMessage);
+    if (processed.isPresent()) {
+      LOGGER.info("sent message to "
+              + remote
+              + ": "
+              + processed.orElseThrow());
+    } else {
+      LOGGER.info("sent message to "
+              + remote
+              + ": "
+              + "IGNORING MESSAGE");
+    }
   }
 
   @Override
