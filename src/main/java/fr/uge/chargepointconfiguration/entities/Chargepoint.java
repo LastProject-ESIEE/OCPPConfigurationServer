@@ -28,7 +28,7 @@ public class Chargepoint {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id_chargepoint")
-  private int id = 0;
+  private int id;
 
   @Column(name = "serial_number_chargepoint", nullable = false, length = 45)
   private String serialNumberChargepoint;
