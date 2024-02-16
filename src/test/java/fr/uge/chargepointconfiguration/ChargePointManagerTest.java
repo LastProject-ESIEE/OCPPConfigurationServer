@@ -59,7 +59,7 @@ public class ChargePointManagerTest {
             chargepointRepository);
     var receivedMessage = new WebSocketRequestMessage(2,
             "1",
-            "BootNotification",
+            WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST,
             "{}");
 
     var actualResponse = manager.processMessage(receivedMessage);
@@ -67,8 +67,8 @@ public class ChargePointManagerTest {
     var expectedWebSocketResponseMessage = new WebSocketResponseMessage(3,
             receivedMessage.messageId(),
             JsonParser.objectToJsonString(resp));
-    assertEquals(expectedWebSocketResponseMessage.messageId(), actualResponse.messageId());
-    assertEquals(expectedWebSocketResponseMessage.callType(), actualResponse.callType());
+    assertEquals(expectedWebSocketResponseMessage.messageId(), actualResponse.orElseThrow().messageId());
+    assertEquals(expectedWebSocketResponseMessage.callType(), actualResponse.orElseThrow().callType());
     // WE DON'T COMPARE THE DATE BECAUSE WE CANNOT HAVE THE SAME DATE, MS DIFFERENCE.
   }
 
@@ -79,7 +79,7 @@ public class ChargePointManagerTest {
             chargepointRepository);
     var receivedMessage = new WebSocketRequestMessage(2,
             "2",
-            "BootNotification",
+            WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST,
             "{}");
 
     var actualResponse = manager.processMessage(receivedMessage);
@@ -87,8 +87,8 @@ public class ChargePointManagerTest {
     var expectedWebSocketResponseMessage = new WebSocketResponseMessage(3,
             receivedMessage.messageId(),
             JsonParser.objectToJsonString(resp));
-    assertEquals(expectedWebSocketResponseMessage.messageId(), actualResponse.messageId());
-    assertEquals(expectedWebSocketResponseMessage.callType(), actualResponse.callType());
+    assertEquals(expectedWebSocketResponseMessage.messageId(), actualResponse.orElseThrow().messageId());
+    assertEquals(expectedWebSocketResponseMessage.callType(), actualResponse.orElseThrow().callType());
     // WE DON'T COMPARE THE DATE BECAUSE WE CANNOT HAVE THE SAME DATE, MS DIFFERENCE.
   }
 
