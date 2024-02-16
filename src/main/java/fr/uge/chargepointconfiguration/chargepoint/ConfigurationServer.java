@@ -36,7 +36,7 @@ public class ConfigurationServer extends WebSocketServer {
     //conn.send("Welcome to the server!");
     LOGGER.info("new connection to " + conn.getRemoteSocketAddress());
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
-    chargePoints.put(conn.getRemoteSocketAddress(),
+    chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
                     message -> conn.send(message.toString()), chargepointRepository));
   }
