@@ -10,10 +10,11 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
   @Bean
@@ -53,19 +54,26 @@ public class WebSecurityConfig {
   }
 
   @Bean
+  static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    return new GrantedAuthorityDefaults(""); // none
+  }
+
+  @Bean
   static RoleHierarchy roleHierarchy() {
     var hierarchy = new RoleHierarchyImpl();
     hierarchy.setHierarchy("""
-            ROLE_ADMIN > ROLE_USER
+            ROLE_Administrator > ROLE_Editor
+            ROLE_Editor > ROLE_Visualizer
             """);
     return hierarchy;
   }
 
-  // and, if using method security also add
+  // required because using method security
   @Bean
   static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
           RoleHierarchy roleHierarchy) {
-    var expressionHandler = new DefaultMethodSecurityExpressionHandler();
+    DefaultMethodSecurityExpressionHandler expressionHandler =
+            new DefaultMethodSecurityExpressionHandler();
     expressionHandler.setRoleHierarchy(roleHierarchy);
     return expressionHandler;
   }
