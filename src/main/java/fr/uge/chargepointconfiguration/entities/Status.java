@@ -88,6 +88,7 @@ public class Status {
   @Override
   public String toString() {
     return "Status{"
+           + "id=" + id
            + ", lastUpdate=" + lastUpdate
            + ", error='" + error + '\''
            + ", state=" + state

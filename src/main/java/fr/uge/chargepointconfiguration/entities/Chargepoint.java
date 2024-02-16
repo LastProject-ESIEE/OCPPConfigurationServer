@@ -27,7 +27,7 @@ public class Chargepoint {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id_chargepoint")
-  private int id;
+  private int id = 0;
 
   @Column(name = "serial_number_chargepoint", nullable = false, length = 45)
   private String serialNumberChargepoint;
@@ -58,6 +58,50 @@ public class Chargepoint {
   // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
+
+  /**
+   * Chargepoint's constructor with defaults values.
+   *
+   * @param serialNumberChargepoint String.
+   * @param type String.
+   * @param constructor String.
+   * @param clientId String.
+   * @param serverAddress String.
+   * @param configuration String.
+   * @param status Status.
+   */
+  public Chargepoint(String serialNumberChargepoint,
+                     String type,
+                     String constructor,
+                     String clientId,
+                     String serverAddress,
+                     String configuration,
+                     Status status,
+                     Firmware firmware) {
+    Objects.requireNonNull(serialNumberChargepoint);
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(constructor);
+    Objects.requireNonNull(clientId);
+    Objects.requireNonNull(serverAddress);
+    Objects.requireNonNull(configuration);
+    Objects.requireNonNull(status);
+    Objects.requireNonNull(firmware);
+    this.serialNumberChargepoint = serialNumberChargepoint;
+    this.type = type;
+    this.constructor = constructor;
+    this.clientId = clientId;
+    this.serverAddress = serverAddress;
+    this.configuration = configuration;
+    this.status = status;
+    this.firmware = firmware;
+  }
+
+  /**
+   * No args Chargepoint's constructor.<br>
+   * It should not be called.
+   */
+  public Chargepoint() {
+  }
 
   public int getId() {
     return id;
