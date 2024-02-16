@@ -27,6 +27,9 @@ public class ChargePointManager {
   public ChargePointManager(OcppVersion ocppVersion,
                             MessageSender messageSender,
                             ChargepointRepository chargepointRepository) {
+    Objects.requireNonNull(ocppVersion);
+    Objects.requireNonNull(messageSender);
+    Objects.requireNonNull(chargepointRepository);
     this.ocppVersion = ocppVersion;
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
@@ -44,15 +47,16 @@ public class ChargePointManager {
    * @param webSocketRequestMessage The websocket message sent to our server.
    * @return A String representing the response we've sent to the sender.
    */
-  public String processMessage(WebSocketRequestMessage webSocketRequestMessage) {
+  public WebSocketResponseMessage processMessage(WebSocketRequestMessage webSocketRequestMessage) {
     Objects.requireNonNull(webSocketRequestMessage);
     var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
     // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
     var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
-    messageSender.sendMessage(new WebSocketResponseMessage(3,
+    var webSocketResponseMessage = new WebSocketResponseMessage(3,
             webSocketRequestMessage.messageId(),
-            JsonParser.objectToJsonString(resp)));
-    return JsonParser.objectToJsonString(resp);
+            JsonParser.objectToJsonString(resp));
+    messageSender.sendMessage(webSocketResponseMessage);
+    return webSocketResponseMessage;
   }
 
   /**
