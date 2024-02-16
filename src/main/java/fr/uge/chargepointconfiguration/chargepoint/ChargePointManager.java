@@ -5,6 +5,7 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
+import java.util.Objects;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -44,17 +45,14 @@ public class ChargePointManager {
    * @return A String representing the response we've sent to the sender.
    */
   public String processMessage(WebSocketRequestMessage webSocketRequestMessage) {
-    try {
-      var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-      var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
-      messageSender.sendMessage(new WebSocketResponseMessage(3,
-              webSocketRequestMessage.messageId(),
-              JsonParser.objectToJsonString(resp)));
-      return JsonParser.objectToJsonString(resp);
-    } catch (IllegalArgumentException e) {
-      System.out.println(e.getMessage());
-      return "ERROR";
-    }
+    Objects.requireNonNull(webSocketRequestMessage);
+    var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
+    // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
+    var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
+    messageSender.sendMessage(new WebSocketResponseMessage(3,
+            webSocketRequestMessage.messageId(),
+            JsonParser.objectToJsonString(resp)));
+    return JsonParser.objectToJsonString(resp);
   }
 
   /**
