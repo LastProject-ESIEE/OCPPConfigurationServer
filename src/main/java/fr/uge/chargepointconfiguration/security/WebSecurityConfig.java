@@ -4,8 +4,13 @@ import fr.uge.chargepointconfiguration.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,52 +24,50 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfig {
-
-  /*
-  @Bean
-  public UserDetailsService userDetailsService() {
-    InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-    manager.createUser(User.withUsername("user")
-      .password(passwordEncoder().encode("password"))
-      .roles("USER")
-      .build());
-    manager.createUser(User.withUsername("admin")
-      .password(passwordEncoder().encode("admin"))
-      .roles("USER", "ADMIN")
-      .build());
-    return manager;
-  }*/
-
-
-  //  @Bean
-  //  UserDetailsManager users(DataSource dataSource) {
-  //    JdbcUserDetailsManager users = new JdbcUserDetailsManager(dataSource);
-  //    return users;
-  //  }
 
   @Bean
   SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
     http
             .authorizeHttpRequests(authorize ->
                     authorize.requestMatchers("/api/**").authenticated()
-                            .requestMatchers("/login").permitAll()
                             .requestMatchers("/index.html").permitAll()
                             // allow React to access its files
                             .requestMatchers("/static/**").permitAll()
                             // allow React to access its files
                             .requestMatchers("/manifest.json").permitAll()
                             .requestMatchers("/").permitAll()
+                            .requestMatchers("/static/**").permitAll()
                             .anyRequest().authenticated()
             )
-            .formLogin(formLogin -> formLogin.loginPage("/login")
+            .formLogin(formLogin -> formLogin.loginPage("/login").permitAll()
                     .failureUrl("/login?failed")
                     .defaultSuccessUrl("/api", true)
                     // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
                     .loginProcessingUrl("/authentication/login/process"))
+            .formLogin(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre
             .httpBasic(Customizer.withDefaults());
     return http.build();
+  }
+
+  @Bean
+  static RoleHierarchy roleHierarchy() {
+    var hierarchy = new RoleHierarchyImpl();
+    hierarchy.setHierarchy("""
+            ROLE_ADMIN > ROLE_USER
+            """);
+    return hierarchy;
+  }
+
+  // and, if using method security also add
+  @Bean
+  static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+          RoleHierarchy roleHierarchy) {
+    var expressionHandler = new DefaultMethodSecurityExpressionHandler();
+    expressionHandler.setRoleHierarchy(roleHierarchy);
+    return expressionHandler;
   }
 
   @Bean
