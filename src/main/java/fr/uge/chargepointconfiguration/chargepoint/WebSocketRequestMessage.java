@@ -43,7 +43,8 @@ public record WebSocketRequestMessage(int callType,
   }
 
   /**
-   * Parse string message received from the web socket.
+   * Parse string message received from the web socket.<br>
+   * TODO : improve this method because it is not really safe, the split could be wrong !
    *
    * @param message - received message
    * @return WebSocketMessage
