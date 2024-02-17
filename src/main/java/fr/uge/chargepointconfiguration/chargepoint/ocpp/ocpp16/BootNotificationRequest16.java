@@ -11,10 +11,10 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
  * @param chargeBoxSerialNumber String.
  * @param firmwareVersion String.
  */
-public record BootNotificationRequest(String chargePointVendor,
-                                      String chargePointModel,
-                                      String chargePointSerialNumber,
-                                      String chargeBoxSerialNumber,
-                                      String firmwareVersion) implements OcppMessage {
+public record BootNotificationRequest16(String chargePointVendor,
+                                        String chargePointModel,
+                                        String chargePointSerialNumber,
+                                        String chargeBoxSerialNumber,
+                                        String firmwareVersion) implements OcppMessage {
 
 }

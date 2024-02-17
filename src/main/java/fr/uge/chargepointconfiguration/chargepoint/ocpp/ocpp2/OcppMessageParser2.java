@@ -15,7 +15,7 @@ public class OcppMessageParser2 implements OcppMessageParser {
   public Optional<OcppMessage> parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
     return switch (webSocketRequestMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST ->
-              Optional.of(JsonParser.stringToObject(BootNotificationRequest.class,
+              Optional.of(JsonParser.stringToObject(BootNotificationRequest2.class,
                       webSocketRequestMessage.data()));
       case UPDATE_FIRMWARE_RESPONSE ->
               throw new UnsupportedOperationException(
