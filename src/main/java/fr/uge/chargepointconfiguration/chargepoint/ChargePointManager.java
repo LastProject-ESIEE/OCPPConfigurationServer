@@ -3,6 +3,9 @@ package fr.uge.chargepointconfiguration.chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest2;
+import fr.uge.chargepointconfiguration.entities.Chargepoint;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.util.Objects;
@@ -55,6 +58,7 @@ public class ChargePointManager {
     // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
     var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
     if (resp.isPresent()) {
+      checkAndRegisterInDatabase(webSocketRequestMessage);
       var webSocketResponseMessage = new WebSocketResponseMessage(3,
               webSocketRequestMessage.messageId(),
               JsonParser.objectToJsonString(resp.orElseThrow()));
@@ -76,5 +80,36 @@ public class ChargePointManager {
    */
   public void onError() {
     // TODO change borne status
+  }
+
+  /**
+   * Checks if the message is a BootNotificationRequest.<br>
+   * If it is the case, this method will check in database if the sender has already been
+   * saved into the database.<br>
+   * If the sender was not in the database, we create a new entry.
+   *
+   * @param message The message sent by the sender with the message's type.
+   */
+  private void checkAndRegisterInDatabase(WebSocketRequestMessage message) {
+    if (message.messageName()
+            == WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST) {
+      if (ocppVersion == OcppVersion.V1_6) {
+        var bootNotification = JsonParser.stringToObject(
+                BootNotificationRequest16.class, message.data()
+        );
+        var chargePointInDatabase =
+                chargepointRepository.findBySerialNumber(
+                        bootNotification.chargePointSerialNumber()
+                );
+        if (chargePointInDatabase == null) {
+          // TODO : create and save into database
+        }
+      } else if (ocppVersion == OcppVersion.V2) {
+        var bootNotification = JsonParser.stringToObject(
+                BootNotificationRequest2.class, message.data()
+        );
+        // TODO : Check in DB if the current chargepoint does exist.
+      }
+    }
   }
 }
