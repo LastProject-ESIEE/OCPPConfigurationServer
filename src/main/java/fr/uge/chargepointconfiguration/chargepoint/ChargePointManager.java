@@ -3,8 +3,15 @@ package fr.uge.chargepointconfiguration.chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest2;
+import fr.uge.chargepointconfiguration.entities.Chargepoint;
+import fr.uge.chargepointconfiguration.entities.Status;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
+import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -17,6 +24,9 @@ public class ChargePointManager {
   private final OcppMessageBuilder ocppMessageBuilder;
   private final MessageSender messageSender;
   private final ChargepointRepository chargepointRepository;
+  private final FirmwareRepository firmwareRepository;
+  private final StatusRepository statusRepository;
+  private boolean authenticated = false;
 
   /**
    * ChargePointManager's constructor.
@@ -27,15 +37,16 @@ public class ChargePointManager {
    */
   public ChargePointManager(OcppVersion ocppVersion,
                             MessageSender messageSender,
-                            ChargepointRepository chargepointRepository) {
-    Objects.requireNonNull(ocppVersion);
-    Objects.requireNonNull(messageSender);
-    Objects.requireNonNull(chargepointRepository);
-    this.ocppVersion = ocppVersion;
+                            ChargepointRepository chargepointRepository,
+                            FirmwareRepository firmwareRepository,
+                            StatusRepository statusRepository) {
+    this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
-    this.messageSender = messageSender;
-    this.chargepointRepository = chargepointRepository;
+    this.messageSender = Objects.requireNonNull(messageSender);
+    this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.statusRepository = Objects.requireNonNull(statusRepository);
   }
 
   /**
@@ -51,8 +62,11 @@ public class ChargePointManager {
   public Optional<WebSocketResponseMessage> processMessage(
           WebSocketRequestMessage webSocketRequestMessage) {
     Objects.requireNonNull(webSocketRequestMessage);
+    authenticated = doesChargepointExistInDatabase(webSocketRequestMessage);
+    if (!authenticated) {
+      System.out.println("NOT AUTHENTICATED");
+    }
     var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-    // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
     var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
     if (resp.isPresent()) {
       var webSocketResponseMessage = new WebSocketResponseMessage(3,
@@ -76,5 +90,38 @@ public class ChargePointManager {
    */
   public void onError() {
     // TODO change borne status
+  }
+
+  private boolean doesChargepointExistInDatabase(WebSocketRequestMessage message) {
+    if (message.messageName()
+            == WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST) {
+      return switch (ocppVersion) {
+        case V2 -> {
+          var bootNotification = JsonParser.stringToObject(
+                  BootNotificationRequest2.class, message.data()
+          );
+          var chargingStation = bootNotification.chargingStation();
+          var chargePointInDatabase =
+                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
+                          chargingStation.serialNumber(),
+                          chargingStation.vendorName()
+                  );
+          yield chargePointInDatabase != null;
+        }
+        case V1_6 -> {
+          var bootNotification = JsonParser.stringToObject(
+                  BootNotificationRequest16.class, message.data()
+          );
+          var chargePointInDatabase =
+                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
+                          bootNotification.chargePointSerialNumber(),
+                          bootNotification.chargePointVendor()
+                  );
+          yield chargePointInDatabase != null;
+        }
+      };
+    } else {
+      return authenticated;
+    }
   }
 }

@@ -1,10 +1,8 @@
 package fr.uge.chargepointconfiguration.entities;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,7 +24,7 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Chargepoint {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_chargepoint")
   private int id;
 
@@ -57,21 +55,21 @@ public class Chargepoint {
   @JoinColumn(name = "id_status", referencedColumnName = "id_status", nullable = false)
   private Status status;
 
-  @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @ManyToOne(cascade = CascadeType.MERGE)
   // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
 
   /**
-   * Chargepoint's constructor with defaults values.
+   * Chargepoint's constructor.
    *
-   * @param serialNumberChargepoint String.
-   * @param type String.
-   * @param constructor String.
-   * @param clientId String.
-   * @param serverAddress String.
-   * @param configuration String.
-   * @param status Status.
+   * @param serialNumberChargepoint The chargepoint's unique serial id.
+   * @param type The commercial name of the chargepoint.
+   * @param constructor The chargepoint's manufacturer.
+   * @param clientId The client's name of the chargepoint.
+   * @param serverAddress The server's URL of the chargepoint.
+   * @param configuration A JSON containing the chargepoint's configuration.
+   * @param firmware The chargepoint's firmware.
    */
   public Chargepoint(String serialNumberChargepoint,
                      String type,
@@ -81,27 +79,19 @@ public class Chargepoint {
                      String configuration,
                      Status status,
                      Firmware firmware) {
-    Objects.requireNonNull(serialNumberChargepoint);
-    Objects.requireNonNull(type);
-    Objects.requireNonNull(constructor);
-    Objects.requireNonNull(clientId);
-    Objects.requireNonNull(serverAddress);
-    Objects.requireNonNull(configuration);
-    Objects.requireNonNull(status);
-    Objects.requireNonNull(firmware);
-    this.serialNumberChargepoint = serialNumberChargepoint;
-    this.type = type;
-    this.constructor = constructor;
-    this.clientId = clientId;
-    this.serverAddress = serverAddress;
-    this.configuration = configuration;
-    this.status = status;
-    this.firmware = firmware;
+    this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
+    this.type = Objects.requireNonNull(type);
+    this.constructor = Objects.requireNonNull(constructor);
+    this.clientId = Objects.requireNonNull(clientId);
+    this.serverAddress = Objects.requireNonNull(serverAddress);
+    this.configuration = Objects.requireNonNull(configuration);
+    this.firmware = Objects.requireNonNull(firmware);
+    this.status = Objects.requireNonNull(status);
+    lastEdit = status.getLastUpdate();
   }
 
   /**
-   * No args Chargepoint's constructor.<br>
-   * It should not be called.
+   * Empty constructor. Should not be called.
    */
   public Chargepoint() {
   }
