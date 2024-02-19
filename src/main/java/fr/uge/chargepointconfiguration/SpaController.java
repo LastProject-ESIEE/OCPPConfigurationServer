@@ -9,13 +9,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class SpaController {
+  /*
+  @RequestMapping(value = "/{path:[^\\.]*}")
+  public String forward() {
+    return "forward:/";
+  }
+   */
 
   /**
    * A method that forwards the requests to the frontend root.
    *
    * @return a redirect to the view of the frontend root
    */
-  @RequestMapping(value = "/{path:[^\\.]*}")
+  @RequestMapping(value = { "/login", "/about" })
   public String forward() {
     return "forward:/";
   }

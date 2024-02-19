@@ -59,7 +59,7 @@ public class WebSecurityConfig {
             )
             .formLogin(formLogin -> formLogin.loginPage("/login")
                     .failureUrl("/login?failed")
-                    .defaultSuccessUrl("/api", true)
+                    .defaultSuccessUrl("/", true)
                     // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
                     .loginProcessingUrl("/authentication/login/process"))
             .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre
