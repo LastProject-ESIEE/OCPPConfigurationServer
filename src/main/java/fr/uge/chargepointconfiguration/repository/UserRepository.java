@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.repository;
 
 import fr.uge.chargepointconfiguration.entities.User;
+import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,7 @@ public interface UserRepository extends CrudRepository<User, Integer> {
   @Query("SELECT u FROM User u WHERE u.email = :email")
   User findByEmail(@Param("email") String email);
 
+  User findById(int id);
+
+  List<User> findAll();
 }
