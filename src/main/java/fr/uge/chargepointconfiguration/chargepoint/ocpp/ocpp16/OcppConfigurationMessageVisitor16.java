@@ -6,7 +6,7 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 public class OcppConfigurationMessageVisitor16 implements OcppMessageVisitor16 {
 
   @Override
-  public void visit(BootNotificationRequest bootNotificationRequest) {
+  public void visit(BootNotificationRequest16 bootNotificationRequest) {
   }
 
 }

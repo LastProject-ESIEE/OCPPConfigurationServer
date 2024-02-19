@@ -2,9 +2,12 @@ package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
+import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.WebSocket;
@@ -18,6 +21,8 @@ public class ConfigurationServer extends WebSocketServer {
   private static final Logger LOGGER = LogManager.getLogger(ConfigurationServer.class);
   private final HashMap<InetSocketAddress, ChargePointManager> chargePoints = new HashMap<>();
   private final ChargepointRepository chargepointRepository;
+  private final FirmwareRepository firmwareRepository;
+  private final StatusRepository statusRepository;
 
   /**
    * ConfigurationServer's constructor.
@@ -25,9 +30,13 @@ public class ConfigurationServer extends WebSocketServer {
    * @param address InetSocketAddress.
    */
   public ConfigurationServer(InetSocketAddress address,
-                             ChargepointRepository chargepointRepository) {
+                             ChargepointRepository chargepointRepository,
+                             FirmwareRepository firmwareRepository,
+                             StatusRepository statusRepository) {
     super(address);
     this.chargepointRepository = chargepointRepository;
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.statusRepository = Objects.requireNonNull(statusRepository);
   }
 
   @Override
@@ -37,7 +46,10 @@ public class ConfigurationServer extends WebSocketServer {
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
-                    message -> conn.send(message.toString()), chargepointRepository));
+                    message -> conn.send(message.toString()),
+                    chargepointRepository,
+                    firmwareRepository,
+                    statusRepository));
   }
 
   @Override

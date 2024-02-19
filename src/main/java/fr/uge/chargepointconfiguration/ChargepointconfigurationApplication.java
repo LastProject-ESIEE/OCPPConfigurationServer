@@ -2,8 +2,11 @@ package fr.uge.chargepointconfiguration;
 
 import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
+import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import java.net.InetSocketAddress;
+import java.util.Objects;
 import org.java_websocket.server.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +22,8 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
 
   private final UserRepository userRepository;
   private final ChargepointRepository chargepointRepository;
+  private final FirmwareRepository firmwareRepository;
+  private final StatusRepository statusRepository;
 
   /**
    * The class's constructor.<br>
@@ -28,9 +33,13 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    */
   @Autowired
   public ChargepointconfigurationApplication(UserRepository userRepository,
-                                             ChargepointRepository chargepointRepository) {
+                                             ChargepointRepository chargepointRepository,
+                                             FirmwareRepository firmwareRepository,
+                                             StatusRepository statusRepository) {
     this.userRepository = userRepository;
     this.chargepointRepository = chargepointRepository;
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.statusRepository = Objects.requireNonNull(statusRepository);
   }
 
   /**
@@ -54,7 +63,9 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       Thread.ofPlatform().start(() -> {
         WebSocketServer server = new ConfigurationServer(
                 new InetSocketAddress(websocketUrl, websocketPort),
-                chargepointRepository
+                chargepointRepository,
+                firmwareRepository,
+                statusRepository
         );
         server.run();
       });

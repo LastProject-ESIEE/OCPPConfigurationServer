@@ -18,7 +18,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
    * @param email User's email.
    * @return The correct User or null if the user couldn't be found.
    */
-  @Query("SELECT u FROM User u WHERE u.email = :email")
-  User findByEmail(@Param("email") String email);
+  User findByEmail(String email);
 
 }

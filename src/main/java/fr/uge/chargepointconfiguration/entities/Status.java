@@ -20,36 +20,64 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "status")
 public class Status {
-  private enum Step { firmware, configuration }
 
-  private enum StatusProcess { pending, processing, finished, failed }
+  /**
+   * The mods which a machine can be.<br>
+   * FIRMWARE : the chargepoint will update his firmware thanks to a given url.<br>
+   * CONFIGURATION : the chargepoint will change values in his configuration.
+   */
+  public enum Step { FIRMWARE, CONFIGURATION }
+
+  /**
+   * The status of the process.<br>
+   * PENDING : the process is not launched.<br>
+   * PROCESSING : the process has been accepted by the chargepoint and is now in process.<br>
+   * FINISHED : the process has been done successfully.<br>
+   * FAILED : the process has failed because of a wrong configuration or a bug.
+   */
+  public enum StatusProcess { PENDING, PROCESSING, FINISHED, FAILED }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_status")
   private int id;
 
   @Column(name = "last_update", nullable = false,
-      columnDefinition = "datetime default current_timestamp")
+          columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
   private Timestamp lastUpdate;
 
   @Column(name = "error", nullable = false, length = 65_535)
-  private String error;
-
-  @Column(name = "state", nullable = false,
-      columnDefinition = "boolean default false")
+  private String error = "";
+  
+  @Column(name = "state", nullable = false, columnDefinition = "boolean default false")
   private boolean state = false;
 
-  @Column(name = "step", nullable = false,
-      columnDefinition = "varchar(32) default 'firmware'")
+  @Column(name = "step", nullable = false, columnDefinition = "varchar(32) default 'FIRMWARE'")
   @Enumerated(EnumType.STRING)
-  private Step step = Step.firmware;
+  private Step step = Step.FIRMWARE;
 
   @Column(name = "step_status", nullable = false,
-      columnDefinition = "varchar(32) default 'pending'")
+          columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
-  private StatusProcess status = StatusProcess.pending;
+  private StatusProcess status = StatusProcess.PENDING;
+
+  /**
+   * Status's constructor.
+   *
+   * @param lastUpdate The last time the status has changed.
+   */
+  public Status(Timestamp lastUpdate) {
+    this.lastUpdate = Objects.requireNonNull(lastUpdate);
+    state = true;
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public Status() {
+
+  }
 
   public String getError() {
     return error;
@@ -94,13 +122,13 @@ public class Status {
   @Override
   public String toString() {
     return "Status{"
-           + "id=" + id
-           + ", lastUpdate=" + lastUpdate
-           + ", error='" + error + '\''
-           + ", state=" + state
-           + ", step=" + step
-           + ", status=" + status
-           + '}';
+            + "id=" + id
+            + ", lastUpdate=" + lastUpdate
+            + ", error='" + error + '\''
+            + ", state=" + state
+            + ", step=" + step
+            + ", status=" + status
+            + '}';
   }
 
   @Override
