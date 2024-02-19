@@ -43,9 +43,10 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   }
 
   /**
+   * Call on spring server start.
    *
-   * @param args program
-   * @throws Exception
+   * @param args program arguments
+   * @throws Exception invalid parameter
    */
   @Override
   public void run(String... args) throws Exception {
