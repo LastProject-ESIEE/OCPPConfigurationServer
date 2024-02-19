@@ -14,6 +14,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Chargepoint class represents a charge point in the database via JPA.<br>
@@ -47,7 +48,9 @@ public class Chargepoint {
   @Column(name = "configuration", nullable = false)
   private String configuration;
 
-  @Column(name = "last_edit", nullable = false)
+  @Column(name = "last_edit", nullable = false,
+      columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp lastEdit;
 
   @OneToOne(cascade = CascadeType.ALL)
@@ -58,6 +61,50 @@ public class Chargepoint {
   // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
+
+  /**
+   * Chargepoint's constructor with defaults values.
+   *
+   * @param serialNumberChargepoint String.
+   * @param type String.
+   * @param constructor String.
+   * @param clientId String.
+   * @param serverAddress String.
+   * @param configuration String.
+   * @param status Status.
+   */
+  public Chargepoint(String serialNumberChargepoint,
+                     String type,
+                     String constructor,
+                     String clientId,
+                     String serverAddress,
+                     String configuration,
+                     Status status,
+                     Firmware firmware) {
+    Objects.requireNonNull(serialNumberChargepoint);
+    Objects.requireNonNull(type);
+    Objects.requireNonNull(constructor);
+    Objects.requireNonNull(clientId);
+    Objects.requireNonNull(serverAddress);
+    Objects.requireNonNull(configuration);
+    Objects.requireNonNull(status);
+    Objects.requireNonNull(firmware);
+    this.serialNumberChargepoint = serialNumberChargepoint;
+    this.type = type;
+    this.constructor = constructor;
+    this.clientId = clientId;
+    this.serverAddress = serverAddress;
+    this.configuration = configuration;
+    this.status = status;
+    this.firmware = firmware;
+  }
+
+  /**
+   * No args Chargepoint's constructor.<br>
+   * It should not be called.
+   */
+  public Chargepoint() {
+  }
 
   public int getId() {
     return id;

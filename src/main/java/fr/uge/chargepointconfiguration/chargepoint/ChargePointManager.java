@@ -1,14 +1,12 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageParser16;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.RegistrationStatus;
-import fr.uge.chargepointconfiguration.entities.User;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
-import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -16,47 +14,54 @@ import java.time.LocalDateTime;
 public class ChargePointManager {
   private final OcppVersion ocppVersion;
   private final OcppMessageParser ocppMessageParser;
+  private final OcppMessageBuilder ocppMessageBuilder;
   private final MessageSender messageSender;
-  private final UserRepository userRepository;
+  private final ChargepointRepository chargepointRepository;
 
   /**
    * ChargePointManager's constructor.
    *
-   * @param ocppVersion OcppVersion.
-   * @param messageSender MessageSender.
-   * @param userRepository UserRepository.
+   * @param ocppVersion The version of the OCPP protocol (1.6 or 2.0.1).
+   * @param messageSender The websocket connection used to send data.
+   * @param chargepointRepository The chargepoint's repository for database queries.
    */
   public ChargePointManager(OcppVersion ocppVersion,
                             MessageSender messageSender,
-                            UserRepository userRepository) {
+                            ChargepointRepository chargepointRepository) {
+    Objects.requireNonNull(ocppVersion);
+    Objects.requireNonNull(messageSender);
+    Objects.requireNonNull(chargepointRepository);
     this.ocppVersion = ocppVersion;
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
+    this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
     this.messageSender = messageSender;
-    this.userRepository = userRepository;
+    this.chargepointRepository = chargepointRepository;
   }
 
   /**
-   * Processes the message from the sender in OCPP.
+   * Processes the received websocket message according to the OCPP protocol and
+   * returns the response we've sent to the sender.<br>
+   * According to the message, we send (or not) a message.<br>
+   * For example :<br>
+   * If the message is BootNotificationRequest, the response should be BootNotificationResponse.
    *
-   * @param webSocketRequestMessage WebSocketRequestMessage.
+   * @param webSocketRequestMessage The websocket message sent to our server.
+   * @return A String representing the response we've sent to the sender.
    */
-  public void processMessage(WebSocketRequestMessage webSocketRequestMessage) {
-    try {
-      var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-      userRepository.save(new User("Borne",
-              "toBeALive",
-              webSocketRequestMessage.messageName(),
-              "g00d p4ssw0rd",
-              User.Role.Visualizer));
-      var resp = new BootNotificationResponse(LocalDateTime.now().toString(),
-              60,
-              RegistrationStatus.Accepted);
-      messageSender.sendMessage(new WebSocketResponseMessage(3,
+  public Optional<WebSocketResponseMessage> processMessage(
+          WebSocketRequestMessage webSocketRequestMessage) {
+    Objects.requireNonNull(webSocketRequestMessage);
+    var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
+    // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
+    var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
+    if (resp.isPresent()) {
+      var webSocketResponseMessage = new WebSocketResponseMessage(3,
               webSocketRequestMessage.messageId(),
-              JsonParser.objectToJsonString(resp)));
-    } catch (IllegalArgumentException e) {
-      System.out.println(e.getMessage());
+              JsonParser.objectToJsonString(resp.orElseThrow()));
+      messageSender.sendMessage(webSocketResponseMessage);
+      return Optional.of(webSocketResponseMessage);
     }
+    return Optional.empty();
   }
 
   /**

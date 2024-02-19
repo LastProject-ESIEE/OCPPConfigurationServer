@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration;
 
 import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
+import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
 import java.net.InetSocketAddress;
 import org.java_websocket.server.WebSocketServer;
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ChargepointconfigurationApplication implements CommandLineRunner {
 
   private final UserRepository userRepository;
+  private final ChargepointRepository chargepointRepository;
 
   /**
    * The class's constructor.<br>
@@ -25,8 +27,10 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    * @param userRepository UserRepository.
    */
   @Autowired
-  public ChargepointconfigurationApplication(UserRepository userRepository) {
+  public ChargepointconfigurationApplication(UserRepository userRepository,
+                                             ChargepointRepository chargepointRepository) {
     this.userRepository = userRepository;
+    this.chargepointRepository = chargepointRepository;
   }
 
   /**
@@ -50,7 +54,7 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       Thread.ofPlatform().start(() -> {
         WebSocketServer server = new ConfigurationServer(
                 new InetSocketAddress(websocketUrl, websocketPort),
-                userRepository
+                chargepointRepository
         );
         server.run();
       });

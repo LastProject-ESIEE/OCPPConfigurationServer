@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
+package fr.uge.chargepointconfiguration.chargepoint.ocpp;
 
 /**
  * Defines the status given to a message.

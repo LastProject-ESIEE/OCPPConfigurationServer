@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
+package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;

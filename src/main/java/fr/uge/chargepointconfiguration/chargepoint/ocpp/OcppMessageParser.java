@@ -4,13 +4,15 @@ import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageParser16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.OcppMessageParser2;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Interface used to define an OCPP message parser.
+ * Interface used to define an OCPP message parser.<br>
+ * TODO : We could use an Observer to avoid redundancy.
  */
 public interface OcppMessageParser {
 
-  OcppMessage parseMessage(WebSocketRequestMessage webSocketRequestMessage);
+  Optional<OcppMessage> parseMessage(WebSocketRequestMessage webSocketRequestMessage);
 
   String transform(OcppMessage message);
 
