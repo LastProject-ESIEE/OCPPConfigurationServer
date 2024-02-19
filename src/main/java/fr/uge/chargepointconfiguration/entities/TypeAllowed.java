@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * TypeAllowed class represents a type allowed in the database via JPA.<br>
@@ -41,6 +43,9 @@ public class TypeAllowed {
   public void setType(String type) {
     this.type = type;
   }
+
+  @ManyToMany(mappedBy = "typesAllowed")
+  private Set<Firmware> firmwares;
 
   @Override
   public String toString() {
