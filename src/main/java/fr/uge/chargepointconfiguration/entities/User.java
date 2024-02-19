@@ -26,7 +26,7 @@ public class User {
    * - ADMINISTRATOR.
    */
   public enum Role {
-    Visualizer, Editor, Administrator
+    VISUALIZER, EDITOR, ADMINISTRATOR
   }
 
   @Id

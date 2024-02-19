@@ -19,9 +19,22 @@ import java.util.Objects;
 @Entity
 @Table(name = "status")
 public class Status {
-  private enum Step { firmware, configuration }
 
-  private enum StatusProcess { pending, processing, finished, failed }
+  /**
+   * The mods which a machine can be.<br>
+   * FIRMWARE : the chargepoint will update his firmware thanks to a given url.<br>
+   * CONFIGURATION : the chargepoint will change values in his configuration.
+   */
+  public enum Step { FIRMWARE, CONFIGURATION }
+
+  /**
+   * The status of the process.<br>
+   * PENDING : the process is not launched.<br>
+   * PROCESSING : the process has been accepted by the chargepoint and is now in process.<br>
+   * FINISHED : the process has been done successfully.<br>
+   * FAILED : the process has failed because of a wrong configuration or a bug.
+   */
+  public enum StatusProcess { PENDING, PROCESSING, FINISHED, FAILED }
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
