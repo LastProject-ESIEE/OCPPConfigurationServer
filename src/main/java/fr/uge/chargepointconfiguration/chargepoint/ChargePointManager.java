@@ -6,8 +6,12 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest2;
 import fr.uge.chargepointconfiguration.entities.Chargepoint;
+import fr.uge.chargepointconfiguration.entities.Status;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
+import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,6 +24,9 @@ public class ChargePointManager {
   private final OcppMessageBuilder ocppMessageBuilder;
   private final MessageSender messageSender;
   private final ChargepointRepository chargepointRepository;
+  private final FirmwareRepository firmwareRepository;
+  private final StatusRepository statusRepository;
+  private boolean authenticated = false;
 
   /**
    * ChargePointManager's constructor.
@@ -30,15 +37,16 @@ public class ChargePointManager {
    */
   public ChargePointManager(OcppVersion ocppVersion,
                             MessageSender messageSender,
-                            ChargepointRepository chargepointRepository) {
-    Objects.requireNonNull(ocppVersion);
-    Objects.requireNonNull(messageSender);
-    Objects.requireNonNull(chargepointRepository);
-    this.ocppVersion = ocppVersion;
+                            ChargepointRepository chargepointRepository,
+                            FirmwareRepository firmwareRepository,
+                            StatusRepository statusRepository) {
+    this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
-    this.messageSender = messageSender;
-    this.chargepointRepository = chargepointRepository;
+    this.messageSender = Objects.requireNonNull(messageSender);
+    this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.statusRepository = Objects.requireNonNull(statusRepository);
   }
 
   /**
@@ -54,11 +62,13 @@ public class ChargePointManager {
   public Optional<WebSocketResponseMessage> processMessage(
           WebSocketRequestMessage webSocketRequestMessage) {
     Objects.requireNonNull(webSocketRequestMessage);
+    authenticated = doesChargepointExistInDatabase(webSocketRequestMessage);
+    if (!authenticated) {
+      System.out.println("NOT AUTHENTICATED");
+    }
     var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
-    // TODO : If it is a BootNotificationRequest, we should save the sender into the database.
     var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
     if (resp.isPresent()) {
-      checkAndRegisterInDatabase(webSocketRequestMessage);
       var webSocketResponseMessage = new WebSocketResponseMessage(3,
               webSocketRequestMessage.messageId(),
               JsonParser.objectToJsonString(resp.orElseThrow()));
@@ -82,13 +92,48 @@ public class ChargePointManager {
     // TODO change borne status
   }
 
+  private boolean doesChargepointExistInDatabase(WebSocketRequestMessage message) {
+    if (message.messageName()
+            == WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST) {
+      return switch (ocppVersion) {
+        case V2 -> {
+          var bootNotification = JsonParser.stringToObject(
+                  BootNotificationRequest2.class, message.data()
+          );
+          var chargingStation = bootNotification.chargingStation();
+          var chargePointInDatabase =
+                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
+                          chargingStation.serialNumber(),
+                          chargingStation.vendorName()
+                  );
+          yield chargePointInDatabase != null;
+        }
+        case V1_6 -> {
+          var bootNotification = JsonParser.stringToObject(
+                  BootNotificationRequest16.class, message.data()
+          );
+          var chargePointInDatabase =
+                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
+                          bootNotification.chargePointSerialNumber(),
+                          bootNotification.chargePointVendor()
+                  );
+          yield chargePointInDatabase != null;
+        }
+      };
+    } else {
+      return authenticated;
+    }
+  }
+
   /**
    * Checks if the message is a BootNotificationRequest.<br>
    * If it is the case, this method will check in database if the sender has already been
    * saved into the database.<br>
-   * If the sender was not in the database, we create a new entry.
+   * If the sender was not in the database, we create a new entry.<br>
+   * TODO : Do a huge refactoring on this method !
    *
    * @param message The message sent by the sender with the message's type.
+   * @deprecated do not use this method, it is here for understanding how saving works.
    */
   private void checkAndRegisterInDatabase(WebSocketRequestMessage message) {
     if (message.messageName()
@@ -102,13 +147,42 @@ public class ChargePointManager {
                         bootNotification.chargePointSerialNumber()
                 );
         if (chargePointInDatabase == null) {
-          // TODO : create and save into database
+          var firmware = firmwareRepository.findByVersion(bootNotification.firmwareVersion());
+          var status = new Status(new Timestamp(System.currentTimeMillis()));
+          var chargePoint = new Chargepoint(); // TODO : Replace aaaaaa by correct URL.
+          chargePoint.setSerialNumberChargepoint(bootNotification.chargePointSerialNumber());
+          chargePoint.setType(bootNotification.chargePointModel());
+          chargePoint.setConstructor(bootNotification.chargePointVendor());
+          chargePoint.setClientId(bootNotification.chargeBoxSerialNumber());
+          chargePoint.setServerAddress("www.alfen.com");
+          chargePoint.setConfiguration("{}");
+          chargePoint.setStatus(status);
+          chargePoint.setFirmware(firmware);
+          chargepointRepository.save(chargePoint);
         }
       } else if (ocppVersion == OcppVersion.V2) {
         var bootNotification = JsonParser.stringToObject(
                 BootNotificationRequest2.class, message.data()
         );
-        // TODO : Check in DB if the current chargepoint does exist.
+        var chargeStation = bootNotification.chargingStation();
+        var chargePointInDatabase =
+                chargepointRepository.findBySerialNumber(
+                        chargeStation.serialNumber()
+                );
+        if (chargePointInDatabase == null) {
+          var firmware = firmwareRepository.findByVersion(chargeStation.firmwareVersion());
+          var status = new Status(new Timestamp(System.currentTimeMillis()));
+          var chargePoint = new Chargepoint(); // TODO : Replace aaaaa by correct URL.
+          chargePoint.setSerialNumberChargepoint(chargeStation.serialNumber());
+          chargePoint.setType(chargeStation.model());
+          chargePoint.setConstructor(chargeStation.vendorName());
+          chargePoint.setClientId("UNKNOWN");
+          chargePoint.setServerAddress("www.alfen.com");
+          chargePoint.setConfiguration("{}");
+          chargePoint.setStatus(status);
+          chargePoint.setFirmware(firmware);
+          chargepointRepository.save(chargePoint);
+        }
       }
     }
   }
