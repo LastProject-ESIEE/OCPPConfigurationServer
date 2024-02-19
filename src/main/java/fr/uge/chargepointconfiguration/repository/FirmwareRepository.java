@@ -16,6 +16,5 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer> {
    * @param version Firmware's unique version.
    * @return The correct Firmware or null if the firmware couldn't be found.
    */
-  @Query("SELECT f FROM Firmware f WHERE f.version LIKE :version")
-  Firmware findByVersion(@Param("version") String version);
+  Firmware findByVersion(String version);
 }
