@@ -122,12 +122,13 @@ public class Status {
   @Override
   public String toString() {
     return "Status{"
-           + "lastUpdate=" + lastUpdate
-           + ", error='" + error + '\''
-           + ", state=" + state
-           + ", step=" + step
-           + ", status=" + status
-           + '}';
+            + "id=" + id
+            + ", lastUpdate=" + lastUpdate
+            + ", error='" + error + '\''
+            + ", state=" + state
+            + ", step=" + step
+            + ", status=" + status
+            + '}';
   }
 
   @Override
