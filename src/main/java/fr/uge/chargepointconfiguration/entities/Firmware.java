@@ -29,11 +29,8 @@ public class Firmware {
   @Column(name = "url", nullable = false, length = 65_535)
   private String url;
 
-  @Column(name = "major_version", nullable = false)
-  private int majorVersion;
-
-  @Column(name = "minor_version", nullable = false)
-  private int minorVersion;
+  @Column(name = "version", nullable = false, length = 45)
+  private String version;
 
   @Column(name = "constructor", nullable = false, length = 45)
   private String constructor;
@@ -56,20 +53,12 @@ public class Firmware {
     this.url = url;
   }
 
-  public int getMajorVersion() {
-    return majorVersion;
+  public String getVersion() {
+    return version;
   }
 
-  public void setMajorVersion(int majorVersion) {
-    this.majorVersion = majorVersion;
-  }
-
-  public int getMinorVersion() {
-    return minorVersion;
-  }
-
-  public void setMinorVersion(int minorVersion) {
-    this.minorVersion = minorVersion;
+  public void setVersion(String version) {
+    this.version = version;
   }
 
   public String getConstructor() {
@@ -98,8 +87,7 @@ public class Firmware {
     }
     Firmware firmware = (Firmware) o;
     return id == firmware.id
-           && majorVersion == firmware.majorVersion
-           && minorVersion == firmware.minorVersion
+           && Objects.equals(version, firmware.version)
            && Objects.equals(url, firmware.url)
            && Objects.equals(constructor, firmware.constructor)
            && Objects.equals(typesAllowed, firmware.typesAllowed);
@@ -107,7 +95,7 @@ public class Firmware {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, url, majorVersion, minorVersion, constructor, typesAllowed);
+    return Objects.hash(id, url, version, constructor, typesAllowed);
   }
 
   @Override
@@ -115,8 +103,7 @@ public class Firmware {
     return "Firmware{"
            + "id=" + id
            + ", url='" + url + '\''
-           + ", majorVersion=" + majorVersion
-           + ", minorVersion=" + minorVersion
+           + ", version=" + version
            + ", constructor='" + constructor + '\''
            + ", typesAllowed=" + typesAllowed
            + '}';
