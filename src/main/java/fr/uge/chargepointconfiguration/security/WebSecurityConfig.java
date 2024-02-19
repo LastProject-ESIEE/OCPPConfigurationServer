@@ -34,7 +34,12 @@ public class WebSecurityConfig {
           .authorizeHttpRequests(authorize ->
                 authorize.requestMatchers("/api/**").authenticated()
                       // allow React to access its files
-                      .requestMatchers("/index.html", "/static/**", "/manifest.json").permitAll()
+                      .requestMatchers(
+                        "/index.html",
+                        "/static/**",
+                        "/manifest.json",
+                        "/assets/**")
+                      .permitAll()
                       .requestMatchers("/").permitAll()
                       .anyRequest().authenticated()
           )

@@ -13,7 +13,11 @@ function Login() {
 
     return (
         <Box>
-            <Grid alignContent={"center"} marginLeft={100} marginRight={100}>
+            <Grid style={{
+                alignContent: 'center',
+                marginLeft: '20%',
+                marginRight: '20%'
+            }}>
                 <Grid xs={12}>
                     <Box textAlign={"center"}>
                         <img src="assets/logo-brs.png" alt="logo de BRS"/>
@@ -21,7 +25,10 @@ function Login() {
                 </Grid>
                 <Grid xs={12}>
                     <Box>
-                        <form action="/authentication/login/process" method="post">
+                        <form action="/authentication/login/process" method="post" style={{
+                            marginLeft: '30%',
+                            marginRight: '30%'
+                        }}>
                             <label htmlFor="username">Identifiant :</label>
                             <input type="text" id="username" name="username" placeholder="Entrez votre identifiant mail@BRS" style={{
                                 width: '100%',
@@ -43,7 +50,6 @@ function Login() {
                                        border: '1px solid #ccc'
                                    }} required/>
 
-                            <a href="lien vers la page de changement de mot passe">Mot de passe oublié ?</a>
                             <input type="submit" value="Connexion" style={{
                                 width: '100%',
                                 backgroundColor: '#36A9E1',
