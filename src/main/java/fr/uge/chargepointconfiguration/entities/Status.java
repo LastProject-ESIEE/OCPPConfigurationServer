@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Status class represents a status in the database via JPA.<br>
@@ -37,26 +38,46 @@ public class Status {
   public enum StatusProcess { PENDING, PROCESSING, FINISHED, FAILED }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_status")
   private int id;
 
-  @Column(name = "last_update", nullable = false)
+  @Column(name = "last_update", nullable = false,
+          columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp lastUpdate;
 
   @Column(name = "error", nullable = false, length = 65_535)
-  private String error;
+  private String error = "";
 
-  @Column(name = "state", nullable = false)
-  private boolean state;
+  @Column(name = "state", nullable = false, columnDefinition = "boolean default false")
+  private boolean state = false;
 
-  @Column(name = "step", nullable = false)
+  @Column(name = "step", nullable = false, columnDefinition = "varchar(32) default 'FIRMWARE'")
   @Enumerated(EnumType.STRING)
-  private Step step;
+  private Step step = Step.FIRMWARE;
 
-  @Column(name = "step_status", nullable = false)
+  @Column(name = "step_status", nullable = false,
+          columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
-  private StatusProcess status;
+  private StatusProcess status = StatusProcess.PENDING;
+
+  /**
+   * Status's constructor.
+   *
+   * @param lastUpdate The last time the status has changed.
+   */
+  public Status(Timestamp lastUpdate) {
+    this.lastUpdate = Objects.requireNonNull(lastUpdate);
+    state = true;
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public Status() {
+
+  }
 
   public String getError() {
     return error;
@@ -101,7 +122,7 @@ public class Status {
   @Override
   public String toString() {
     return "Status{"
-           + ", lastUpdate=" + lastUpdate
+           + "lastUpdate=" + lastUpdate
            + ", error='" + error + '\''
            + ", state=" + state
            + ", step=" + step
