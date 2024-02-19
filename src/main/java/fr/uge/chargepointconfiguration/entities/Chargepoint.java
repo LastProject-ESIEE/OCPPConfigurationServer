@@ -47,7 +47,7 @@ public class Chargepoint {
   private String configuration;
 
   @Column(name = "last_edit", nullable = false,
-          columnDefinition = "datetime default current_timestamp")
+      columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
   private Timestamp lastEdit;
 
@@ -94,7 +94,6 @@ public class Chargepoint {
    * Empty constructor. Should not be called.
    */
   public Chargepoint() {
-
   }
 
   public int getId() {

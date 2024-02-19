@@ -49,7 +49,7 @@ public class Status {
 
   @Column(name = "error", nullable = false, length = 65_535)
   private String error = "";
-
+  
   @Column(name = "state", nullable = false, columnDefinition = "boolean default false")
   private boolean state = false;
 

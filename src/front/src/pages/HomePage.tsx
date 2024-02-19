@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/logo-brs.png";
+import logo from "../../public/assets/logo-brs.png";
 
 export function displayHomePage(): React.ReactNode {
     return (
