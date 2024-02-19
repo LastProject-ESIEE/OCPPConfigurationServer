@@ -42,6 +42,12 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
     SpringApplication.run(ChargepointconfigurationApplication.class, args);
   }
 
+  /**
+   * Call on spring server start.
+   *
+   * @param args program arguments
+   * @throws Exception invalid parameter
+   */
   @Override
   public void run(String... args) throws Exception {
     var websocketUrl = System.getenv("WEBSOCKET_URL");
@@ -52,7 +58,7 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
     try {
       var websocketPort = Integer.parseInt(websocketPortString);
       Thread.ofPlatform().start(() -> {
-        WebSocketServer server = new ConfigurationServer(
+        var server = new ConfigurationServer(
                 new InetSocketAddress(websocketUrl, websocketPort),
                 chargepointRepository
         );

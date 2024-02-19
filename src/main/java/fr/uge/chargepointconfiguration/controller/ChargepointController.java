@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 /**
  * A controller for the Chargepoint entity.
  */
@@ -41,14 +43,14 @@ public class ChargepointController {
    */
   @Operation(summary = "Get all the chargepoints")
   @ApiResponse(responseCode = "200",
-      description = "Found all the chargepoints",
-      content = { @Content(
-          mediaType = "application/json",
-          schema = @Schema(implementation = Chargepoint.class)) })
+          description = "Found all the chargepoints",
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = Chargepoint.class))
+          })
   @GetMapping(value = "/chargepoint/all")
   public List<Chargepoint> getAllChargepoints() {
     return StreamSupport.stream(chargepointRepository.findAll().spliterator(), false)
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
   }
 
   /**
@@ -59,16 +61,13 @@ public class ChargepointController {
    * @return An optional of chargepoint.
    */
   @Operation(summary = "Get a chargepoint by its id")
-  @ApiResponses(value = {
-      @ApiResponse(responseCode = "200",
+  @ApiResponses(value = { @ApiResponse(responseCode = "200",
           description = "Found the chargepoint",
-          content = { @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = Chargepoint.class)) }),
-      @ApiResponse(responseCode = "404",
-          description = "This chargepoint does not exist",
-          content = @Content)
-  })
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = Chargepoint.class)) }),
+                          @ApiResponse(responseCode = "404",
+                  description = "This chargepoint does not exist",
+                  content = @Content) })
   @GetMapping(value = "/chargepoint/{id}")
   public Optional<Chargepoint> getChargepointById(@PathVariable int id) {
     return chargepointRepository.findById(id);

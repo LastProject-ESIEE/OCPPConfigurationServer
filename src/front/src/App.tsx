@@ -3,11 +3,14 @@ import './styles/App.css';
 import FullWidthTabs from './pages/HomeMenu';
 
 function Home() {
-
     useEffect(() =>
     {
-        //const ws = new WebSocket('ws://localhost:8080/websocket/chargepoint');
-        const ws = new WebSocket('ws://app-91d7e400-ac56-44dd-81e5-c2f07e397127.cleverapps.io:8080/websocket/chargepoint');
+        // Get current server address
+        let address = window.location.href.replace("http://", "").replace("https://", "").replace("/","")
+        let protocol = address.startsWith("localhost") || address.startsWith("127.0.0.1") ? "ws://" : "wss://"
+        let websocketAddress = protocol + address + "/websocket/chargepoint"
+        console.log("Connecting to the websocket address: " + websocketAddress)
+        const ws = new WebSocket(websocketAddress);
 
         if(ws != null){
             ws.onopen = (ev: Event) => {
@@ -24,11 +27,6 @@ function Home() {
                 console.log('Disconnected from server');
             }
         }
-
-
-
-
-
     }, [])
 
     return (
