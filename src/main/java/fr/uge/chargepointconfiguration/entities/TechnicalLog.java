@@ -35,7 +35,8 @@ public class TechnicalLog {
   @Column(name = "id")
   private int id;
 
-  @Column(name = "date", nullable = false)
+  @Column(name = "date", nullable = false,
+          columnDefinition = "datetime default current_timestamp")
   private Timestamp date;
 
   @Column(name = "component", nullable = false, length = 45)

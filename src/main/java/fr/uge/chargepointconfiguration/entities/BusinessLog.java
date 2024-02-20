@@ -23,7 +23,8 @@ public class BusinessLog {
   @Column(name = "id")
   private int id;
 
-  @Column(name = "date", nullable = false)
+  @Column(name = "date", nullable = false,
+          columnDefinition = "datetime default current_timestamp")
   private Timestamp date;
 
   @Column(name = "user", nullable = false, length = 45)
