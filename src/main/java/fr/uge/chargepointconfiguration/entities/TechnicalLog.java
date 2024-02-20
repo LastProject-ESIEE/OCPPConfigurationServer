@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -148,30 +147,30 @@ public class TechnicalLog {
       return false;
     }
     return getId() == that.getId()
-      && Objects.equals(getDate(), that.getDate())
-      && Objects.equals(getComponent(), that.getComponent())
-      && getCriticism() == that.getCriticism()
-      && Objects.equals(getCompleteLog(), that.getCompleteLog());
+           && Objects.equals(getDate(), that.getDate())
+           && Objects.equals(getComponent(), that.getComponent())
+           && getCriticism() == that.getCriticism()
+           && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-      getId(),
-      getDate(),
-      getComponent(),
-      getCriticism(),
-      getCompleteLog());
+            getId(),
+            getDate(),
+            getComponent(),
+            getCriticism(),
+            getCompleteLog());
   }
 
   @Override
   public String toString() {
     return "TechnicalLog{"
-      + "id=" + id
-      + ", date=" + date
-      + ", component='" + component + '\''
-      + ", criticism=" + criticism
-      + ", completeLog='" + completeLog + '\''
-      + '}';
+           + "id=" + id
+           + ", date=" + date
+           + ", component='" + component + '\''
+           + ", criticism=" + criticism
+           + ", completeLog='" + completeLog + '\''
+           + '}';
   }
 }
