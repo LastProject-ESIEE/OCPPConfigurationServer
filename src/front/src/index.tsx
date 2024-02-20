@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles/index.css';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Error from "./pages/Error";
@@ -15,9 +15,27 @@ root.render(
     <React.StrictMode>
         <Router>
             <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/about" element={<About/>}/>
+                {/*TODO: remplacer par les vrais components dans les routes*/}
+                <Route path="" element={<Login/>}/>
+                <Route path="about" element={<About/>}/>
+                <Route path="home" element={<Home/>}>
+                    <Route path="" element={<Navigate to="chargepoint"/>}/>
+                    <Route path="configuration">
+                        <Route path="" element={<About/>}/>
+                        <Route path="new" element={<Error/>}/>
+                        <Route path="edit" element={<Error/>}/>
+                    </Route>
+                    <Route path="chargepoint" element={<About/>}/>
+                    <Route path="firmware">
+                        <Route path="" element={<About/>}/>
+                        <Route path="new" element={<Error/>}/>
+                    </Route>
+                    <Route path="account">
+                        <Route path="" element={<About/>}/>
+                        <Route path="new" element={<Error/>}/>
+                    </Route>
+                    <Route path="myAccount" element={<About/>}/>
+                </Route>
                 <Route path="*" element={<Error/>}/>
                 {/* Add more routes as needed */}
             </Routes>
