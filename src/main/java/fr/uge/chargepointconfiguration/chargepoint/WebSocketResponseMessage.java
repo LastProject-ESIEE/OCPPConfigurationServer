@@ -7,10 +7,10 @@ package fr.uge.chargepointconfiguration.chargepoint;
  * @param messageId String.
  * @param data      String.
  */
-public record WebSocketResponseMessage(int callType, String messageId, String data) {
+public record WebSocketResponseMessage(int callType, long messageId, String data) {
 
   @Override
   public String toString() {
-    return "[" + callType + "," + messageId + "," + data + "]";
+    return "[" + callType + ",\"" + messageId + "\"," + data + "]";
   }
 }

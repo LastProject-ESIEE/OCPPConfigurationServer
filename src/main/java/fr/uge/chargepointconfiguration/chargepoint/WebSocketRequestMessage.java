@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import java.util.Optional;
+
 /**
  * A record to define a message received by the server from the remote.
  *
@@ -9,7 +11,7 @@ package fr.uge.chargepointconfiguration.chargepoint;
  * @param data        The data given by the message, it is in Json format.
  */
 public record WebSocketRequestMessage(int callType,
-                                      String messageId,
+                                      long messageId,
                                       WebSocketMessageName messageName,
                                       String data) {
 
@@ -49,12 +51,18 @@ public record WebSocketRequestMessage(int callType,
    * @param message - received message
    * @return WebSocketMessage
    */
-  public static WebSocketRequestMessage parse(String message) {
+  public static Optional<WebSocketRequestMessage> parse(String message) {
     var array = message.substring(1, message.length() - 1).split(",", 4);
     int callType = Integer.parseInt(array[0]);
-    String messageId = array[1];
-    var messageName = WebSocketMessageName.nameToEnum(array[2].substring(1, array[2].length() - 1));
-    return new WebSocketRequestMessage(callType, messageId, messageName, array[3]);
+    try {
+      var messageId = Long.parseLong(array[1].replaceAll("\"", ""));
+      var messageName = WebSocketMessageName
+              .nameToEnum(array[2]
+              .substring(1, array[2].length() - 1));
+      return Optional.of(new WebSocketRequestMessage(callType, messageId, messageName, array[3]));
+    } catch (NumberFormatException n) {
+      return Optional.empty();
+    }
   }
 
   @Override
