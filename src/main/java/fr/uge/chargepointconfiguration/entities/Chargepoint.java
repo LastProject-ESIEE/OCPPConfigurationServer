@@ -55,8 +55,7 @@ public class Chargepoint {
   @JoinColumn(name = "id_status", referencedColumnName = "id_status", nullable = false)
   private Status status;
 
-  @ManyToOne(cascade = CascadeType.MERGE)
-  // TODO juger s'il y a un réel besoin d'avoir le firmware tout le temps
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
 
