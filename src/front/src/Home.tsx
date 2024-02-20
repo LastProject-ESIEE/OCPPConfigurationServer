@@ -1,80 +1,21 @@
 import { Avatar, Button, Grid, IconButton, Toolbar } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import { useState } from "react";
-
-const buttons = [
-    {
-        roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-        label: "Configuration",
-        href: "/configuration",
-        subButtons: [
-            {
-                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher",
-                href: "",
-            },
-            {
-                roles: ["ADMINISTRATOR", "EDITOR"],
-                label: "Créer",
-                href: "/new",
-            },
-            {
-                roles: ["ADMINISTRATOR", "EDITOR"],
-                label: "Modifier",
-                href: "/edit",
-            },
-        ]
-    },
-    {
-        roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-        label: "Consulter les bornes",
-        href: "/chargepoint",
-        subButtons: [
-            {
-                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Liste des bornes",
-                href: "",
-            }
-        ]
-    },
-    {
-        roles: ["ADMINISTRATOR", "EDITOR"],
-        label: "Firmware",
-        href: "/firmware",
-        subButtons: [
-            {
-                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher/Modifier",
-                href: "",
-            },
-            {
-                roles: ["ADMINISTRATOR", "EDITOR"],
-                label: "Créer",
-                href: "/new",
-            }
-        ]
-    },
-    {
-        roles: ["ADMINISTRATOR"],
-        label: "Gestion des comptes",
-        href: "/acounts",
-        subButtons: [
-            {
-                roles: ["ADMINISTRATOR"],
-                label: "Création",
-                href: "/new",
-            },
-            {
-                roles: ["ADMINISTRATOR"],
-                label: "Modification",
-                href: "/edit",
-            }
-        ]
-    },
-]
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { ButtonData, buttons } from "./conf/homeDefinition";
 
 export function Home() {
-    const [selectedButton, setSelectedButton] = useState("Configuration");
+    const location = useLocation();
+    const [currentButton, setCurrentButton] = useState<ButtonData | null>(null);
+
+    // Update the currentButton state when the URL changes
+    useEffect(() => {
+        const matchingButton = buttons.find(item => {
+            const buttonPath = `/home${item.href}`;
+            return location.pathname.startsWith(buttonPath);
+        });
+        setCurrentButton(matchingButton || null);
+    }, [location.pathname]);
 
     return (
         <div className="App">
@@ -84,24 +25,19 @@ export function Home() {
                     <Grid container spacing={2} direction="column" alignItems="center">
                         {/* First line of buttons */}
                         <Grid item container spacing={2} justifyContent="center">
-                            {
-                                buttons.filter(item => item.roles.includes("ADMINISTRATOR")).map(item =>
-                                    <Grid item>
-                                        <Button onClick={() => setSelectedButton(item.label)} variant="contained">{item.label}</Button>
-                                    </Grid>)
-                            }
+                            {buttons.filter(item => item.roles.includes("ADMINISTRATOR")).map(item =>
+                                <Grid item key={item.label}>
+                                    <Link to={`/home${item.href}`}><Button variant="contained">{item.label}</Button></Link>
+                                </Grid>
+                            )}
                         </Grid>
                         {/* Second line of buttons */}
                         <Grid item container spacing={2} justifyContent="center">
-                            {
-                                buttons.filter(item => item.label === selectedButton).map(item =>
-                                    item.subButtons.filter(subButton => subButton.roles.includes("ADMINISTRATOR")).map(subButton =>
-                                        <Grid item>
-                                            <Button variant="contained">{subButton.label}</Button>
-                                        </Grid>)
-                                )
-
-                            }
+                            {currentButton && currentButton.subButtons.filter(subButton => subButton.roles.includes("ADMINISTRATOR")).map(subButton =>
+                                <Grid item key={subButton.label}>
+                                    <Link to={`/home${currentButton.href}${subButton.href}`}><Button variant="contained">{subButton.label}</Button></Link>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
 
@@ -114,5 +50,6 @@ export function Home() {
         </div>
     );
 }
+
 
 export default Home;
