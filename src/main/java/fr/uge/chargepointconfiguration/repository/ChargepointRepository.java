@@ -24,5 +24,11 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
   Chargepoint findBySerialNumberChargepointAndConstructor(String serialNumber,
                                                           String constructor);
 
+
+  /**
+   * Return a list of registered Chargepoints from database.
+   *
+   * @return A list of Chargepoints or an empty list if no chargepoints are registered.
+   */
   List<Chargepoint> findAll();
 }
