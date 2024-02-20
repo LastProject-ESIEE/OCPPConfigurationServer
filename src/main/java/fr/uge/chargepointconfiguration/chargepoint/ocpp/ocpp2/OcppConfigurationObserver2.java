@@ -43,7 +43,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   public void onMessage(OcppMessage ocppMessage,
                         ChargePointManager chargePointManager, long messageId) {
     switch (ocppMessage) {
-      case BootNotificationRequest2 b -> processBootNotification(b, messageId, chargePointManager);
+      case BootNotificationRequest20 b -> processBootNotification(b, messageId, chargePointManager);
       default -> {
         // Do nothing
       }
@@ -61,7 +61,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   }
 
   private void processBootNotification(
-          BootNotificationRequest2 bootNotificationRequest,
+          BootNotificationRequest20 bootNotificationRequest,
           long messageId,
           ChargePointManager chargePointManager) {
 
@@ -79,7 +79,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     // Dispatch information to users
     WebSocketHandler.sendMessageToUsers("Charge point x connected !");
     // Send BootNotification Response
-    var response = new BootNotificationResponse(
+    var response = new BootNotificationResponse20(
             LocalDateTime.now().toString(),
             5,
             RegistrationStatus.Accepted

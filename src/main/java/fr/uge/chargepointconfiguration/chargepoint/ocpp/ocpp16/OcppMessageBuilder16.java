@@ -17,7 +17,7 @@ public class OcppMessageBuilder16 implements OcppMessageBuilder {
   public Optional<OcppMessage> buildMessage(WebSocketRequestMessage webSocketRequestMessage) {
     return switch (webSocketRequestMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST ->
-              Optional.of(new BootNotificationResponse(LocalDateTime.now().toString(),
+              Optional.of(new BootNotificationResponse16(LocalDateTime.now().toString(),
                       5,
                       RegistrationStatus.Accepted));
       case UPDATE_FIRMWARE_RESPONSE ->

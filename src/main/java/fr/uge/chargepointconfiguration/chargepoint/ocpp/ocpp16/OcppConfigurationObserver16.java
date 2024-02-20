@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 /**
  * Defines the OCPP configuration message for the visitor.
  */
-public class Ocpp16ConfigurationObserver implements OcppObserver {
+public class OcppConfigurationObserver16 implements OcppObserver {
   private final OcppMessageSender sender;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
@@ -29,7 +29,7 @@ public class Ocpp16ConfigurationObserver implements OcppObserver {
    * @param firmwareRepository firmware repository
    * @param statusRepository charge point status repository
    */
-  public Ocpp16ConfigurationObserver(OcppMessageSender sender,
+  public OcppConfigurationObserver16(OcppMessageSender sender,
                                      ChargepointRepository chargepointRepository,
                                      FirmwareRepository firmwareRepository,
                                      StatusRepository statusRepository) {
@@ -77,7 +77,7 @@ public class Ocpp16ConfigurationObserver implements OcppObserver {
     // Dispatch information to users
     WebSocketHandler.sendMessageToUsers("Charge point x connected !");
     // Send BootNotification Response
-    var response = new BootNotificationResponse(
+    var response = new BootNotificationResponse16(
             LocalDateTime.now().toString(),
             5,
             RegistrationStatus.Accepted

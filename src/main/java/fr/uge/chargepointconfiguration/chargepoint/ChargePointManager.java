@@ -5,7 +5,7 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest2;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest20;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
@@ -104,7 +104,7 @@ public class ChargePointManager {
       return switch (ocppVersion) {
         case V2 -> {
           var bootNotification = JsonParser.stringToObject(
-                  BootNotificationRequest2.class, message.data()
+                  BootNotificationRequest20.class, message.data()
           );
           var chargingStation = bootNotification.chargingStation();
           var chargePointInDatabase =

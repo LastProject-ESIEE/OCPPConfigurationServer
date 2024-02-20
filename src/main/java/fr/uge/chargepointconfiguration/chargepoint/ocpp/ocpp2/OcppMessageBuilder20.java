@@ -4,7 +4,7 @@ import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationResponse16;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -12,13 +12,13 @@ import java.util.Optional;
 /**
  * Builds an OCPP 2.0.1 message.
  */
-public class OcppMessageBuilder2 implements OcppMessageBuilder {
+public class OcppMessageBuilder20 implements OcppMessageBuilder {
 
   @Override
   public Optional<OcppMessage> buildMessage(WebSocketRequestMessage webSocketRequestMessage) {
     return switch (webSocketRequestMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST ->
-              Optional.of(new BootNotificationResponse(LocalDateTime.now().toString(),
+              Optional.of(new BootNotificationResponse16(LocalDateTime.now().toString(),
                       5,
                       RegistrationStatus.Accepted));
       case UPDATE_FIRMWARE_RESPONSE ->

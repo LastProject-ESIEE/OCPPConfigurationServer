@@ -2,7 +2,7 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp;
 
 import fr.uge.chargepointconfiguration.chargepoint.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.Ocpp16ConfigurationObserver;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppConfigurationObserver16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.OcppConfigurationObserver2;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
@@ -29,7 +29,7 @@ public interface OcppObserver {
                                              FirmwareRepository firmwareRepository,
                                              StatusRepository statusRepository) {
     return switch (ocppVersion) {
-      case V1_6 -> new Ocpp16ConfigurationObserver(
+      case V1_6 -> new OcppConfigurationObserver16(
               ocppMessageSender,
               chargepointRepository,
               firmwareRepository,
