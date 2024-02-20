@@ -24,10 +24,10 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   /**
    * Constructor for the OCPP 1.6 configuration observer.
    *
-   * @param sender websocket channel to send message
+   * @param sender                websocket channel to send message
    * @param chargepointRepository charge point repository
-   * @param firmwareRepository firmware repository
-   * @param statusRepository charge point status repository
+   * @param firmwareRepository    firmware repository
+   * @param statusRepository      charge point status repository
    */
   public OcppConfigurationObserver16(OcppMessageSender sender,
                                      ChargepointRepository chargepointRepository,
@@ -44,6 +44,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                         ChargePointManager chargePointManager, long messageId) {
     switch (ocppMessage) {
       case BootNotificationRequest16 b -> processBootNotification(b, messageId, chargePointManager);
+      case ChangeConfigurationResponse16 c -> System.out.println(
+              "Response change configuration : " + c.status()
+      );
       default -> {
         // Do nothing
       }
@@ -82,6 +85,14 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             5,
             RegistrationStatus.Accepted
     );
-    sender.sendMessage(response, messageId);
+    sender.sendMessage(response, messageId, 3, false);
+
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      //skip
+    }
+    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
+    sender.sendMessage(updateLightRequest, 1, 2, true);
   }
 }

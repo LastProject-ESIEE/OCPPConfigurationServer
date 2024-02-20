@@ -19,11 +19,21 @@ public record WebSocketRequestMessage(int callType,
    * Defines the message type sent by the remote.
    */
   public enum WebSocketMessageName {
-    BOOT_NOTIFICATION_REQUEST,
-    UPDATE_FIRMWARE_RESPONSE,
-    STATUS_FIRMWARE_REQUEST,
-    CHANGE_CONFIGURATION_RESPONSE,
-    OTHER;
+    BOOT_NOTIFICATION_REQUEST("BootNotification"),
+    UPDATE_FIRMWARE_RESPONSE("UpdateFirmware"),
+    STATUS_FIRMWARE_REQUEST("StatusFirmware"),
+    CHANGE_CONFIGURATION_RESPONSE("ConfigurationResponse"),
+    OTHER("Other");
+
+    private final String name;
+
+    WebSocketMessageName(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
 
     /**
      * Converts the message name into an enum to make the process
@@ -41,7 +51,6 @@ public record WebSocketRequestMessage(int callType,
         default -> OTHER;
       };
     }
-
   }
 
   /**
@@ -67,6 +76,7 @@ public record WebSocketRequestMessage(int callType,
 
   @Override
   public String toString() {
-    return "[" + callType + ",\"" + messageId + "\",\"" + messageName + "\"," + data + "]";
+    return "[" + callType + ",\"" + messageId + "\",\""
+           + messageName.getName() + "\"," + data + "]";
   }
 }

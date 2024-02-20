@@ -84,6 +84,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
             5,
             RegistrationStatus.Accepted
     );
-    sender.sendMessage(response, messageId);
+    sender.sendMessage(response, messageId, 3, false);
   }
 }

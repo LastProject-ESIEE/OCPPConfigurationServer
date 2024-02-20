@@ -2,11 +2,12 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 
+
 /**
- * An OCCP message to change a field value.
+ * An OCCP 1.6 message to change a field value in the charge point configuration.
  *
  * @param key String.
  * @param value String.
  */
-public record ChangeConfiguration(String key, String value) implements OcppMessage {
+public record ChangeConfigurationRequest16(String key, String value) implements OcppMessage {
 }

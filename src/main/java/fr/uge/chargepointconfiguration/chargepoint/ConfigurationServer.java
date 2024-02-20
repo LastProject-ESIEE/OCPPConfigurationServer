@@ -47,12 +47,20 @@ public class ConfigurationServer extends WebSocketServer {
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
-                    (occpMessage, messageId) -> {
-                      var webSocketResponseMessage = new WebSocketResponseMessage(3,
-                              messageId,
-                              JsonParser.objectToJsonString(occpMessage)
-                      );
-                      conn.send(webSocketResponseMessage.toString());
+                    (occpMessage, messageId, callType, isReq) -> {
+                      if (isReq) {
+                        conn.send(new WebSocketRequestMessage(callType,
+                                messageId,
+                                WebSocketRequestMessage //TODO: pass to message sender arg
+                                        .WebSocketMessageName.CHANGE_CONFIGURATION_RESPONSE,
+                                JsonParser.objectToJsonString(occpMessage)
+                        ).toString());
+                      } else {
+                        conn.send(new WebSocketResponseMessage(callType,
+                                messageId,
+                                JsonParser.objectToJsonString(occpMessage)
+                        ).toString());
+                      }
                     },
                     chargepointRepository,
                     firmwareRepository,
