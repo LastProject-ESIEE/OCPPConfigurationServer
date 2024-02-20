@@ -1,7 +1,6 @@
 package fr.uge.chargepointconfiguration;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -22,7 +21,7 @@ public class SpaController {
    *
    * @return a redirect to the view of the frontend root
    */
-  @RequestMapping(value = { "/login", "/about" })
+  @RequestMapping(value = { "/login", "/about", "/home/**" })
   public String forward() {
     return "forward:/";
   }
