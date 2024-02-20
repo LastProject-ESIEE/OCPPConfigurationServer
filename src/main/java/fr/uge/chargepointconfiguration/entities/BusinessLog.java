@@ -15,11 +15,11 @@ import java.util.Objects;
  * a charge point, a firmware version and the complete log.
  */
 @Entity
-@Table(name = "\"business_log\"")
+@Table(name = "business_log")
 public class BusinessLog {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 

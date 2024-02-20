@@ -13,10 +13,10 @@ import java.util.Objects;
 
 /**
  * Technical class represents a technical log in the database via JPA.<br>
- * A technical log has an id, a date, a component, a criticism and the complete log.
+ * A technical log has an id, a date, a component, a criticality and the complete log.
  */
 @Entity
-@Table(name = "\"technical_log\"")
+@Table(name = "technical_log")
 public class TechnicalLog {
 
   /**
@@ -26,12 +26,12 @@ public class TechnicalLog {
    * - WARNING :<br>
    * - ERROR.
    */
-  public enum Criticism {
+  public enum Criticality {
     INFO, WARNING, ERROR
   }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 
@@ -42,8 +42,8 @@ public class TechnicalLog {
   private String component;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "criticism", nullable = false)
-  private Criticism criticism;
+  @Column(name = "criticality", nullable = false)
+  private Criticality criticality;
 
   @Column(name = "complete_log", nullable = false)
   private String completeLog;
@@ -105,19 +105,19 @@ public class TechnicalLog {
   /**
    * Get the criticism of the log.
    *
-   * @return criticism, Criticism.
+   * @return criticism, Criticality.
    */
-  public Criticism getCriticism() {
-    return criticism;
+  public Criticality getCriticality() {
+    return criticality;
   }
 
   /**
    * Set the criticism of the log.
    *
-   * @param criticism a Criticism.
+   * @param criticality a Criticality.
    */
-  public void setCriticism(Criticism criticism) {
-    this.criticism = criticism;
+  public void setCriticality(Criticality criticality) {
+    this.criticality = criticality;
   }
 
   /**
@@ -149,7 +149,7 @@ public class TechnicalLog {
     return getId() == that.getId()
            && Objects.equals(getDate(), that.getDate())
            && Objects.equals(getComponent(), that.getComponent())
-           && getCriticism() == that.getCriticism()
+           && getCriticality() == that.getCriticality()
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
@@ -159,7 +159,7 @@ public class TechnicalLog {
             getId(),
             getDate(),
             getComponent(),
-            getCriticism(),
+            getCriticality(),
             getCompleteLog());
   }
 
@@ -169,7 +169,7 @@ public class TechnicalLog {
            + "id=" + id
            + ", date=" + date
            + ", component='" + component + '\''
-           + ", criticism=" + criticism
+           + ", criticism=" + criticality
            + ", completeLog='" + completeLog + '\''
            + '}';
   }
