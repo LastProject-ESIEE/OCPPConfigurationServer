@@ -1,6 +1,5 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageBuilder;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
@@ -18,7 +17,6 @@ import java.util.Objects;
 public class ChargePointManager {
   private final OcppVersion ocppVersion;
   private final OcppMessageParser ocppMessageParser;
-  private final OcppMessageBuilder ocppMessageBuilder;
   private final OcppMessageSender ocppMessageSender;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
@@ -40,13 +38,16 @@ public class ChargePointManager {
                             StatusRepository statusRepository) {
     this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
-    this.ocppMessageBuilder = OcppMessageBuilder.instantiateFromVersion(ocppVersion);
     this.ocppMessageSender = Objects.requireNonNull(ocppMessageSender);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
     this.ocppObserver = OcppObserver.instantiateFromVersion(ocppVersion,
-            ocppMessageSender, chargepointRepository, firmwareRepository, statusRepository);
+            ocppMessageSender,
+            chargepointRepository,
+            firmwareRepository,
+            statusRepository
+    );
   }
 
   /**
@@ -60,28 +61,11 @@ public class ChargePointManager {
    */
   public void processMessage(WebSocketRequestMessage webSocketRequestMessage) {
     Objects.requireNonNull(webSocketRequestMessage);
-    /*
-    authenticated = doesChargepointExistInDatabase(webSocketRequestMessage);
-    if (!authenticated) {
-      System.out.println("NOT AUTHENTICATED");
-    }
-    */
     var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
     if (message.isEmpty()) {
       return;
     }
     ocppObserver.onMessage(message.get(), this, webSocketRequestMessage.messageId());
-
-    /*
-    var resp = ocppMessageBuilder.buildMessage(webSocketRequestMessage);
-    if (resp.isPresent()) {
-      var webSocketResponseMessage = new WebSocketResponseMessage(3,
-              webSocketRequestMessage.messageId(),
-              JsonParser.objectToJsonString(resp.orElseThrow()));
-      ocppMessageSender.sendMessage(webSocketResponseMessage);
-      return Optional.of(webSocketResponseMessage);
-    }
-     */
   }
 
   /**
