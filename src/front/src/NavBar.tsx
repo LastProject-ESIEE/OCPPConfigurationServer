@@ -16,7 +16,7 @@ function ButtonLink(props: { label: string, href: string, disabled?: boolean }):
 
 export function NavBar() {
     const location = useLocation();
-    const [currentButton, setCurrentButton] = useState<ButtonData | null>(null);
+    const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
     const userRole = "ADMINISTRATOR";
 
     // Update the currentButton state when the URL changes
@@ -25,7 +25,7 @@ export function NavBar() {
             const buttonPath = `/home${item.href}`;
             return location.pathname.startsWith(buttonPath);
         });
-        setCurrentButton(matchingButton || null);
+        setCurrentButton(matchingButton);
     }, [location.pathname]);
 
     return (
@@ -39,10 +39,7 @@ export function NavBar() {
                             <Grid item container direction="row" spacing={2} justifyContent="center">
                                 {buttons.filter((item) => item.roles.includes(userRole))
                                     .map((item) => {
-                                            let disabled = false;
-                                            if (item === currentButton) {
-                                                disabled = true;
-                                            }
+                                            const disabled = item === currentButton;
                                             return <ButtonLink disabled={disabled} label={item.label}
                                                                href={`/home${item.href}`}/>
                                         }
@@ -54,10 +51,7 @@ export function NavBar() {
                                     currentButton.subButtons
                                         .filter((subButton) => subButton.roles.includes(userRole))
                                         .map((subButton) => {
-                                            let disabled = false;
-                                            if (location.pathname === `/home${currentButton.href}${subButton.href}`) {
-                                                disabled = true
-                                            }
+                                            const disabled = location.pathname === `/home${currentButton.href}${subButton.href}`
                                             return <ButtonLink disabled={disabled} label={subButton.label}
                                                                href={`/home${currentButton.href}${subButton.href}`}/>
                                         })}
