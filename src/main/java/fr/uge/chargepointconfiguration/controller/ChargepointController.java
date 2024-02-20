@@ -49,8 +49,7 @@ public class ChargepointController {
           })
   @GetMapping(value = "/chargepoint/all")
   public List<Chargepoint> getAllChargepoints() {
-    return StreamSupport.stream(chargepointRepository.findAll().spliterator(), false)
-            .collect(Collectors.toList());
+    return chargepointRepository.findAll();
   }
 
   /**
