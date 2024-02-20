@@ -70,14 +70,14 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR"],
-                label: "Création",
-                href: "/new",
+                label: "Modification",
+                href: "",
                 subButtons: []
             },
             {
                 roles: ["ADMINISTRATOR"],
-                label: "Modification",
-                href: "/edit",
+                label: "Création",
+                href: "/new",
                 subButtons: []
             }
         ]
