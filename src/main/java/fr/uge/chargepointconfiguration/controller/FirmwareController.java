@@ -47,9 +47,8 @@ public class FirmwareController {
           mediaType = "application/json",
           schema = @Schema(implementation = Firmware.class)) })
   @GetMapping(value = "/firmware/all")
-  public List<Firmware> getAllChargepoints() {
-    return StreamSupport.stream(firmwareRepository.findAll().spliterator(), false)
-        .collect(Collectors.toList());
+  public List<Firmware> getAllFirmwares() {
+    return firmwareRepository.findAll();
   }
 
   /**
@@ -71,7 +70,7 @@ public class FirmwareController {
           content = @Content)
   })
   @GetMapping(value = "/firmware/{id}")
-  public Optional<Firmware> getChargepointById(
+  public Optional<Firmware> getFirmwareById(
       @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
     return firmwareRepository.findById(id);
   }
