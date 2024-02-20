@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
+package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
@@ -15,7 +15,7 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
  * @param status This enum serves as a response for the message. If it is accepted,
  *               rejected or something else.
  */
-public record BootNotificationResponse(String currentTime,
-                                       int interval,
-                                       RegistrationStatus status) implements OcppMessage {
+public record BootNotificationResponse16(String currentTime,
+                                         int interval,
+                                         RegistrationStatus status) implements OcppMessage {
 }

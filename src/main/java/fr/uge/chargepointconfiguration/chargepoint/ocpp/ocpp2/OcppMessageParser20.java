@@ -9,13 +9,13 @@ import java.util.Optional;
 /**
  * Parses an OCPP 2.0.1 message.
  */
-public class OcppMessageParser2 implements OcppMessageParser {
+public class OcppMessageParser20 implements OcppMessageParser {
 
   @Override
   public Optional<OcppMessage> parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
     return switch (webSocketRequestMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST ->
-              Optional.of(JsonParser.stringToObject(BootNotificationRequest2.class,
+              Optional.of(JsonParser.stringToObject(BootNotificationRequest20.class,
                       webSocketRequestMessage.data()));
       case UPDATE_FIRMWARE_RESPONSE ->
               throw new UnsupportedOperationException(
