@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Technical class represents a technical log in the database via JPA.<br>
@@ -37,6 +38,7 @@ public class TechnicalLog {
 
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp date;
 
   @Column(name = "component", nullable = false, length = 45)
