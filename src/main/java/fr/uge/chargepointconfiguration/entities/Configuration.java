@@ -1,18 +1,12 @@
 package fr.uge.chargepointconfiguration.entities;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * A configuration class representation in the database.
@@ -36,12 +30,6 @@ public class Configuration {
 
   @Column(name = "configuration", nullable = false)
   private String configuration;
-
-  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @JoinTable(name = "compatibility",
-          joinColumns = @JoinColumn(name = "id_type_allowed"),
-          inverseJoinColumns = @JoinColumn(name = "id_firmware"))
-  private Set<TypeAllowed> typesAllowed;
 
   public int getId() {
     return id;
@@ -93,7 +81,7 @@ public class Configuration {
 
   @Override
   public String toString() {
-    return "Firmware{"
+    return "Configuration{"
            + "id=" + id
            + ", name='" + name + '\''
            + ", description=" + description
