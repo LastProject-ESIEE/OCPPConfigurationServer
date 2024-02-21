@@ -41,9 +41,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   @Override
   public void onMessage(OcppMessage ocppMessage,
-                        ChargePointManager chargePointManager, long messageId) {
+                        ChargePointManager chargePointManager) {
     switch (ocppMessage) {
-      case BootNotificationRequest16 b -> processBootNotification(b, messageId, chargePointManager);
+      case BootNotificationRequest16 b -> processBootNotification(b, chargePointManager);
       case ChangeConfigurationResponse16 c -> System.out.println(
               "Response change configuration : " + c.status()
       );
@@ -65,7 +65,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16,
-          long messageId, ChargePointManager chargePointManager) {
+          ChargePointManager chargePointManager) {
     // Get charge point from database
     var chargePoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
             bootNotificationRequest16.chargePointSerialNumber(),
@@ -85,7 +85,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             5,
             RegistrationStatus.Accepted
     );
-    sender.sendMessage(response, messageId, 3, false);
+    sender.sendMessage(response, chargePointManager);
 
     try {
       Thread.sleep(5000);
@@ -93,6 +93,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       //skip
     }
     var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
-    sender.sendMessage(updateLightRequest, 1, 2, true);
+    sender.sendMessage(updateLightRequest, chargePointManager);
   }
 }
