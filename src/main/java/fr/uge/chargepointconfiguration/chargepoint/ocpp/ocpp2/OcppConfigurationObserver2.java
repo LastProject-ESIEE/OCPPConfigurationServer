@@ -6,8 +6,6 @@ import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.ChangeConfigurationRequest16;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.ChangeConfigurationResponse16;
 import fr.uge.chargepointconfiguration.entities.Chargepoint;
 import fr.uge.chargepointconfiguration.entities.Status;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
@@ -105,26 +103,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
       status.setStatus(Status.StatusProcess.PROCESSING);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
-      testConfiguration(chargePointManager);
+      // TODO : Send the configuration of the chargepoint by retrieving config from DB
     }
-  }
-
-  private void processChangeConfiguration(ChangeConfigurationResponse16 changeConfiguration,
-                                          ChargePointManager chargePointManager) {
-    var status = currentChargepoint.getStatus();
-    status.setStatus(Status.StatusProcess.FINISHED);
-    status.setError(changeConfiguration.status());
-    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-    chargepointRepository.save(currentChargepoint);
-  }
-
-  private void testConfiguration(ChargePointManager chargePointManager) {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      //skip
-    }
-    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
-    sender.sendMessage(updateLightRequest, chargePointManager);
   }
 }
