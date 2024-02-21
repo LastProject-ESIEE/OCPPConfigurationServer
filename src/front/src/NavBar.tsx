@@ -14,6 +14,19 @@ function ButtonLink(props: { label: string, href: string, disabled?: boolean }):
     )
 }
 
+function englishRoleToFrench(role: string): string {
+    switch (role) {
+        case "ADMINISTRATOR":
+            return "Administrateur";
+        case "EDITOR":
+            return "Éditeur";
+        case "VISUALIZER":
+            return "Visualiseur";
+        default:
+            return "Visiteur";
+    }
+}
+
 export function NavBar() {
     const location = useLocation();
     const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
@@ -81,7 +94,7 @@ export function NavBar() {
                                 <Grid item>
                                     <Grid container direction="column" alignItems="center">
                                         <Typography variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
-                                        <Typography variant="body2">{userRole}</Typography>
+                                        <Typography variant="body2">{englishRoleToFrench(userRole)}</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
