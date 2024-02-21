@@ -13,7 +13,38 @@ import java.util.Optional;
  */
 public interface OcppMessageParser {
 
+  /**
+   * Parses the web socket message into an OCPP message.<br>
+   * Returns an empty optional if the packet is unknown.
+   *
+   * @param webSocketMessage The received message.
+   * @return An optional of an OCPP message.
+   * @Deprecated Use parseRequestMessage or parseResponseMessage instead.
+   */
   Optional<OcppMessage> parseMessage(WebSocketMessage webSocketMessage);
+
+  /**
+   * Parses the request web socket message sent by the chargepoint
+   * into an OCPP message.<br>
+   * Returns an empty optional if the packet is unknown.
+   *
+   * @param webSocketMessage The received message.
+   * @return An optional of an OCPP message.
+   */
+  Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage);
+
+  /**
+   * Parses the request web socket message sent by the server
+   * into an OCPP message.<br>
+   * This method should be called after the server sent a request to the chargepoint.<br>
+   * Returns an empty optional if the packet is unknown.
+   *
+   * @param requestMessage The message the server sent to the chargepoint.
+   * @param responseMessage The message sent by the chargepoint.
+   * @return An optional of an OCPP message.
+   */
+  Optional<OcppMessage> parseResponseMessage(WebSocketMessage requestMessage,
+                                             WebSocketMessage responseMessage);
 
   String transform(OcppMessage message);
 
