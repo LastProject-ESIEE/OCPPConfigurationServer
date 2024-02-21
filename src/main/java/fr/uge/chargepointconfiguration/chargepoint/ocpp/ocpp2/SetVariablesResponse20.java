@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageResponse;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.SetVariableResult;
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  * @param setVariableResult {@link SetVariableResult}.
  */
 public record SetVariablesResponse20(List<SetVariableResult> setVariableResult)
-        implements OcppMessage {
+        implements OcppMessageResponse {
 }

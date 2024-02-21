@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
 
 
 /**
@@ -9,5 +9,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
  * @param key String.
  * @param value String.
  */
-public record ChangeConfigurationRequest16(String key, String value) implements OcppMessage {
+public record ChangeConfigurationRequest16(String key, String value) implements OcppMessageRequest {
 }

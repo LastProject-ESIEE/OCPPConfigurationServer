@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageResponse;
 
 /**
  * The response to the {@link UpdateFirmwareRequest20}.<br>
@@ -12,5 +12,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
  * @param status This field indicates whether the Charging station
  *               was able to accept the request.
  */
-public record UpdateFirmwareResponse20(String status) implements OcppMessage {
+public record UpdateFirmwareResponse20(String status) implements OcppMessageResponse {
 }

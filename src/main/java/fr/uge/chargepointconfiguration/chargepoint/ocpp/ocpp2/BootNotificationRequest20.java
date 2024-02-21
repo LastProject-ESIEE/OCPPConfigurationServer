@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.ChargingStation;
 
 /**
@@ -10,6 +10,6 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.ChargingStati
  * @param reason String, the reason of why this message has been sent.
  */
 public record BootNotificationRequest20(ChargingStation chargingStation,
-                                        String reason) implements OcppMessage {
+                                        String reason) implements OcppMessageRequest {
 
 }

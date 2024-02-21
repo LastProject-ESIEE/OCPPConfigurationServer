@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
 
 /**
  * Represents the firmware status notification request to gives the current status of
@@ -10,5 +10,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
  * @param requestId The id of the message that started the update process.
  */
 public record FirmwareStatusNotificationRequest20(String status, int requestId)
-        implements OcppMessage {
+        implements OcppMessageRequest {
 }

@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.Firmware;
 
 /**
@@ -11,5 +11,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data.Firmware;
  * @param firmware {@link Firmware}.
  */
 public record UpdateFirmwareRequest20(int requestId,
-                                      Firmware firmware) implements OcppMessage {
+                                      Firmware firmware) implements OcppMessageRequest {
 }
