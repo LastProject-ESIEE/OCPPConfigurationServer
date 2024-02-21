@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
@@ -17,12 +18,12 @@ import java.util.Objects;
 public class ChargePointManager {
   private final OcppVersion ocppVersion;
   private final OcppMessageParser ocppMessageParser;
-  private final OcppMessageSender ocppMessageSender;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
   private final OcppObserver ocppObserver;
   private boolean authenticated = false;
+  private long currentId = 1;
 
   /**
    * ChargePointManager's constructor.
@@ -38,7 +39,6 @@ public class ChargePointManager {
                             StatusRepository statusRepository) {
     this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
-    this.ocppMessageSender = Objects.requireNonNull(ocppMessageSender);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
@@ -48,6 +48,15 @@ public class ChargePointManager {
             firmwareRepository,
             statusRepository
     );
+  }
+
+  /**
+   * Returns the current websocket message id.
+   *
+   * @return A long representing the current websocket
+   */
+  public long getCurrentId() {
+    return currentId;
   }
 
   /**
@@ -65,7 +74,15 @@ public class ChargePointManager {
     if (message.isEmpty()) {
       return;
     }
-    ocppObserver.onMessage(message.get(), this, webSocketRequestMessage.messageId());
+    var ocppMessage = message.orElseThrow();
+    switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
+      case RESPONSE -> currentId += 1;
+      case REQUEST -> currentId = webSocketRequestMessage.messageId();
+      default -> {
+        // Weird message, ignore it.
+      }
+    }
+    ocppObserver.onMessage(message.orElseThrow(), this);
   }
 
   /**

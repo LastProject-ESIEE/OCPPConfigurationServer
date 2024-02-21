@@ -1,5 +1,11 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.ChangeConfigurationResponse16;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest20;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.SetVariablesResponse20;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.UpdateFirmwareResponse20;
 import java.util.Optional;
 
 /**
@@ -40,7 +46,7 @@ public record WebSocketRequestMessage(int callType,
      * message easier.
      *
      * @param messageName The message type received from the remote.
-     * @return The correct enum if found, an IllegalArgumentException if not.
+     * @return The correct enum if found, an OTHER by default.
      */
     public static WebSocketMessageName nameToEnum(String messageName) {
       return switch (messageName) {
@@ -48,6 +54,23 @@ public record WebSocketRequestMessage(int callType,
         case "UpdateFirmware" -> UPDATE_FIRMWARE_RESPONSE;
         case "StatusFirmware" -> STATUS_FIRMWARE_REQUEST;
         case "ChangeConfiguration" -> CHANGE_CONFIGURATION_RESPONSE;
+        default -> OTHER;
+      };
+    }
+
+    /**
+     * Converts the OCPP message type into the enum.
+     *
+     * @param ocppMessage The OCPP message received by the server.
+     * @return The correct enum if found, an OTHER by default.
+     */
+    public static WebSocketMessageName ocppMessageToEnum(OcppMessage ocppMessage) {
+      return switch (ocppMessage) {
+        case BootNotificationRequest16 ignored -> BOOT_NOTIFICATION_REQUEST;
+        case BootNotificationRequest20 ignored -> BOOT_NOTIFICATION_REQUEST;
+        case UpdateFirmwareResponse20 ignored -> UPDATE_FIRMWARE_RESPONSE;
+        case SetVariablesResponse20 ignored -> CHANGE_CONFIGURATION_RESPONSE;
+        case ChangeConfigurationResponse16 ignored -> CHANGE_CONFIGURATION_RESPONSE;
         default -> OTHER;
       };
     }

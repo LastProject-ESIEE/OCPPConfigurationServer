@@ -41,9 +41,9 @@ public class OcppConfigurationObserver2 implements OcppObserver {
 
   @Override
   public void onMessage(OcppMessage ocppMessage,
-                        ChargePointManager chargePointManager, long messageId) {
+                        ChargePointManager chargePointManager) {
     switch (ocppMessage) {
-      case BootNotificationRequest20 b -> processBootNotification(b, messageId, chargePointManager);
+      case BootNotificationRequest20 b -> processBootNotification(b, chargePointManager);
       default -> {
         // Do nothing
       }
@@ -62,7 +62,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
 
   private void processBootNotification(
           BootNotificationRequest20 bootNotificationRequest,
-          long messageId,
           ChargePointManager chargePointManager) {
 
     // Get charge point from database
@@ -84,6 +83,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
             5,
             RegistrationStatus.Accepted
     );
-    sender.sendMessage(response, messageId, 3, false);
+    sender.sendMessage(response, chargePointManager);
   }
 }
