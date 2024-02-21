@@ -3,6 +3,7 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
+import fr.uge.chargepointconfiguration.chargepoint.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
@@ -14,6 +15,7 @@ import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 /**
  * Defines the OCPP configuration message for the visitor.
@@ -108,26 +110,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       status.setStatus(Status.StatusProcess.PROCESSING);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
-      testConfiguration(chargePointManager);
     }
-  }
-
-  private void processChangeConfiguration(ChangeConfigurationResponse16 changeConfiguration,
-                                          ChargePointManager chargePointManager) {
-    var status = currentChargepoint.getStatus();
-    status.setStatus(Status.StatusProcess.FINISHED);
-    status.setError(changeConfiguration.status());
-    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-    chargepointRepository.save(currentChargepoint);
-  }
-
-  private void testConfiguration(ChargePointManager chargePointManager) {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      //skip
-    }
-    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
-    sender.sendMessage(updateLightRequest, chargePointManager);
   }
 }
