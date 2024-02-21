@@ -4,13 +4,11 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.BootNotificationRequest16;
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationRequest20;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
-import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Manages the charge point by listening and sending messages to the charge point.
@@ -22,8 +20,8 @@ public class ChargePointManager {
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
   private final OcppObserver ocppObserver;
-  private boolean authenticated = false;
   private long currentId = 1;
+  private WebSocketMessage pendingRequest = null;
 
   /**
    * ChargePointManager's constructor.
@@ -60,13 +58,31 @@ public class ChargePointManager {
   }
 
   /**
+   * Sets the current pending request.<br>
+   * If the current pending request is set,
+   * we now wait for a response from the chargepoint.
+   *
+   * @param pendingRequest The request sent to the chargepoint.
+   */
+  public void setPendingRequest(WebSocketMessage pendingRequest) {
+    this.pendingRequest = pendingRequest;
+  }
+
+  /**
    * Processes the received websocket message according to the OCPP protocol.
    *
    * @param webSocketMessage The websocket message sent to our server.
    */
   public void processMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
-    var message = ocppMessageParser.parseMessage(webSocketMessage);
+    Optional<OcppMessage> message;
+    if (pendingRequest == null) {
+      message = ocppMessageParser.parseRequestMessage(webSocketMessage);
+    } else {
+      message = ocppMessageParser.parseResponseMessage(pendingRequest,
+              webSocketMessage);
+      pendingRequest = null;
+    }
     if (message.isEmpty()) {
       return;
     }
@@ -92,38 +108,5 @@ public class ChargePointManager {
    */
   public void onError() {
     // TODO change borne status
-  }
-
-  private boolean doesChargepointExistInDatabase(WebSocketRequestMessage message) {
-    if (message.messageName()
-        == WebSocketMessage.MessageTypeRequest.BOOT_NOTIFICATION_REQUEST) {
-      return switch (ocppVersion) {
-        case V2 -> {
-          var bootNotification = JsonParser.stringToObject(
-                  BootNotificationRequest20.class, message.data()
-          );
-          var chargingStation = bootNotification.chargingStation();
-          var chargePointInDatabase =
-                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
-                          chargingStation.serialNumber(),
-                          chargingStation.vendorName()
-                  );
-          yield chargePointInDatabase != null;
-        }
-        case V1_6 -> {
-          var bootNotification = JsonParser.stringToObject(
-                  BootNotificationRequest16.class, message.data()
-          );
-          var chargePointInDatabase =
-                  chargepointRepository.findBySerialNumberChargepointAndConstructor(
-                          bootNotification.chargePointSerialNumber(),
-                          bootNotification.chargePointVendor()
-                  );
-          yield chargePointInDatabase != null;
-        }
-      };
-    } else {
-      return authenticated;
-    }
   }
 }
