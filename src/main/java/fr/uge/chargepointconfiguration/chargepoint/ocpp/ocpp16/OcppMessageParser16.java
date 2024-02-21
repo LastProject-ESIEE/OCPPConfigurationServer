@@ -13,26 +13,6 @@ import java.util.Optional;
 public class OcppMessageParser16 implements OcppMessageParser {
 
   @Override
-  public Optional<OcppMessage> parseMessage(WebSocketMessage webSocketMessage) {
-    var type = webSocketMessage.messageName();
-    if (type == null) {
-      return Optional.empty();
-    }
-    return switch (webSocketMessage.messageName()) {
-      case BOOT_NOTIFICATION_REQUEST -> Optional.of(
-              JsonParser.stringToObject(BootNotificationRequest16.class,
-              webSocketMessage.data())
-      );
-      case STATUS_FIRMWARE_REQUEST ->
-              throw new UnsupportedOperationException("TODO : Parse this message");
-      case CHANGE_CONFIGURATION_REQUEST ->
-              throw new UnsupportedOperationException(
-                      "TODO : Parse this message");
-      case OTHER -> Optional.empty(); // Ignoring the message.
-    };
-  }
-
-  @Override
   public Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
     return switch (webSocketMessage.messageName()) {
