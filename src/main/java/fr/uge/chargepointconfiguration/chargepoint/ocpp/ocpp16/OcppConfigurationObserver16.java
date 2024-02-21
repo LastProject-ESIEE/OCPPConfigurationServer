@@ -127,7 +127,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     } catch (InterruptedException e) {
       //skip
     }
-    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "0");
+    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
     sender.sendMessage(updateLightRequest, chargePointManager);
   }
 }
