@@ -17,10 +17,24 @@ function ButtonLink(props: { label: string, href: string, disabled?: boolean }):
 export function NavBar() {
     const location = useLocation();
     const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
-    const userRole = "ADMINISTRATOR";
-
+    const [userRole, setUserRole] = useState<any>(null);
+    const [user, setUser] = useState<any>(null);
     // Update the currentButton state when the URL changes
     useEffect(() => {
+        fetch("api/user/me")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw response;
+            })
+            .then(data => {
+                setUser(data);
+                setUserRole(data.role);
+            })
+            .catch(error => {
+                console.error("ERROR ", error);
+            });
         const matchingButton = buttons.find(item => {
             const buttonPath = `/home${item.href}`;
             return location.pathname.startsWith(buttonPath);
@@ -66,8 +80,8 @@ export function NavBar() {
                             <Grid container direction="row" alignItems="center">
                                 <Grid item>
                                     <Grid container direction="column" alignItems="center">
-                                        <Typography variant="body1">Julien</Typography>
-                                        <Typography variant="body2">Administrator</Typography>
+                                        <Typography variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
+                                        <Typography variant="body2">{userRole}</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
