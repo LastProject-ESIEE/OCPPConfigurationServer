@@ -32,16 +32,6 @@ public class TechnicalLogController {
   }
 
   /**
-   * Save the technical log in the database.
-   *
-   * @param technicalLog a TechnicalLog.
-   */
-  public void addTechnicalLog(TechnicalLog technicalLog) {
-    Objects.requireNonNull(technicalLog);
-    technicalLogRepository.save(technicalLog);
-  }
-
-  /**
    * Returns a list of technical logs according to the given component and criticality.
    *
    * @param component   a type of component of the system.

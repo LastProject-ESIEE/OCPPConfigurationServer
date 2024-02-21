@@ -32,16 +32,6 @@ public class BusinessLogController {
   }
 
   /**
-   * Save the business log in the database.
-   *
-   * @param businessLog a BusinessLog.
-   */
-  public void addBusinessLog(BusinessLog businessLog) {
-    Objects.requireNonNull(businessLog);
-    businessLogRepository.save(businessLog);
-  }
-
-  /**
    * Returns a list of business logs according to the given charge point.
    *
    * @param chargepoint the id of the charge point.
