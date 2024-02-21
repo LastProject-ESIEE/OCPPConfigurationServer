@@ -86,7 +86,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             RegistrationStatus.Accepted
     );
     sender.sendMessage(response, chargePointManager);
+  }
 
+  private void testConfiguration(ChargePointManager chargePointManager) {
     try {
       Thread.sleep(5000);
     } catch (InterruptedException e) {
