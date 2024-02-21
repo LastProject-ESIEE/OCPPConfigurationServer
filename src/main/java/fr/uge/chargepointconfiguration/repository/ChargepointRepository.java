@@ -1,6 +1,8 @@
 package fr.uge.chargepointconfiguration.repository;
 
 import fr.uge.chargepointconfiguration.entities.Chargepoint;
+import io.micrometer.common.lang.NonNullApi;
+import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,12 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
    */
   Chargepoint findBySerialNumberChargepointAndConstructor(String serialNumber,
                                                           String constructor);
+
+
+  /**
+   * Return a list of registered Chargepoints from database.
+   *
+   * @return A list of Chargepoints or an empty list if no chargepoints are registered.
+   */
+  List<Chargepoint> findAll();
 }
