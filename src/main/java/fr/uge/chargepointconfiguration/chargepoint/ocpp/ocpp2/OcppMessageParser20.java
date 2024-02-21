@@ -28,6 +28,17 @@ public class OcppMessageParser20 implements OcppMessageParser {
   }
 
   @Override
+  public Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage) {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<OcppMessage> parseResponseMessage(WebSocketMessage requestMessage,
+                                                    WebSocketMessage responseMessage) {
+    return Optional.empty();
+  }
+
+  @Override
   public String transform(OcppMessage message) {
     return JsonParser.objectToJsonString(message);
   }
