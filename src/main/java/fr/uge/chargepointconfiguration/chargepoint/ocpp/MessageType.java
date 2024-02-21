@@ -33,7 +33,7 @@ public enum MessageType {
    * @param callType The message's call type.
    * @return The enum according to the call type.
    */
-  public MessageType intToEnum(int callType) {
+  public MessageType codeToEnum(int callType) {
     return switch (callType) {
       case 2 -> REQUEST;
       case 3 -> RESPONSE;
