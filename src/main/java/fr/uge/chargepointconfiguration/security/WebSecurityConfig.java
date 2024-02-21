@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                         "/manifest.json",
                         "/assets/**")
                       .permitAll()
-                      .requestMatchers("/").permitAll()
+                      .requestMatchers("/", "/logout", "/about").permitAll()
                       .anyRequest().authenticated()
           )
           .formLogin(formLogin -> formLogin.loginPage("/").permitAll()
@@ -48,7 +48,6 @@ public class WebSecurityConfig {
                 .defaultSuccessUrl("/home", true)
                 // see : https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/AbstractAuthenticationFilterConfigurer.html#defaultSuccessUrl(java.lang.String,boolean)
                 .loginProcessingUrl("/authentication/login/process"))
-          .formLogin(Customizer.withDefaults())
           .csrf(AbstractHttpConfigurer::disable) // TODO csrf propre
           .httpBasic(Customizer.withDefaults());
     return http.build();

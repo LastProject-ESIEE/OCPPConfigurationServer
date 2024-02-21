@@ -1,7 +1,6 @@
 package fr.uge.chargepointconfiguration;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Package visibility, just for testing purpose.
  */
 @Component
-class TestController {
+class FakeController {
 
   @PreAuthorize("isAuthenticated()") // TODO : should not be necessary
   String authenticated() {
@@ -42,87 +40,87 @@ class TestController {
 }
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
-class TestControllerTest {
+//@RunWith(SpringRunner.class)
+public class PermissionTest {
 
   @Autowired
-  private TestController testController;
+  private FakeController fakeController;
 
   @Test
   @WithAnonymousUser
   void notAuthenticated() {
-    assertThrows(AccessDeniedException.class, () -> testController.authenticated());
+    assertThrows(AccessDeniedException.class, () -> fakeController.authenticated());
   }
 
   @Test
   @WithMockUser
   void authenticated() {
-    assertDoesNotThrow(() -> testController.authenticated());
+    assertDoesNotThrow(() -> fakeController.authenticated());
   }
 
   @Test
   @WithMockUser(roles = "Administrator")
   void authenticatedWithAdminRole() {
-    assertDoesNotThrow(() -> testController.authenticated());
+    assertDoesNotThrow(() -> fakeController.authenticated());
   }
 
   @Test
   @WithMockUser(roles = "RANDOM")
   void adminWithRandomRole() {
-    assertThrows(AccessDeniedException.class, () -> testController.admin());
+    assertThrows(AccessDeniedException.class, () -> fakeController.admin());
   }
 
   @Test
   @WithMockUser(roles = "Visualizer")
   void adminWithUserRole() {
-    assertThrows(AccessDeniedException.class, () -> testController.admin());
+    assertThrows(AccessDeniedException.class, () -> fakeController.admin());
   }
 
   @Test
   @WithMockUser(roles = "Administrator")
   void adminWithAdministratorRole() {
-    assertDoesNotThrow(() -> testController.admin());
+    assertDoesNotThrow(() -> fakeController.admin());
   }
 
   @Test
   @WithMockUser(roles = "RANDOM")
   void editorWithRandomRole() {
-    assertThrows(AccessDeniedException.class, () -> testController.editor());
+    assertThrows(AccessDeniedException.class, () -> fakeController.editor());
   }
 
   @Test
   @WithMockUser(roles = "Editor")
   void editorWithEditorRole() {
-    assertDoesNotThrow(() -> testController.editor());
+    assertDoesNotThrow(() -> fakeController.editor());
   }
 
   @Test
   @WithMockUser(roles = "Administrator")
   void editorWithAdministratorRole() {
-    assertDoesNotThrow(() -> testController.editor());
+    assertDoesNotThrow(() -> fakeController.editor());
   }
 
   @Test
   @WithMockUser(roles = "RANDOM")
   void visualizerWithRandomRole() {
-    assertThrows(AccessDeniedException.class, () -> testController.visualizer());
+    assertThrows(AccessDeniedException.class, () -> fakeController.visualizer());
   }
 
   @Test
   @WithMockUser(roles = "Editor")
   void visualizerWithEditorRole() {
-    assertDoesNotThrow(() -> testController.visualizer());
+    assertDoesNotThrow(() -> fakeController.visualizer());
   }
 
   @Test
   @WithMockUser(roles = "Visualizer")
   void visualizerWithVisualizerRole() {
-    assertDoesNotThrow(() -> testController.visualizer());
+    assertDoesNotThrow(() -> fakeController.visualizer());
   }
 
   @Test
   @WithMockUser(roles = "Administrator")
   void visualizerWithAdministratorRole() {
-    assertDoesNotThrow(() -> testController.visualizer());
+    assertDoesNotThrow(() -> fakeController.visualizer());
   }
 }
