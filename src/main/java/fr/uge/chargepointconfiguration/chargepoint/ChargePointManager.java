@@ -60,11 +60,7 @@ public class ChargePointManager {
   }
 
   /**
-   * Processes the received websocket message according to the OCPP protocol and
-   * returns the response we've sent to the sender.<br>
-   * According to the message, we send (or not) a message.<br>
-   * For example :<br>
-   * If the message is BootNotificationRequest, the response should be BootNotificationResponse.
+   * Processes the received websocket message according to the OCPP protocol.
    *
    * @param webSocketMessage The websocket message sent to our server.
    */
