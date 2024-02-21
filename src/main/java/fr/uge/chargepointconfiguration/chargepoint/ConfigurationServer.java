@@ -51,24 +51,22 @@ public class ConfigurationServer extends WebSocketServer {
             new ChargePointManager(ocppVersion.orElseThrow(),
                     (ocppMessage, chargePointManager) -> {
                       switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-                        case REQUEST -> {
-                          conn.send(
-                                  new WebSocketRequestMessage(
-                                          MessageType.REQUEST.getCallType(),
-                                          chargePointManager.getCurrentId(),
-                                          WebSocketMessage
-                                                  .MessageTypeRequest
-                                                  .ocppMessageToEnum(ocppMessage),
-                                          JsonParser.objectToJsonString(ocppMessage)
-                                  )
-                                          .toString());
-                        }
+                        case REQUEST -> conn.send(
+                                new WebSocketRequestMessage(
+                                        MessageType.REQUEST.getCallType(),
+                                        chargePointManager.getCurrentId(),
+                                        WebSocketMessage
+                                                .MessageTypeRequest
+                                                .ocppMessageToEnum(ocppMessage),
+                                        JsonParser.objectToJsonString(ocppMessage)
+                                ) // TODO : Change the creation to be smaller
+                                        .toString());
                         case RESPONSE -> conn.send(
                                 new WebSocketResponseMessage(
                                         MessageType.RESPONSE.getCallType(),
                                         chargePointManager.getCurrentId(),
                                         JsonParser.objectToJsonString(ocppMessage)
-                                )
+                                ) // TODO : Change the creation to be smaller
                                         .toString()
                         );
                         default -> throw new AssertionError("What is this bloody package :( ???");
