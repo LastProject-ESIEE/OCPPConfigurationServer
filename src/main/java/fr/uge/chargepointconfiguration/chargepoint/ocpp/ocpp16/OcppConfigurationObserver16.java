@@ -6,9 +6,13 @@ import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationResponse20;
+import fr.uge.chargepointconfiguration.entities.Chargepoint;
+import fr.uge.chargepointconfiguration.entities.Status;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -19,7 +23,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
-  private boolean authenticated;
+  private Chargepoint currentChargepoint;
 
   /**
    * Constructor for the OCPP 1.6 configuration observer.
@@ -67,16 +71,28 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           BootNotificationRequest16 bootNotificationRequest16,
           ChargePointManager chargePointManager) {
     // Get charge point from database
-    var chargePoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
+    currentChargepoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
             bootNotificationRequest16.chargePointSerialNumber(),
             bootNotificationRequest16.chargePointVendor()
     );
     // If charge point is not found then skip it
-    if (chargePoint == null) {
-      //TODO: add log
+    if (currentChargepoint == null) {
+      // TODO : Add log, this chargepoint is unknown
+      var response = new BootNotificationResponse20(
+              LocalDateTime.now().toString(),
+              5,
+              RegistrationStatus.Rejected
+      );
+      sender.sendMessage(response, chargePointManager);
       return;
     }
-    authenticated = true;
+    var status = currentChargepoint.getStatus();
+    status.setState(true);
+    status.setStatus(Status.StatusProcess.PENDING);
+    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+    currentChargepoint.setStatus(status);
+    // TODO : Add log, the chargepoint is now connected
+    chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     WebSocketHandler.sendMessageToUsers("Charge point x connected !");
     // Send BootNotification Response
@@ -86,15 +102,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             RegistrationStatus.Accepted
     );
     sender.sendMessage(response, chargePointManager);
-  }
-
-  private void testConfiguration(ChargePointManager chargePointManager) {
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      //skip
+    // TODO : Add log,we sent a bootNotif response
+    if (status.getStep() == Status.Step.CONFIGURATION) {
+      status = currentChargepoint.getStatus();
+      status.setStatus(Status.StatusProcess.PROCESSING);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      chargepointRepository.save(currentChargepoint);
     }
-    var updateLightRequest = new ChangeConfigurationRequest16("LightIntensity", "100");
-    sender.sendMessage(updateLightRequest, chargePointManager);
   }
 }

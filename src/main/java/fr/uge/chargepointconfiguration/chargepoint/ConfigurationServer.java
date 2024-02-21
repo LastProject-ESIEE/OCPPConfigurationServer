@@ -55,18 +55,18 @@ public class ConfigurationServer extends WebSocketServer {
                                 new WebSocketRequestMessage(
                                         MessageType.REQUEST.getCallType(),
                                         chargePointManager.getCurrentId(),
-                                        WebSocketRequestMessage
-                                                .WebSocketMessageName
+                                        WebSocketMessage
+                                                .MessageTypeRequest
                                                 .ocppMessageToEnum(ocppMessage),
                                         JsonParser.objectToJsonString(ocppMessage)
-                                )
+                                ) // TODO : Change the creation to be smaller
                                         .toString());
                         case RESPONSE -> conn.send(
                                 new WebSocketResponseMessage(
                                         MessageType.RESPONSE.getCallType(),
                                         chargePointManager.getCurrentId(),
                                         JsonParser.objectToJsonString(ocppMessage)
-                                )
+                                ) // TODO : Change the creation to be smaller
                                         .toString()
                         );
                         default -> throw new AssertionError("What is this bloody package :( ???");
@@ -95,7 +95,7 @@ public class ConfigurationServer extends WebSocketServer {
             + remote
             + ": "
             + message);
-    var webSocketMessage = WebSocketRequestMessage.parse(message);
+    var webSocketMessage = WebSocketMessage.parse(message);
     if (webSocketMessage.isEmpty()) {
       LOGGER.info("failed to parse message from " + remote);
       return;
