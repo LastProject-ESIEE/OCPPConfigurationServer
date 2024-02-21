@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * ou.
+ * Represents the message sent or received via a web socket.
  */
 public interface WebSocketMessage {
 
