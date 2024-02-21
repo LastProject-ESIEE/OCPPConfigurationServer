@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration;
 
 import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.repository.ConfigurationRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import fr.uge.chargepointconfiguration.repository.UserRepository;
@@ -24,6 +25,7 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
+  private final ConfigurationRepository configurationRepository;
 
   /**
    * The class's constructor.<br>
@@ -35,11 +37,13 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   public ChargepointconfigurationApplication(UserRepository userRepository,
                                              ChargepointRepository chargepointRepository,
                                              FirmwareRepository firmwareRepository,
-                                             StatusRepository statusRepository) {
+                                             StatusRepository statusRepository,
+                                             ConfigurationRepository configurationRepository) {
     this.userRepository = userRepository;
     this.chargepointRepository = chargepointRepository;
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
+    this.configurationRepository = configurationRepository;
   }
 
   /**

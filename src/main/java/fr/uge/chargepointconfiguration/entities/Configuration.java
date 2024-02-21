@@ -71,7 +71,7 @@ public class Configuration {
     return id == configuration.id
            && Objects.equals(name, configuration.name)
            && Objects.equals(description, configuration.description)
-           && Objects.equals(configuration, configuration.configuration);
+           && Objects.equals(this.configuration, configuration.configuration);
   }
 
   @Override
@@ -84,7 +84,7 @@ public class Configuration {
     return "Configuration{"
            + "id=" + id
            + ", name='" + name + '\''
-           + ", description=" + description
+           + ", description='" + description + '\''
            + ", configuration='" + configuration + '\''
            + '}';
   }
