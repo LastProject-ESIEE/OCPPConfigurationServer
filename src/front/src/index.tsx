@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import About from "./pages/About";
 import Error from "./pages/Error";
 import Home from "./Home";
+import { ConfigurationListPage } from './pages/Configuration';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -21,7 +22,7 @@ root.render(
                 <Route path="home" element={<Home/>}>
                     <Route path="" element={<Navigate to="chargepoint"/>}/>
                     <Route path="configuration">
-                        <Route path="" element={<About/>}/>
+                        <Route path="" element={<ConfigurationListPage/>}/>
                         <Route path="new" element={<Error/>}/>
                         <Route path="edit" element={<Error/>}/>
                     </Route>
