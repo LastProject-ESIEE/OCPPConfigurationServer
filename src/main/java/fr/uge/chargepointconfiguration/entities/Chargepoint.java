@@ -43,9 +43,6 @@ public class Chargepoint {
   @Column(name = "server_address", nullable = false, length = 65_535)
   private String serverAddress;
 
-  @Column(name = "configuration", nullable = false)
-  private String configuration;
-
   @Column(name = "last_edit", nullable = false,
       columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
@@ -58,6 +55,14 @@ public class Chargepoint {
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(
+          name = "id_configuration",
+          referencedColumnName = "id_configuration",
+          nullable = false
+  )
+  private Configuration configuration;
 
   /**
    * Chargepoint's constructor.
@@ -75,7 +80,7 @@ public class Chargepoint {
                      String constructor,
                      String clientId,
                      String serverAddress,
-                     String configuration,
+                     Configuration configuration,
                      Status status,
                      Firmware firmware) {
     this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
@@ -139,11 +144,11 @@ public class Chargepoint {
     this.serverAddress = serverAddress;
   }
 
-  public String getConfiguration() {
+  public Configuration getConfiguration() {
     return configuration;
   }
 
-  public void setConfiguration(String configuration) {
+  public void setConfiguration(Configuration configuration) {
     this.configuration = configuration;
   }
 
