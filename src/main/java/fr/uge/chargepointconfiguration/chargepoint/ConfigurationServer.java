@@ -52,16 +52,6 @@ public class ConfigurationServer extends WebSocketServer {
                     (ocppMessage, chargePointManager) -> {
                       switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
                         case REQUEST -> {
-                          var truc = new WebSocketRequestMessage(
-                                  MessageType.REQUEST.getCallType(),
-                                  chargePointManager.getCurrentId(),
-                                  WebSocketMessage
-                                          .MessageTypeRequest
-                                          .ocppMessageToEnum(ocppMessage),
-                                  JsonParser.objectToJsonString(ocppMessage)
-                          )
-                                  .toString();
-                          System.out.println(truc);
                           conn.send(
                                   new WebSocketRequestMessage(
                                           MessageType.REQUEST.getCallType(),
