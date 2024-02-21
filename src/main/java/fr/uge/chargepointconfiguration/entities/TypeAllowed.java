@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "type_allowed")
 public class TypeAllowed {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_type_allowed")
   private int id;
 

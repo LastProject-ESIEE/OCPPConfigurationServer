@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Technical class represents a technical log in the database via JPA.<br>
@@ -20,7 +21,8 @@ import java.util.Objects;
 public class TechnicalLog {
 
   /**
-   * Role enum represents different critical level that a log can have in the application.<br>
+   * Criticality enum represents different critical level that a log can have
+   * in the application.<br>
    * The criticism can be :<br>
    * - INFO ;<br>
    * - WARNING :<br>
@@ -30,6 +32,18 @@ public class TechnicalLog {
     INFO, WARNING, ERROR
   }
 
+  /**
+   * Component enum represents different components where a log can be created.<br>
+   * The component can be :<br>
+   * - BACKEND ;<br>
+   * - FRONTEND :<br>
+   * - WEBSOCKET :<br>
+   * - DATABASE.
+   */
+  public enum Component {
+    BACKEND, FRONTEND, WEBSOCKET, DATABASE
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
@@ -37,10 +51,12 @@ public class TechnicalLog {
 
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp date;
 
-  @Column(name = "component", nullable = false, length = 45)
-  private String component;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "component", nullable = false)
+  private Component component;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "criticality", nullable = false)
@@ -90,7 +106,7 @@ public class TechnicalLog {
    *
    * @return component, String.
    */
-  public String getComponent() {
+  public Component getComponent() {
     return component;
   }
 
@@ -99,7 +115,7 @@ public class TechnicalLog {
    *
    * @param component a String.
    */
-  public void setComponent(String component) {
+  public void setComponent(Component component) {
     this.component = component;
   }
 

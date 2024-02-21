@@ -31,7 +31,7 @@ public class User implements fr.uge.chargepointconfiguration.Entity<UserDto> {
   }
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private int id;
 
