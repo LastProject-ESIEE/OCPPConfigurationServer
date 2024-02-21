@@ -23,7 +23,7 @@ function englishRoleToFrench(role: string): string {
         case "VISUALIZER":
             return "Visualiseur";
         default:
-            return "Visiteur";
+            return "Inconnu";
     }
 }
 
