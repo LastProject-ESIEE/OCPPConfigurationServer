@@ -44,7 +44,7 @@ public interface OcppObserver {
     };
   }
 
-  void onMessage(OcppMessage ocppMessage, ChargePointManager chargePointManager, long messageId);
+  void onMessage(OcppMessage ocppMessage, ChargePointManager chargePointManager);
 
   void onConnection(ChargePointManager chargePointManager);
 
