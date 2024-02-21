@@ -3,7 +3,6 @@ package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
-import fr.uge.chargepointconfiguration.chargepoint.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
@@ -15,7 +14,6 @@ import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 /**
  * Defines the OCPP configuration message for the visitor.
