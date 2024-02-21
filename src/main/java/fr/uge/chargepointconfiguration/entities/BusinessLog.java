@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * BusinessLog class represents a Business log in the database via JPA.<br>
@@ -25,9 +26,14 @@ public class BusinessLog {
 
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
   private Timestamp date;
 
-  @Column(name = "user", nullable = false, length = 45)
+  /*
+   * The quote for user ("user") are here to specify the database H2 that
+   * user isn't the key word user, but a field user in the database.
+   */
+  @Column(name = "\"user\"", nullable = false, length = 45)
   private String user;
 
   @Column(name = "charge_point", nullable = false)
@@ -94,10 +100,10 @@ public class BusinessLog {
   }
 
   /**
-   * Get the id of the charge point of the log.
-   *
-   * @return chargePoint, int.
-   */
+  * Get the id of the charge point of the log.
+  *
+  * @return chargePoint, int.
+  */
   public int getChargePoint() {
     return chargePoint;
   }
