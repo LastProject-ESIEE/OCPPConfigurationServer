@@ -106,7 +106,7 @@ public class TechnicalLog {
    *
    * @return component, String.
    */
-  public String getComponent() {
+  public Component getComponent() {
     return component;
   }
 
@@ -115,7 +115,7 @@ public class TechnicalLog {
    *
    * @param component a String.
    */
-  public void setComponent(String component) {
+  public void setComponent(Component component) {
     this.component = component;
   }
 
