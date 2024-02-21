@@ -66,18 +66,17 @@ public class ChargePointManager {
    * For example :<br>
    * If the message is BootNotificationRequest, the response should be BootNotificationResponse.
    *
-   * @param webSocketRequestMessage The websocket message sent to our server.
+   * @param webSocketMessage The websocket message sent to our server.
    */
-  public void processMessage(WebSocketRequestMessage webSocketRequestMessage) {
-    Objects.requireNonNull(webSocketRequestMessage);
-    var message = ocppMessageParser.parseMessage(webSocketRequestMessage);
+  public void processMessage(WebSocketMessage webSocketMessage) {
+    Objects.requireNonNull(webSocketMessage);
+    var message = ocppMessageParser.parseMessage(webSocketMessage);
     if (message.isEmpty()) {
       return;
     }
     var ocppMessage = message.orElseThrow();
     switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-      case RESPONSE -> currentId += 1;
-      case REQUEST -> currentId = webSocketRequestMessage.messageId();
+      case REQUEST -> currentId = webSocketMessage.messageId();
       default -> {
         // Weird message, ignore it.
       }
@@ -101,7 +100,7 @@ public class ChargePointManager {
 
   private boolean doesChargepointExistInDatabase(WebSocketRequestMessage message) {
     if (message.messageName()
-        == WebSocketRequestMessage.WebSocketMessageName.BOOT_NOTIFICATION_REQUEST) {
+        == WebSocketMessage.MessageTypeRequest.BOOT_NOTIFICATION_REQUEST) {
       return switch (ocppVersion) {
         case V2 -> {
           var bootNotification = JsonParser.stringToObject(

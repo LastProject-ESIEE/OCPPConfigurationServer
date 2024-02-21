@@ -51,16 +51,28 @@ public class ConfigurationServer extends WebSocketServer {
             new ChargePointManager(ocppVersion.orElseThrow(),
                     (ocppMessage, chargePointManager) -> {
                       switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-                        case REQUEST -> conn.send(
-                                new WebSocketRequestMessage(
-                                        MessageType.REQUEST.getCallType(),
-                                        chargePointManager.getCurrentId(),
-                                        WebSocketRequestMessage
-                                                .WebSocketMessageName
-                                                .ocppMessageToEnum(ocppMessage),
-                                        JsonParser.objectToJsonString(ocppMessage)
-                                )
-                                        .toString());
+                        case REQUEST -> {
+                          var truc = new WebSocketRequestMessage(
+                                  MessageType.REQUEST.getCallType(),
+                                  chargePointManager.getCurrentId(),
+                                  WebSocketMessage
+                                          .MessageTypeRequest
+                                          .ocppMessageToEnum(ocppMessage),
+                                  JsonParser.objectToJsonString(ocppMessage)
+                          )
+                                  .toString();
+                          System.out.println(truc);
+                          conn.send(
+                                  new WebSocketRequestMessage(
+                                          MessageType.REQUEST.getCallType(),
+                                          chargePointManager.getCurrentId(),
+                                          WebSocketMessage
+                                                  .MessageTypeRequest
+                                                  .ocppMessageToEnum(ocppMessage),
+                                          JsonParser.objectToJsonString(ocppMessage)
+                                  )
+                                          .toString());
+                        }
                         case RESPONSE -> conn.send(
                                 new WebSocketResponseMessage(
                                         MessageType.RESPONSE.getCallType(),
@@ -95,7 +107,7 @@ public class ConfigurationServer extends WebSocketServer {
             + remote
             + ": "
             + message);
-    var webSocketMessage = WebSocketRequestMessage.parse(message);
+    var webSocketMessage = WebSocketMessage.parse(message);
     if (webSocketMessage.isEmpty()) {
       LOGGER.info("failed to parse message from " + remote);
       return;

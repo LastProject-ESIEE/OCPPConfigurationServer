@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
+import fr.uge.chargepointconfiguration.chargepoint.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageParser;
@@ -12,17 +13,14 @@ import java.util.Optional;
 public class OcppMessageParser20 implements OcppMessageParser {
 
   @Override
-  public Optional<OcppMessage> parseMessage(WebSocketRequestMessage webSocketRequestMessage) {
-    return switch (webSocketRequestMessage.messageName()) {
+  public Optional<OcppMessage> parseMessage(WebSocketMessage webSocketMessage) {
+    return switch (webSocketMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST ->
               Optional.of(JsonParser.stringToObject(BootNotificationRequest20.class,
-                      webSocketRequestMessage.data()));
-      case UPDATE_FIRMWARE_RESPONSE ->
-              throw new UnsupportedOperationException(
-                      "TODO : Parse this message");
+                      webSocketMessage.data()));
       case STATUS_FIRMWARE_REQUEST ->
               throw new UnsupportedOperationException("TODO : Parse this message");
-      case CHANGE_CONFIGURATION_RESPONSE ->
+      case CHANGE_CONFIGURATION_REQUEST ->
               throw new UnsupportedOperationException(
                       "TODO : Parse this messages");
       case OTHER -> Optional.empty(); // Ignoring the message.

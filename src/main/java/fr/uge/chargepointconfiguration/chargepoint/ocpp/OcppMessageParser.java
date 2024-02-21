@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp;
 
+import fr.uge.chargepointconfiguration.chargepoint.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepoint.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.OcppMessageParser16;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.OcppMessageParser20;
@@ -12,7 +13,7 @@ import java.util.Optional;
  */
 public interface OcppMessageParser {
 
-  Optional<OcppMessage> parseMessage(WebSocketRequestMessage webSocketRequestMessage);
+  Optional<OcppMessage> parseMessage(WebSocketMessage webSocketMessage);
 
   String transform(OcppMessage message);
 
