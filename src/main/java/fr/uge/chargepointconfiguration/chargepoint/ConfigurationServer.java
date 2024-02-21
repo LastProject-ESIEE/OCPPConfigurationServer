@@ -50,7 +50,7 @@ public class ConfigurationServer extends WebSocketServer {
     chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
                     (ocppMessage, chargePointManager) -> {
-                      switch (OcppMessage.getMessageTypeFromMessage(ocppMessage)) {
+                      switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
                         case REQUEST -> conn.send(
                                 new WebSocketRequestMessage(
                                         MessageType.REQUEST.getCallType(),

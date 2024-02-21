@@ -75,7 +75,7 @@ public class ChargePointManager {
       return;
     }
     var ocppMessage = message.orElseThrow();
-    switch (OcppMessage.getMessageTypeFromMessage(ocppMessage)) {
+    switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
       case RESPONSE -> currentId += 1;
       case REQUEST -> currentId = webSocketRequestMessage.messageId();
       default -> {
