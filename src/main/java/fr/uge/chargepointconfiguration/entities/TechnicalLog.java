@@ -21,7 +21,8 @@ import org.hibernate.annotations.CreationTimestamp;
 public class TechnicalLog {
 
   /**
-   * Role enum represents different critical level that a log can have in the application.<br>
+   * Criticality enum represents different critical level that a log can have
+   * in the application.<br>
    * The criticism can be :<br>
    * - INFO ;<br>
    * - WARNING :<br>
@@ -29,6 +30,18 @@ public class TechnicalLog {
    */
   public enum Criticality {
     INFO, WARNING, ERROR
+  }
+
+  /**
+   * Component enum represents different components where a log can be created.<br>
+   * The component can be :<br>
+   * - BACKEND ;<br>
+   * - FRONTEND :<br>
+   * - WEBSOCKET :<br>
+   * - DATABASE.
+   */
+  public enum Component {
+    BACKEND, FRONTEND, WEBSOCKET, DATABASE
   }
 
   @Id
@@ -41,8 +54,9 @@ public class TechnicalLog {
   @CreationTimestamp
   private Timestamp date;
 
-  @Column(name = "component", nullable = false, length = 45)
-  private String component;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "component", nullable = false)
+  private Component component;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "criticality", nullable = false)

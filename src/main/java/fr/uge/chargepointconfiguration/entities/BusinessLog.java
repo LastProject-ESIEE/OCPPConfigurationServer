@@ -29,6 +29,10 @@ public class BusinessLog {
   @CreationTimestamp
   private Timestamp date;
 
+  /**
+   * The quote for user ("user") are here to specify the database H2 that
+   * user isn't the key word user, but a field user in the database.
+   */
   @Column(name = "\"user\"", nullable = false, length = 45)
   private String user;
 
