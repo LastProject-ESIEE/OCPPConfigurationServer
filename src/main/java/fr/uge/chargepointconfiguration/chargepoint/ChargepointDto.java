@@ -14,7 +14,6 @@ import java.sql.Timestamp;
  * @param constructor The chargepoint's manufacturer.
  * @param clientId The client's name of the chargepoint.
  * @param serverAddress The server's URL of the chargepoint.
- * @param lastEdit Last time this chargepoint status has been changed.
  * @param configuration A JSON containing the chargepoint's configuration.
  * @param status {@link Status}.
  * @param firmware {@link Firmware}.
@@ -26,7 +25,6 @@ public record ChargepointDto(
     String constructor,
     String clientId,
     String serverAddress,
-    Timestamp lastEdit,
     Configuration configuration,
     Status status,
     Firmware firmware) {

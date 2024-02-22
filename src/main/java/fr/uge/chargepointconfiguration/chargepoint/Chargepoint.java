@@ -46,11 +46,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
   @Column(name = "server_address", nullable = false, length = 65_535)
   private String serverAddress;
 
-  @Column(name = "last_edit", nullable = false,
-      columnDefinition = "datetime default current_timestamp")
-  @CreationTimestamp
-  private Timestamp lastEdit;
-
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(
       name = "id_configuration",
@@ -95,7 +90,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
     this.configuration = Objects.requireNonNull(configuration);
     this.firmware = Objects.requireNonNull(firmware);
     this.status = Objects.requireNonNull(status);
-    lastEdit = status.getLastUpdate();
   }
 
   /**
@@ -156,13 +150,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
     this.configuration = configuration;
   }
 
-  public Timestamp getLastEdit() {
-    return lastEdit;
-  }
-
-  public void setLastEdit(Timestamp lastEdit) {
-    this.lastEdit = lastEdit;
-  }
 
   public Status getStatus() {
     return status;
@@ -195,7 +182,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
            && Objects.equals(clientId, that.clientId)
            && Objects.equals(serverAddress, that.serverAddress)
            && Objects.equals(configuration, that.configuration)
-           && Objects.equals(lastEdit, that.lastEdit)
            && Objects.equals(status, that.status)
            && Objects.equals(firmware, that.firmware);
   }
@@ -209,7 +195,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
             clientId,
             serverAddress,
             configuration,
-            lastEdit,
             status,
             firmware);
   }
@@ -223,7 +208,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
           constructor,
           clientId,
           serverAddress,
-          lastEdit,
           configuration,
           status,
           firmware);
@@ -239,7 +223,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
            + ", clientId='" + clientId + '\''
            + ", serverAddress='" + serverAddress + '\''
            + ", configuration='" + configuration + '\''
-           + ", lastEdit=" + lastEdit
            + ", status=" + status
            + ", firmware=" + firmware
            + '}';

@@ -7,7 +7,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Objects;
+import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * A configuration class representation in the database.
@@ -30,6 +33,11 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
       columnDefinition = "longtext default ''")
   private String description = "";
 
+  @Column(name = "last_edit", nullable = false,
+      columnDefinition = "datetime default current_timestamp")
+  @CreationTimestamp
+  private Timestamp lastEdit;
+
   @Column(name = "configuration", nullable = false)
   private String configuration;
 
@@ -43,6 +51,7 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
                        String configuration) {
     this.name = Objects.requireNonNull(name);
     this.configuration = Objects.requireNonNull(configuration);
+    lastEdit = new Timestamp(System.currentTimeMillis());
   }
 
   /**
@@ -72,6 +81,14 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
     this.description = description;
   }
 
+  public Timestamp getLastEdit() {
+    return lastEdit;
+  }
+
+  public void setLastEdit(Timestamp lastEdit) {
+    this.lastEdit = lastEdit;
+  }
+
   public String getConfiguration() {
     return configuration;
   }
@@ -92,12 +109,13 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
     return id == configuration.id
            && Objects.equals(name, configuration.name)
            && Objects.equals(description, configuration.description)
+           && Objects.equals(lastEdit, lastEdit)
            && Objects.equals(this.configuration, configuration.configuration);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, configuration);
+    return Objects.hash(id, name, description, lastEdit, configuration);
   }
 
   @Override
@@ -106,7 +124,8 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
         id,
           name,
           description,
-          configuration);
+        lastEdit,
+        configuration);
   }
 
   @Override
@@ -115,6 +134,7 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
            + "id=" + id
            + ", name='" + name + '\''
            + ", description='" + description + '\''
+           + ", lastEdit=" + lastEdit
            + ", configuration='" + configuration + '\''
            + '}';
   }
