@@ -1,5 +1,6 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.user.UserDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import java.util.Objects;
 */
 @Entity
 @Table(name = "configuration")
-public class Configuration {
+public class Configuration implements fr.uge.chargepointconfiguration.Entity<ConfigurationDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +28,29 @@ public class Configuration {
 
   @Column(name = "description", nullable = false,
       columnDefinition = "longtext default ''")
-  private String description;
+  private String description = "";
 
   @Column(name = "configuration", nullable = false)
   private String configuration;
+
+  /**
+   * Configuration's constructor without defaults values.
+   *
+   * @param name How you want your configuration to be named.
+   * @param configuration A JSON containing key and values for your configuration.
+   */
+  public Configuration(String name,
+                       String configuration) {
+    this.name = Objects.requireNonNull(name);
+    this.configuration = Objects.requireNonNull(configuration);
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public Configuration() {
+
+  }
 
   public int getId() {
     return id;
@@ -78,6 +98,15 @@ public class Configuration {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, description, configuration);
+  }
+
+  @Override
+  public ConfigurationDto toDto() {
+    return new ConfigurationDto(
+        id,
+          name,
+          description,
+          configuration);
   }
 
   @Override

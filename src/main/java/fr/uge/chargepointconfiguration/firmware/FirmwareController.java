@@ -1,7 +1,6 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.entities.Firmware;
-import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
+import fr.uge.chargepointconfiguration.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,8 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,8 +44,8 @@ public class FirmwareController {
           mediaType = "application/json",
           schema = @Schema(implementation = Firmware.class)) })
   @GetMapping(value = "/firmware/all")
-  public List<Firmware> getAllFirmwares() {
-    return firmwareRepository.findAll();
+  public List<FirmwareDto> getAllFirmwares() {
+    return firmwareRepository.findAll().stream().map(Firmware::toDto).toList();
   }
 
   /**
@@ -70,8 +67,9 @@ public class FirmwareController {
           content = @Content)
   })
   @GetMapping(value = "/firmware/{id}")
-  public Optional<Firmware> getFirmwareById(
+  public Optional<FirmwareDto> getFirmwareById(
       @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
-    return firmwareRepository.findById(id);
+    // TODO : exception BAD REQUEST si id est pas un nombre
+    return Optional.of(firmwareRepository.findById(id).orElseThrow().toDto());
   }
 }

@@ -1,6 +1,6 @@
-package fr.uge.chargepointconfiguration.repository;
+package fr.uge.chargepointconfiguration.status;
 
-import fr.uge.chargepointconfiguration.entities.Status;
+import fr.uge.chargepointconfiguration.status.Status;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

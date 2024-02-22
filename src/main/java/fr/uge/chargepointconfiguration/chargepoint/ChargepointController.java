@@ -1,7 +1,6 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.entities.Chargepoint;
-import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
+import fr.uge.chargepointconfiguration.firmware.Firmware;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,8 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +45,8 @@ public class ChargepointController {
                   schema = @Schema(implementation = Chargepoint.class))
           })
   @GetMapping(value = "/chargepoint/all")
-  public List<Chargepoint> getAllChargepoints() {
-    return chargepointRepository.findAll();
+  public List<ChargepointDto> getAllChargepoints() {
+    return chargepointRepository.findAll().stream().map(Chargepoint::toDto).toList();
   }
 
   /**
@@ -68,7 +65,8 @@ public class ChargepointController {
                   description = "This chargepoint does not exist",
                   content = @Content) })
   @GetMapping(value = "/chargepoint/{id}")
-  public Optional<Chargepoint> getChargepointById(@PathVariable int id) {
-    return chargepointRepository.findById(id);
+  public Optional<ChargepointDto> getChargepointById(@PathVariable int id) {
+    // TODO : exception BAD REQUEST si id est pas un nombre
+    return Optional.of(chargepointRepository.findById(id).orElseThrow().toDto());
   }
 }

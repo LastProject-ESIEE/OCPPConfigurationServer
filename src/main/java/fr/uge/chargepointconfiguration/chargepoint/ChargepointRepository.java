@@ -1,11 +1,8 @@
-package fr.uge.chargepointconfiguration.repository;
+package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.entities.Chargepoint;
-import io.micrometer.common.lang.NonNullApi;
+import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import java.util.List;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**

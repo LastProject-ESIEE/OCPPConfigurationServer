@@ -1,10 +1,8 @@
-package fr.uge.chargepointconfiguration.repository;
+package fr.uge.chargepointconfiguration.user;
 
-import fr.uge.chargepointconfiguration.entities.User;
+import fr.uge.chargepointconfiguration.user.User;
 import java.util.List;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**

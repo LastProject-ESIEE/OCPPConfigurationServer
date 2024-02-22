@@ -1,5 +1,7 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.typeallowed;
 
+import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.firmware.FirmwareDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +18,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "type_allowed")
-public class TypeAllowed {
+public class TypeAllowed implements fr.uge.chargepointconfiguration.Entity<TypeAllowedDto> {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_type_allowed")
@@ -27,6 +30,25 @@ public class TypeAllowed {
 
   @Column(name = "type", nullable = false, length = 45)
   private String type;
+
+  /**
+   * TypeAllowed's constructor.
+   *
+   * @param constructor A chargepoint's manufacturer where a firmware is working on.
+   * @param type The commercial name of a chargepoint where a firmware is working on.
+   */
+  public TypeAllowed(String constructor,
+                     String type) {
+    this.constructor = Objects.requireNonNull(constructor);
+    this.type = Objects.requireNonNull(type);
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public TypeAllowed() {
+
+  }
 
   public String getConstructor() {
     return constructor;
@@ -46,6 +68,14 @@ public class TypeAllowed {
 
   @ManyToMany(mappedBy = "typesAllowed")
   private Set<Firmware> firmwares;
+
+  @Override
+  public TypeAllowedDto toDto() {
+    return new TypeAllowedDto(
+        id,
+        constructor,
+        type);
+  }
 
   @Override
   public String toString() {

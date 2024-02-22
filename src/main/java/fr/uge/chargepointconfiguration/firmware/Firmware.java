@@ -1,5 +1,7 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Firmware class represents a firmware in the database via JPA.<br>
@@ -21,7 +24,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "firmware")
-public class Firmware {
+public class Firmware implements fr.uge.chargepointconfiguration.Entity<FirmwareDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +45,32 @@ public class Firmware {
           joinColumns = @JoinColumn(name = "id_type_allowed"),
           inverseJoinColumns = @JoinColumn(name = "id_firmware"))
   private Set<TypeAllowed> typesAllowed;
+
+  /**
+   * Firmware's constructor.
+   *
+   * @param url Link where is the firmware stored.
+   * @param version Firmware reference version.
+   * @param constructor Manufacturer of this firmware.
+   * @param  typesAllowed Set of all the compatible firmware.
+   */
+  public Firmware(String url,
+                  String version,
+                  String constructor,
+                  Set<TypeAllowed> typesAllowed) {
+    this.url = Objects.requireNonNull(url);
+    this.version = Objects.requireNonNull(version);
+    this.constructor = Objects.requireNonNull(constructor);
+    typesAllowed.forEach(Objects::requireNonNull);
+    this.typesAllowed = Objects.requireNonNull(typesAllowed);
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public Firmware() {
+
+  }
 
   public int getId() {
     return id;
@@ -98,6 +127,16 @@ public class Firmware {
   @Override
   public int hashCode() {
     return Objects.hash(id, url, version, constructor, typesAllowed);
+  }
+
+  @Override
+  public FirmwareDto toDto() {
+    return new FirmwareDto(
+        id,
+        url,
+        version,
+        constructor,
+        typesAllowed.stream().map(TypeAllowed::toDto).collect(Collectors.toSet()));
   }
 
   @Override

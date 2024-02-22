@@ -1,5 +1,8 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.configuration.Configuration;
+import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.status.Status;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +24,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "chargepoint")
-public class Chargepoint {
+public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<ChargepointDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,20 +52,20 @@ public class Chargepoint {
   private Timestamp lastEdit;
 
   @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(
+      name = "id_configuration",
+      referencedColumnName = "id_configuration",
+      nullable = false
+  )
+  private Configuration configuration;
+
+  @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "id_status", referencedColumnName = "id_status", nullable = false)
   private Status status;
 
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
   private Firmware firmware;
-
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(
-          name = "id_configuration",
-          referencedColumnName = "id_configuration",
-          nullable = false
-  )
-  private Configuration configuration;
 
   /**
    * Chargepoint's constructor.
@@ -73,6 +76,7 @@ public class Chargepoint {
    * @param clientId The client's name of the chargepoint.
    * @param serverAddress The server's URL of the chargepoint.
    * @param configuration A JSON containing the chargepoint's configuration.
+   * @param status Description of the current state of configuration for the chargepoint.
    * @param firmware The chargepoint's firmware.
    */
   public Chargepoint(String serialNumberChargepoint,
@@ -208,6 +212,21 @@ public class Chargepoint {
             lastEdit,
             status,
             firmware);
+  }
+
+  @Override
+  public ChargepointDto toDto() {
+    return new ChargepointDto(
+        id,
+          serialNumberChargepoint,
+          type,
+          constructor,
+          clientId,
+          serverAddress,
+          lastEdit,
+          configuration,
+          status,
+          firmware);
   }
 
   @Override

@@ -1,10 +1,8 @@
-package fr.uge.chargepointconfiguration.repository;
+package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.entities.Firmware;
+import fr.uge.chargepointconfiguration.firmware.Firmware;
 import java.util.List;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 /**
  * Repository for the firmware.

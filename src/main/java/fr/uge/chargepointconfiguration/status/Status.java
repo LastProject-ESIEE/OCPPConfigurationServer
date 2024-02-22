@@ -1,5 +1,6 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.status;
 
+import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +20,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "status")
-public class Status {
+public class Status implements fr.uge.chargepointconfiguration.Entity<StatusDto> {
 
   /**
    * The mods which a machine can be.<br>
@@ -117,6 +118,17 @@ public class Status {
 
   public void setStatus(StatusProcess status) {
     this.status = status;
+  }
+
+  @Override
+  public StatusDto toDto() {
+    return new StatusDto(
+        id,
+          lastUpdate,
+          error,
+          state,
+          step,
+          status);
   }
 
   @Override

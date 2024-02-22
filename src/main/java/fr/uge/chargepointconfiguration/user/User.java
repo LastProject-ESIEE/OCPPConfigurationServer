@@ -1,6 +1,5 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.user;
 
-import fr.uge.chargepointconfiguration.user.UserDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -50,16 +49,6 @@ public class User implements fr.uge.chargepointconfiguration.Entity<UserDto> {
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
   private Role role;
-
-  @Override
-  public UserDto toDto() {
-    return new UserDto(
-          id,
-          firstName,
-          lastName,
-          email,
-          role);
-  }
 
   /**
    * User's constructor.
@@ -217,6 +206,16 @@ public class User implements fr.uge.chargepointconfiguration.Entity<UserDto> {
   @Override
   public int hashCode() {
     return Objects.hash(id, email, lastName, firstName, password, role);
+  }
+
+  @Override
+  public UserDto toDto() {
+    return new UserDto(
+        id,
+        firstName,
+        lastName,
+        email,
+        role);
   }
 
   @Override
