@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
+package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
@@ -14,7 +14,13 @@ public class OcppMessageParser20 implements OcppMessageParser {
 
   @Override
   public Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage) {
-    return Optional.empty();
+    Objects.requireNonNull(webSocketMessage);
+    return switch (webSocketMessage.messageName()) {
+      case BOOT_NOTIFICATION_REQUEST -> Optional.of(
+          JsonParser.stringToObject(BootNotificationRequest20.class,
+              webSocketMessage.data()));
+      default -> Optional.empty();
+    };
   }
 
   @Override

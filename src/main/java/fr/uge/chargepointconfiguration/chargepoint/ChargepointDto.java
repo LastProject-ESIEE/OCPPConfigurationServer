@@ -16,8 +16,8 @@ import java.sql.Timestamp;
  * @param serverAddress The server's URL of the chargepoint.
  * @param lastEdit Last time this chargepoint status has been changed.
  * @param configuration A JSON containing the chargepoint's configuration.
- * @param status Description of the current state of configuration for the chargepoint.
- * @param firmware The chargepoint's firmware.
+ * @param status {@link Status}.
+ * @param firmware {@link Firmware}.
  */
 public record ChargepointDto(
     int id,

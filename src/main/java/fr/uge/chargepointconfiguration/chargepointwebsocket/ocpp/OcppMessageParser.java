@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.OcppMessageParser16;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.OcppMessageParser20;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public interface OcppMessageParser {
     Objects.requireNonNull(ocppVersion);
     return switch (ocppVersion) {
       case V1_6 -> new OcppMessageParser16();
-      case V2 -> new fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.OcppMessageParser20();
+      case V2 -> new OcppMessageParser20();
     };
   }
 }
