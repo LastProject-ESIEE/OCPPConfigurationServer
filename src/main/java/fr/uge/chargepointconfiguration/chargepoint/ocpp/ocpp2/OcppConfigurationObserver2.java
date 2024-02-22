@@ -50,6 +50,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
                         ChargePointManager chargePointManager) {
     switch (ocppMessage) {
       case BootNotificationRequest20 b -> processBootNotification(b, chargePointManager);
+      // TODO : Add switch case for the update firmware response and status firmware request.
       default -> {
         // Do nothing
       }

@@ -56,7 +56,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     switch (ocppMessage) {
       case BootNotificationRequest16 b -> processBootNotification(b, chargePointManager);
       case ChangeConfigurationResponse16 c -> processConfigurationResponse(c, chargePointManager);
-      // TODO : Update firmware response and status firmware request
+      // TODO : Add switch case for the update firmware response and status firmware request.
       default -> {
         // Do nothing
       }
