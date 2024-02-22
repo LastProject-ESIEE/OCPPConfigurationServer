@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.controller;
 
 import fr.uge.chargepointconfiguration.entities.Chargepoint;
 import fr.uge.chargepointconfiguration.entities.Configuration;
+import fr.uge.chargepointconfiguration.entities.dto.ConfigurationGeneralDto;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.ConfigurationRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,30 +45,11 @@ public class ConfigurationController {
   @ApiResponse(responseCode = "200",
           description = "Found all the configuration",
           content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = Configuration.class))
+                  schema = @Schema(implementation = ConfigurationGeneralDto.class))
           })
   @GetMapping(value = "/configuration/all")
-  public List<Configuration> getAllConfiguration() {
-    return configurationRepository.findAll();
+  public List<ConfigurationGeneralDto> getAllConfiguration() {
+    return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
   }
 
-  /**
-   * Returns an optional of chargepoint according to the given id.<br>
-   * It is empty if the repository could not find a chargepoint.
-   *
-   * @param id An int.
-   * @return An optional of chargepoint.
-   */
-  @Operation(summary = "Get a chargepoint by its id")
-  @ApiResponses(value = { @ApiResponse(responseCode = "200",
-          description = "Found the chargepoint",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = Chargepoint.class)) }),
-                          @ApiResponse(responseCode = "404",
-                  description = "This chargepoint does not exist",
-                  content = @Content) })
-  @GetMapping(value = "/chargepoint/{id}")
-  public Optional<Chargepoint> getChargepointById(@PathVariable int id) {
-    return chargepointRepository.findById(id);
-  }
 }
