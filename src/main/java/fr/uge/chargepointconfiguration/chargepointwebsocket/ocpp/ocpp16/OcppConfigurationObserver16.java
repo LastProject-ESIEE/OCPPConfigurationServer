@@ -98,6 +98,11 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
     var status = currentChargepoint.getStatus();
     var config = currentChargepoint.getConfiguration();
+    if (status.getStatus() == Status.StatusProcess.FINISHED
+            && config.getLastEdit().before(status.getLastUpdate())) {
+      // TODO : Log, the chargepoint is ready !
+      return;
+    }
     status.setState(true);
     status.setStatus(Status.StatusProcess.PENDING);
     var statusLastTime = status.getLastUpdate();
