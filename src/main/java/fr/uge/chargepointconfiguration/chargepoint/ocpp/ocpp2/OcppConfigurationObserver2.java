@@ -13,6 +13,8 @@ import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Defines the OCPP configuration message for the visitor.
@@ -22,6 +24,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
+  private final Queue<SetVariablesRequest20> queue = new LinkedList<>();
   private Chargepoint currentChargepoint;
 
   /**
@@ -47,6 +50,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
                         ChargePointManager chargePointManager) {
     switch (ocppMessage) {
       case BootNotificationRequest20 b -> processBootNotification(b, chargePointManager);
+      // TODO : Add switch case for the update firmware response and status firmware request.
       default -> {
         // Do nothing
       }
@@ -97,13 +101,38 @@ public class OcppConfigurationObserver2 implements OcppObserver {
             RegistrationStatus.Accepted
     );
     sender.sendMessage(response, chargePointManager);
-    // TODO : Add log,we sent a bootNotif response
-    if (status.getStep() == Status.Step.CONFIGURATION) {
-      status = currentChargepoint.getStatus();
-      status.setStatus(Status.StatusProcess.PROCESSING);
-      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-      chargepointRepository.save(currentChargepoint);
-      // TODO : Send the configuration of the chargepoint by retrieving config from DB
+    switch (status.getStep()) {
+      case Status.Step.CONFIGURATION -> processConfigurationRequest(chargePointManager);
+      case Status.Step.FIRMWARE -> processFirmwareRequest(chargePointManager);
+      default -> {
+        // ignore
+      }
     }
+  }
+
+  private void processConfigurationRequest(ChargePointManager chargePointManager) {
+    if (queue.isEmpty()) {
+      var status = currentChargepoint.getStatus();
+      status.setStatus(Status.StatusProcess.FINISHED);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+    }
+  }
+
+  private void processFirmwareRequest(ChargePointManager chargePointManager) {
+    var status = currentChargepoint.getStatus();
+    status.setStatus(Status.StatusProcess.PROCESSING);
+    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+    currentChargepoint.setStatus(status);
+    chargepointRepository.save(currentChargepoint);
+    // TODO : Send a update firmware request !
+    status = currentChargepoint.getStatus();
+    status.setStatus(Status.StatusProcess.PENDING);
+    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+    status.setStep(Status.Step.CONFIGURATION);
+    currentChargepoint.setStatus(status);
+    chargepointRepository.save(currentChargepoint);
+    processConfigurationRequest(chargePointManager);
   }
 }
