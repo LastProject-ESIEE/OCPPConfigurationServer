@@ -1,9 +1,10 @@
-package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2;
+package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
