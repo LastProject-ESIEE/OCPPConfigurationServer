@@ -183,6 +183,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         status.setError(response.status());
         currentChargepoint.setStatus(status);
         chargepointRepository.save(currentChargepoint);
+        queue.clear();
       }
     }
   }
