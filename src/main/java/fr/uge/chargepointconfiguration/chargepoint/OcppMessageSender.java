@@ -7,5 +7,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
  */
 @FunctionalInterface
 public interface OcppMessageSender {
-  void sendMessage(OcppMessage ocppMessage, long messageId);
+  void sendMessage(OcppMessage ocppMessage, ChargePointManager chargePointManager);
 }

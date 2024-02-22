@@ -6,9 +6,13 @@ import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.BootNotificationResponse20;
+import fr.uge.chargepointconfiguration.entities.Chargepoint;
+import fr.uge.chargepointconfiguration.entities.Status;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
 import fr.uge.chargepointconfiguration.repository.StatusRepository;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -19,15 +23,15 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
-  private boolean authenticated;
+  private Chargepoint currentChargepoint;
 
   /**
    * Constructor for the OCPP 1.6 configuration observer.
    *
-   * @param sender websocket channel to send message
+   * @param sender                websocket channel to send message
    * @param chargepointRepository charge point repository
-   * @param firmwareRepository firmware repository
-   * @param statusRepository charge point status repository
+   * @param firmwareRepository    firmware repository
+   * @param statusRepository      charge point status repository
    */
   public OcppConfigurationObserver16(OcppMessageSender sender,
                                      ChargepointRepository chargepointRepository,
@@ -41,9 +45,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   @Override
   public void onMessage(OcppMessage ocppMessage,
-                        ChargePointManager chargePointManager, long messageId) {
+                        ChargePointManager chargePointManager) {
     switch (ocppMessage) {
-      case BootNotificationRequest16 b -> processBootNotification(b, messageId, chargePointManager);
+      case BootNotificationRequest16 b -> processBootNotification(b, chargePointManager);
+      case ChangeConfigurationResponse16 c -> System.out.println(
+              "Response change configuration : " + c.status()
+      );
       default -> {
         // Do nothing
       }
@@ -62,18 +69,30 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16,
-          long messageId, ChargePointManager chargePointManager) {
+          ChargePointManager chargePointManager) {
     // Get charge point from database
-    var chargePoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
+    currentChargepoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
             bootNotificationRequest16.chargePointSerialNumber(),
             bootNotificationRequest16.chargePointVendor()
     );
     // If charge point is not found then skip it
-    if (chargePoint == null) {
-      //TODO: add log
+    if (currentChargepoint == null) {
+      // TODO : Add log, this chargepoint is unknown
+      var response = new BootNotificationResponse20(
+              LocalDateTime.now().toString(),
+              5,
+              RegistrationStatus.Rejected
+      );
+      sender.sendMessage(response, chargePointManager);
       return;
     }
-    authenticated = true;
+    var status = currentChargepoint.getStatus();
+    status.setState(true);
+    status.setStatus(Status.StatusProcess.PENDING);
+    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+    currentChargepoint.setStatus(status);
+    // TODO : Add log, the chargepoint is now connected
+    chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     WebSocketHandler.sendMessageToUsers("Charge point x connected !");
     // Send BootNotification Response
@@ -82,6 +101,13 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             5,
             RegistrationStatus.Accepted
     );
-    sender.sendMessage(response, messageId);
+    sender.sendMessage(response, chargePointManager);
+    // TODO : Add log,we sent a bootNotif response
+    if (status.getStep() == Status.Step.CONFIGURATION) {
+      status = currentChargepoint.getStatus();
+      status.setStatus(Status.StatusProcess.PROCESSING);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      chargepointRepository.save(currentChargepoint);
+    }
   }
 }

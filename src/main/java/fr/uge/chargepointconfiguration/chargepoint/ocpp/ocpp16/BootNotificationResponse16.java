@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageResponse;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
 
 /**
@@ -17,5 +17,5 @@ import fr.uge.chargepointconfiguration.chargepoint.ocpp.RegistrationStatus;
  */
 public record BootNotificationResponse16(String currentTime,
                                          int interval,
-                                         RegistrationStatus status) implements OcppMessage {
+                                         RegistrationStatus status) implements OcppMessageResponse {
 }

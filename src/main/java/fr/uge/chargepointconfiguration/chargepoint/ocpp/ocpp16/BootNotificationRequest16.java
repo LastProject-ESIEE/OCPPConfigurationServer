@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
 
 /**
  * Defines the BootNotificationRequest message from the OCPP protocol.
@@ -15,6 +15,6 @@ public record BootNotificationRequest16(String chargePointVendor,
                                         String chargePointModel,
                                         String chargePointSerialNumber,
                                         String chargeBoxSerialNumber,
-                                        String firmwareVersion) implements OcppMessage {
+                                        String firmwareVersion) implements OcppMessageRequest {
 
 }

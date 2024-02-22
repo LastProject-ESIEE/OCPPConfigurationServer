@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.MessageType;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
 import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
@@ -47,12 +49,28 @@ public class ConfigurationServer extends WebSocketServer {
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
             new ChargePointManager(ocppVersion.orElseThrow(),
-                    (occpMessage, messageId) -> {
-                      var webSocketResponseMessage = new WebSocketResponseMessage(3,
-                              messageId,
-                              JsonParser.objectToJsonString(occpMessage)
-                      );
-                      conn.send(webSocketResponseMessage.toString());
+                    (ocppMessage, chargePointManager) -> {
+                      switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
+                        case REQUEST -> conn.send(
+                                new WebSocketRequestMessage(
+                                        MessageType.REQUEST.getCallType(),
+                                        chargePointManager.getCurrentId(),
+                                        WebSocketMessage
+                                                .MessageTypeRequest
+                                                .ocppMessageToEnum(ocppMessage),
+                                        JsonParser.objectToJsonString(ocppMessage)
+                                ) // TODO : Change the creation to be smaller
+                                        .toString());
+                        case RESPONSE -> conn.send(
+                                new WebSocketResponseMessage(
+                                        MessageType.RESPONSE.getCallType(),
+                                        chargePointManager.getCurrentId(),
+                                        JsonParser.objectToJsonString(ocppMessage)
+                                ) // TODO : Change the creation to be smaller
+                                        .toString()
+                        );
+                        default -> throw new AssertionError("What is this bloody package :( ???");
+                      }
                     },
                     chargepointRepository,
                     firmwareRepository,
@@ -62,11 +80,11 @@ public class ConfigurationServer extends WebSocketServer {
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     LOGGER.warn("closed "
-                + conn.getRemoteSocketAddress()
-                + " with exit code "
-                + code
-                + " additional info: "
-                + reason);
+            + conn.getRemoteSocketAddress()
+            + " with exit code "
+            + code
+            + " additional info: "
+            + reason);
     chargePoints.remove(conn.getRemoteSocketAddress());
   }
 
@@ -74,10 +92,10 @@ public class ConfigurationServer extends WebSocketServer {
   public void onMessage(WebSocket conn, String message) {
     var remote = conn.getRemoteSocketAddress();
     LOGGER.info("received message from "
-                + remote
-                + ": "
-                + message);
-    var webSocketMessage = WebSocketRequestMessage.parse(message);
+            + remote
+            + ": "
+            + message);
+    var webSocketMessage = WebSocketMessage.parse(message);
     if (webSocketMessage.isEmpty()) {
       LOGGER.info("failed to parse message from " + remote);
       return;
@@ -89,15 +107,15 @@ public class ConfigurationServer extends WebSocketServer {
   @Override
   public void onMessage(WebSocket conn, ByteBuffer message) {
     LOGGER.info("received ByteBuffer from "
-                + conn.getRemoteSocketAddress());
+            + conn.getRemoteSocketAddress());
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
     LOGGER.error("an error occurred on connection "
-                 + conn.getRemoteSocketAddress()
-                 + ":"
-                 + ex);
+            + conn.getRemoteSocketAddress()
+            + ":"
+            + ex);
   }
 
   @Override
