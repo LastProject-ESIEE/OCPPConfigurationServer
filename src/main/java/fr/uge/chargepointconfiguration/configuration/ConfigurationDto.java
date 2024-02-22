@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import java.sql.Timestamp;
+
 /**
  * DTO to read configuration in database.
  *
@@ -12,5 +14,6 @@ public record ConfigurationDto(
     int id,
     String name,
     String description,
+    Timestamp lastEdit,
     String configuration) {
 }
