@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp2.data;
+package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data;
 
 /**
  * An object for the UpdateFirmwareRequest.<br>
