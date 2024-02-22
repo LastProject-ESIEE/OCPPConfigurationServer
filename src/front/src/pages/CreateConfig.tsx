@@ -14,6 +14,7 @@ import {
     TextField
 } from '@mui/material';
 import confKeys from "../conf/confKeys";
+import Typography from "@mui/material/Typography";
 
 const FirmwareSection = () => (
     <Box>
@@ -113,40 +114,67 @@ function KeyValuePair(props: {
 }
 
 function KeyValueSection() {
-
     const [options, setOptions] = useState(confKeys.map(key => key.keyName));
-    const [selectedKeys, setSelectedKeys] = useState(new Set<string>());
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+    const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+    const updateOptions = () => {
+        if (selectedKey === null) {
+            return; // Handle potential error or prevent unnecessary updates
+        }
+
+        const newSelectedKeys = [...selectedKeys, selectedKey];
+        setOptions(options.filter(key => !newSelectedKeys.includes(key)));
+        setSelectedKeys(newSelectedKeys);
+    };
 
     return (
         <Box>
             <h4>Clé: valeur :</h4>
-            <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
-                <Paper elevation={2} sx={{p: 2}}>
+            <Box sx={{ pt: 1, pb: 1 }} style={{ maxHeight: '60vh', overflow: 'auto' }}>
+                <Paper elevation={2} sx={{ p: 2 }}>
                     <Grid container alignItems="center" justifyContent="space-evenly">
                         <Grid item>
-                            <Input disabled defaultValue="Borne_id" placeholder="Borne_id"/>
+                            <Input disabled defaultValue="Borne_id" placeholder="Borne_id" />
                         </Grid>
                         <Grid item>
-                            <p>: </p>
+                            <p>:</p>
                         </Grid>
                         <Grid item>
-                            <Input defaultValue="BRS-HERR" placeholder="valeur"/>
+                            <Input defaultValue="BRS-HERR" placeholder="valeur" />
                         </Grid>
                     </Grid>
                 </Paper>
 
-                <Paper elevation={2} sx={{p: 2, mt: 2}}>
-                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
-                                  setOptions={setOptions}/>
-                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
-                                  setOptions={setOptions}/>
-                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
-                                  setOptions={setOptions}/>
-                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
-                                  setOptions={setOptions}/>
-                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
-                                  setOptions={setOptions}/>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                    <Grid container alignItems="center" justifyContent="space-evenly">
+                        <Grid item>
+                            <Autocomplete
+                                onChange={(event, value) => {
+                                    setSelectedKey(value);
+                                }}
+                                sx={{ width: 300 }}
+                                disablePortal
+                                options={options}
+                                renderInput={(params) => <TextField {...params} label="Clé" />}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Button onClick={updateOptions} variant="contained" type="submit" sx={{ borderRadius: 28 }}>
+                                +
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Paper>
+                {selectedKeys.length !== 0 && (
+                    <Paper elevation={2} sx={{ p: 2, mt: 2 }}>
+                        {selectedKeys.map((key) => (
+                            <Typography key={key} sx={{ mt: 2 }} variant="body1">
+                                {key} :
+                            </Typography>
+                        ))}
+                    </Paper>
+                )}
             </Box>
         </Box>
     );
