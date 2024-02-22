@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.repository;
 
 import fr.uge.chargepointconfiguration.entities.Configuration;
 import fr.uge.chargepointconfiguration.entities.Status;
+import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +11,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ConfigurationRepository extends CrudRepository<Configuration, Integer> {
-
+  List<Configuration> findAll();
 }
