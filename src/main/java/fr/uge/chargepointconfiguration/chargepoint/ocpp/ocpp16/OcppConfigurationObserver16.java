@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepoint.OcppMessageSender;
@@ -17,7 +19,9 @@ import fr.uge.chargepointconfiguration.repository.StatusRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -93,8 +97,10 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       return;
     }
     var status = currentChargepoint.getStatus();
+    var config = currentChargepoint.getConfiguration();
     status.setState(true);
     status.setStatus(Status.StatusProcess.PENDING);
+    var statusLastTime = status.getLastUpdate();
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
     // TODO : Add log, the chargepoint is now connected
@@ -121,9 +127,18 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     if (queue.isEmpty()) {
       // The change configuration list is empty, so we load the configuration
       var configuration = currentChargepoint.getConfiguration().getConfiguration();
-      // TODO : iterate through this JSON/String and send every key/value and wait for response.
-      var testConfig = new ChangeConfigurationRequest16("LightIntensity", "0");
-      queue.add(testConfig);
+      var mapper = new ObjectMapper();
+      HashMap<String, String> configMap;
+      try {
+        configMap = mapper.readValue(configuration, HashMap.class);
+      } catch (JsonProcessingException e) {
+        return;
+      }
+      for (Map.Entry<String, String> set :
+              configMap.entrySet()) {
+        var config = new ChangeConfigurationRequest16(set.getKey(), set.getValue());
+        queue.add(config);
+      }
     }
     var config = queue.poll();
     if (config == null) {
@@ -158,6 +173,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
           currentChargepoint.setStatus(status);
           chargepointRepository.save(currentChargepoint);
+        } else {
+          processConfigurationRequest(chargePointManager);
         }
       }
       default -> {
