@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-d
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Error from "./pages/Error";
+import CreateConfig from "./pages/CreateConfig";
 import Home from "./Home";
 import { ConfigurationListPage } from './pages/Configuration';
 
@@ -23,7 +24,7 @@ root.render(
                     <Route path="" element={<Navigate to="chargepoint"/>}/>
                     <Route path="configuration">
                         <Route path="" element={<ConfigurationListPage/>}/>
-                        <Route path="new" element={<Error/>}/>
+                        <Route path="new" element={<CreateConfig/>}/>
                         <Route path="edit" element={<Error/>}/>
                     </Route>
                     <Route path="chargepoint" element={<About/>}/>
