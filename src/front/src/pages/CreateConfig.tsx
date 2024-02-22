@@ -124,6 +124,8 @@ function KeyValueSection() {
         }
 
         const newSelectedKeys = [...selectedKeys, selectedKey];
+
+        setSelectedKey(null);
         setOptions(options.filter(key => !newSelectedKeys.includes(key)));
         setSelectedKeys(newSelectedKeys);
     };
@@ -156,6 +158,7 @@ function KeyValueSection() {
                                 sx={{ width: 300 }}
                                 disablePortal
                                 options={options}
+                                value={selectedKey}
                                 renderInput={(params) => <TextField {...params} label="Clé" />}
                             />
                         </Grid>
