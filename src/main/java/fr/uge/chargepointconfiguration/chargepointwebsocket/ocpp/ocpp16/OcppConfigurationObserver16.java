@@ -7,6 +7,8 @@ import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
@@ -14,6 +16,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotif
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
+import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;

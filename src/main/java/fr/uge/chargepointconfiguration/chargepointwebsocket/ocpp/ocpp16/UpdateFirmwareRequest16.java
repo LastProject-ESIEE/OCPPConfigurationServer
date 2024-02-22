@@ -1,6 +1,7 @@
-package fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16;
+package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16;
 
-import fr.uge.chargepointconfiguration.chargepoint.ocpp.OcppMessageRequest;
+import fr.uge.chargepointconfiguration.chargepoint.ocpp.ocpp16.UpdateFirmwareResponse16;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageRequest;
 
 /**
  * Represents the Update Firmware packet from OCPP 1.6.<br>
