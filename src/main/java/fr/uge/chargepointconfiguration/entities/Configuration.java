@@ -25,7 +25,8 @@ public class Configuration {
   @Column(name = "name", nullable = false, length = 50)
   private String name;
 
-  @Column(name = "description", nullable = false)
+  @Column(name = "description", nullable = false,
+      columnDefinition = "longtext default ''")
   private String description;
 
   @Column(name = "configuration", nullable = false)
