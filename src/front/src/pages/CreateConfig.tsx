@@ -123,7 +123,7 @@ function KeyValueSection() {
             return; // Handle potential error or prevent unnecessary updates
         }
 
-        const newSelectedKeys = [...selectedKeys, selectedKey];
+        const newSelectedKeys = [selectedKey, ...selectedKeys];
 
         setSelectedKey(null);
         setOptions(options.filter(key => !newSelectedKeys.includes(key)));
