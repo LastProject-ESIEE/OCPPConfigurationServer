@@ -1,5 +1,18 @@
-import React, { useState } from 'react';
-import { Autocomplete, Box, Button, Container, Grid, Input, MenuItem, Paper, Select, TextField } from '@mui/material';
+import React, { SyntheticEvent, useState } from 'react';
+import {
+    Autocomplete,
+    AutocompleteChangeDetails,
+    AutocompleteChangeReason,
+    Box,
+    Button,
+    Container,
+    Grid,
+    Input,
+    MenuItem,
+    Paper,
+    Select,
+    TextField
+} from '@mui/material';
 import confKeys from "../conf/confKeys";
 
 const FirmwareSection = () => (
@@ -55,32 +68,35 @@ function KeyValuePair(props: {
 
     const [currentValue, setCurrentValue] = useState("");
 
+    function handleChange(event: SyntheticEvent<Element, Event>, newValue: string | null, reason: AutocompleteChangeReason, details?: AutocompleteChangeDetails<string> | undefined) {
+        const deleteSelection = () => {
+            selectedKeys.delete(currentValue);
+            setSelectedKeys(selectedKeys);
+            setOptions(confKeys
+                .filter(key => !selectedKeys.has(key.keyName))
+                .map(key => key.keyName))
+        }
+        if (newValue === null) {
+            return;
+        }
+
+        deleteSelection();
+        if (reason === "clear" || !options.includes(newValue)) {
+            return;
+        }
+        setCurrentValue(newValue);
+        setSelectedKeys(selectedKeys.add(newValue));
+        setOptions(confKeys
+            .filter(key => !selectedKeys.has(key.keyName))
+            .map(key => key.keyName));
+
+    }
+
     return (
         <Grid sx={{pt: 1, pb: 1}} container alignItems="center" justifyContent="space-evenly">
             <Grid item>
                 <Autocomplete
-                    onChange={(event, newValue, reason) => {
-                        const deleteSelection = () => {
-                            selectedKeys.delete(currentValue);
-                            setSelectedKeys(selectedKeys);
-                            setOptions(confKeys
-                                .filter(key => !selectedKeys.has(key.keyName))
-                                .map(key => key.keyName))
-                        }
-                        if (newValue === null) {
-                            return;
-                        }
-
-                        deleteSelection();
-                        if (reason === "clear" || !options.includes(newValue)) {
-                            return;
-                        }
-                        setCurrentValue(newValue);
-                        setSelectedKeys(selectedKeys.add(newValue));
-                        setOptions(confKeys
-                            .filter(key => !selectedKeys.has(key.keyName))
-                            .map(key => key.keyName));
-                    }}
+                    onChange={handleChange}
                     sx={{width: 300}}
                     disablePortal
                     options={options}
@@ -120,7 +136,16 @@ function KeyValueSection() {
                 </Paper>
 
                 <Paper elevation={2} sx={{p: 2, mt: 2}}>
-
+                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
+                                  setOptions={setOptions}/>
+                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
+                                  setOptions={setOptions}/>
+                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
+                                  setOptions={setOptions}/>
+                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
+                                  setOptions={setOptions}/>
+                    <KeyValuePair selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} options={options}
+                                  setOptions={setOptions}/>
                 </Paper>
             </Box>
         </Box>
