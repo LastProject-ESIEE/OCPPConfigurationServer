@@ -1,6 +1,15 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.firmware.Firmware;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +44,34 @@ public class ConfigurationController {
    * @param createConfigurationDto All the necessary information for a configuration creation.
    * @return A configuration created with its information and its http result status.
    */
+  @Operation(summary = "Post a configuration")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201",
+          description = "Configuration created",
+          content = { @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ConfigurationDto.class)) }),
+      @ApiResponse(responseCode = "409",
+          description = "Configuration creation has a conflict",
+          content = @Content)
+  })
   @PostMapping("/create")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
+      @Parameter(
+          name = "CreateConfigurationDto",
+          description = "Valid createConfiguration form",
+          example = """
+              {  "name": "String",
+                "description": "String",
+                "configuration": [
+                  {
+                    "key": "String",
+                    "value": "String"
+                  }
+                ],
+                "firmware": "String"
+              }""",
+          required = true)
       @RequestBody CreateConfigurationDto createConfigurationDto) {
     return new ResponseEntity<>(configurationService.save(createConfigurationDto),
         HttpStatus.CREATED);

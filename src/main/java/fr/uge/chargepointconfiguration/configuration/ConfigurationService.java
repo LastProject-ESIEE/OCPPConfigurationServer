@@ -32,6 +32,7 @@ public class ConfigurationService {
         createConfigurationDto.name(),
         createConfigurationDto.description(),
         createConfigurationDto.configuration()));
+    // TODO create status and chargepoint
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
   }
