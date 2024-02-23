@@ -1,7 +1,5 @@
 package fr.uge.chargepointconfiguration.user;
 
-import fr.uge.chargepointconfiguration.entities.User;
-
 /**
  * DTO to read user in database.
  *
