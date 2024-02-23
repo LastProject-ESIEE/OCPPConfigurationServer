@@ -1,53 +1,98 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Input, MenuItem, Paper, Select, TextField } from '@mui/material';
 import confKeys from "../conf/confKeys";
 import Typography from "@mui/material/Typography";
 
-const FirmwareSection = () => (
-    <Box>
-        <Paper elevation={2} sx={{p: 2, mt: 3}}>
+function FirmwareSection (props: {
+    globalState: GlobalState;
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>
+}) {
+    const [firmware, setFirmware] = useState("");
+
+    return (
+        <Box>
+            <Paper elevation={2} sx={{p: 2, mt: 3}}>
+                <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid xs={4} item>
+                        <h4>Titre de la configuration : </h4>
+                    </Grid>
+                    <Grid xs={7} item>
+                        <Input
+                            onChange={event => {
+                                props.setGlobalState(prevState => {
+                                    return {
+                                        configuration: prevState.configuration,
+                                        firmware: prevState.firmware,
+                                        description: prevState.description,
+                                        name: event.target.value
+                                    }
+                                })
+                            }}
+                            fullWidth={true}
+                            placeholder="Titre"/>
+                    </Grid>
+                </Grid>
+            </Paper>
+
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid xs={4} item>
-                    <h4>Titre de la configuration : </h4>
+                    <h4>Firmware : </h4>
                 </Grid>
                 <Grid xs={7} item>
-                    <Input fullWidth={true} placeholder="Titre"/>
+                    <Paper elevation={2} sx={{p: 2, mt: 3}}>
+                        <Select
+                            value={firmware}
+                            onChange={event => {
+                                setFirmware(event.target.value as string)
+                                props.setGlobalState(prevState => {
+                                    return {
+                                        configuration: prevState.configuration,
+                                        firmware: event.target.value as string,
+                                        description: prevState.description,
+                                        name: prevState.name
+                                    }
+                                })
+                            }}
+                            fullWidth={true}>
+                            <MenuItem value={6.7} selected={true}>6.7</MenuItem>
+                            <MenuItem value={1.2} selected={true}>1.2</MenuItem>
+                        </Select>
+                    </Paper>
                 </Grid>
             </Grid>
-        </Paper>
-
-        <Grid container alignItems="center" justifyContent="space-between">
-            <Grid xs={4} item>
-                <h4>Firmware : </h4>
-            </Grid>
-            <Grid xs={7} item>
-                <Paper elevation={2} sx={{p: 2, mt: 3}}>
-                    <Select defaultValue={6.7} fullWidth={true}>
-                        <MenuItem value={6.7} selected={true}>6.7</MenuItem>
-                        <MenuItem value={1.2} selected={true}>1.2</MenuItem>
-                    </Select>
-                </Paper>
-            </Grid>
-        </Grid>
 
 
-        <Paper elevation={2} sx={{p: 2, mt: 3}}>
-            <Grid container alignItems="center" justifyContent="space-between">
-                <Grid xs={4} item>
-                    <h4>Description : </h4>
+            <Paper elevation={2} sx={{p: 2, mt: 3}}>
+                <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid xs={4} item>
+                        <h4>Description : </h4>
+                    </Grid>
+                    <Grid xs={7} item>
+                        <Input
+                            onChange={event => {
+                                props.setGlobalState(prevState => {
+                                    return {
+                                        configuration: prevState.configuration,
+                                        firmware: prevState.firmware,
+                                        description: event.target.value,
+                                        name: prevState.name
+                                    }
+                                })
+                            }}
+                            multiline minRows={4} maxRows={6} fullWidth={true}
+                            placeholder="Description de la configuration"/>
+                    </Grid>
                 </Grid>
-                <Grid xs={7} item>
-                    <Input multiline minRows={4} maxRows={6} fullWidth={true}
-                           placeholder="Description de la configuration"/>
-                </Grid>
-            </Grid>
-        </Paper>
-    </Box>
-);
+            </Paper>
+        </Box>
+    );
+}
 
 
 function KeyValuePair(props: {
-    selectedKey: string
+    selectedKey: string,
+    globalState: GlobalState,
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }): JSX.Element {
     const {selectedKey} = props;
 
@@ -65,7 +110,30 @@ function KeyValuePair(props: {
                 <Grid item>
                     <Input
                         onChange={event => {
-                            setCurrentValue(event.target.value)
+                            const newValue = event.target.value
+                            setCurrentValue(newValue)
+                            const newKey: Configuration = {
+                                key: props.selectedKey,
+                                value: newValue
+                            }
+                            props.setGlobalState(prevState => {
+                                let updated = false;
+                                prevState.configuration.forEach(conf => {
+                                    if(conf.key === newKey.key){
+                                        conf.value = newKey.value
+                                        updated = true
+                                    }
+                                })
+                                if(!updated){
+                                    prevState.configuration.push(newKey)
+                                }
+                                return {
+                                    configuration: prevState.configuration,
+                                    firmware: prevState.firmware,
+                                    description: prevState.description,
+                                    name: prevState.name
+                                }
+                            })
                         }}
                         value={currentValue}
                         placeholder="valeur"/>
@@ -75,7 +143,7 @@ function KeyValuePair(props: {
     )
 }
 
-function KeyValueSection() {
+function KeyValueSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> }) {
     const [options, setOptions] = useState(confKeys.map(key => key.keyName));
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -105,7 +173,31 @@ function KeyValueSection() {
                             <p>:</p>
                         </Grid>
                         <Grid item>
-                            <Input defaultValue="BRS-HERR" placeholder="valeur"/>
+                            <Input defaultValue="BRS-HERR" onChange={ev => {
+                                const newKey: Configuration = {
+                                    key:"Identity",
+                                    value:ev.target.value
+                                }
+                                props.setGlobalState(prevState => {
+                                    let updated = false;
+                                    prevState.configuration.forEach(conf => {
+                                        if(conf.key === newKey.key){
+                                            conf.value = newKey.value
+                                            updated = true
+                                        }
+                                    })
+                                    if(!updated){
+                                        prevState.configuration.push(newKey)
+                                    }
+                                    return {
+                                        configuration: prevState.configuration,
+                                        firmware: prevState.firmware,
+                                        description: prevState.description,
+                                        name: prevState.name
+                                    }
+                                })
+
+                            }} placeholder="valeur"/>
                         </Grid>
                     </Grid>
                 </Paper>
@@ -134,10 +226,9 @@ function KeyValueSection() {
                 {selectedKeys.length !== 0 && (
                     <Paper elevation={2} sx={{p: 2, mt: 2}}>
                         <Grid sx={{pt: 1, pb: 1}} container alignItems="center" justifyContent="space-evenly">
-
                             {selectedKeys.map((key) => {
                                 return (
-                                    <KeyValuePair key={key} selectedKey={key} />
+                                    <KeyValuePair key={key} selectedKey={key} globalState={props.globalState} setGlobalState={props.setGlobalState}/>
                                 )
                             })}
                         </Grid>
@@ -148,19 +239,43 @@ function KeyValueSection() {
     );
 }
 
+type GlobalState = {
+    name: string,
+    description: string,
+    configuration: Configuration[],
+    firmware: string
+}
+
+type Configuration = {
+    key: string,
+    value: string,
+}
+
 const FirmwareUpdate = () => {
+
+    const [globalState, setGlobalState] = useState<GlobalState>({
+        name: "",
+        description: "",
+        configuration: [],
+        firmware: ""
+    })
+
+    function handleSubmit() {
+        console.log(globalState)
+    }
+
     return (
         <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
             <Grid container spacing={15}>
                 <Grid item xs={12} md={6}>
-                    <FirmwareSection/>
+                    <FirmwareSection globalState={globalState} setGlobalState={setGlobalState}/>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <KeyValueSection/>
+                    <KeyValueSection globalState={globalState} setGlobalState={setGlobalState}/>
                 </Grid>
             </Grid>
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
-                <Button variant="contained" color="primary">Valider</Button>
+                <Button onClick={handleSubmit} variant="contained" color="primary">Valider</Button>
             </Box>
         </Container>
     );
