@@ -66,7 +66,6 @@ function KeyValuePair(props: {
                     <Input
                         onChange={event => {
                             setCurrentValue(event.target.value)
-                            console.log(selectedKey, event.target.value)
                         }}
                         value={currentValue}
                         placeholder="valeur"/>
