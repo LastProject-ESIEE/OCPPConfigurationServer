@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.status.StatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -28,14 +29,18 @@ public class ConfigurationController {
 
   private final ConfigurationService configurationService;
 
+  private final StatusService statusService;
+
   /**
    * ConfigurationController's constructor.
    *
    * @param configurationService A ConfigurationService doing database manipulations.
    */
   @Autowired
-  public ConfigurationController(ConfigurationService configurationService) {
+  public ConfigurationController(ConfigurationService configurationService,
+                                 StatusService statusService) {
     this.configurationService = configurationService;
+    this.statusService = statusService;
   }
 
   /**
@@ -73,7 +78,10 @@ public class ConfigurationController {
               }""",
           required = true)
       @RequestBody CreateConfigurationDto createConfigurationDto) {
-    return new ResponseEntity<>(configurationService.save(createConfigurationDto),
+    var status = statusService.save();
+    var configuration = configurationService.save(createConfigurationDto);
+
+    return new ResponseEntity<>(configuration,
         HttpStatus.CREATED);
   }
 }

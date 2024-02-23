@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.status.StatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
