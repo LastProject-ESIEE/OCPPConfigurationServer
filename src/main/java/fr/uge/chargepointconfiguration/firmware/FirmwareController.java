@@ -12,11 +12,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * A controller for the firmware entity.
  */
+@RequestMapping("/api/firmware")
 @RestController
 public class FirmwareController {
 
@@ -43,7 +45,7 @@ public class FirmwareController {
       content = { @Content(
           mediaType = "application/json",
           schema = @Schema(implementation = Firmware.class)) })
-  @GetMapping(value = "/firmware/all")
+  @GetMapping(value = "/all")
   public List<FirmwareDto> getAllFirmwares() {
     return firmwareRepository.findAll().stream().map(Firmware::toDto).toList();
   }
@@ -66,7 +68,7 @@ public class FirmwareController {
           description = "This firmware does not exist",
           content = @Content)
   })
-  @GetMapping(value = "/firmware/{id}")
+  @GetMapping(value = "/{id}")
   public Optional<FirmwareDto> getFirmwareById(
       @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
