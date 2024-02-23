@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Error from "./pages/Error";
 import Home from "./Home";
 import { ConfigurationListPage } from './pages/Configuration';
+import { ChargePointTable } from './pages/BornesTable';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -26,7 +27,7 @@ root.render(
                         <Route path="new" element={<Error/>}/>
                         <Route path="edit" element={<Error/>}/>
                     </Route>
-                    <Route path="chargepoint" element={<About/>}/>
+                    <Route path="chargepoint" Component={ChargePointTable}/>
                     <Route path="firmware">
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
