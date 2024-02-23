@@ -100,6 +100,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     var config = currentChargepoint.getConfiguration();
     if (status.getStatus() == Status.StatusProcess.FINISHED
             && config.getLastEdit().before(status.getLastUpdate())) {
+      // TODO : Log, the chargepoint is ready !
       var response = new BootNotificationResponse16(
               LocalDateTime.now().toString(),
               5,
