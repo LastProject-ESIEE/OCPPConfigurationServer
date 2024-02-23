@@ -99,6 +99,7 @@ public interface WebSocketMessage {
     return switch (MessageType.codeToEnum(callType)) {
       case RESPONSE -> {
         try {
+          array = message.substring(1, message.length() - 1).split(",", 3);
           var messageId = Long.parseLong(array[1].replaceAll("\"", ""));
           yield Optional.of(new WebSocketResponseMessage(callType, messageId, array[2]));
         } catch (NumberFormatException n) {
