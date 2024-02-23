@@ -24,10 +24,8 @@ root.render(
                     <Route path="" element={<Navigate to="chargepoint"/>}/>
                     <Route path="configuration">
                         <Route path="" element={<ConfigurationListPage/>}/>
-                        <Route path="new" element={<Error/>}/>
                         <Route path="edit/:id" element={<ConfigurationEditPage/>}/>
                         <Route path="new" element={<CreateConfig/>}/>
-                        <Route path="edit" element={<Error/>}/>
                     </Route>
                     <Route path="chargepoint" element={<About/>}/>
                     <Route path="firmware">

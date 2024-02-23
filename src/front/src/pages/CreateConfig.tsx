@@ -1,13 +1,58 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Input, MenuItem, Paper, Select, TextField } from '@mui/material';
 import confKeys from "../conf/confKeys";
 import Typography from "@mui/material/Typography";
+
+
+export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
+    let request = await fetch(window.location.origin + "/api/configuration/create",
+        {
+            method: "POST",
+            body: JSON.stringify({
+                name: configuration.name,
+                description: configuration.description,
+                configuration: JSON.stringify(configuration.configuration),
+                firmware: configuration.firmware
+            })
+        })
+    if(request.ok){
+        return true
+    }else{
+        console.log("Fetch configuration list failed, error code:" +  request.status)
+        return false
+    }
+}
+
+type Firmware = {
+    id: number,
+    url: string,
+    version: string,
+    constructor: string,
+}
 
 function FirmwareSection (props: {
     globalState: GlobalState;
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
     const [firmware, setFirmware] = useState("");
+    const [firmwares, setFirmwares] = useState<Firmware[]>([]);
+
+    useEffect(() => {
+        fetch("api/firmware/all")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw response;
+            })
+            .then(data => {
+                console.log("firmwares : ", data)
+                setFirmwares(data);
+            })
+            .catch(error => {
+                console.error("ERROR ", error);
+            });
+    }, []);
 
     return (
         <Box>
@@ -262,6 +307,7 @@ const FirmwareUpdate = () => {
 
     function handleSubmit() {
         console.log(globalState)
+        postNewConfiguration(globalState) // manage response to display error or succes
     }
 
     return (
