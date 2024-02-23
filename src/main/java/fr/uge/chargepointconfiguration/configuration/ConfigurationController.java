@@ -1,29 +1,26 @@
 package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
-import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointService;
 import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
-import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.status.StatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * A controller for the configuration entity.
+ * A controller for the Configuration entity.
  */
 @RestController
 @RequestMapping("/api/configuration")
@@ -47,6 +44,22 @@ public class ConfigurationController {
     this.chargepointService = chargepointService;
     this.configurationService = configurationService;
     this.statusService = statusService;
+  }
+
+  /**
+   * Returns a list of all configuration without the configuration.
+   *
+   * @return A list of all the configuration.
+   */
+  @Operation(summary = "Get all configuration")
+  @ApiResponse(responseCode = "200",
+      description = "Found all the configuration",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationGeneralDto.class))
+      })
+  @GetMapping(value = "/all")
+  public List<ConfigurationGeneralDto> getAllConfiguration() {
+    return configurationService.getAllConfigurations();
   }
 
   /**
@@ -86,8 +99,8 @@ public class ConfigurationController {
       @RequestBody CreateConfigurationDto createConfigurationDto) {
     var status = statusService.save();
     var configuration = configurationService.save(createConfigurationDto);
-    var chargepoint = chargepointService.save(new CreateChargepointDto(
-          "ACE0272306",
+    chargepointService.save(new CreateChargepointDto(
+        "ACE0272306",
         "Eve Single S-line",
         "Alfen BV",
         "BRS",
@@ -95,7 +108,7 @@ public class ConfigurationController {
         configuration.id(),
         status.id(),
         createConfigurationDto.firmware()
-        ));
+    ));
     return new ResponseEntity<>(configuration,
         HttpStatus.CREATED);
   }
