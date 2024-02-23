@@ -42,6 +42,20 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
   private String configuration;
 
   /**
+   * Configuration's constructor.
+   *
+   * @param name How you want your configuration to be named.
+   * @param description Describe the meaning of this configuration.
+   * @param configuration A JSON containing key and values for your configuration.
+   */
+  public Configuration(String name,
+                       String description,
+                       String configuration) {
+    this(name, configuration);
+    this.description = Objects.requireNonNull(description);
+  }
+
+  /**
    * Configuration's constructor without defaults values.
    *
    * @param name How you want your configuration to be named.
