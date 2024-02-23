@@ -123,11 +123,13 @@ public interface WebSocketMessage {
    * @return WebSocketMessage
    */
   static Optional<WebSocketMessage> parse(String message) {
+    // Split this line by 4 by default for a request type message.
     var array = message.substring(1, message.length() - 1).split(",", 4);
     var callType = Integer.parseInt(array[0]);
     return switch (MessageType.codeToEnum(callType)) {
       case RESPONSE -> {
         try {
+          // Split this line by 3, because a response has 3 parts (MessageType, MessageId, Data).
           array = message.substring(1, message.length() - 1).split(",", 3);
           var messageId = Long.parseLong(array[1].replaceAll("\"", ""));
           yield Optional.of(new WebSocketResponseMessage(callType, messageId, array[2]));
