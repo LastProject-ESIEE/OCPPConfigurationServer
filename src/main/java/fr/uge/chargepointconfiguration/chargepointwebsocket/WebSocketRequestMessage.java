@@ -14,6 +14,11 @@ public record WebSocketRequestMessage(int callType,
                                       String data) implements WebSocketMessage {
 
   @Override
+  public boolean isRequest() {
+    return true;
+  }
+
+  @Override
   public String toString() {
     return "[" + callType + ",\"" + messageId + "\",\""
            + messageName.getName() + "\"," + data + "]";
