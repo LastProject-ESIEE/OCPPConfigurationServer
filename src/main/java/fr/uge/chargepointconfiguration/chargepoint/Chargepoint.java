@@ -58,10 +58,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
   @JoinColumn(name = "id_status", referencedColumnName = "id_status", nullable = false)
   private Status status;
 
-  @ManyToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
-  private Firmware firmware;
-
   /**
    * Chargepoint's constructor.
    *
@@ -72,7 +68,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
    * @param serverAddress The server's URL of the chargepoint.
    * @param configuration A JSON containing the chargepoint's configuration.
    * @param status Description of the current state of configuration for the chargepoint.
-   * @param firmware The chargepoint's firmware.
    */
   public Chargepoint(String serialNumberChargepoint,
                      String type,
@@ -80,15 +75,13 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
                      String clientId,
                      String serverAddress,
                      Configuration configuration,
-                     Status status,
-                     Firmware firmware) {
+                     Status status) {
     this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
     this.type = Objects.requireNonNull(type);
     this.constructor = Objects.requireNonNull(constructor);
     this.clientId = Objects.requireNonNull(clientId);
     this.serverAddress = Objects.requireNonNull(serverAddress);
     this.configuration = Objects.requireNonNull(configuration);
-    this.firmware = Objects.requireNonNull(firmware);
     this.status = Objects.requireNonNull(status);
   }
 
@@ -159,14 +152,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
     this.status = status;
   }
 
-  public Firmware getFirmware() {
-    return firmware;
-  }
-
-  public void setFirmware(Firmware firmware) {
-    this.firmware = firmware;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -182,8 +167,7 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
            && Objects.equals(clientId, that.clientId)
            && Objects.equals(serverAddress, that.serverAddress)
            && Objects.equals(configuration, that.configuration)
-           && Objects.equals(status, that.status)
-           && Objects.equals(firmware, that.firmware);
+           && Objects.equals(status, that.status);
   }
 
   @Override
@@ -195,8 +179,7 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
             clientId,
             serverAddress,
             configuration,
-            status,
-            firmware);
+            status);
   }
 
   @Override
@@ -209,8 +192,7 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
           clientId,
           serverAddress,
           configuration,
-          status,
-          firmware);
+          status);
   }
 
   @Override
@@ -224,7 +206,6 @@ public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<Charg
            + ", serverAddress='" + serverAddress + '\''
            + ", configuration='" + configuration + '\''
            + ", status=" + status
-           + ", firmware=" + firmware
            + '}';
   }
 }
