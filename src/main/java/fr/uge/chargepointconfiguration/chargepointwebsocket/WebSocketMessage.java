@@ -14,18 +14,47 @@ import java.util.Optional;
  */
 public interface WebSocketMessage {
 
+  /**
+   * Returns the message's data.<br>
+   * Often, it is information concerning a change in the configuration
+   * or information about the chargepoint.<br>
+   * It is represented by a json formatted string.
+   *
+   * @return The message's data (json formatted string).
+   */
   String data();
 
+  /**
+   * Returns the message's type.<br>
+   * By default, it returns null when the message is not a request.
+   *
+   * @return {@link MessageTypeRequest}.
+   */
   default MessageTypeRequest messageName() {
     return null;
   }
 
+  /**
+   * Returns the message's id.<br>
+   * It is used to respond to the message or wait for the correct message.
+   *
+   * @return The message's id.
+   */
   long messageId();
 
+  /**
+   * Checks if the current message is a request or not.<br>
+   * For the false value, the current message could be a Response or Other.
+   *
+   * @return True if the message is a request or false, if not.
+   */
   boolean isRequest();
 
   /**
-   * Defines the message type which the server could receive from the chargepoint.
+   * Defines the request message type for OCPP 1.6 and OCPP 2.0.1 protocols.<br>
+   * These enums can be sent by the chargepoint (BootNotification, StatusFirmware)
+   * or the server (ChangeConfiguration, SetVariables).<br>
+   * By default, if the packet is unknown, we set to other.
    */
   enum MessageTypeRequest {
     BOOT_NOTIFICATION_REQUEST("BootNotification"),
