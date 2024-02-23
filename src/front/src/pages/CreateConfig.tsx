@@ -36,7 +36,7 @@ function FirmwareSection(props: {
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
     const [firmware, setFirmware] = useState("");
-    const [firmwareList, setFirmwareList] = useState<{id:number, version:string}[]>([]);
+    const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
 
     useEffect(() => {
         const fetchFirmwareList = async () => {
@@ -72,13 +72,13 @@ function FirmwareSection(props: {
                     </Grid>
                 </Grid>
             </Paper>
+            <Paper elevation={2} sx={{p: 2, mt: 3}}>
 
-            <Grid container alignItems="center" justifyContent="space-between">
-                <Grid xs={4} item>
-                    <h4>Firmware : </h4>
-                </Grid>
-                <Grid xs={7} item>
-                    <Paper elevation={2} sx={{p: 2, mt: 3}}>
+                <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid xs={4} item>
+                        <h4>Firmware : </h4>
+                    </Grid>
+                    <Grid xs={7} item>
                         <Select
                             value={firmware}
                             onChange={event => {
@@ -98,9 +98,9 @@ function FirmwareSection(props: {
                                 <MenuItem key={item.id} value={item.id} selected={true}>{item.version}</MenuItem>
                             ))}
                         </Select>
-                    </Paper>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Paper>
 
 
             <Paper elevation={2} sx={{p: 2, mt: 3}}>
@@ -129,7 +129,6 @@ function FirmwareSection(props: {
     );
 }
 
-
 function KeyValuePair(props: {
     selectedKey: string,
     globalState: GlobalState,
@@ -140,46 +139,58 @@ function KeyValuePair(props: {
     const [currentValue, setCurrentValue] = useState("");
 
     return (
-        <Grid sx={{pt: 1, pb: 1}} container alignItems="center" justifyContent="space-evenly">
-            <Grid sx={{pt: 1, pb: 1}} container alignItems="center" justifyContent="space-evenly">
-                <Grid item>
-                    <Typography>{selectedKey}</Typography>
-                </Grid>
-                <Grid item>
-                    <p>:</p>
-                </Grid>
-                <Grid item>
-                    <Input
-                        onChange={event => {
-                            const newValue = event.target.value
-                            setCurrentValue(newValue)
-                            const newKey: Configuration = {
-                                key: props.selectedKey,
-                                value: newValue
-                            }
-                            props.setGlobalState(prevState => {
-                                let updated = false;
-                                prevState.configuration.forEach(conf => {
-                                    if (conf.key === newKey.key) {
-                                        conf.value = newKey.value
-                                        updated = true
-                                    }
-                                })
-                                if (!updated) {
-                                    prevState.configuration.push(newKey)
-                                }
-                                return {
-                                    configuration: prevState.configuration,
-                                    firmware: prevState.firmware,
-                                    description: prevState.description,
-                                    name: prevState.name
+        <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
+            <Grid item sm={4}>
+                <Typography>{selectedKey}</Typography>
+            </Grid>
+            <Grid item sm={1}>
+                <p>:</p>
+            </Grid>
+            <Grid item sm={5}>
+                <Input
+                    onChange={event => {
+                        const newValue = event.target.value
+                        setCurrentValue(newValue)
+                        const newKey: Configuration = {
+                            key: props.selectedKey,
+                            value: newValue
+                        }
+                        props.setGlobalState(prevState => {
+                            let updated = false;
+                            prevState.configuration.forEach(conf => {
+                                if (conf.key === newKey.key) {
+                                    conf.value = newKey.value
+                                    updated = true
                                 }
                             })
-                        }}
-                        value={currentValue}
-                        placeholder="valeur"/>
-                </Grid>
+                            if (!updated) {
+                                prevState.configuration.push(newKey)
+                            }
+                            return {
+                                configuration: prevState.configuration,
+                                firmware: prevState.firmware,
+                                description: prevState.description,
+                                name: prevState.name
+                            }
+                        })
+                    }}
+                    value={currentValue}
+                    placeholder="valeur"/>
             </Grid>
+            <Button
+                size={"large"}
+                sx={{
+                    width: "30px", // Adjust as needed
+                    height: "30px", // Adjust as needed
+                    color: "error",
+                }}
+                color={"error"}
+                onClick={() => {
+                    console.log("efface toi stp");
+                }}
+            >
+                <h2>&times;</h2>
+            </Button>
         </Grid>
     )
 }
@@ -258,8 +269,9 @@ function KeyValueSection(props: { globalState: GlobalState; setGlobalState: Disp
                             />
                         </Grid>
                         <Grid item>
-                            <Button onClick={updateOptions} variant="contained" type="submit" sx={{borderRadius: 28}}>
-                                +
+                            <Button size={"large"} onClick={updateOptions} variant="contained" type="submit"
+                                    sx={{borderRadius: 100}}>
+                                <span style={{fontSize: "larger", fontWeight: "bolder"}}>+</span>
                             </Button>
                         </Grid>
                     </Grid>
@@ -318,7 +330,8 @@ const FirmwareUpdate = () => {
                 </Grid>
             </Grid>
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
-                <Button onClick={handleSubmit} variant="contained" color="primary">Valider</Button>
+                <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
+                        color="primary">Valider</Button>
             </Box>
         </Container>
     );
