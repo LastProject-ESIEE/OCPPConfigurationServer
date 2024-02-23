@@ -5,20 +5,28 @@ import Typography from "@mui/material/Typography";
 
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
+    let myConfig = configuration.configuration.map(keyValue => "\""+keyValue.key+"\"" + ":" + "\""+keyValue.value+"\"")
+        .join(", ")
+
+    myConfig = "{" + myConfig + "}"
+
     let request = await fetch(window.location.origin + "/api/configuration/create",
         {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 name: configuration.name,
                 description: configuration.description,
-                configuration: JSON.stringify(configuration.configuration),
+                configuration: myConfig,
                 firmware: configuration.firmware
             })
         })
-    if(request.ok){
+    if (request.ok) {
         return true
-    }else{
-        console.log("Fetch configuration list failed, error code:" +  request.status)
+    } else {
+        console.log("Fetch configuration list failed, error code:" + request.status)
         return false
     }
 }
@@ -30,7 +38,7 @@ type Firmware = {
     constructor: string,
 }
 
-function FirmwareSection (props: {
+function FirmwareSection(props: {
     globalState: GlobalState;
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
@@ -99,8 +107,8 @@ function FirmwareSection (props: {
                                 })
                             }}
                             fullWidth={true}>
-                            <MenuItem value={6.7} selected={true}>6.7</MenuItem>
-                            <MenuItem value={1.2} selected={true}>1.2</MenuItem>
+                            <MenuItem value={1} selected={true}>6.1.1-4160</MenuItem>
+                            <MenuItem value={2} selected={true}>5.4.3-4073</MenuItem>
                         </Select>
                     </Paper>
                 </Grid>
@@ -164,12 +172,12 @@ function KeyValuePair(props: {
                             props.setGlobalState(prevState => {
                                 let updated = false;
                                 prevState.configuration.forEach(conf => {
-                                    if(conf.key === newKey.key){
+                                    if (conf.key === newKey.key) {
                                         conf.value = newKey.value
                                         updated = true
                                     }
                                 })
-                                if(!updated){
+                                if (!updated) {
                                     prevState.configuration.push(newKey)
                                 }
                                 return {
@@ -220,18 +228,18 @@ function KeyValueSection(props: { globalState: GlobalState; setGlobalState: Disp
                         <Grid item>
                             <Input defaultValue="BRS-HERR" onChange={ev => {
                                 const newKey: Configuration = {
-                                    key:"Identity",
-                                    value:ev.target.value
+                                    key: "Identity",
+                                    value: ev.target.value
                                 }
                                 props.setGlobalState(prevState => {
                                     let updated = false;
                                     prevState.configuration.forEach(conf => {
-                                        if(conf.key === newKey.key){
+                                        if (conf.key === newKey.key) {
                                             conf.value = newKey.value
                                             updated = true
                                         }
                                     })
-                                    if(!updated){
+                                    if (!updated) {
                                         prevState.configuration.push(newKey)
                                     }
                                     return {
@@ -273,7 +281,8 @@ function KeyValueSection(props: { globalState: GlobalState; setGlobalState: Disp
                         <Grid sx={{pt: 1, pb: 1}} container alignItems="center" justifyContent="space-evenly">
                             {selectedKeys.map((key) => {
                                 return (
-                                    <KeyValuePair key={key} selectedKey={key} globalState={props.globalState} setGlobalState={props.setGlobalState}/>
+                                    <KeyValuePair key={key} selectedKey={key} globalState={props.globalState}
+                                                  setGlobalState={props.setGlobalState}/>
                                 )
                             })}
                         </Grid>
