@@ -46,7 +46,7 @@ public class Status implements fr.uge.chargepointconfiguration.Entity<StatusDto>
   @Column(name = "last_update", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp lastUpdate;
+  private Timestamp lastUpdate = new Timestamp(System.currentTimeMillis());
 
   @Column(name = "error", nullable = false, length = 65_535)
   private String error = "";
@@ -62,16 +62,6 @@ public class Status implements fr.uge.chargepointconfiguration.Entity<StatusDto>
           columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
   private StatusProcess status = StatusProcess.PENDING;
-
-  /**
-   * Status's constructor.
-   *
-   * @param lastUpdate The last time the status has changed.
-   */
-  public Status(Timestamp lastUpdate) {
-    this.lastUpdate = Objects.requireNonNull(lastUpdate);
-    state = true;
-  }
 
   /**
    * Empty constructor. Should not be called.
