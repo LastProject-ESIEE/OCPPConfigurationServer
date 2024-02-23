@@ -206,5 +206,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     status.setStep(Status.Step.CONFIGURATION);
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
+    processConfigurationRequest(chargePointManager);
   }
 }
