@@ -9,5 +9,6 @@ package fr.uge.chargepointconfiguration.configuration;
  */
 public record CreateConfigurationDto(String name,
                                    String description,
-                                   String configuration) {
+                                   String configuration,
+                                   String firmware) {
 }
