@@ -1,11 +1,11 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Input, MenuItem, Paper, Select, TextField } from '@mui/material';
 import confKeys from "../conf/confKeys";
 import Typography from "@mui/material/Typography";
 
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    let myConfig = configuration.configuration.map(keyValue => "\""+keyValue.key+"\"" + ":" + "\""+keyValue.value+"\"")
+    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key}":"${keyValue.value}"`)
         .join(", ")
 
     myConfig = "{" + myConfig + "}"
@@ -31,36 +31,11 @@ export async function postNewConfiguration(configuration: GlobalState): Promise<
     }
 }
 
-type Firmware = {
-    id: number,
-    url: string,
-    version: string,
-    constructor: string,
-}
-
 function FirmwareSection(props: {
     globalState: GlobalState;
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
     const [firmware, setFirmware] = useState("");
-    const [firmwares, setFirmwares] = useState<Firmware[]>([]);
-
-    useEffect(() => {
-        fetch("api/firmware/all")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw response;
-            })
-            .then(data => {
-                console.log("firmwares : ", data)
-                setFirmwares(data);
-            })
-            .catch(error => {
-                console.error("ERROR ", error);
-            });
-    }, []);
 
     return (
         <Box>
