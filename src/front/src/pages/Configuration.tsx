@@ -1,15 +1,7 @@
 import { Box, Grid, List, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { ConfigurationView, getConfigurationList } from "../conf/configurationController";
-import { configure } from "@testing-library/react";
-import { Link, RouteProps, RouterProps, useParams, useSearchParams } from "react-router-dom";
-
-
-let confTest = [{id: 1, description: "Configuration 1"},
-{id: 2, description: "Configuration 2"},
-{id: 3, description: "Configuration 3"},
-{id: 4, description: "Configuration 4"}]
-
+import { Link, useParams } from "react-router-dom";
 
 
 export function ConfigurationListPage()  {
@@ -21,26 +13,32 @@ export function ConfigurationListPage()  {
 
     return (
         <Box maxWidth={"true"}>
-            <Grid container maxWidth={"true"} flexDirection={"row"} justifyContent={"center"}>
-                <Grid container xs={2} maxWidth={"true"} justifyContent={"center"}>
-                    <Typography maxWidth={"true"} variant="h6" justifyContent={"center"}>Nom</Typography>
+            <Grid key="grid-header" container maxWidth={"true"} flexDirection={"row"} justifyContent={"center"}>
+                <Grid key="grid-header-item-1" item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Name</Typography>
                 </Grid>
-                <Grid container xs={10} maxWidth={"true"} justifyContent={"center"}>
-                    <Typography maxWidth={"true"} variant="h6" justifyContent={"center"}>Decsription</Typography>
+                <Grid key="grid-header-item-2" item xs={6} maxWidth={"true"} justifyContent={"center"}>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Decsription</Typography>
+                </Grid>
+                <Grid key="grid-header-item-3" item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Last update</Typography>
                 </Grid>
             </Grid>
-            <Box maxWidth={"true"}>
-            <List style={{maxWidth: "true"}}>
+            <Box key="box-list-container" maxWidth={"true"}>
+                <List key="configuration-list" style={{maxWidth: "true",height: 700, maxHeight: 700, overflow: 'auto'}}>
                         {items.map(configuration => {
                             return (
-                                <Link to={{ pathname: 'edit/' + configuration.id}} style={{ textDecoration: 'none' }} >
-                                    <ListItemButton style={{maxWidth: "true"}} onClick={(ev) => console.log("Display " + configuration.id)}>
+                                <Link key={"configuration-edit-path-" + configuration.id}  to={{ pathname: 'edit/' + configuration.id}} style={{ textDecoration: 'none' }} >
+                                    <ListItemButton style={{maxWidth: "true", padding: 0, paddingTop: 4}}>
                                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                                            <Grid container xs={2} maxWidth={"true"} justifyContent={"center"}>
-                                                <Typography variant="body2">{configuration.name}</Typography>
+                                            <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                                                <Typography variant="body1" align="center">{configuration.name}</Typography>
                                             </Grid>
-                                            <Grid container xs={10} maxWidth={"true"} justifyContent={"center"}>
-                                                <Typography variant="body2">{configuration.description}</Typography>
+                                            <Grid item xs={6} maxWidth={"true"} justifyContent={"center"}>
+                                                <Typography variant="body1" align="center">{configuration.description === "" ? "No description" : configuration.description}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                                                <Typography variant="body1" align="center">{new Date(configuration.timestamp).toLocaleString()}</Typography>
                                             </Grid>
                                         </Grid>
                                     </ListItemButton>

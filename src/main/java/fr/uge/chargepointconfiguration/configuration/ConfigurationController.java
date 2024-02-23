@@ -1,20 +1,13 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.entities.Chargepoint;
-import fr.uge.chargepointconfiguration.entities.Configuration;
-import fr.uge.chargepointconfiguration.entities.dto.ConfigurationGeneralDto;
-import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
-import fr.uge.chargepointconfiguration.repository.ConfigurationRepository;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -23,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class ConfigurationController {
-
   private final ConfigurationRepository configurationRepository;
 
   /**
@@ -37,7 +29,7 @@ public class ConfigurationController {
   }
 
   /**
-   * Returns a list of all configuration.
+   * Returns a list of all configuration without the configuration.
    *
    * @return A list of all the configuration.
    */
@@ -47,9 +39,11 @@ public class ConfigurationController {
           content = { @Content(mediaType = "application/json",
                   schema = @Schema(implementation = ConfigurationGeneralDto.class))
           })
-  @GetMapping(value = "/configuration/all")
+  @GetMapping(value = "/api/configuration/all")
   public List<ConfigurationGeneralDto> getAllConfiguration() {
     return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
   }
+
+
 
 }

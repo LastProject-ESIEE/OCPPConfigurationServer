@@ -1,7 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
 import java.util.List;
-import fr.uge.chargepointconfiguration.configuration.Configuration;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
-package fr.uge.chargepointconfiguration.entities.dto;
+package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.entities.Configuration;
+import java.sql.Timestamp;
 
 /**
  * Configuration DTO which contains general information name and description.
@@ -8,7 +8,11 @@ import fr.uge.chargepointconfiguration.entities.Configuration;
  * @param name        configuration name
  * @param description configuration description
  */
-public record ConfigurationGeneralDto(int id, String name, String description) {
+public record ConfigurationGeneralDto(
+        int id,
+        String name,
+        String description,
+        Timestamp timestamp) {
 
   /**
    * Create DTO from Configuration entity.
@@ -20,7 +24,8 @@ public record ConfigurationGeneralDto(int id, String name, String description) {
     return new ConfigurationGeneralDto(
             configuration.getId(),
             configuration.getName(),
-            configuration.getDescription()
+            configuration.getDescription(),
+            configuration.getLastEdit()
     );
   }
 }
