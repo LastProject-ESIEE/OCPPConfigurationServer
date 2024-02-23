@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Input, MenuItem, Paper, Select, TextField } from '@mui/material';
 import confKeys from "../conf/confKeys";
 import Typography from "@mui/material/Typography";
@@ -36,6 +36,17 @@ function FirmwareSection(props: {
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
     const [firmware, setFirmware] = useState("");
+    const [firmwareList, setFirmwareList] = useState<{id:number, version:string}[]>([]);
+
+    useEffect(() => {
+        const fetchFirmwareList = async () => {
+            const response = await fetch('/api/firmware/all');
+            const data = await response.json();
+            setFirmwareList(data);
+        };
+
+        fetchFirmwareList();
+    }, []);
 
     return (
         <Box>
@@ -82,8 +93,10 @@ function FirmwareSection(props: {
                                 })
                             }}
                             fullWidth={true}>
-                            <MenuItem value={1} selected={true}>6.1.1-4160</MenuItem>
-                            <MenuItem value={2} selected={true}>5.4.3-4073</MenuItem>
+
+                            {firmwareList && firmwareList.map((item) => (
+                                <MenuItem key={item.id} value={item.id} selected={true}>{item.version}</MenuItem>
+                            ))}
                         </Select>
                     </Paper>
                 </Grid>
