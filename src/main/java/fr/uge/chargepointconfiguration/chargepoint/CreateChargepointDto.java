@@ -14,7 +14,6 @@ import fr.uge.chargepointconfiguration.status.Status;
  * @param serverAddress           The server's URL of the chargepoint.
  * @param configuration           A JSON containing the chargepoint's configuration.
  * @param status                  {@link Status}.
- * @param firmware                {@link Firmware}.
  */
 public record CreateChargepointDto(
     String serialNumberChargepoint,
@@ -23,7 +22,5 @@ public record CreateChargepointDto(
     String clientId,
     String serverAddress,
     int configuration,
-    int status,
-    int firmware) {
-
+    int status) {
 }

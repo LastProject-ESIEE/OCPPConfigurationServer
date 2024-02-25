@@ -1,11 +1,15 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.user.UserDto;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -41,17 +45,23 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
   @Column(name = "configuration", nullable = false)
   private String configuration;
 
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
+  private Firmware firmware;
+
   /**
    * Configuration's constructor.
    *
    * @param name How you want your configuration to be named.
    * @param description Describe the meaning of this configuration.
    * @param configuration A JSON containing key and values for your configuration.
+   * @param firmware The chargepoint's firmware.
    */
   public Configuration(String name,
                        String description,
-                       String configuration) {
-    this(name, configuration);
+                       String configuration,
+                       Firmware firmware) {
+    this(name, configuration, firmware);
     this.description = Objects.requireNonNull(description);
   }
 
@@ -62,10 +72,12 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
    * @param configuration A JSON containing key and values for your configuration.
    */
   public Configuration(String name,
-                       String configuration) {
+                       String configuration,
+                       Firmware firmware) {
     this.name = Objects.requireNonNull(name);
     this.configuration = Objects.requireNonNull(configuration);
     lastEdit = new Timestamp(System.currentTimeMillis());
+    this.firmware = Objects.requireNonNull(firmware);
   }
 
   /**
@@ -111,6 +123,14 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
     this.configuration = configuration;
   }
 
+  public Firmware getFirmware() {
+    return firmware;
+  }
+
+  public void setFirmware(Firmware firmware) {
+    this.firmware = firmware;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -124,12 +144,13 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
            && Objects.equals(name, configuration.name)
            && Objects.equals(description, configuration.description)
            && Objects.equals(lastEdit, lastEdit)
-           && Objects.equals(this.configuration, configuration.configuration);
+           && Objects.equals(this.configuration, configuration.configuration)
+           && Objects.equals(firmware, configuration.firmware);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, description, lastEdit, configuration);
+    return Objects.hash(id, name, description, lastEdit, configuration, firmware);
   }
 
   @Override
@@ -139,7 +160,8 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
           name,
           description,
         lastEdit,
-        configuration);
+        configuration,
+        firmware);
   }
 
   @Override
@@ -150,6 +172,7 @@ public class Configuration implements fr.uge.chargepointconfiguration.Entity<Con
            + ", description='" + description + '\''
            + ", lastEdit=" + lastEdit
            + ", configuration='" + configuration + '\''
+           + ", firmware=" + firmware
            + '}';
   }
 }

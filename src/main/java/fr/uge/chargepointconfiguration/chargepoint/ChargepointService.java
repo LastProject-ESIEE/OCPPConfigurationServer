@@ -18,8 +18,6 @@ public class ChargepointService {
 
   private final ConfigurationRepository configurationRepository;
 
-  private final FirmwareRepository firmwareRepository;
-
   private final StatusRepository statusRepository;
 
   /**
@@ -27,17 +25,14 @@ public class ChargepointService {
    *
    * @param chargepointRepository A ChargepointRepository accessing to database.
    * @param configurationRepository A ConfigurationRepository accessing to database.
-   * @param firmwareRepository A FirmwareRepository accessing to database.
    * @param statusRepository A StatusRepository accessing to database.
    */
   @Autowired
   public ChargepointService(ChargepointRepository chargepointRepository,
                             ConfigurationRepository configurationRepository,
-                            FirmwareRepository firmwareRepository,
                             StatusRepository statusRepository) {
     this.chargepointRepository = chargepointRepository;
     this.configurationRepository = configurationRepository;
-    this.firmwareRepository = firmwareRepository;
     this.statusRepository = statusRepository;
   }
 
@@ -55,8 +50,7 @@ public class ChargepointService {
         createChargepointDto.clientId(),
         createChargepointDto.serverAddress(),
         configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
-        statusRepository.findById(createChargepointDto.status()).orElseThrow(),
-        firmwareRepository.findById(createChargepointDto.firmware()).orElseThrow()
+        statusRepository.findById(createChargepointDto.status()).orElseThrow()
     ));
     return chargepoint.toDto();
   }

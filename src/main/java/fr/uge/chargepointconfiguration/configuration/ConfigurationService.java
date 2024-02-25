@@ -1,8 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
-import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
-import fr.uge.chargepointconfiguration.status.StatusRepository;
+import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +13,19 @@ public class ConfigurationService {
 
   private final ConfigurationRepository configurationRepository;
 
+  private final FirmwareRepository firmwareRepository;
+
   /**
    * ConfigurationService's constructor.
    *
    * @param configurationRepository A ConfigurationRepository accessing to database.
+   * @param firmwareRepository A FirmwareRepository accessing to database.
    */
   @Autowired
-  public ConfigurationService(ConfigurationRepository configurationRepository) {
+  public ConfigurationService(ConfigurationRepository configurationRepository,
+                              FirmwareRepository firmwareRepository) {
     this.configurationRepository = configurationRepository;
+    this.firmwareRepository = firmwareRepository;
   }
 
   /**
@@ -35,7 +38,8 @@ public class ConfigurationService {
     var configuration = configurationRepository.save(new Configuration(
         createConfigurationDto.name(),
         createConfigurationDto.description(),
-        createConfigurationDto.configuration()));
+        createConfigurationDto.configuration(),
+        firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
     // TODO create status and chargepoint
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
