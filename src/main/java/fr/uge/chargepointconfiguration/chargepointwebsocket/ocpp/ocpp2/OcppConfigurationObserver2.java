@@ -1,18 +1,29 @@
 package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketRequestMessage;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Component;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.SetVariableData;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.VariableType;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
+import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -24,7 +35,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
-  private final Queue<SetVariablesRequest20> queue = new LinkedList<>();
+  private final Queue<SetVariableData> queue = new LinkedList<>();
   private Chargepoint currentChargepoint;
 
   /**
@@ -50,7 +61,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
                         ChargePointManager chargePointManager) {
     switch (ocppMessage) {
       case BootNotificationRequest20 b -> processBootNotification(b, chargePointManager);
-      // TODO : Add switch case for the update firmware response and status firmware request.
+      case SetVariablesResponse20 r -> processConfigurationResponse(r, chargePointManager);
       default -> {
         // Do nothing
       }
@@ -111,12 +122,49 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   }
 
   private void processConfigurationRequest(ChargePointManager chargePointManager) {
+    var configuration = currentChargepoint.getConfiguration().getConfiguration();
+    var mapper = new ObjectMapper();
+    HashMap<String, HashMap<String, String>> configMap;
+    try {
+      configMap = mapper.readValue(configuration, HashMap.class);
+    } catch (JsonProcessingException e) {
+      return;
+    }
+    for (var component : configMap.keySet()) {
+      var componentConfig = configMap.get(component);
+      for (var key : componentConfig.keySet()) {
+        var value = componentConfig.get(key);
+        queue.add(new SetVariableData(
+                value,
+                new Component(component),
+                new VariableType(key)
+        ));
+      }
+    }
+    var status = currentChargepoint.getStatus();
     if (queue.isEmpty()) {
-      var status = currentChargepoint.getStatus();
       status.setStatus(Status.StatusProcess.FINISHED);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       currentChargepoint.setStatus(status);
       chargepointRepository.save(currentChargepoint);
+    } else {
+      status.setState(true);
+      status.setStatus(Status.StatusProcess.PENDING);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+      var setVariableList = new ArrayList<SetVariableData>();
+      while (!queue.isEmpty()) {
+        setVariableList.add(queue.poll());
+      }
+      var setVariableRequest = new SetVariablesRequest20(setVariableList);
+      sender.sendMessage(setVariableRequest, chargePointManager);
+      chargePointManager.setPendingRequest(
+              new WebSocketRequestMessage(MessageType.REQUEST.getCallType(),
+                      chargePointManager.getCurrentId(),
+                      WebSocketMessage.MessageTypeRequest.SET_VARIABLES_REQUEST,
+                      JsonParser.objectToJsonString(setVariableRequest))
+      );
     }
   }
 
@@ -134,5 +182,35 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
     processConfigurationRequest(chargePointManager);
+  }
+
+  private void processConfigurationResponse(SetVariablesResponse20 response,
+                                            ChargePointManager chargePointManager) {
+    var noFailure = true;
+    var failedConfig = new StringBuilder();
+    for (var result : response.setVariableResult()) {
+      if (!result.attributeStatus().equals("Accepted")) {
+        noFailure = false;
+        failedConfig.append(result.attributeStatus())
+                .append(" :\n\tComponent : ")
+                .append(result.component().name())
+                .append("\n\tVariable : ")
+                .append(result.variable().name())
+                .append("\n");
+      }
+    }
+    var status = currentChargepoint.getStatus();
+    if (!noFailure) {
+      status.setStatus(Status.StatusProcess.FAILED);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      status.setError(failedConfig.toString());
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+      return;
+    }
+    status.setStatus(Status.StatusProcess.FINISHED);
+    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+    currentChargepoint.setStatus(status);
+    chargepointRepository.save(currentChargepoint);
   }
 }
