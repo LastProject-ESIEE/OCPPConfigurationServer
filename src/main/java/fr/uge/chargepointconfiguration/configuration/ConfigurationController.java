@@ -106,8 +106,7 @@ public class ConfigurationController {
         "BRS",
         "www.brs-prod.com",
         configuration.id(),
-        status.id(),
-        createConfigurationDto.firmware()
+        status.id()
     ));
     return new ResponseEntity<>(configuration,
         HttpStatus.CREATED);
