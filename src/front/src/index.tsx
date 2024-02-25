@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-d
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Error from "./pages/Error";
-import CreateConfig from "./pages/CreateConfig";
+import CreateConfig from "./pages/configuration/CreateConfig";
 import Home from "./Home";
 import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
 
