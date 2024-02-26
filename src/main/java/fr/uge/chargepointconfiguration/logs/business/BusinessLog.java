@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.logs.technical.TechnicalLog;
 import fr.uge.chargepointconfiguration.status.StatusDto;
 import fr.uge.chargepointconfiguration.user.User;
 import jakarta.persistence.CascadeType;
@@ -73,8 +74,8 @@ public class BusinessLog implements DtoEntity<BusinessLogDto> {
    *
    * @param user User logged currently implied with this log, null if not.
    * @param chargepoint Chargepoint implied with this log, null if not.
-   * @param category Group logs by category action type.
-   * @param completeLog All the log in one String.
+   * @param category {@link TechnicalLog.Component}
+   * @param completeLog All the log in a String.
    */
   public BusinessLog(User user, Chargepoint chargepoint, Category category, String completeLog) {
     this.user = user;
