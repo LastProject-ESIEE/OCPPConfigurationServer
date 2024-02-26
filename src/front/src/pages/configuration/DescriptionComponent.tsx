@@ -1,15 +1,17 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { GlobalState } from "./GlobalState";
+import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, Input, Paper } from "@mui/material";
 
 function DescriptionComponent(props: {
     globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    errorState: ErrorState
 }) {
+    const backgroundColor = props.errorState.description === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
     return (
-        <Paper elevation={2} sx={{p: 2, mt: 3}}>
-            <Grid container alignItems="center" justifyContent="space-between">
+        <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, backgroundColor}}>
+            <Grid direction={"column"} container justifyContent="space-between">
                 <Grid xs={4} item>
                     <h4>Description : </h4>
                 </Grid>
@@ -28,6 +30,9 @@ function DescriptionComponent(props: {
                         multiline minRows={4} maxRows={6} fullWidth={true}
                         placeholder="Description de la configuration"/>
                 </Grid>
+                {props.errorState.description !== "" &&
+                    <p>{props.errorState.description}</p>
+                }
             </Grid>
         </Paper>
     )

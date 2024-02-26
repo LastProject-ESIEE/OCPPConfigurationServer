@@ -14,3 +14,9 @@ export type Key = {
     id: string,
     keyName: string
 }
+
+export type ErrorState = {
+    name: string,
+    firmware: string,
+    description: string,
+}
