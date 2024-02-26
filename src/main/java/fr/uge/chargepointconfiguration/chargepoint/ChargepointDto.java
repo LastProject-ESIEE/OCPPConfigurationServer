@@ -16,7 +16,6 @@ import java.sql.Timestamp;
  * @param serverAddress The server's URL of the chargepoint.
  * @param configuration A JSON containing the chargepoint's configuration.
  * @param status {@link Status}.
- * @param firmware {@link Firmware}.
  */
 public record ChargepointDto(
     int id,
@@ -26,6 +25,5 @@ public record ChargepointDto(
     String clientId,
     String serverAddress,
     Configuration configuration,
-    Status status,
-    Firmware firmware) {
+    Status status) {
 }

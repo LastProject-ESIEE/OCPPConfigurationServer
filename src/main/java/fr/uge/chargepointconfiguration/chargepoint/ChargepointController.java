@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -18,19 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * A controller for the Chargepoint entity.
  */
+@RequestMapping("/api/chargepoint")
 @RestController
 public class ChargepointController {
 
-  private final ChargepointRepository chargepointRepository;
+  private final ChargepointService chargepointService;
 
   /**
    * ChargepointController's constructor.
    *
-   * @param chargepointRepository A ChargePointRepository.
+   * @param chargepointService A ChargePointService.
    */
   @Autowired
-  public ChargepointController(ChargepointRepository chargepointRepository) {
-    this.chargepointRepository = chargepointRepository;
+  public ChargepointController(ChargepointService chargepointService) {
+    this.chargepointService = chargepointService;
   }
 
   /**
@@ -44,9 +46,9 @@ public class ChargepointController {
           content = { @Content(mediaType = "application/json",
                   schema = @Schema(implementation = Chargepoint.class))
           })
-  @GetMapping(value = "/chargepoint/all")
+  @GetMapping(value = "/all")
   public List<ChargepointDto> getAllChargepoints() {
-    return chargepointRepository.findAll().stream().map(Chargepoint::toDto).toList();
+    return chargepointService.getAllChargepoints();
   }
 
   /**
@@ -64,9 +66,8 @@ public class ChargepointController {
                           @ApiResponse(responseCode = "404",
                   description = "This chargepoint does not exist",
                   content = @Content) })
-  @GetMapping(value = "/chargepoint/{id}")
+  @GetMapping(value = "/{id}")
   public Optional<ChargepointDto> getChargepointById(@PathVariable int id) {
-    // TODO : exception BAD REQUEST si id est pas un nombre
-    return Optional.of(chargepointRepository.findById(id).orElseThrow().toDto());
+    return chargepointService.getChargepointById(id);
   }
 }

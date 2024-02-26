@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.user;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,7 +17,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "\"user\"")
-public class User implements fr.uge.chargepointconfiguration.Entity<UserDto> {
+public class User implements DtoEntity<UserDto> {
 
   /**
    * Role enum represents different roles that a User can have in the application.<br>
