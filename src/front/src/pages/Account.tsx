@@ -9,7 +9,6 @@ function Account() {
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    const [oldPasswordMatch, setOldPasswordMatch] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -47,7 +46,7 @@ function Account() {
 
     const validatePassword = (password : string) => {
         // Regex to check prerequisites of password.
-        const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{(\[-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
+        const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
         return regex.test(password);
     };
 
@@ -113,7 +112,7 @@ function Account() {
                 </Grid>
                 <Grid item xs={6} md={2}>
                     <Box>
-                        {user && user.lastName || "Inconnu"}
+                        {(user && user.lastName) || "Inconnu"}
                     </Box>
                 </Grid>
                 <Grid item xs={6} md={6}>
@@ -123,7 +122,7 @@ function Account() {
                 </Grid>
                 <Grid item xs={6} md={2}>
                     <Box>
-                        {user && user.firstName || "Inconnu"}
+                        {(user && user.firstName) || "Inconnu"}
                     </Box>
                 </Grid>
                 <Grid item xs={6} md={6}>
@@ -133,7 +132,7 @@ function Account() {
                 </Grid>
                 <Grid item xs={6} md={2}>
                     <Box>
-                        {user && user.email || "Inconnu"}
+                        {(user && user.email) || "Inconnu"}
                     </Box>
                 </Grid>
                 <Grid item xs={6} md={6}>
@@ -143,7 +142,7 @@ function Account() {
                 </Grid>
                 <Grid item xs={6} md={2}>
                     <Box>
-                        {user && englishRoleToFrench(user.role) || "Inconnu"}
+                        {(user && englishRoleToFrench(user.role)) || "Inconnu"}
                     </Box>
                 </Grid>
                 <Grid item xs={6} md={6}>
