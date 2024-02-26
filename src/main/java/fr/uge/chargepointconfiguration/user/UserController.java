@@ -1,10 +1,14 @@
 package fr.uge.chargepointconfiguration.user;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
 
-  private final UserRepository userRepository;
+  private final UserService userService;
 
   @Autowired
-  public UserController(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public UserController(UserService userService) {
+    this.userService = userService;
   }
 
   /**
@@ -32,7 +36,7 @@ public class UserController {
   public UserDto getUserById(@PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
     System.out.println("getUser " + id);
-    return userRepository.findById(id).toDto();
+    return userService.getUserById(id);
   }
 
   /**
@@ -42,7 +46,7 @@ public class UserController {
    */
   @GetMapping("/all")
   public List<UserDto> getAllUsers() {
-    return userRepository.findAll().stream().map(User::toDto).toList();
+    return userService.getAllUsers();
   }
 
   /**
@@ -52,8 +56,28 @@ public class UserController {
    */
   @GetMapping("/me")
   public UserDto getAuthenticatedUser() {
-    var authentication = SecurityContextHolder.getContext().getAuthentication();
-    var email = authentication.getName();
-    return userRepository.findByEmail(email).toDto();
+    return userService.getAuthenticatedUser();
+  }
+
+  /**
+   * Update the password of the user.
+   *
+   * @param changePasswordUserDto a ChangePassworddUserDto.
+   * @return a ChangePasswordUserDto.
+   */
+  @PostMapping("/updatePassword")
+  public ResponseEntity<User> postNewPasswordUser(
+          @Parameter(
+                  name = "String",
+                  description = "Old and new password",
+                  example = """
+                          {
+                            "oldPassword": "String"
+                            "newPassword": "String"
+                          }""",
+                  required = true)
+          @RequestBody ChangePasswordUserDto changePasswordUserDto) {
+    var user = userService.updatePassword(changePasswordUserDto);
+    return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }

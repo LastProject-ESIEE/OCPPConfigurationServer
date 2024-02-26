@@ -14,7 +14,7 @@ function ButtonLink(props: { label: string, href: string, disabled?: boolean }):
     )
 }
 
-function englishRoleToFrench(role: string): string {
+export function englishRoleToFrench(role: string): string {
     switch (role) {
         case "ADMINISTRATOR":
             return "Administrateur";
