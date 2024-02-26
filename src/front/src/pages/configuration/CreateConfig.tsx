@@ -189,7 +189,7 @@ function FirmwareUpdate() {
 
     function handleSubmit() {
         console.log(globalState)
-        if (check(globalState)) {
+        if (!check(globalState)) {
             postNewConfiguration(globalState) // manage response to display error or success
         }
     }
