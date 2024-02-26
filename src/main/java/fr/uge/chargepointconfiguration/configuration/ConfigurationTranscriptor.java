@@ -16,7 +16,7 @@ public enum ConfigurationTranscriptor {
           "^(100|\\d{1,2})$"),
 
   NETWORK_PROFILE("Adresse IP/DNS du point de charge",
-          "BackOfficeNetworkProfile1",
+          "BackOffice-URL-wired",
           "",
           new Component(""),
           ""),
@@ -124,7 +124,7 @@ public enum ConfigurationTranscriptor {
    * @param fullName The full name of the enum.
    * @return {@link ConfigurationTranscriptor}.
    */
-  public ConfigurationTranscriptor fullNameToEnum(String fullName) {
+  public static ConfigurationTranscriptor fullNameToEnum(String fullName) {
     return switch (fullName) {
       case "Intensité de la LED" -> LIGHT_INTENSITY;
       case "Adresse IP/DNS du point de charge" -> NETWORK_PROFILE;
