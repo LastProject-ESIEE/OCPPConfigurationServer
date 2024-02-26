@@ -1,41 +1,40 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.logs.business;
 
-import fr.uge.chargepointconfiguration.entities.BusinessLog;
-import fr.uge.chargepointconfiguration.repository.BusinessLogRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for business log.
  */
+@RequestMapping("/api/log/business")
 @RestController
 public class BusinessLogController {
 
-  private final BusinessLogRepository businessLogRepository;
+  private final BusinessLogService businessLogService;
 
   /**
    * BusinessLogController's constructor.
    *
-   * @param businessLogRepository A BusinessLogRepository.
+   * @param businessLogService A BusinessLogService.
    */
   @Autowired
-  public BusinessLogController(BusinessLogRepository businessLogRepository) {
-    this.businessLogRepository = businessLogRepository;
+  public BusinessLogController(BusinessLogService businessLogService) {
+    this.businessLogService = businessLogService;
   }
 
   /**
-   * Returns a list of business logs according to the given charge point.
+   * Returns a list of business logs according to the given chargepoint.
    *
-   * @param chargepoint the id of the charge point.
-   * @return a list of business logs by charge point.
+   * @param id the id of the chargepoint.
+   * @return a list of business logs by chargepoint.
    */
   @Operation(summary = "Get a list of logs by its charge point")
   @ApiResponse(responseCode = "200",
@@ -43,8 +42,8 @@ public class BusinessLogController {
           content = { @Content(mediaType = "application/json",
                   schema = @Schema(implementation = BusinessLog.class))
           })
-  @GetMapping(value = "/log/business/{chargepoint}")
-  public List<BusinessLog> getBusinessLogByChargepoint(@PathVariable int chargepoint) {
-    return businessLogRepository.findAllByChargePoint(chargepoint);
+  @GetMapping(value = "/{id}")
+  public List<BusinessLog> getBusinessLogByChargepointId(@PathVariable int id) {
+    return businessLogService.getAllByChargepointId(id);
   }
 }

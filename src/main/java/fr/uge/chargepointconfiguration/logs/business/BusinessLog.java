@@ -1,10 +1,17 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.logs.business;
 
+import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -18,6 +25,17 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "business_log")
 public class BusinessLog {
+
+  /**
+   * Category attach to this log.<br>
+   * - LOGIN : log in and out of chargepoints.<br>
+   * - STATUS : any creation/modification/delete of the status of a chargepoint.<br>
+   * - FIRM : any creation/modification/delete of a firmware.<br>
+   * - CONFIG : any creation/modification/delete of a configuration.<br>
+   */
+  public enum Category {
+    LOGIN, STATUS, FIRM, CONFIG
+  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,17 +51,43 @@ public class BusinessLog {
    * The quote for user ("user") are here to specify the database H2 that
    * user isn't the key word user, but a field user in the database.
    */
-  @Column(name = "\"user\"", nullable = false, length = 45)
-  private String user;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  private User user;
 
-  @Column(name = "charge_point", nullable = false)
-  private int chargePoint;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "chargepoint_id", referencedColumnName = "id_chargepoint")
+  private Chargepoint chargepoint;
 
-  @Column(name = "firmware_version", nullable = false, length = 25)
-  private String firmwareVersion;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "category", nullable = false)
+  private Category category;
 
   @Column(name = "complete_log", nullable = false)
   private String completeLog;
+
+  /**
+   * BusinessLog's constructor.
+   *
+   * @param user User logged currently implied with this log, null if not.
+   * @param chargepoint Chargepoint implied with this log, null if not.
+   * @param category Group logs by category action type.
+   * @param completeLog All the log in one String.
+   */
+  public BusinessLog(User user, Chargepoint chargepoint, Category category, String completeLog) {
+    this.user = user;
+    this.chargepoint = chargepoint;
+    this.category = Objects.requireNonNull(category);
+    this.completeLog = Objects.requireNonNull(completeLog);
+    date = new Timestamp(System.currentTimeMillis());
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public BusinessLog() {
+
+  }
 
   /**
    * Get the id of the log.
@@ -86,7 +130,7 @@ public class BusinessLog {
    *
    * @return user, String
    */
-  public String getUser() {
+  public User getUser() {
     return user;
   }
 
@@ -95,7 +139,7 @@ public class BusinessLog {
    *
    * @param user a String.
    */
-  public void setUser(String user) {
+  public void setUser(User user) {
     this.user = user;
   }
 
@@ -104,35 +148,25 @@ public class BusinessLog {
   *
   * @return chargePoint, int.
   */
-  public int getChargePoint() {
-    return chargePoint;
+  public Chargepoint getChargepoint() {
+    return chargepoint;
   }
 
   /**
    * Set the id of the charge point.
    *
-   * @param chargePoint an int.
+   * @param chargepoint an int.
    */
-  public void setChargePoint(int chargePoint) {
-    this.chargePoint = chargePoint;
+  public void setChargepoint(Chargepoint chargepoint) {
+    this.chargepoint = chargepoint;
   }
 
-  /**
-   * Get the firmware version of the charge point in the log.
-   *
-   * @return firmwareVersion, String.
-   */
-  public String getFirmwareVersion() {
-    return firmwareVersion;
+  public Category getCategory() {
+    return category;
   }
 
-  /**
-   * Set the firmware version of the charge point in the log.
-   *
-   * @param firmwareVersion a String.
-   */
-  public void setFirmwareVersion(String firmwareVersion) {
-    this.firmwareVersion = firmwareVersion;
+  public void setCategory(Category category) {
+    this.category = category;
   }
 
   /**
@@ -163,10 +197,9 @@ public class BusinessLog {
       return false;
     }
     return getId() == that.getId()
-           && getChargePoint() == that.getChargePoint()
+           && getChargepoint() == that.getChargepoint()
            && Objects.equals(getDate(), that.getDate())
            && Objects.equals(getUser(), that.getUser())
-           && Objects.equals(getFirmwareVersion(), that.getFirmwareVersion())
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
@@ -175,8 +208,7 @@ public class BusinessLog {
     return Objects.hash(getId(),
             getDate(),
             getUser(),
-            getChargePoint(),
-            getFirmwareVersion(),
+            getChargepoint(),
             getCompleteLog());
   }
 
@@ -186,8 +218,7 @@ public class BusinessLog {
            + "id=" + id
            + ", date=" + date
            + ", user='" + user + '\''
-           + ", chargePoint=" + chargePoint
-           + ", firmwareVersion='" + firmwareVersion + '\''
+           + ", chargePoint=" + chargepoint
            + ", completeLog='" + completeLog + '\''
            + '}';
   }

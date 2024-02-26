@@ -1,13 +1,10 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.logs.technical;
 
-import fr.uge.chargepointconfiguration.entities.TechnicalLog;
-import fr.uge.chargepointconfiguration.repository.TechnicalLogRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

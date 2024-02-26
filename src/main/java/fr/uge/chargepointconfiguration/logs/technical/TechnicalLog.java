@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.logs.technical;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
