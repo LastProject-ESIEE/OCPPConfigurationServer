@@ -76,7 +76,7 @@ public class ChargePointManager {
   public void processMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
     Optional<OcppMessage> message;
-    if (pendingRequest == null) {
+    if (webSocketMessage.isRequest()) {
       message = ocppMessageParser.parseRequestMessage(webSocketMessage);
     } else {
       message = ocppMessageParser.parseResponseMessage(pendingRequest,

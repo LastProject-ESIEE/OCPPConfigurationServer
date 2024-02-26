@@ -6,6 +6,6 @@ package fr.uge.chargepointconfiguration;
  *
  * @param <D> The DTO matching this entity
  */
-public interface Entity<D> {
+public interface DtoEntity<D> {
   D toDto();
 }

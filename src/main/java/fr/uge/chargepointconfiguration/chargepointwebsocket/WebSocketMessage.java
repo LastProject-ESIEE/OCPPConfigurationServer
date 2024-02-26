@@ -5,6 +5,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.BootNotificationRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.ChangeConfigurationRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotificationRequest20;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.SetVariablesRequest20;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -13,21 +14,53 @@ import java.util.Optional;
  */
 public interface WebSocketMessage {
 
+  /**
+   * Returns the message's data.<br>
+   * Often, it is information concerning a change in the configuration
+   * or information about the chargepoint.<br>
+   * It is represented by a json formatted string.
+   *
+   * @return The message's data (json formatted string).
+   */
   String data();
 
+  /**
+   * Returns the message's type.<br>
+   * By default, it returns null when the message is not a request.
+   *
+   * @return {@link MessageTypeRequest}.
+   */
   default MessageTypeRequest messageName() {
     return null;
   }
 
+  /**
+   * Returns the message's id.<br>
+   * It is used to respond to the message or wait for the correct message.
+   *
+   * @return The message's id.
+   */
   long messageId();
 
   /**
-   * Defines the message type which the server could receive from the chargepoint.
+   * Checks if the current message is a request or not.<br>
+   * For the false value, the current message could be a Response or Other.
+   *
+   * @return True if the message is a request or false, if not.
+   */
+  boolean isRequest();
+
+  /**
+   * Defines the request message type for OCPP 1.6 and OCPP 2.0.1 protocols.<br>
+   * These enums can be sent by the chargepoint (BootNotification, StatusFirmware)
+   * or the server (ChangeConfiguration, SetVariables).<br>
+   * By default, if the packet is unknown, we set to other.
    */
   enum MessageTypeRequest {
     BOOT_NOTIFICATION_REQUEST("BootNotification"),
     STATUS_FIRMWARE_REQUEST("StatusFirmware"),
     CHANGE_CONFIGURATION_REQUEST("ChangeConfiguration"),
+    SET_VARIABLES_REQUEST("SetVariables"),
     OTHER("Other");
 
     private final String name;
@@ -61,6 +94,7 @@ public interface WebSocketMessage {
         case BootNotificationRequest16 ignored -> BOOT_NOTIFICATION_REQUEST;
         case BootNotificationRequest20 ignored -> BOOT_NOTIFICATION_REQUEST;
         case ChangeConfigurationRequest16 ignored -> CHANGE_CONFIGURATION_REQUEST;
+        case SetVariablesRequest20 ignored -> SET_VARIABLES_REQUEST;
         default -> OTHER;
       };
     }
@@ -89,11 +123,14 @@ public interface WebSocketMessage {
    * @return WebSocketMessage
    */
   static Optional<WebSocketMessage> parse(String message) {
+    // Split this line by 4 by default for a request type message.
     var array = message.substring(1, message.length() - 1).split(",", 4);
     var callType = Integer.parseInt(array[0]);
     return switch (MessageType.codeToEnum(callType)) {
       case RESPONSE -> {
         try {
+          // Split this line by 3, because a response has 3 parts (MessageType, MessageId, Data).
+          array = message.substring(1, message.length() - 1).split(",", 3);
           var messageId = Long.parseLong(array[1].replaceAll("\"", ""));
           yield Optional.of(new WebSocketResponseMessage(callType, messageId, array[2]));
         } catch (NumberFormatException n) {
