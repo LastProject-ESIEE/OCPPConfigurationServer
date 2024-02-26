@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepointwebsocket;
+package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Component;
 import java.util.Objects;
@@ -54,7 +54,7 @@ public enum ConfigurationTranscriptor {
   /**
    * Enum's constructor. Should be private and not called outside this enum.
    *
-   * @param fullName The name which will be displayed to the user.
+   * @param fullName The name which will be displayed to the user, it should be unique.
    * @param ocpp16Key The configuration key according to the OCPP 1.6 protocol.
    * @param ocpp20Key The configuration key according to the OCPP 2.0.1 protocol.
    * @param component {@link Component}.
@@ -116,5 +116,23 @@ public enum ConfigurationTranscriptor {
    */
   public String getRegexRule() {
     return regexRule;
+  }
+
+  /**
+   * Searches the correct enum with the given full name.
+   *
+   * @param fullName The full name of the enum.
+   * @return {@link ConfigurationTranscriptor}.
+   */
+  public ConfigurationTranscriptor fullNameToEnum(String fullName) {
+    return switch (fullName) {
+      case "Intensité de la LED" -> LIGHT_INTENSITY;
+      case "Adresse IP/DNS du point de charge" -> NETWORK_PROFILE;
+      case "Nom du constructeur" -> VENDOR_NAME;
+      case "Liste d'authentification local activé ?" -> LOCAL_AUTH_LIST;
+      case "Courant max du point de charge" -> STATION_MAX_CURRENT;
+      case "Changer le mot de passe du point de charge" -> STATION_PASSWORD;
+      default -> throw new IllegalStateException("Unknown key");
+    };
   }
 }
