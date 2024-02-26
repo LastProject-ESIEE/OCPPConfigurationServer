@@ -7,8 +7,8 @@ function TitleComponent(props: {
     setGlobalState: Dispatch<SetStateAction<GlobalState>>
 }) {
     return (
-        <Paper elevation={2} sx={{p: 2, mt: 3}}>
-            <Grid container alignItems="center" justifyContent="space-between">
+        <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3}}>
+            <Grid direction={"column"} container justifyContent="space-between">
                 <Grid xs={4} item>
                     <h4>Titre de la configuration : </h4>
                 </Grid>

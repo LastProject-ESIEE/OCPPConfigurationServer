@@ -106,7 +106,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
     return (
         <Box>
             <Paper elevation={2} sx={{p: 2, mt: 2}}>
-                <h4>Clé: Valeur</h4>
+                <h4>Champs de la configuration :</h4>
                 <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
                     <AddKeyValuePair setSelectedKeys={setSelectedKeys} selectedKeys={selectedKeys}/>
                     {selectedKeys.length !== 0 && (
@@ -141,7 +141,7 @@ function FirmwareUpdate() {
 
     function handleSubmit() {
         console.log(globalState)
-        postNewConfiguration(globalState) // manage response to display error or success
+        // postNewConfiguration(globalState) // manage response to display error or success
     }
 
     return (
