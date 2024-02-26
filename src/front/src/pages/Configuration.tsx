@@ -8,7 +8,7 @@ export function ConfigurationListPage()  {
     const [items, setItems] = React.useState<ConfigurationView[]>([]);
 
     useEffect(() => {
-        getConfigurationList().then((result: ConfigurationView[]) => setItems(result.concat(result).concat(result).concat(result).concat(result).concat(result).concat(result).concat(result).concat(result).concat(result)));
+        getConfigurationList().then((result: ConfigurationView[]) => setItems(result));
       }, [])
 
     return (
