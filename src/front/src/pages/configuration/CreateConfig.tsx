@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../conf/confKeys";
-import { GlobalState } from "./GlobalState";
+import {GlobalState, Key} from "./GlobalState";
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
@@ -38,19 +38,21 @@ export async function postNewConfiguration(configuration: GlobalState): Promise<
 }
 
 function AddKeyValuePair(props: {
-    setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>,
-    selectedKeys: string[],
+    setSelectedKeys: React.Dispatch<React.SetStateAction<Key[]>>,
+    selectedKeys: Key[],
 }) {
     const {
         setSelectedKeys,
         selectedKeys,
     } = props;
 
-    const [selectedKey, setSelectedKey] = useState<string | null>(null);
-    const [options, setOptions] = useState(confKeys.map(key => key.keyName));
+    const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+    const [options, setOptions] = useState<Key[]>(confKeys.map(key => {
+        return {id: key.id, keyName: key.keyName}
+    }));
 
     useEffect(() => {
-        setOptions(confKeys.map(key => key.keyName).filter(key => !selectedKeys.includes(key)));
+        setOptions(confKeys.filter(key => !selectedKeys.map(selected => selected.id).includes(key.id)));
     }, [selectedKeys])
 
     const updateOptions = () => {
@@ -104,7 +106,8 @@ function LeftSection(props: {
 }
 
 function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> }) {
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+    const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
 
     return (
         <Box>
@@ -118,7 +121,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                             {selectedKeys.map((key) => {
                                 return (
                                     <KeyValuePair
-                                        key={key}
+                                        key={key.id}
                                         selectedKeys={selectedKeys}
                                         setSelectedKeys={setSelectedKeys}
                                         selectedKey={key}
