@@ -9,10 +9,12 @@ import KeyValuePair from "./KeyValuePair";
 
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key}":"${keyValue.value}"`)
+    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
         .join(", ")
 
     myConfig = "{" + myConfig + "}"
+
+    console.log(JSON.parse(myConfig))
 
     let request = await fetch(window.location.origin + "/api/configuration/create",
         {
@@ -73,6 +75,7 @@ function AddKeyValuePair(props: {
                     sx={{width: 300}}
                     disablePortal
                     options={options}
+                    getOptionLabel={option => option.keyName}
                     value={selectedKey}
                     renderInput={(params) => <TextField {...params} label="Clé"/>}
                 />
