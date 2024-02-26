@@ -36,7 +36,7 @@ public class UserController {
   public UserDto getUserById(@PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
     System.out.println("getUser " + id);
-    return userService.getUserById(id);
+    return userService.getUserById(id).toDto();
   }
 
   /**
@@ -46,7 +46,10 @@ public class UserController {
    */
   @GetMapping("/all")
   public List<UserDto> getAllUsers() {
-    return userService.getAllUsers();
+    return userService.getAllUsers()
+            .stream()
+            .map(User::toDto)
+            .toList();
   }
 
   /**
@@ -56,7 +59,7 @@ public class UserController {
    */
   @GetMapping("/me")
   public UserDto getAuthenticatedUser() {
-    return userService.getAuthenticatedUser();
+    return userService.getAuthenticatedUser().toDto();
   }
 
   /**

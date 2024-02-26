@@ -28,12 +28,7 @@ public class UserService {
    * @return a User.
    */
   public User updatePassword(ChangePasswordUserDto changePasswordUserDto) {
-    var userDto = getAuthenticatedUser();
-    var id = userDto.id();
-    var user = userRepository.findById(id);
-    if (user == null) {
-      throw new IllegalArgumentException("User not found with this id : " + id);
-    }
+    var user = getAuthenticatedUser();
     if (!passwordEncoder.matches(changePasswordUserDto.oldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("Bad password");
     }
@@ -48,8 +43,8 @@ public class UserService {
    * @param id of the user.
    * @return information about the user.
    */
-  public UserDto getUserById(int id) {
-    return userRepository.findById(id).toDto();
+  public User getUserById(int id) {
+    return userRepository.findById(id);
   }
 
   /**
@@ -57,8 +52,8 @@ public class UserService {
    *
    * @return Details about all the users.
    */
-  public List<UserDto> getAllUsers() {
-    return userRepository.findAll().stream().map(User::toDto).toList();
+  public List<User> getAllUsers() {
+    return userRepository.findAll().stream().toList();
   }
 
   /**
@@ -66,9 +61,9 @@ public class UserService {
    *
    * @return Details about the current user.
    */
-  public UserDto getAuthenticatedUser() {
+  public User getAuthenticatedUser() {
     var authentication = SecurityContextHolder.getContext().getAuthentication();
     var email = authentication.getName();
-    return userRepository.findByEmail(email).toDto();
+    return userRepository.findByEmail(email);
   }
 }

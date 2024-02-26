@@ -13,7 +13,7 @@ function Account() {
     const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
-        fetch("../api/user/me")
+        fetch("/api/user/me")
             .then(response => {
                 if (response.ok) {
                     return response.json();
