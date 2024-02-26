@@ -1,6 +1,8 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.status.StatusDto;
 import fr.uge.chargepointconfiguration.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,7 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "business_log")
-public class BusinessLog {
+public class BusinessLog implements DtoEntity<BusinessLogDto> {
 
   /**
    * Category attach to this log.<br>
@@ -210,6 +212,16 @@ public class BusinessLog {
             getUser(),
             getChargepoint(),
             getCompleteLog());
+  }
+
+  @Override
+  public BusinessLogDto toDto() {
+    return new BusinessLogDto(this.id,
+        this.date,
+        this.user,
+        this.chargepoint,
+        this.category,
+        this.completeLog);
   }
 
   @Override

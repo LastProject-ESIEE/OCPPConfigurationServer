@@ -43,7 +43,7 @@ public class BusinessLogController {
                   schema = @Schema(implementation = BusinessLog.class))
           })
   @GetMapping(value = "/{id}")
-  public List<BusinessLog> getBusinessLogByChargepointId(@PathVariable int id) {
-    return businessLogService.getAllByChargepointId(id);
+  public List<BusinessLogDto> getBusinessLogByChargepointId(@PathVariable int id) {
+    return businessLogService.getAllByChargepointId(id).stream().map(BusinessLog::toDto).toList();
   }
 }
