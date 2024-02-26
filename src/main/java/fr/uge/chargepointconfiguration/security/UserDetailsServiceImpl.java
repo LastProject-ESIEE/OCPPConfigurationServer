@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.security;
 
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.user.UserRepository;
 import java.util.Objects;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

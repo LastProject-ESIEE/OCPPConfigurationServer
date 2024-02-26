@@ -1,14 +1,13 @@
 package fr.uge.chargepointconfiguration;
 
-import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
-import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
-import fr.uge.chargepointconfiguration.repository.ConfigurationRepository;
-import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
-import fr.uge.chargepointconfiguration.repository.StatusRepository;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ConfigurationServer;
+import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
+import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.status.StatusRepository;
+import fr.uge.chargepointconfiguration.user.UserRepository;
 import java.net.InetSocketAddress;
 import java.util.Objects;
-import org.java_websocket.server.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
