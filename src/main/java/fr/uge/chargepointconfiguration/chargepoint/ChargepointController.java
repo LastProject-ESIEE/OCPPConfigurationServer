@@ -1,6 +1,5 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.firmware.Firmware;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,9 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -70,4 +72,30 @@ public class ChargepointController {
   public Optional<ChargepointDto> getChargepointById(@PathVariable int id) {
     return chargepointService.getChargepointById(id);
   }
+
+  /**
+   * Returns a list of all the chargepoints.
+   *
+   * @return A list corresponding chargepoints.
+   */
+  @Operation(summary = "Search for chargepoints")
+  @ApiResponse(responseCode = "200",
+        description = "Search for chargepoints",
+        content = { @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Chargepoint.class))
+        })
+  @GetMapping(value = "/search")
+  public List<ChargepointDto> searchChargepoints(
+        @RequestParam int size,
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "") String clientIdContains,
+        @RequestParam(required = false, defaultValue = "id") String sortBy,
+        @RequestParam(required = false, defaultValue = "asc") String order
+  ) {
+    return chargepointService.search(
+          PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
+          clientIdContains
+    );
+  }
+
 }
