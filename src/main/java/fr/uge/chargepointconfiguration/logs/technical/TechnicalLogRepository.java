@@ -1,6 +1,6 @@
-package fr.uge.chargepointconfiguration.repository;
+package fr.uge.chargepointconfiguration.logs.technical;
 
-import fr.uge.chargepointconfiguration.entities.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.technical.TechnicalLog;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.entities;
+package fr.uge.chargepointconfiguration.logs.technical;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,6 +64,28 @@ public class TechnicalLog {
 
   @Column(name = "complete_log", nullable = false)
   private String completeLog;
+
+
+  /**
+   * TechnicalLog's constructor.
+   *
+   * @param component {@link Component}
+   * @param criticality {@link Criticality}
+   * @param completeLog All the log in a String.
+   */
+  public TechnicalLog(Component component, Criticality criticality, String completeLog) {
+    this.component = component;
+    this.criticality = criticality;
+    this.completeLog = completeLog;
+    date = new Timestamp(System.currentTimeMillis());
+  }
+
+  /**
+   * Empty constructor. Should not be called.
+   */
+  public TechnicalLog() {
+
+  }
 
   /**
    * Get the id of the log.
