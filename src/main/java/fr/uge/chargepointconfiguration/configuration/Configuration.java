@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.user.UserDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,7 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
 */
 @Entity
 @Table(name = "configuration")
-public class Configuration implements fr.uge.chargepointconfiguration.Entity<ConfigurationDto> {
+public class Configuration implements DtoEntity<ConfigurationDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

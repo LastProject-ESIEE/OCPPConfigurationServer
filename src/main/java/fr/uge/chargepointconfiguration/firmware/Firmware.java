@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
-import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "firmware")
-public class Firmware implements fr.uge.chargepointconfiguration.Entity<FirmwareDto> {
+public class Firmware implements DtoEntity<FirmwareDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

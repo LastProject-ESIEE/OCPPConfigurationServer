@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.status.Status;
@@ -10,12 +11,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
 import java.util.Objects;
-import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Chargepoint class represents a charge point in the database via JPA.<br>
@@ -24,7 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "chargepoint")
-public class Chargepoint implements fr.uge.chargepointconfiguration.Entity<ChargepointDto> {
+public class Chargepoint implements DtoEntity<ChargepointDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

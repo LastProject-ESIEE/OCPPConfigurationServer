@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.typeallowed;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.firmware.FirmwareDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "type_allowed")
-public class TypeAllowed implements fr.uge.chargepointconfiguration.Entity<TypeAllowedDto> {
+public class TypeAllowed implements DtoEntity<TypeAllowedDto> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
