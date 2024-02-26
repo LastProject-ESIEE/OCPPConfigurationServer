@@ -12,37 +12,39 @@ export function ConfigurationListPage()  {
       }, [])
 
     return (
-        <Box maxWidth={"true"}>
-            <Grid key="grid-header" container maxWidth={"true"} flexDirection={"row"} justifyContent={"center"}>
+        <Box maxWidth={"true"} height={"90vh"} maxHeight={"90vh"}>
+            <Grid key="grid-header" container maxWidth={"true"} flexDirection={"row"} justifyContent={"center"} paddingRight={2}>
                 <Grid key="grid-header-item-1" item xs={3} maxWidth={"true"} justifyContent={"center"}>
-                    <Typography maxWidth={"true"} variant="h6" align="center">Name</Typography>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Nom</Typography>
                 </Grid>
                 <Grid key="grid-header-item-2" item xs={6} maxWidth={"true"} justifyContent={"center"}>
-                    <Typography maxWidth={"true"} variant="h6" align="center">Decsription</Typography>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Description</Typography>
                 </Grid>
                 <Grid key="grid-header-item-3" item xs={3} maxWidth={"true"} justifyContent={"center"}>
-                    <Typography maxWidth={"true"} variant="h6" align="center">Last update</Typography>
+                    <Typography maxWidth={"true"} variant="h6" align="center">Dernière modification</Typography>
                 </Grid>
             </Grid>
-            <Box key="box-list-container" maxWidth={"true"}>
-                <List key="configuration-list" style={{maxWidth: "true",height: 700, maxHeight: 700, overflow: 'auto'}}>
+            <Box key="box-list-container" maxWidth={"true"}  maxHeight={"true"}>
+                <List key="configuration-list" style={{maxWidth: "true", maxHeight:'50vh', overflow: 'auto'}}>
                         {items.map(configuration => {
                             return (
-                                <Link key={"configuration-edit-path-" + configuration.id}  to={{ pathname: 'edit/' + configuration.id}} style={{ textDecoration: 'none' }} >
-                                    <ListItemButton style={{maxWidth: "true", padding: 0, paddingTop: 4}}>
-                                        <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                                            <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
-                                                <Typography variant="body1" align="center">{configuration.name}</Typography>
+                               <Box key={"box-configuration-edit-path-" + configuration.id}  paddingTop={1}>
+                                    <Link key={"configuration-edit-path-" + configuration.id}  to={{ pathname: 'edit/' + configuration.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+                                        <ListItemButton style={{maxWidth: "true", padding: 0, paddingTop: 3, borderRadius: 100, color: 'black', backgroundColor: '#E1E1E1'}}>
+                                            <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
+                                                <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                                                    <Typography variant="body1" align="center">{configuration.name}</Typography>
+                                                </Grid>
+                                                <Grid item xs={6} maxWidth={"true"} justifyContent={"center"}>
+                                                    <Typography variant="body1" align="center">{configuration.description === "" ? "Pas de description" : configuration.description}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
+                                                    <Typography variant="body1" align="center">{new Date(configuration.timestamp).toLocaleString()}</Typography>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={6} maxWidth={"true"} justifyContent={"center"}>
-                                                <Typography variant="body1" align="center">{configuration.description === "" ? "No description" : configuration.description}</Typography>
-                                            </Grid>
-                                            <Grid item xs={3} maxWidth={"true"} justifyContent={"center"}>
-                                                <Typography variant="body1" align="center">{new Date(configuration.timestamp).toLocaleString()}</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </ListItemButton>
-                                </Link>
+                                        </ListItemButton>
+                                    </Link>
+                               </Box>
                             )
                         })}
                 </List>
@@ -57,7 +59,7 @@ export function ConfigurationEditPage() {
 
     return (
         <Box>
-            <p>Edition of configuration {id}</p>
+            <p>Édition de la configuration {id}</p>
         </Box>
     );
 }
