@@ -40,30 +40,10 @@ function Account() {
         }
     }, [password1, password2]);
 
-    const handleOldPassword = (e : React.ChangeEvent<HTMLInputElement>) => {
-        setOldPassword(e.target.value);
-    }
-
     const validatePassword = (password : string) => {
         // Regex to check prerequisites of password.
         const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
         return regex.test(password);
-    };
-
-    const handlePasswordChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-        const newPassword = e.target.value;
-        // To validate new password.
-        const isValidPassword = validatePassword(newPassword);
-        setPassword1(newPassword);
-        // Update the state of the button.
-        setIsButtonDisabled(!isValidPassword || newPassword !== password2);
-    };
-
-    const handlePassword2Change = (e : React.ChangeEvent<HTMLInputElement>) => {
-        const newPassword = e.target.value;
-        setPassword2(newPassword);
-        // Update the state of the button.
-        setIsButtonDisabled(!validatePassword(password1) || newPassword !== password1);
     };
 
     const handleButtonClick = () => {
