@@ -5,10 +5,16 @@ import Typography from "@mui/material/Typography";
 
 function KeyValuePair(props: {
     selectedKey: string,
-    globalState: GlobalState,
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>,
+    selectedKeys: string[]
 }): JSX.Element {
-    const {selectedKey} = props;
+    const {
+        selectedKey,
+        setGlobalState,
+        setSelectedKeys,
+        selectedKeys,
+    } = props;
 
     const [currentValue, setCurrentValue] = useState("");
 
@@ -16,10 +22,10 @@ function KeyValuePair(props: {
         const newValue = event.target.value
         setCurrentValue(newValue)
         const newKey: Configuration = {
-            key: props.selectedKey,
+            key: selectedKey,
             value: newValue
         }
-        props.setGlobalState(prevState => {
+        setGlobalState(prevState => {
             let updated = false;
             prevState.configuration.forEach(conf => {
                 if (conf.key === newKey.key) {
@@ -62,7 +68,7 @@ function KeyValuePair(props: {
                 }}
                 color={"error"}
                 onClick={() => {
-                    console.log("efface toi stp");
+                    setSelectedKeys(selectedKeys.filter(key => key !== selectedKey))
                 }}
             >
                 <h2>&times;</h2>

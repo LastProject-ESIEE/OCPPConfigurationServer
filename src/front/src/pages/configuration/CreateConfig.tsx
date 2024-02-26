@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../conf/confKeys";
 import { GlobalState } from "./GlobalState";
@@ -47,6 +47,10 @@ function AddKeyValuePair(props: {
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
     const [options, setOptions] = useState(confKeys.map(key => key.keyName));
 
+    useEffect(() => {
+        setOptions(confKeys.map(key => key.keyName).filter(key => !selectedKeys.includes(key)));
+    }, [selectedKeys])
+
     const updateOptions = () => {
         if (selectedKey === null) {
             return; // Handle potential error or prevent unnecessary updates
@@ -55,7 +59,7 @@ function AddKeyValuePair(props: {
         const newSelectedKeys = [selectedKey, ...selectedKeys];
 
         setSelectedKey(null);
-        setOptions(options.filter(key => !newSelectedKeys.includes(key)));
+        // setOptions(options.filter(key => !newSelectedKeys.includes(key)));
         setSelectedKeys(newSelectedKeys);
     };
 
@@ -102,7 +106,6 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
     return (
         <Box>
             <Paper elevation={2} sx={{p: 2, mt: 2}}>
-
                 <h4>Clé: Valeur</h4>
                 <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
                     <AddKeyValuePair setSelectedKeys={setSelectedKeys} selectedKeys={selectedKeys}/>
@@ -111,15 +114,18 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                               justifyContent="space-evenly">
                             {selectedKeys.map((key) => {
                                 return (
-                                    <KeyValuePair key={key} selectedKey={key} globalState={props.globalState}
-                                                  setGlobalState={props.setGlobalState}/>
+                                    <KeyValuePair
+                                        key={key}
+                                        selectedKeys={selectedKeys}
+                                        setSelectedKeys={setSelectedKeys}
+                                        selectedKey={key}
+                                        setGlobalState={props.setGlobalState}/>
                                 )
                             })}
                         </Grid>
                     )}
                 </Box>
             </Paper>
-
         </Box>
     );
 }
@@ -154,6 +160,6 @@ function FirmwareUpdate() {
             </Box>
         </Container>
     );
-};
+}
 
 export default FirmwareUpdate;
