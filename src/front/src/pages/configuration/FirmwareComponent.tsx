@@ -1,13 +1,15 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { GlobalState } from "./GlobalState";
+import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
 
 function FirmwareComponent(props: {
     globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    errorState: ErrorState
 }) {
     const [firmware, setFirmware] = useState("");
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
+    const backgroundColor = props.errorState.firmware === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
     useEffect(() => {
         const fetchFirmwareList = async () => {
@@ -21,7 +23,7 @@ function FirmwareComponent(props: {
 
 
     return (
-        <Paper elevation={2} sx={{p: 2, mt: 3}}>
+        <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
 
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid xs={4} item>
@@ -48,6 +50,9 @@ function FirmwareComponent(props: {
                         ))}
                     </Select>
                 </Grid>
+                {props.errorState.firmware !== "" &&
+                    <p>{props.errorState.firmware}</p>
+                }
             </Grid>
         </Paper>
     )

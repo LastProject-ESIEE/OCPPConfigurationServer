@@ -9,3 +9,9 @@ export type GlobalState = {
     configuration: Configuration[],
     firmware: string
 }
+
+export type ErrorState = {
+    name: string,
+    firmware: string,
+    description: string,
+}
