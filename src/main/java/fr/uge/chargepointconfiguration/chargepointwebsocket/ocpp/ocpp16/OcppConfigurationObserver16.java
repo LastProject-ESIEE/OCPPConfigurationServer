@@ -13,6 +13,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotificationResponse20;
+import fr.uge.chargepointconfiguration.configuration.ConfigurationTranscriptor;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
@@ -147,7 +148,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       }
       for (Map.Entry<String, String> set :
               configMap.entrySet()) {
-        var config = new ChangeConfigurationRequest16(set.getKey(), set.getValue());
+        var config = new ChangeConfigurationRequest16(
+                ConfigurationTranscriptor.fullNameToEnum(set.getKey()).getOcpp16Key(),
+                set.getValue());
         queue.add(config);
       }
     }
