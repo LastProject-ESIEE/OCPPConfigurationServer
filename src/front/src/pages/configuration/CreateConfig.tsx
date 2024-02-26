@@ -1,8 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../conf/confKeys";
-import {GlobalState, Key} from "./GlobalState";
-import { ErrorState, GlobalState } from "./GlobalState";
+import { ErrorState, GlobalState, Key } from "./GlobalState";
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
