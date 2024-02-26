@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * A BusinessLog doing database manipulations.
+ * A BusinessLogService doing database manipulations.
  */
 @Service
 public class BusinessLogService {
@@ -30,7 +30,7 @@ public class BusinessLogService {
   }
 
   /**
-   * Returns a list of business logs according to the given chargepoint.
+   * Returns a list of business logs filtered by a chargepoint id.
    *
    * @param chargepointId the id of the chargepoint.
    * @return a list of business logs by chargepoint.

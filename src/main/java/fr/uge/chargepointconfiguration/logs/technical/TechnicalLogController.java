@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TechnicalLogController {
 
-  private final TechnicalLogRepository technicalLogRepository;
+  private final TechnicalLogService technicalLogService;
 
   /**
    * TechnicalLogController's constructor.
    *
-   * @param technicalLogRepository a TechnicalLogRepository.
+   * @param technicalLogService a TechnicalLogService.
    */
   @Autowired
-  public TechnicalLogController(TechnicalLogRepository technicalLogRepository) {
-    this.technicalLogRepository = technicalLogRepository;
+  public TechnicalLogController(TechnicalLogService technicalLogService) {
+    this.technicalLogService = technicalLogService;
   }
 
   /**
@@ -45,6 +45,6 @@ public class TechnicalLogController {
   public List<TechnicalLog> getTechnicalLogByComponentAndCriticality(
           @PathVariable TechnicalLog.Component component,
           @PathVariable TechnicalLog.Criticality criticality) {
-    return technicalLogRepository.findAllByComponentAndCriticality(component, criticality);
+    return technicalLogService.getTechnicalLogByComponentAndCriticality(component, criticality);
   }
 }
