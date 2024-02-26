@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../conf/confKeys";
-import { GlobalState } from "./GlobalState";
+import { ErrorState, GlobalState } from "./GlobalState";
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
@@ -89,13 +89,14 @@ function AddKeyValuePair(props: {
 
 function LeftSection(props: {
     globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>
+    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    errorState: ErrorState
 }) {
     return (
         <Box>
-            <TitleComponent globalState={props.globalState} setGlobalState={props.setGlobalState}/>
-            <FirmwareComponent globalState={props.globalState} setGlobalState={props.setGlobalState}/>
-            <DescriptionComponent globalState={props.globalState} setGlobalState={props.setGlobalState}/>
+            <TitleComponent errorState={props.errorState} globalState={props.globalState} setGlobalState={props.setGlobalState}/>
+            <FirmwareComponent errorState={props.errorState} globalState={props.globalState} setGlobalState={props.setGlobalState}/>
+            <DescriptionComponent errorState={props.errorState} globalState={props.globalState} setGlobalState={props.setGlobalState}/>
         </Box>
     );
 }
@@ -106,7 +107,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
     return (
         <Box>
             <Paper elevation={2} sx={{p: 2, mt: 2}}>
-                <h4>Clé: Valeur</h4>
+                <h4>Champs de la configuration :</h4>
                 <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
                     <AddKeyValuePair setSelectedKeys={setSelectedKeys} selectedKeys={selectedKeys}/>
                     {selectedKeys.length !== 0 && (
@@ -139,22 +140,66 @@ function FirmwareUpdate() {
         firmware: ""
     })
 
+    const [errorState, setErrorState] = useState<ErrorState>({
+        name: "",
+        description: "",
+        firmware: ""
+    })
+
+    function check(globalState: GlobalState): boolean {
+        setErrorState({
+            name: "",
+            description: "",
+            firmware: ""
+        })
+
+        let error = false;
+        if (globalState.name.length === 0) {
+            setErrorState((prevState) => ({
+                ...prevState,
+                name: "Le titre est obligatoire.",
+            }));
+            error = true;
+        }
+
+        if (globalState.name.length > 50) {
+            setErrorState((prevState) => ({
+                ...prevState,
+                name: "Le titre ne peut pas dépasser 50 caractères.",
+            }));
+            error = true;
+        }
+
+        if (globalState.firmware.length === 0) {
+            setErrorState((prevState) => ({
+                ...prevState,
+                firmware: "Le firmware est obligatoire.",
+            }));
+            error = true;
+        }
+
+        return error;
+    }
+
     function handleSubmit() {
         console.log(globalState)
-        postNewConfiguration(globalState) // manage response to display error or success
+        if (check(globalState)) {
+            postNewConfiguration(globalState) // manage response to display error or success
+        }
     }
 
     return (
         <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
             <Grid container spacing={15}>
                 <Grid item xs={12} md={6}>
-                    <LeftSection globalState={globalState} setGlobalState={setGlobalState}/>
+                    <LeftSection errorState={errorState} globalState={globalState} setGlobalState={setGlobalState}/>
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <RightSection globalState={globalState} setGlobalState={setGlobalState}/>
                 </Grid>
             </Grid>
             <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+                {/* TODO : fixer le bouton en bas */}
                 <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
                         color="primary">Valider</Button>
             </Box>
