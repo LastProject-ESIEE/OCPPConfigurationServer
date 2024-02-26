@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepointwebsocket;
+package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Component;
 import java.util.Objects;
@@ -9,42 +9,49 @@ import java.util.Objects;
  */
 public enum ConfigurationTranscriptor {
 
-  LIGHT_INTENSITY("Intensité de la LED",
+  LIGHT_INTENSITY(1,
+          "Intensité de la LED",
           "LightIntensity",
           "UNKNOWN",
           new Component("UNKNOWN"),
           "^(100|\\d{1,2})$"),
 
-  NETWORK_PROFILE("Adresse IP/DNS du point de charge",
-          "BackOfficeNetworkProfile1",
+  NETWORK_PROFILE(2,
+          "Adresse IP/DNS du point de charge",
+          "BackOffice-URL-wired",
           "",
           new Component(""),
           ""),
 
-  VENDOR_NAME("Nom du constructeur",
+  VENDOR_NAME(3,
+          "Nom du constructeur",
           "Identity",
           "Identity",
           new Component("SecurityCtrlr"),
           "^.{0,20}$"),
 
-  LOCAL_AUTH_LIST("Liste d'authentification local activé ?",
+  LOCAL_AUTH_LIST(4,
+          "Liste d'authentification local activé ?",
           "LocalAuthListEnabled",
           "LocalAuthListEnabled",
           new Component("LocalAuthListCtrlr"),
           ""),
 
-  STATION_MAX_CURRENT("Courant max du point de charge",
+  STATION_MAX_CURRENT(5,
+          "Courant max du point de charge",
           "Station-MaxCurrent",
           "",
           new Component(""),
           ""),
 
-  STATION_PASSWORD("Changer le mot de passe du point de charge",
+  STATION_PASSWORD(6,
+          "Changer le mot de passe du point de charge",
           "PW-SetChargerPassword",
           "BasicAuthPassword",
           new Component("SecurityCtrlr"),
           "^(?!.*[\\\\\",]).{10,40}$");
 
+  private final int id;
   private final String fullName;
   private final String ocpp16Key;
   private final String ocpp20Key;
@@ -54,22 +61,34 @@ public enum ConfigurationTranscriptor {
   /**
    * Enum's constructor. Should be private and not called outside this enum.
    *
-   * @param fullName The name which will be displayed to the user.
+   * @param fullName The name which will be displayed to the user, it should be unique.
    * @param ocpp16Key The configuration key according to the OCPP 1.6 protocol.
    * @param ocpp20Key The configuration key according to the OCPP 2.0.1 protocol.
    * @param component {@link Component}.
    * @param regexRule The rule which a user should respect when giving a value to the given key.
    */
-  ConfigurationTranscriptor(String fullName,
+  ConfigurationTranscriptor(int id,
+                            String fullName,
                             String ocpp16Key,
                             String ocpp20Key,
                             Component component,
                             String regexRule) {
+    this.id = id;
     this.fullName = Objects.requireNonNull(fullName);
     this.ocpp16Key = Objects.requireNonNull(ocpp16Key);
     this.ocpp20Key = Objects.requireNonNull(ocpp20Key);
     this.component = Objects.requireNonNull(component);
     this.regexRule = Objects.requireNonNull(regexRule);
+  }
+
+  /**
+   * Returns the configuration's id.<br>
+   * It is used to quickly find the corresponding configuration from the database.
+   *
+   * @return The configuration's id.
+   */
+  public int getId() {
+    return id;
   }
 
   /**
@@ -116,5 +135,23 @@ public enum ConfigurationTranscriptor {
    */
   public String getRegexRule() {
     return regexRule;
+  }
+
+  /**
+   * Searches the correct enum with the given full name.
+   *
+   * @param id Configuration's id.
+   * @return {@link ConfigurationTranscriptor}.
+   */
+  public static ConfigurationTranscriptor idToEnum(int id) {
+    return switch (id) {
+      case 1 -> LIGHT_INTENSITY;
+      case 2 -> NETWORK_PROFILE;
+      case 3 -> VENDOR_NAME;
+      case 4 -> LOCAL_AUTH_LIST;
+      case 5 -> STATION_MAX_CURRENT;
+      case 6 -> STATION_PASSWORD;
+      default -> throw new IllegalStateException("Unknown key");
+    };
   }
 }

@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../conf/confKeys";
-import { ErrorState, GlobalState } from "./GlobalState";
+import { ErrorState, GlobalState, Key } from "./GlobalState";
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
@@ -9,10 +9,12 @@ import KeyValuePair from "./KeyValuePair";
 
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key}":"${keyValue.value}"`)
+    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
         .join(", ")
 
     myConfig = "{" + myConfig + "}"
+
+    console.log(JSON.parse(myConfig))
 
     let request = await fetch(window.location.origin + "/api/configuration/create",
         {
@@ -36,19 +38,21 @@ export async function postNewConfiguration(configuration: GlobalState): Promise<
 }
 
 function AddKeyValuePair(props: {
-    setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>,
-    selectedKeys: string[],
+    setSelectedKeys: React.Dispatch<React.SetStateAction<Key[]>>,
+    selectedKeys: Key[],
 }) {
     const {
         setSelectedKeys,
         selectedKeys,
     } = props;
 
-    const [selectedKey, setSelectedKey] = useState<string | null>(null);
-    const [options, setOptions] = useState(confKeys.map(key => key.keyName));
+    const [selectedKey, setSelectedKey] = useState<Key | null>(null);
+    const [options, setOptions] = useState<Key[]>(confKeys.map(key => {
+        return {id: key.id, keyName: key.keyName}
+    }));
 
     useEffect(() => {
-        setOptions(confKeys.map(key => key.keyName).filter(key => !selectedKeys.includes(key)));
+        setOptions(confKeys.filter(key => !selectedKeys.map(selected => selected.id).includes(key.id)));
     }, [selectedKeys])
 
     const updateOptions = () => {
@@ -73,6 +77,7 @@ function AddKeyValuePair(props: {
                     sx={{width: 300}}
                     disablePortal
                     options={options}
+                    getOptionLabel={option => option.keyName}
                     value={selectedKey}
                     renderInput={(params) => <TextField {...params} label="Clé"/>}
                 />
@@ -102,7 +107,8 @@ function LeftSection(props: {
 }
 
 function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> }) {
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+    const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
 
     return (
         <Box>
@@ -116,7 +122,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                             {selectedKeys.map((key) => {
                                 return (
                                     <KeyValuePair
-                                        key={key}
+                                        key={key.id}
                                         selectedKeys={selectedKeys}
                                         setSelectedKeys={setSelectedKeys}
                                         selectedKey={key}
@@ -183,7 +189,7 @@ function FirmwareUpdate() {
 
     function handleSubmit() {
         console.log(globalState)
-        if (check(globalState)) {
+        if (!check(globalState)) {
             postNewConfiguration(globalState) // manage response to display error or success
         }
     }

@@ -1,24 +1,24 @@
 
 const confKeys = [
     {
+        id: "1",
         keyName: "LightIntensity",
         type: "number",
-        selected: false,
     },
     {
+        id: "2",
         keyName: "Identity",
         type: "string",
-        selected: false,
     },
     {
+        id: "3",
         keyName: "cle bool",
         type: "boolean",
-        selected: false,
     },
     {
+        id: "4",
         keyName: "cle date",
         type: "Date",
-        selected: false,
     },
 ]
 

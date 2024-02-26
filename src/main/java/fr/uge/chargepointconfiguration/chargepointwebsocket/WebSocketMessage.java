@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.BootNotificationRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.ChangeConfigurationRequest16;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.ResetRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotificationRequest20;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.SetVariablesRequest20;
 import java.util.Objects;
@@ -61,6 +62,7 @@ public interface WebSocketMessage {
     STATUS_FIRMWARE_REQUEST("StatusFirmware"),
     CHANGE_CONFIGURATION_REQUEST("ChangeConfiguration"),
     SET_VARIABLES_REQUEST("SetVariables"),
+    RESET_REQUEST("Reset"),
     OTHER("Other");
 
     private final String name;
@@ -95,6 +97,7 @@ public interface WebSocketMessage {
         case BootNotificationRequest20 ignored -> BOOT_NOTIFICATION_REQUEST;
         case ChangeConfigurationRequest16 ignored -> CHANGE_CONFIGURATION_REQUEST;
         case SetVariablesRequest20 ignored -> SET_VARIABLES_REQUEST;
+        case ResetRequest16 ignored -> RESET_REQUEST;
         default -> OTHER;
       };
     }
@@ -111,6 +114,7 @@ public interface WebSocketMessage {
         case "BootNotification" -> BOOT_NOTIFICATION_REQUEST;
         case "StatusFirmware" -> STATUS_FIRMWARE_REQUEST;
         case "ChangeConfiguration" -> CHANGE_CONFIGURATION_REQUEST;
+        case "Reset" -> RESET_REQUEST;
         default -> OTHER;
       };
     }
