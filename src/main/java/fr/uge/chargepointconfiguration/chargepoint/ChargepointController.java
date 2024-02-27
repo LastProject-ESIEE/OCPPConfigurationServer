@@ -93,7 +93,7 @@ public class ChargepointController {
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = chargepointService.countTotal();
-    var nextPage = (((page + 1) * size) <= total) ? ((page + 1) + "") : "";
+    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
 
     return new PageDto<>(total,
           page,
