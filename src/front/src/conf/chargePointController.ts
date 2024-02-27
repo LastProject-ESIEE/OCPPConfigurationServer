@@ -1,6 +1,6 @@
 
 // Status type definition
-export type Status = {
+export type ChargePointStatus = {
     error: string,
     state: boolean, // true: connected, false: disconnected
     step: 'FIRMWARE' | 'CONFIGURATION',
@@ -12,7 +12,7 @@ export type ChargePoint = {
     id: number,
     name: string,
     description: string,
-    status: Status,
+    //status: ChargePointStatus,
     firmware: string
 }
 

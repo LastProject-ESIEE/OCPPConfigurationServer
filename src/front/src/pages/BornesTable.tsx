@@ -1,129 +1,59 @@
-import { Box } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
-import { useEffect } from "react";
-import { ColumnDefinition, ReactTabulator, ReactTabulatorOptions } from "react-tabulator";
-import 'react-tabulator/css/bootstrap/tabulator_bootstrap.min.css';
-import 'react-tabulator/lib/styles.css';
-import { Tabulator } from "tabulator-tables";
+import { InfinityScrollItemsTable, InfinityScrollItemsTableProps } from "./DisplayTable";
+import { ChargePoint, ChargePointStatus } from "../conf/chargePointController";
 
 
-const columns: ColumnDefinition[] = [
-    { title: "Name", field: "name", width: 150, headerFilter:"input" },
-    { title: "Age", field: "age", hozAlign: "left", formatter: "progress" },
-    { title: "Favourite Color", field: "col" },
-    { title: "Date Of Birth", field: "dob", hozAlign: "center" },
-    { title: "Rating", field: "rating", hozAlign: "center", formatter: "star" },
-    { title: "Passed?", field: "passed", hozAlign: "center", formatter: "tickCross" }
-  ];
-
-var data = [
-    {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
-    {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
-    {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
-    {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
-    {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
-  ];
-
-
-const options: ReactTabulatorOptions = {
-    //ajaxURL:"/exampledata/ajaxprogressive?page=5&size=20",
-    progressiveLoad: "scroll",
-    paginationSize: 20,
-  };
+var testChargePoint: ChargePoint[] = [
+  {id:1, description: "Un charge point.", firmware: "v1", name: "C1"},
+  {id:2, description: "Un charge point.", firmware: "v1", name: "C2"},
+  {id:3, description: "Un charge point.", firmware: "v1", name: "C3"},
+  {id:4, description: "Un charge point.", firmware: "v1", name: "C4"},
+  {id:5, description: "Un charge point.", firmware: "v1", name: "C5"},
+  {id:6, description: "Un charge point.", firmware: "v1", name: "C6"},
+  {id:7, description: "Un charge point.", firmware: "v1", name: "C7"},
+  {id:8, description: "Un charge point.", firmware: "v1", name: "C8"},
+  {id:9, description: "Un charge point.", firmware: "v1", name: "C9"},
+  {id:10, description: "Un charge point.", firmware: "v1", name: "C10"},
+  {id:11, description: "Un charge point.", firmware: "v1", name: "C11"},
+  {id:12, description: "Un charge point.", firmware: "v1", name: "C12"},
+  {id:13, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:14, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:15, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:16, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:17, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:18, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:19, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:20, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:21, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:22, description: "Un charge point.", firmware: "v1", name: "C13"},
+  {id:23, description: "Un charge point.", firmware: "v1", name: "C13"},
+]
   
 export function ChargePointTable() {
-    const [tableData, setTableData] = React.useState(data);
-    const [tableColumns, setTableColumns] = React.useState<ColumnDefinition[]>(columns);
-/*
-    useEffect(() => {
-        // Build Tabulator
-        var tabulator = new Tabulator("#example-table", {
-            layout: "fitColumns",
-            ajaxURL: "https://tabulator.info/exampledata/ajaxprogressive?page=5&size=20",
-            progressiveLoad: "scroll",
-            paginationSize: 20,
-            placeholder: "No Data Set",
-            columns: [
-                {title:"Name", field:"name", sorter:"string", width:200},
-                {title:"Progress", field:"progress", sorter:"number", formatter:"progress"},
-                {title:"Gender", field:"gender", sorter:"string"},
-                {title:"Rating", field:"rating", formatter:"star", hozAlign:"center", width:100},
-                {title:"Favourite Color", field:"col", sorter:"string"},
-                {title:"Date Of Birth", field:"dob", sorter:"date", hozAlign:"center"},
-                {title:"Driver", field:"car", hozAlign:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-        });
+    const [tableData, setTableData] = React.useState(testChargePoint);
+    //const [tableColumns, setTableColumns] = React.useState<ColumnDefinition[]>(columns);
 
-        // Cleanup function to destroy the Tabulator instance when the component unmounts
-        return () => {
-            tabulator.destroy();
-        };
-    }, []); // Empty dependency array ensures that this effect runs only once after the initial render
-    
-*/
+    let props: InfinityScrollItemsTableProps<ChargePoint> = {
+      columns: [{title: "Nom", filter: {apiField: "containsTitle"}}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined}],
+      key: "charge-point-table",
+      data: testChargePoint,
+      onSelection: arg => { },
+      formatter: (arg,arg2) => {
+        return (
+          <Box maxWidth={"true"}>
+              <Grid container maxWidth={"true"}>
+                <Typography>{arg.name}</Typography>
+              </Grid>
+          </Box>
+        )
+       },
+      fetchData: () => {
+        console.log("Fetching")
+        return [...testChargePoint,...testChargePoint]
+      },
 
+    }
 
-    return (
-        <Box maxWidth={"true"} maxHeight={100}>
-            <ReactTabulator
-                data={tableData}
-                columns={tableColumns}
-                layout={"fitData"}
-                options={options}
-                events={{
-                    dataLoaded: function (dataO:any) {
-                      console.log('dataLoaded', dataO);
-                      // return data; //return the response data to tabulator
-                      let modResponse: any = {};
-                      modResponse.data = dataO;
-                      modResponse.last = 5;
-                      return modResponse;
-                    },
-                    ajaxError: function (error: any) {
-                      console.log('ajaxError', error);
-                    }
-                }}
-            />
-        </Box> 
-    )
+    return InfinityScrollItemsTable(props)
 }
-
-/*
-            <ReactTabulator
-                data={data}
-                columns={columns}
-                layout={"fitData"}
-                ajaxURL="/exampledata/ajaxprogressive"
-                progressiveLoad="scroll"
-                paginationSize={20}
-                placeholder="No Data Set"
-            />
-export class ChargePointTableTest extends React.Component {
-    el: any = React.createRef();
-  
-    tabulator: Tabulator | null  = null; //variable to hold your table
-    tableData = []; //data for table to display
-  
-    componentDidMount() {
-      //instantiate Tabulator when element is mounted
-      this.tabulator = new Tabulator(this.el, {
-        data: this.tableData, //link data to table
-        reactiveData:true, //enable data reactivity
-        columns: [
-            {title: "Name", field: "name", sorter: "string", width: 200},
-            {title: "Progress", field: "progress", sorter: "number", formatter: "progress"},
-            {title: "Gender", field: "gender", sorter: "string"},
-            {title: "Rating", field: "rating", formatter: "star", hozAlign: "center", width: 100},
-            {title: "Favourite Color", field: "col", sorter: "string"},
-            {title: "Date Of Birth", field: "dob", sorter: "date", hozAlign: "center"},
-            {title: "Driver", field: "car", hozAlign: "center", formatter: "tickCross", sorter: "boolean"},
-        ],
-      });
-    }
-  
-    //add table holder element to DOM
-    render(){
-      return (<div ref={el => (this.el = el)} />);
-    }
-  }
-  */
