@@ -1,11 +1,5 @@
 import { Box, Grid, TextField, Typography } from "@mui/material";
-import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-export type ChargePointModel = {
-    id: string,
-    name: string,
-}
 
 export type TableColumnFilterDefinition = {
     apiField: string,
@@ -15,11 +9,6 @@ export type TableColumnFilterDefinition = {
 export type TableColumnDefinition = {
     title: string,
     filter?: TableColumnFilterDefinition,
-}
-
-export type ConfigurationModel = {
-    id: string,
-    name: string,
 }
 
 export type PageRequest<T> = {
@@ -38,7 +27,7 @@ export type InfinityScrollItemsTableProps<T> = {
     error: string | undefined,
     onSelection: (item: T) => void, // function call when an element is selected in the list
     formatter: (item: T, index: number) => JSX.Element // function that transform an item to a JSX element
-    fetchData: () => T[], // function that fetch next items
+    fetchData: () => void, // function that fetch next items
 }
 
 
@@ -77,10 +66,10 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                             hasMore={props.hasMore}
                             loader={
                                 <>
-                                    {(props.error != undefined) && (
+                                    {(props.error !== undefined) && (
                                         <Typography variant="h6" color={"red"} textAlign={"center"}>{props.error}</Typography>
                                     )}
-                                    {(props.error == undefined) && (
+                                    {(props.error === undefined) && (
                                         <Typography variant="h6" textAlign={"center"}>Chargement...</Typography>
                                     )}
                                 </>

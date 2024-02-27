@@ -40,7 +40,7 @@ export function ChargePointTable() {
           return
         }
         setTableData(result.data)
-        setHasMore(result.total > PAGE_SIZE * (currentPage + 1))
+        setHasMore(result.total > PAGE_SIZE)
       });
     }, [])
     
@@ -78,16 +78,15 @@ export function ChargePointTable() {
        },
       fetchData: () => {
         const nextPage = currentPage + 1;
-        searchChargePoint(1,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
+        searchChargePoint(PAGE_SIZE,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
           if(!result){
             setError("Erreur lors de la récupération des bornes.")
             return
           }
-          setTableData([...tableData, ...(result?.data ?? [])])
-          setHasMore(result.total > PAGE_SIZE * (currentPage + 1))
+          setTableData([...tableData, ...result.data])
+          setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
         });
         setCurrentPage(nextPage)
-        return tableData
       },
     }
 
