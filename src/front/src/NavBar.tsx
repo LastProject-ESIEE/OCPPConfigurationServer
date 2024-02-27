@@ -14,7 +14,7 @@ function ButtonLink(props: { label: string, href: string, disabled?: boolean }):
     )
 }
 
-function englishRoleToFrench(role: string): string {
+export function englishRoleToFrench(role: string): string {
     switch (role) {
         case "ADMINISTRATOR":
             return "Administrateur";
@@ -34,7 +34,7 @@ export function NavBar() {
     const [user, setUser] = useState<any>(null);
     // Update the currentButton state when the URL changes
     useEffect(() => {
-        fetch("api/user/me")
+        fetch("/api/user/me")
             .then(response => {
                 if (response.ok) {
                     return response.json();

@@ -1,13 +1,13 @@
-import { Configuration, GlobalState } from "./GlobalState";
+import {Configuration, GlobalState, Key} from "./GlobalState";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 function KeyValuePair(props: {
-    selectedKey: string,
+    selectedKey: Key,
     setGlobalState: Dispatch<SetStateAction<GlobalState>>,
-    setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>,
-    selectedKeys: string[]
+    setSelectedKeys: React.Dispatch<React.SetStateAction<Key[]>>,
+    selectedKeys: Key[]
 }): JSX.Element {
     const {
         selectedKey,
@@ -48,7 +48,7 @@ function KeyValuePair(props: {
     return (
         <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
             <Grid item sm={4}>
-                <Typography>{selectedKey}</Typography>
+                <Typography>{selectedKey.keyName}</Typography>
             </Grid>
             <Grid item sm={1}>
                 <p>:</p>
@@ -68,7 +68,7 @@ function KeyValuePair(props: {
                 }}
                 color={"error"}
                 onClick={() => {
-                    setSelectedKeys(selectedKeys.filter(key => key !== selectedKey))
+                    setSelectedKeys(selectedKeys.filter(key => key.id !== selectedKey.id))
                 }}
             >
                 <h2>&times;</h2>

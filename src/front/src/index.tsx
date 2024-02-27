@@ -9,6 +9,7 @@ import Error from "./pages/Error";
 import CreateConfig from "./pages/configuration/CreateConfig";
 import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
+import Account from "./pages/Account";
 import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
 
 const root = ReactDOM.createRoot(
@@ -37,7 +38,7 @@ root.render(
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
                     </Route>
-                    <Route path="myAccount" element={<About/>}/>
+                    <Route path="myAccount" element={<Account/>}/>
                 </Route>
                 <Route path="*" element={<Error/>}/>
                 {/* Add more routes as needed */}

@@ -32,6 +32,9 @@ public class OcppMessageParser16 implements OcppMessageParser {
       case CHANGE_CONFIGURATION_REQUEST -> Optional.of(
               JsonParser.stringToObject(ChangeConfigurationResponse16.class,
                       responseMessage.data()));
+      case RESET_REQUEST -> Optional.of(
+              JsonParser.stringToObject(ResetResponse16.class,
+                      responseMessage.data()));
       default -> Optional.empty();
     };
   }

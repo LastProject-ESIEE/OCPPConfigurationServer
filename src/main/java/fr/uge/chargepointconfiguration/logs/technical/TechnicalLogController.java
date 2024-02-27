@@ -1,13 +1,10 @@
-package fr.uge.chargepointconfiguration.controller;
+package fr.uge.chargepointconfiguration.logs.technical;
 
-import fr.uge.chargepointconfiguration.entities.TechnicalLog;
-import fr.uge.chargepointconfiguration.repository.TechnicalLogRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TechnicalLogController {
 
-  private final TechnicalLogRepository technicalLogRepository;
+  private final TechnicalLogService technicalLogService;
 
   /**
    * TechnicalLogController's constructor.
    *
-   * @param technicalLogRepository a TechnicalLogRepository.
+   * @param technicalLogService a TechnicalLogService.
    */
   @Autowired
-  public TechnicalLogController(TechnicalLogRepository technicalLogRepository) {
-    this.technicalLogRepository = technicalLogRepository;
+  public TechnicalLogController(TechnicalLogService technicalLogService) {
+    this.technicalLogService = technicalLogService;
   }
 
   /**
@@ -48,6 +45,6 @@ public class TechnicalLogController {
   public List<TechnicalLog> getTechnicalLogByComponentAndCriticality(
           @PathVariable TechnicalLog.Component component,
           @PathVariable TechnicalLog.Criticality criticality) {
-    return technicalLogRepository.findAllByComponentAndCriticality(component, criticality);
+    return technicalLogService.getTechnicalLogByComponentAndCriticality(component, criticality);
   }
 }

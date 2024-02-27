@@ -51,16 +51,18 @@ public class ConfigurationServer extends WebSocketServer {
             new ChargePointManager(ocppVersion.orElseThrow(),
                     (ocppMessage, chargePointManager) -> {
                       switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-                        case REQUEST -> conn.send(
-                                new WebSocketRequestMessage(
-                                        MessageType.REQUEST.getCallType(),
-                                        chargePointManager.getCurrentId(),
-                                        WebSocketMessage
-                                                .MessageTypeRequest
-                                                .ocppMessageToEnum(ocppMessage),
-                                        JsonParser.objectToJsonString(ocppMessage)
-                                ) // TODO : Change the creation to be smaller
-                                        .toString());
+                        case REQUEST -> {
+                          var webSocketRequestMessage = new WebSocketRequestMessage(
+                                  MessageType.REQUEST.getCallType(),
+                                  chargePointManager.getCurrentId(),
+                                  WebSocketMessage
+                                          .MessageTypeRequest
+                                          .ocppMessageToEnum(ocppMessage),
+                                  JsonParser.objectToJsonString(ocppMessage)
+                          );
+                          chargePointManager.setPendingRequest(webSocketRequestMessage);
+                          conn.send(webSocketRequestMessage.toString());
+                        }
                         case RESPONSE -> conn.send(
                                 new WebSocketResponseMessage(
                                         MessageType.RESPONSE.getCallType(),

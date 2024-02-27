@@ -1,11 +1,11 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
-import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class ChargepointService {
 
   private final ChargepointRepository chargepointRepository;
+  private final PageableChargepointRepository pageableChargepointRepository;
 
   private final ConfigurationRepository configurationRepository;
 
@@ -23,15 +24,17 @@ public class ChargepointService {
   /**
    * ChargepointService's constructor.
    *
-   * @param chargepointRepository A ChargepointRepository accessing to database.
+   * @param chargepointRepository   A ChargepointRepository accessing to database.
    * @param configurationRepository A ConfigurationRepository accessing to database.
-   * @param statusRepository A StatusRepository accessing to database.
+   * @param statusRepository        A StatusRepository accessing to database.
    */
   @Autowired
   public ChargepointService(ChargepointRepository chargepointRepository,
+                            PageableChargepointRepository pageableChargepointRepository,
                             ConfigurationRepository configurationRepository,
                             StatusRepository statusRepository) {
     this.chargepointRepository = chargepointRepository;
+    this.pageableChargepointRepository = pageableChargepointRepository;
     this.configurationRepository = configurationRepository;
     this.statusRepository = statusRepository;
   }
@@ -44,13 +47,13 @@ public class ChargepointService {
    */
   public ChargepointDto save(CreateChargepointDto createChargepointDto) {
     var chargepoint = chargepointRepository.save(new Chargepoint(
-        createChargepointDto.serialNumberChargepoint(),
-        createChargepointDto.type(),
-        createChargepointDto.constructor(),
-        createChargepointDto.clientId(),
-        createChargepointDto.serverAddress(),
-        configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
-        statusRepository.findById(createChargepointDto.status()).orElseThrow()
+          createChargepointDto.serialNumberChargepoint(),
+          createChargepointDto.type(),
+          createChargepointDto.constructor(),
+          createChargepointDto.clientId(),
+          createChargepointDto.serverAddress(),
+          configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
+          statusRepository.findById(createChargepointDto.status()).orElseThrow()
     ));
     return chargepoint.toDto();
   }
@@ -62,5 +65,24 @@ public class ChargepointService {
   public Optional<ChargepointDto> getChargepointById(int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
     return Optional.of(chargepointRepository.findById(id).orElseThrow().toDto());
+  }
+
+  /**
+   * Search for chargepoints with a pagination.
+   *
+   * @param pageable         The page requested
+   * @param clientIdContains the pattern for ClientId
+   * @return the list of corresponding chargepoint
+   */
+  public List<ChargepointDto> search(PageRequest pageable, String clientIdContains) {
+    return pageableChargepointRepository
+          .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
+          .stream()
+          .map(Chargepoint::toDto)
+          .toList();
+  }
+
+  public long countTotal() {
+    return chargepointRepository.count();
   }
 }
