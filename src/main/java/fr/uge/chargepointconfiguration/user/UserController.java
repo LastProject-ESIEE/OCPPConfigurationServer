@@ -1,6 +1,10 @@
 package fr.uge.chargepointconfiguration.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,6 +72,12 @@ public class UserController {
    * @param changePasswordUserDto a ChangePassworddUserDto.
    * @return a ResponseEntity of User.
    */
+  @Operation(summary = "Update password")
+  @ApiResponse(responseCode = "200",
+      description = "Update the password of the current user",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = User.class))
+      })
   @PostMapping("/updatePassword")
   public ResponseEntity<User> postNewPasswordUser(
           @Parameter(
@@ -90,6 +100,12 @@ public class UserController {
    * @param changeRoleUserDto a ChangeRoleUserDto.
    * @return a ResponseEntity of User.
    */
+  @Operation(summary = "Update role")
+  @ApiResponse(responseCode = "200",
+          description = "Update the role of the current user",
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = User.class))
+          })
   @PostMapping("/updateRole")
   public ResponseEntity<User> postUpdateRoleUser(
           @Parameter(
