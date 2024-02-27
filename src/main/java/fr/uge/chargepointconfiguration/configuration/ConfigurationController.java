@@ -84,14 +84,14 @@ public class ConfigurationController {
   @PostMapping("/create")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "The configuration to send to the controller.",
+            description = "The configuration to be sent to the controller.",
             required = true,
             content = @Content(
                   examples = @ExampleObject(
                         """
                         {
-                          "name": "string",
-                          "description": "string",
+                          "name": "the name of the configuration",
+                          "description": "A short description about the configuration",
                           "configuration": "{key1: value1, key2: value2}",
                           "firmware": 0
                         }
