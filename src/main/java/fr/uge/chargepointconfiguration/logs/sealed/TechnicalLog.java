@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.logs.technical;
+package fr.uge.chargepointconfiguration.logs.sealed;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "technical_log")
-public class TechnicalLog {
+public final class TechnicalLog implements Log {
 
   /**
    * Criticality enum represents different critical level that a log can have
@@ -200,6 +200,15 @@ public class TechnicalLog {
             getComponent(),
             getCriticality(),
             getCompleteLog());
+  }
+
+  @Override
+  public String text() {
+    return date + " "
+           + "{" + component + "} "
+           + "{" + criticality + "} "
+           + "(" + id + ") "
+           + completeLog;
   }
 
   @Override

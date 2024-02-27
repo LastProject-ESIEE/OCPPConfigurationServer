@@ -1,9 +1,8 @@
-package fr.uge.chargepointconfiguration.logs.business;
+package fr.uge.chargepointconfiguration.logs.sealed;
 
 import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
-import fr.uge.chargepointconfiguration.logs.technical.TechnicalLog;
-import fr.uge.chargepointconfiguration.status.StatusDto;
+import fr.uge.chargepointconfiguration.logs.business.BusinessLogDto;
 import fr.uge.chargepointconfiguration.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,7 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "business_log")
-public class BusinessLog implements DtoEntity<BusinessLogDto> {
+public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
 
   /**
    * Category attach to this log.<br>
@@ -226,12 +225,23 @@ public class BusinessLog implements DtoEntity<BusinessLogDto> {
   }
 
   @Override
+  public String text() {
+    return date + " "
+           + "{" + category + "} "
+           + "(" + id + ") "
+           + "user " + user.getId() + " "
+           + "chargepoint " + chargepoint + " "
+           + completeLog;
+  }
+
+  @Override
   public String toString() {
     return "BusinessLog{"
            + "id=" + id
            + ", date=" + date
            + ", user='" + user + '\''
-           + ", chargePoint=" + chargepoint
+           + ", chargePoint='" + chargepoint + '\''
+           + ", category='" + category + '\''
            + ", completeLog='" + completeLog + '\''
            + '}';
   }
