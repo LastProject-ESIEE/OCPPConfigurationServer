@@ -1,58 +1,94 @@
-import { Box, Grid, Typography } from "@mui/material";
-import React from "react";
-import { InfinityScrollItemsTable, InfinityScrollItemsTableProps } from "./DisplayTable";
-import { ChargePoint, ChargePointStatus } from "../conf/chargePointController";
+import { Box, Grid, ListItemButton, Typography } from "@mui/material";
+import React, { useEffect } from "react";
+import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
+import { ChargePoint, ChargePointStatus, searchChargePoint } from "../conf/chargePointController";
+import { Link } from "react-router-dom";
+import { maxHeight } from "@mui/system";
 
+const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
 
-var testChargePoint: ChargePoint[] = [
-  {id:1, description: "Un charge point.", firmware: "v1", name: "C1"},
-  {id:2, description: "Un charge point.", firmware: "v1", name: "C2"},
-  {id:3, description: "Un charge point.", firmware: "v1", name: "C3"},
-  {id:4, description: "Un charge point.", firmware: "v1", name: "C4"},
-  {id:5, description: "Un charge point.", firmware: "v1", name: "C5"},
-  {id:6, description: "Un charge point.", firmware: "v1", name: "C6"},
-  {id:7, description: "Un charge point.", firmware: "v1", name: "C7"},
-  {id:8, description: "Un charge point.", firmware: "v1", name: "C8"},
-  {id:9, description: "Un charge point.", firmware: "v1", name: "C9"},
-  {id:10, description: "Un charge point.", firmware: "v1", name: "C10"},
-  {id:11, description: "Un charge point.", firmware: "v1", name: "C11"},
-  {id:12, description: "Un charge point.", firmware: "v1", name: "C12"},
-  {id:13, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:14, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:15, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:16, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:17, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:18, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:19, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:20, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:21, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:22, description: "Un charge point.", firmware: "v1", name: "C13"},
-  {id:23, description: "Un charge point.", firmware: "v1", name: "C13"},
+const chargePointTableColumns: TableColumnDefinition[] = [
+  {
+    title: "Identifiant client",
+    /*
+    filter: {
+      apiField: "containsTitle",
+      onChange: value => console.log("Filtering on : " + value)
+    }
+    */
+  },
+  {
+    title: "Étape", 
+  },
+  {
+    title: "Status",
+  },
+  {
+    title: "Dernière activitée",
+  }
 ]
-  
+
 export function ChargePointTable() {
-    const [tableData, setTableData] = React.useState(testChargePoint);
-    //const [tableColumns, setTableColumns] = React.useState<ColumnDefinition[]>(columns);
+    const [tableData, setTableData] = React.useState<ChargePoint[]>([]);
+    const [currentPage, setCurrentPage] = React.useState(0);
+    const [hasMore, setHasMore] = React.useState(true);
+    const [error, setError] = React.useState<string | undefined>(undefined);
+
+    useEffect(() => {
+      searchChargePoint(PAGE_SIZE).then((result: PageRequest<ChargePoint> | undefined) => {
+        if(!result){
+          setError("Problème lors de la récupération des bornes.")
+          return
+        }
+        setTableData(result.data)
+        setHasMore(result.total > PAGE_SIZE * (currentPage + 1))
+      });
+    }, [])
+    
 
     let props: InfinityScrollItemsTableProps<ChargePoint> = {
-      columns: [{title: "Nom", filter: {apiField: "containsTitle"}}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined}, {title: "Etat", filter: undefined},{title: "Step", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined},{title: "State", filter: undefined}],
+      columns: chargePointTableColumns,
       key: "charge-point-table",
-      data: testChargePoint,
-      onSelection: arg => { },
-      formatter: (arg,arg2) => {
+      data: tableData,
+      hasMore: hasMore,
+      onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
+      formatter: (chargePoint) => {
         return (
-          <Box maxWidth={"true"}>
-              <Grid container maxWidth={"true"}>
-                <Typography>{arg.name}</Typography>
-              </Grid>
+          <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
+              <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'display/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+                  <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                      <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.clientId}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.status.step}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.status.status}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{new Date(chargePoint.status.lastUpdate).toLocaleString()}</Typography>
+                          </Grid>
+                      </Grid>
+                  </ListItemButton>
+              </Link>
           </Box>
         )
        },
       fetchData: () => {
-        console.log("Fetching")
-        return [...testChargePoint,...testChargePoint]
+        const nextPage = currentPage + 1;
+        searchChargePoint(1,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
+          if(!result){
+            setError("Problème lors de la récupération des bornes.")
+            return
+          }
+          setTableData([...tableData, ...(result?.data ?? [])])
+          setHasMore(result.total > PAGE_SIZE * (currentPage + 1))
+        });
+        setCurrentPage(nextPage)
+        return tableData
       },
-
     }
 
     return InfinityScrollItemsTable(props)

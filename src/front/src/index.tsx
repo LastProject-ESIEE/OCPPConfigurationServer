@@ -29,7 +29,10 @@ root.render(
                         <Route path="edit/:id" element={<ConfigurationEditPage/>}/>
                         <Route path="new" element={<CreateConfig/>}/>
                     </Route>
-                    <Route path="chargepoint" Component={ChargePointTable}/>
+                    <Route path="chargepoint">
+                        <Route path="" element={<ChargePointTable/>}/>
+                        <Route path="display/:id" element={<Error/>}/>
+                    </Route>
                     <Route path="firmware">
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
