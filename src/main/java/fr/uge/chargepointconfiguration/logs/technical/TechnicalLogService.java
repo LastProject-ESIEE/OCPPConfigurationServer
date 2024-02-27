@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

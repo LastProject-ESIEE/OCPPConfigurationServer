@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

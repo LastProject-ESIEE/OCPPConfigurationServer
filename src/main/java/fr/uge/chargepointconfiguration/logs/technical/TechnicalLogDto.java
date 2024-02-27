@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import java.sql.Timestamp;
 
 /**

@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
