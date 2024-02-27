@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class ChargepointService {
 
   private final ChargepointRepository chargepointRepository;
-  private final PageableChargepointRepository pageableChargepointRepository;
 
   private final ConfigurationRepository configurationRepository;
 
@@ -30,11 +29,9 @@ public class ChargepointService {
    */
   @Autowired
   public ChargepointService(ChargepointRepository chargepointRepository,
-                            PageableChargepointRepository pageableChargepointRepository,
                             ConfigurationRepository configurationRepository,
                             StatusRepository statusRepository) {
     this.chargepointRepository = chargepointRepository;
-    this.pageableChargepointRepository = pageableChargepointRepository;
     this.configurationRepository = configurationRepository;
     this.statusRepository = statusRepository;
   }
@@ -75,7 +72,7 @@ public class ChargepointService {
    * @return the list of corresponding chargepoint
    */
   public List<ChargepointDto> search(PageRequest pageable, String clientIdContains) {
-    return pageableChargepointRepository
+    return chargepointRepository
           .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
           .stream()
           .map(Chargepoint::toDto)
