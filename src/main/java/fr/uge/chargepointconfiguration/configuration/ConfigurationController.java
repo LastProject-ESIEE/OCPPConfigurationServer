@@ -4,11 +4,12 @@ import fr.uge.chargepointconfiguration.chargepoint.ChargepointService;
 import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.status.StatusService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/configuration")
+@Tag(name = "Configuration", description = "The configuration API")
 public class ConfigurationController {
 
   private final ChargepointService chargepointService;
@@ -53,10 +55,11 @@ public class ConfigurationController {
    */
   @Operation(summary = "Get all configuration")
   @ApiResponse(responseCode = "200",
-      description = "Found all the configuration",
-      content = { @Content(mediaType = "application/json",
-          schema = @Schema(implementation = ConfigurationGeneralDto.class))
-      })
+      description = "Found all the configuration.",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationGeneralDto.class)
+      )
+  )
   @GetMapping(value = "/all")
   public List<ConfigurationGeneralDto> getAllConfiguration() {
     return configurationService.getAllConfigurations();
@@ -68,34 +71,34 @@ public class ConfigurationController {
    * @param createConfigurationDto All the necessary information for a configuration creation.
    * @return A configuration created with its information and its http result status.
    */
-  @Operation(summary = "Post a configuration")
+  @Operation(summary = "Create a configuration")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201",
           description = "Configuration created",
-          content = { @Content(
+          content = @Content(
               mediaType = "application/json",
-              schema = @Schema(implementation = ConfigurationDto.class)) }),
-      @ApiResponse(responseCode = "409",
-          description = "Configuration creation has a conflict",
-          content = @Content)
+              schema = @Schema(implementation = ConfigurationDto.class)
+          )
+      )
   })
   @PostMapping("/create")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
-      @Parameter(
-          name = "CreateConfigurationDto",
-          description = "Valid createConfiguration form",
-          example = """
-              {  "name": "String",
-                "description": "String",
-                "configuration": [
-                  {
-                    "key": "String",
-                    "value": "String"
-                  }
-                ],
-                "firmware": "String"
-              }""",
-          required = true)
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "The configuration to be sent to the controller.",
+            required = true,
+            content = @Content(
+                  examples = @ExampleObject(
+                        """
+                        {
+                          "name": "the name of the configuration",
+                          "description": "A short description about the configuration",
+                          "configuration": "{key1: value1, key2: value2}",
+                          "firmware": 0
+                        }
+                        """
+                  )
+            )
+      )
       @RequestBody CreateConfigurationDto createConfigurationDto) {
     var status = statusService.save();
     var configuration = configurationService.save(createConfigurationDto);

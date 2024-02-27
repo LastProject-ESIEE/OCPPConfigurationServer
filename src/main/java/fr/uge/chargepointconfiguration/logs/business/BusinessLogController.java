@@ -1,9 +1,11 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/api/log/business")
 @RestController
+@Tag(name = "Business Log", description = "The business log API")
 public class BusinessLogController {
 
   private final BusinessLogService businessLogService;
@@ -38,12 +41,14 @@ public class BusinessLogController {
    */
   @Operation(summary = "Get a list of logs by its charge point")
   @ApiResponse(responseCode = "200",
-          description = "Found the list of business logs",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = BusinessLog.class))
-          })
+        description = "Found the list of business logs",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = BusinessLog.class)
+        )
+  )
   @GetMapping(value = "/{id}")
-  public List<BusinessLogDto> getBusinessLogByChargepointId(@PathVariable int id) {
+  public List<BusinessLogDto> getBusinessLogByChargepointId(@Parameter @PathVariable int id) {
     return businessLogService.getAllByChargepointId(id).stream().map(BusinessLog::toDto).toList();
   }
 }

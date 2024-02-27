@@ -1,9 +1,11 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for technical log.
  */
 @RestController
+@Tag(name = "Technical log", description = "The technical log API")
 public class TechnicalLogController {
 
   private final TechnicalLogService technicalLogService;
@@ -37,14 +40,16 @@ public class TechnicalLogController {
    */
   @Operation(summary = "Get a list of logs by its component and criticality")
   @ApiResponse(responseCode = "200",
-          description = "Found the list of technical logs",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TechnicalLog.class))
-          })
+        description = "Found the list of technical logs",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = TechnicalLog.class)
+        )
+  )
   @GetMapping(value = "/log/technical/{component}/{criticality}")
   public List<TechnicalLog> getTechnicalLogByComponentAndCriticality(
-          @PathVariable TechnicalLog.Component component,
-          @PathVariable TechnicalLog.Criticality criticality) {
+          @Parameter @PathVariable TechnicalLog.Component component,
+          @Parameter @PathVariable TechnicalLog.Criticality criticality) {
     return technicalLogService.getTechnicalLogByComponentAndCriticality(component, criticality);
   }
 }
