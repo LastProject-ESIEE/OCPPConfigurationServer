@@ -70,7 +70,7 @@ public class UserController {
    * Update the password of the user.
    *
    * @param changePasswordUserDto a ChangePassworddUserDto.
-   * @return a ResponseEntity of User.
+   * @return a ResponseEntity of UserDto.
    */
   @Operation(summary = "Update password")
   @ApiResponse(responseCode = "200",
@@ -79,7 +79,7 @@ public class UserController {
           schema = @Schema(implementation = User.class))
       })
   @PostMapping("/updatePassword")
-  public ResponseEntity<User> postNewPasswordUser(
+  public ResponseEntity<UserDto> postUpdatePasswordUser(
           @Parameter(
                   name = "JSON with old and new password",
                   description = "Old and new password",
@@ -90,7 +90,7 @@ public class UserController {
                           }""",
                   required = true)
           @RequestBody ChangePasswordUserDto changePasswordUserDto) {
-    var user = userService.updatePassword(changePasswordUserDto);
+    var user = userService.updatePassword(changePasswordUserDto).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
@@ -98,7 +98,7 @@ public class UserController {
    * Updadate the role of the user.
    *
    * @param changeRoleUserDto a ChangeRoleUserDto.
-   * @return a ResponseEntity of User.
+   * @return a ResponseEntity of UserDto.
    */
   @Operation(summary = "Update role")
   @ApiResponse(responseCode = "200",
@@ -107,7 +107,7 @@ public class UserController {
                   schema = @Schema(implementation = User.class))
           })
   @PostMapping("/updateRole")
-  public ResponseEntity<User> postUpdateRoleUser(
+  public ResponseEntity<UserDto> postUpdateRoleUser(
           @Parameter(
                   name = "JSON with id and new role of the user",
                   description = "Update the role of the user",
@@ -119,7 +119,7 @@ public class UserController {
                           """,
                   required = true)
           @RequestBody ChangeRoleUserDto changeRoleUserDto) {
-    var user = userService.updateRole(changeRoleUserDto);
+    var user = userService.updateRole(changeRoleUserDto).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }
