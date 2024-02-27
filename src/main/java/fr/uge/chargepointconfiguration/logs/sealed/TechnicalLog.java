@@ -17,7 +17,7 @@ import org.hibernate.annotations.CreationTimestamp;
  * A technical log has an id, a date, a component, a criticality and the complete log.
  */
 @Entity
-@Table(name = "technical_log")
+@Table(name = "technical_logs")
 public final class TechnicalLog implements Log {
 
   /**
@@ -55,11 +55,11 @@ public final class TechnicalLog implements Log {
   private Timestamp date;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "component", nullable = false)
+  @Column(name = "component", nullable = false, columnDefinition = "varchar(32)")
   private Component component;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "criticality", nullable = false)
+  @Column(name = "criticality", nullable = false, columnDefinition = "varchar(32)")
   private Criticality criticality;
 
   @Column(name = "complete_log", nullable = false)
@@ -187,15 +187,14 @@ public final class TechnicalLog implements Log {
     }
     return getId() == that.getId()
            && Objects.equals(getDate(), that.getDate())
-           && Objects.equals(getComponent(), that.getComponent())
+           && getComponent() == that.getComponent()
            && getCriticality() == that.getCriticality()
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-            getId(),
+    return Objects.hash(getId(),
             getDate(),
             getComponent(),
             getCriticality(),

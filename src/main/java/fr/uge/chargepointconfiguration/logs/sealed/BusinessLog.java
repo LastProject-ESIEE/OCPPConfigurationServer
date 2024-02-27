@@ -13,7 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -25,8 +25,8 @@ import org.hibernate.annotations.CreationTimestamp;
  * a charge point, a firmware version and the complete log.
  */
 @Entity
-@Table(name = "business_log")
-public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
+@Table(name = "business_logs")
+public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
 
   /**
    * Category attach to this log.<br>
@@ -53,13 +53,15 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
    * The quote for user ("user") are here to specify the database H2 that
    * user isn't the key word user, but a field user in the database.
    */
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id", referencedColumnName = "id")
-  private User user;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", referencedColumnName = "id",
+      columnDefinition = "int default NULL")
+  private User user = null;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "chargepoint_id", referencedColumnName = "id_chargepoint")
-  private Chargepoint chargepoint;
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "chargepoint_id", referencedColumnName = "id_chargepoint",
+      columnDefinition = "int default NULL")
+  private Chargepoint chargepoint = null;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "category", nullable = false)
@@ -85,80 +87,52 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
   }
 
   /**
+   * BusinessLog's constructor.
+   *
+   * @param category {@link TechnicalLog.Component}
+   * @param completeLog All the log in a String.
+   */
+  public BusinessLog(Category category, String completeLog) {
+    this.category = Objects.requireNonNull(category);
+    this.completeLog = Objects.requireNonNull(completeLog);
+    date = new Timestamp(System.currentTimeMillis());
+  }
+
+  /**
    * Empty constructor. Should not be called.
    */
   public BusinessLog() {
 
   }
 
-  /**
-   * Get the id of the log.
-   *
-   * @return id, int.
-   */
   public int getId() {
     return id;
   }
 
-  /**
-   * Set the id of the log.
-   *
-   * @param id an int.
-   */
   public void setId(int id) {
     this.id = id;
   }
 
-  /**
-   * Get the date of the log.
-   *
-   * @return date, Timestamp.
-   */
   public Timestamp getDate() {
     return date;
   }
 
-  /**
-   * Set the date of the log.
-   *
-   * @param date an Timestamp.
-   */
   public void setDate(Timestamp date) {
     this.date = date;
   }
 
-  /**
-   * Get the user of the log.
-   *
-   * @return user, String
-   */
   public User getUser() {
     return user;
   }
 
-  /**
-   * Set the mail user of the log.
-   *
-   * @param user a String.
-   */
   public void setUser(User user) {
     this.user = user;
   }
 
-  /**
-  * Get the id of the charge point of the log.
-  *
-  * @return chargePoint, int.
-  */
   public Chargepoint getChargepoint() {
     return chargepoint;
   }
 
-  /**
-   * Set the id of the charge point.
-   *
-   * @param chargepoint an int.
-   */
   public void setChargepoint(Chargepoint chargepoint) {
     this.chargepoint = chargepoint;
   }
@@ -171,24 +145,13 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
     this.category = category;
   }
 
-  /**
-   * Get the complete log.
-   *
-   * @return completeLog, String.
-   */
   public String getCompleteLog() {
     return completeLog;
   }
 
-  /**
-   * Set the complete log.
-   *
-   * @param completeLog a String.
-   */
   public void setCompleteLog(String completeLog) {
     this.completeLog = completeLog;
   }
-
 
   @Override
   public boolean equals(Object o) {
@@ -202,6 +165,7 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
            && getChargepoint() == that.getChargepoint()
            && Objects.equals(getDate(), that.getDate())
            && Objects.equals(getUser(), that.getUser())
+           && getCategory() == that.getCategory()
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
@@ -211,6 +175,7 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
             getDate(),
             getUser(),
             getChargepoint(),
+            getCategory(),
             getCompleteLog());
   }
 
@@ -229,8 +194,8 @@ public final class BusinessLog implements DtoEntity<BusinessLogDto>, Log {
     return date + " "
            + "{" + category + "} "
            + "(" + id + ") "
-           + "user " + user.getId() + " "
-           + "chargepoint " + chargepoint + " "
+           + "user " + (user == null ? "null" : user.getId()) + " "
+           + "chargepoint " + (chargepoint == null ? "null" : chargepoint.getId()) + " "
            + completeLog;
   }
 

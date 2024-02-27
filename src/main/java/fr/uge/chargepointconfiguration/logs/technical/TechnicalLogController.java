@@ -9,11 +9,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for technical log.
  */
+@RequestMapping("/api/log/technical")
 @RestController
 public class TechnicalLogController {
 
@@ -42,7 +44,7 @@ public class TechnicalLogController {
           content = { @Content(mediaType = "application/json",
                   schema = @Schema(implementation = TechnicalLog.class))
           })
-  @GetMapping(value = "/log/technical/{component}/{criticality}")
+  @GetMapping(value = "/{component}/{criticality}")
   public List<TechnicalLog> getTechnicalLogByComponentAndCriticality(
           @PathVariable TechnicalLog.Component component,
           @PathVariable TechnicalLog.Criticality criticality) {
