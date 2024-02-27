@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.user;
 
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,7 +49,7 @@ public class UserService {
   }
 
   /**
-   * retrieve info in database for all users.
+   * Retrieve info in database for all users.
    *
    * @return Details about all the users.
    */
@@ -57,7 +58,7 @@ public class UserService {
   }
 
   /**
-   * retrieve info in database for the current user.
+   * Retrieve info in database for the current user.
    *
    * @return Details about the current user.
    */
@@ -65,5 +66,22 @@ public class UserService {
     var authentication = SecurityContextHolder.getContext().getAuthentication();
     var email = authentication.getName();
     return userRepository.findByEmail(email);
+  }
+
+  /**
+   * Update the role of the user.
+   *
+   * @param changeRoleUserDto a ChangeRoleUserDto.
+   * @return a User updated.
+   */
+  public User updateRole(ChangeRoleUserDto changeRoleUserDto) {
+    var user = getUserById(changeRoleUserDto.id());
+    var role = changeRoleUserDto.role();
+    var test = Arrays.asList(User.Role.values()).contains(role);
+    if (!test) {
+      throw new IllegalArgumentException("This role doesn't exist. Verify your parameter.");
+    }
+    user.setRole(role);
+    return userRepository.save(user);
   }
 }
