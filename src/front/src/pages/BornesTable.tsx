@@ -1,31 +1,94 @@
+import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { Tabulator } from "tabulator-tables";
+import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
+import { ChargePoint, searchChargePoint } from "../conf/chargePointController";
+import { Link } from "react-router-dom";
+
+const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
+
+const chargePointTableColumns: TableColumnDefinition[] = [
+  {
+    title: "Identifiant client",
+    /*
+    filter: {
+      apiField: "containsTitle",
+      onChange: value => console.log("Filtering on : " + value)
+    }
+    */
+  },
+  {
+    title: "Étape", 
+  },
+  {
+    title: "Status",
+  },
+  {
+    title: "Dernière activitée",
+  }
+]
 
 export function ChargePointTable() {
+    const [tableData, setTableData] = React.useState<ChargePoint[]>([]);
+    const [currentPage, setCurrentPage] = React.useState(0);
+    const [hasMore, setHasMore] = React.useState(true);
+    const [error, setError] = React.useState<string | undefined>(undefined);
+
     useEffect(() => {
-        // Build Tabulator
-        var tabulator = new Tabulator("#example-table", {
-            layout: "fitColumns",
-            ajaxURL: "https://tabulator.info/exampledata/ajaxprogressive?page=5&size=20",
-            progressiveLoad: "scroll",
-            paginationSize: 20,
-            placeholder: "No Data Set",
-            columns: [
-                {title: "Name", field: "name", sorter: "string", width: 200},
-                {title: "Progress", field: "progress", sorter: "number", formatter: "progress"},
-                {title: "Gender", field: "gender", sorter: "string"},
-                {title: "Rating", field: "rating", formatter: "star", hozAlign: "center", width: 100},
-                {title: "Favourite Color", field: "col", sorter: "string"},
-                {title: "Date Of Birth", field: "dob", sorter: "date", hozAlign: "center"},
-                {title: "Driver", field: "car", hozAlign: "center", formatter: "tickCross", sorter: "boolean"},
-            ],
+      searchChargePoint(PAGE_SIZE).then((result: PageRequest<ChargePoint> | undefined) => {
+        if(!result){
+          setError("Erreur lors de la récupération des bornes.")
+          return
+        }
+        setTableData(result.data)
+        setHasMore(result.total > PAGE_SIZE)
+      });
+    }, [])
+    
+
+    let props: InfinityScrollItemsTableProps<ChargePoint> = {
+      columns: chargePointTableColumns,
+      key: "charge-point-table",
+      data: tableData,
+      hasMore: hasMore,
+      error: error,
+      onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
+      formatter: (chargePoint) => {
+        return (
+          <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
+              <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'display/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+                  <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                      <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.clientId}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.status.step}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{chargePoint.status.status}</Typography>
+                          </Grid>
+                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center">{new Date(chargePoint.status.lastUpdate).toLocaleString()}</Typography>
+                          </Grid>
+                      </Grid>
+                  </ListItemButton>
+              </Link>
+          </Box>
+        )
+       },
+      fetchData: () => {
+        const nextPage = currentPage + 1;
+        searchChargePoint(PAGE_SIZE,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
+          if(!result){
+            setError("Erreur lors de la récupération des bornes.")
+            return
+          }
+          setTableData([...tableData, ...result.data])
+          setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
         });
+        setCurrentPage(nextPage)
+      },
+    }
 
-        // Cleanup function to destroy the Tabulator instance when the component unmounts
-        return () => {
-            tabulator.destroy();
-        };
-    }, []); // Empty dependency array ensures that this effect runs only once after the initial render
-
-    return <div id="example-table"></div>;
+    return InfinityScrollItemsTable(props)
 }
