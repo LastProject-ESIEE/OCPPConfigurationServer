@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.apache.logging.log4j.Level;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**
@@ -19,18 +20,6 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "technical_logs")
 public final class TechnicalLog implements Log {
-
-  /**
-   * Criticality enum represents different critical level that a log can have
-   * in the application.<br>
-   * The criticism can be :<br>
-   * - INFO ;<br>
-   * - WARNING :<br>
-   * - ERROR.
-   */
-  public enum Criticality {
-    INFO, WARNING, ERROR
-  }
 
   /**
    * Component enum represents different components where a log can be created.<br>
@@ -55,12 +44,12 @@ public final class TechnicalLog implements Log {
   private Timestamp date;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "component", nullable = false, columnDefinition = "varchar(32)")
+  @Column(name = "component", nullable = false)
   private Component component;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "criticality", nullable = false, columnDefinition = "varchar(32)")
-  private Criticality criticality;
+  @Column(name = "level", nullable = false)
+  private String level;
+
 
   @Column(name = "complete_log", nullable = false)
   private String completeLog;
@@ -70,13 +59,13 @@ public final class TechnicalLog implements Log {
    * TechnicalLog's constructor.
    *
    * @param component {@link Component}
-   * @param criticality {@link Criticality}
+   * @param level String version of {@link Level}
    * @param completeLog All the log in a String.
    */
-  public TechnicalLog(Component component, Criticality criticality, String completeLog) {
-    this.component = component;
-    this.criticality = criticality;
-    this.completeLog = completeLog;
+  public TechnicalLog(Component component, String level, String completeLog) {
+    this.component = Objects.requireNonNull(component);
+    this.level = Objects.requireNonNull(level);
+    this.completeLog = Objects.requireNonNull(completeLog);
     date = new Timestamp(System.currentTimeMillis());
   }
 
@@ -142,21 +131,21 @@ public final class TechnicalLog implements Log {
   }
 
   /**
-   * Get the criticism of the log.
+   * Get the level of the log.
    *
-   * @return criticism, Criticality.
+   * @return {@link Level}
    */
-  public Criticality getCriticality() {
-    return criticality;
+  public String getLevel() {
+    return level;
   }
 
   /**
-   * Set the criticism of the log.
+   * Set the level of the log.
    *
-   * @param criticality a Criticality.
+   * @param level a {@link Level}.
    */
-  public void setCriticality(Criticality criticality) {
-    this.criticality = criticality;
+  public void setLevel(String level) {
+    this.level = level;
   }
 
   /**
@@ -188,7 +177,7 @@ public final class TechnicalLog implements Log {
     return getId() == that.getId()
            && Objects.equals(getDate(), that.getDate())
            && getComponent() == that.getComponent()
-           && getCriticality() == that.getCriticality()
+           && getLevel() == that.getLevel()
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
@@ -197,7 +186,7 @@ public final class TechnicalLog implements Log {
     return Objects.hash(getId(),
             getDate(),
             getComponent(),
-            getCriticality(),
+            getLevel(),
             getCompleteLog());
   }
 
@@ -205,7 +194,7 @@ public final class TechnicalLog implements Log {
   public String text() {
     return date + " "
            + "{" + component + "} "
-           + "{" + criticality + "} "
+           + "{" + level + "} "
            + "(" + id + ") "
            + completeLog;
   }
@@ -215,8 +204,8 @@ public final class TechnicalLog implements Log {
     return "TechnicalLog{"
            + "id=" + id
            + ", date=" + date
-           + ", component='" + component + '\''
-           + ", criticism=" + criticality
+           + ", component=" + component
+           + ", level=" + level
            + ", completeLog='" + completeLog + '\''
            + '}';
   }

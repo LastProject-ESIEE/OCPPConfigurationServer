@@ -32,9 +32,9 @@ public class CustomLoggerService {
   }
 
   /**
-   * Create a log.
+   * Saves a log into the database in the corresponding table according to the log type.
    *
-   * @param log A log saved in database.
+   * @param log {@link Log}
    * @return The used log.
    */
   public Log save(Log log) {

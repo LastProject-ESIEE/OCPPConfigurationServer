@@ -5,5 +5,7 @@ package fr.uge.chargepointconfiguration.logs.sealed;
  */
 public sealed interface Log permits BusinessLog, TechnicalLog {
 
+  String getLevel();
+
   String text();
 }

@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
+import org.apache.logging.log4j.Level;
 import org.hibernate.annotations.CreationTimestamp;
 
 /**
@@ -67,6 +68,9 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
   @Column(name = "category", nullable = false)
   private Category category;
 
+  @Column(name = "level", nullable = false)
+  private String level;
+
   @Column(name = "complete_log", nullable = false)
   private String completeLog;
 
@@ -76,12 +80,18 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
    * @param user User logged currently implied with this log, null if not.
    * @param chargepoint Chargepoint implied with this log, null if not.
    * @param category {@link TechnicalLog.Component}
+   * @param level String version of {@link Level}.
    * @param completeLog All the log in a String.
    */
-  public BusinessLog(User user, Chargepoint chargepoint, Category category, String completeLog) {
+  public BusinessLog(User user,
+                     Chargepoint chargepoint,
+                     Category category,
+                     String level,
+                     String completeLog) {
     this.user = user;
     this.chargepoint = chargepoint;
     this.category = Objects.requireNonNull(category);
+    this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
     date = new Timestamp(System.currentTimeMillis());
   }
@@ -90,10 +100,12 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
    * BusinessLog's constructor.
    *
    * @param category {@link TechnicalLog.Component}
+   * @param level String version of {@link Level}.
    * @param completeLog All the log in a String.
    */
-  public BusinessLog(Category category, String completeLog) {
+  public BusinessLog(Category category, String level, String completeLog) {
     this.category = Objects.requireNonNull(category);
+    this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
     date = new Timestamp(System.currentTimeMillis());
   }
@@ -143,6 +155,14 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
 
   public void setCategory(Category category) {
     this.category = category;
+  }
+
+  public String getLevel() {
+    return level;
+  }
+
+  public void setLevel(String level) {
+    this.level = level;
   }
 
   public String getCompleteLog() {

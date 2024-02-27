@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.logs.technical;
 
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import java.util.List;
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,9 @@ public class TechnicalLogService {
     this.technicalLogRepository = technicalLogRepository;
   }
 
-  public List<TechnicalLog>  getTechnicalLogByComponentAndCriticality(
+  public List<TechnicalLog>  getTechnicalLogByComponentAndLevel(
       TechnicalLog.Component component,
-      TechnicalLog.Criticality criticality) {
-    return technicalLogRepository.findAllByComponentAndCriticality(component, criticality);
+      Level level) {
+    return technicalLogRepository.findAllByComponentAndLevel(component, level);
   }
 }

@@ -34,6 +34,6 @@ public class CustomLogger {
    */
   public void log(Log log) {
     var savedLog = customLoggerService.save(log);
-    logger.log(Level.ERROR, savedLog.text());
+    logger.log(Level.getLevel(savedLog.getLevel()), savedLog.text());
   }
 }
