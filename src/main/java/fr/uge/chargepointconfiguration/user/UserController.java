@@ -66,21 +66,44 @@ public class UserController {
    * Update the password of the user.
    *
    * @param changePasswordUserDto a ChangePassworddUserDto.
-   * @return a ChangePasswordUserDto.
+   * @return a ResponseEntity of User.
    */
   @PostMapping("/updatePassword")
   public ResponseEntity<User> postNewPasswordUser(
           @Parameter(
-                  name = "String",
+                  name = "JSON with old and new password",
                   description = "Old and new password",
                   example = """
                           {
-                            "oldPassword": "String"
+                            "oldPassword": "String",
                             "newPassword": "String"
                           }""",
                   required = true)
           @RequestBody ChangePasswordUserDto changePasswordUserDto) {
     var user = userService.updatePassword(changePasswordUserDto);
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  /**
+   * Updadate the role of the user.
+   *
+   * @param changeRoleUserDto a ChangeRoleUserDto.
+   * @return a ResponseEntity of User.
+   */
+  @PostMapping("/updateRole")
+  public ResponseEntity<User> postUpdateRoleUser(
+          @Parameter(
+                  name = "JSON with id and new role of the user",
+                  description = "Update the role of the user",
+                  example = """
+                          {
+                            "id": "int",
+                            "role": "String"
+                          }
+                          """,
+                  required = true)
+          @RequestBody ChangeRoleUserDto changeRoleUserDto) {
+    var user = userService.updateRole(changeRoleUserDto);
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }
