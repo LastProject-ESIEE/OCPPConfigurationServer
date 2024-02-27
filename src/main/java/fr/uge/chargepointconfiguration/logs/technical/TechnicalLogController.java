@@ -2,9 +2,11 @@ package fr.uge.chargepointconfiguration.logs.technical;
 
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/api/log/technical")
 @RestController
+@Tag(name = "Technical log", description = "The technical log API")
 public class TechnicalLogController {
 
   private final TechnicalLogService technicalLogService;
@@ -47,8 +50,8 @@ public class TechnicalLogController {
           })
   @GetMapping(value = "/{component}/{criticality}")
   public List<TechnicalLog> getTechnicalLogByComponentAndLevel(
-          @PathVariable TechnicalLog.Component component,
-          @PathVariable Level level) {
+          @Parameter @PathVariable TechnicalLog.Component component,
+          @Parameter @PathVariable Level level) {
     return technicalLogService.getTechnicalLogByComponentAndLevel(component, level);
   }
 }

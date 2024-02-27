@@ -8,6 +8,7 @@ import About from "./pages/About";
 import Error from "./pages/Error";
 import CreateConfig from "./pages/configuration/CreateConfig";
 import Home from "./Home";
+import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
 import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
 
@@ -28,7 +29,10 @@ root.render(
                         <Route path="edit/:id" element={<ConfigurationEditPage/>}/>
                         <Route path="new" element={<CreateConfig/>}/>
                     </Route>
-                    <Route path="chargepoint" element={<About/>}/>
+                    <Route path="chargepoint">
+                        <Route path="" element={<ChargePointTable/>}/>
+                        <Route path="display/:id" element={<Error/>}/>
+                    </Route>
                     <Route path="firmware">
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
@@ -36,6 +40,11 @@ root.render(
                     <Route path="account">
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
+                    </Route>
+                    <Route path="logs">
+                        <Route path="" element={<Navigate to="business"/>}/>
+                        <Route path="business" element={<About/>}/>
+                        <Route path="technical" element={<Error/>}/>
                     </Route>
                     <Route path="myAccount" element={<Account/>}/>
                 </Route>
