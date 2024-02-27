@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { ButtonData, buttons } from "./conf/homeDefinition";
-import { Button, Grid, Toolbar } from "@mui/material";
+import {Link, useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {ButtonData, buttons} from "./conf/homeDefinition";
+import {Avatar, Button, Grid, IconButton, Toolbar} from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 
@@ -60,7 +60,7 @@ export function NavBar() {
     return (
         <AppBar position="static">
             <Toolbar>
-                <Grid container alignItems="center" justifyContent="space-between">
+                <Grid direction="row" container alignItems="center" justifyContent="space-between">
                     {/* Buttons on the left */}
                     <Grid item>
                         <Grid container direction="column" spacing={2}>
@@ -90,17 +90,49 @@ export function NavBar() {
 
                     {/* Profile box on the right */}
                     <Grid item>
-                        <Link style={{textDecoration: 'none', color: 'inherit'}} to="/home/myAccount">
-
-                            <Grid container direction="row" alignItems="center">
-                                <Grid item>
-                                    <Grid container direction="column" alignItems="center">
-                                        <Typography variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
-                                        <Typography variant="body2">{englishRoleToFrench(userRole)}</Typography>
-                                    </Grid>
-                                </Grid>
+                        <Grid direction="row" container alignItems="center" justifyContent="space-between">
+                            <Grid item>
+                                <IconButton
+                                    onClick={() => {
+                                        fetch("/logout", {
+                                            method: "POST"
+                                        })
+                                            .then((response) => {
+                                                if (response.ok) {
+                                                    window.location.href = '/';
+                                                }
+                                                throw response;
+                                            })
+                                            .catch(error => {
+                                                console.error("ERROR ", error);
+                                            });
+                                    }}
+                                    aria-label={"logout"}
+                                    style={{fontSize: 'inherit'}}
+                                >
+                                    <Avatar src={"assets/power-off.png"} alt={"logout"}
+                                            style={{
+                                                width: '1em',
+                                                height: 'auto'
+                                            }}/>
+                                </IconButton>
                             </Grid>
-                        </Link>
+                            <Grid item>
+
+                                <Link style={{textDecoration: 'none', color: 'inherit'}} to="/home/myAccount">
+                                    <Grid container direction="column" alignItems="center">
+                                        <Grid item>
+                                            <Typography
+                                                variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <Typography variant="body2">{englishRoleToFrench(userRole)}</Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Link>
+                            </Grid>
+                        </Grid>
+
 
                     </Grid>
                 </Grid>
