@@ -24,9 +24,9 @@ public class ChargepointService {
   /**
    * ChargepointService's constructor.
    *
-   * @param chargepointRepository A ChargepointRepository accessing to database.
+   * @param chargepointRepository   A ChargepointRepository accessing to database.
    * @param configurationRepository A ConfigurationRepository accessing to database.
-   * @param statusRepository A StatusRepository accessing to database.
+   * @param statusRepository        A StatusRepository accessing to database.
    */
   @Autowired
   public ChargepointService(ChargepointRepository chargepointRepository,
@@ -47,13 +47,13 @@ public class ChargepointService {
    */
   public ChargepointDto save(CreateChargepointDto createChargepointDto) {
     var chargepoint = chargepointRepository.save(new Chargepoint(
-        createChargepointDto.serialNumberChargepoint(),
-        createChargepointDto.type(),
-        createChargepointDto.constructor(),
-        createChargepointDto.clientId(),
-        createChargepointDto.serverAddress(),
-        configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
-        statusRepository.findById(createChargepointDto.status()).orElseThrow()
+          createChargepointDto.serialNumberChargepoint(),
+          createChargepointDto.type(),
+          createChargepointDto.constructor(),
+          createChargepointDto.clientId(),
+          createChargepointDto.serverAddress(),
+          configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
+          statusRepository.findById(createChargepointDto.status()).orElseThrow()
     ));
     return chargepoint.toDto();
   }
@@ -70,15 +70,19 @@ public class ChargepointService {
   /**
    * Search for chargepoints with a pagination.
    *
-   * @param pageable The page requested
+   * @param pageable         The page requested
    * @param clientIdContains the pattern for ClientId
    * @return the list of corresponding chargepoint
    */
   public List<ChargepointDto> search(PageRequest pageable, String clientIdContains) {
-    return pageableChargepointRepository.findAllByClientIdContaining(pageable, clientIdContains)
+    return pageableChargepointRepository
+          .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
           .stream()
           .map(Chargepoint::toDto)
           .toList();
   }
 
+  public long countTotal() {
+    return chargepointRepository.count();
+  }
 }

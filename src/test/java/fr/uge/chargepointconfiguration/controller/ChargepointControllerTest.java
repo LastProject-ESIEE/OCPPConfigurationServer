@@ -100,8 +100,17 @@ class ChargepointControllerTest {
     var result1 = chargepointController.searchChargepoints(2, 0, "", "id", "asc");
     var result2 = chargepointController.searchChargepoints(2, 1, "", "id", "asc");
 
+    assertEquals(0, result1.page());
+    assertEquals(1, result2.page());
+    assertEquals(3, result1.total());
+    assertEquals(3, result2.total());
     assertEquals(2, result1.size());
-    assertEquals(1, result2.size());
+    assertEquals(2, result2.size());
+    assertEquals(2, result1.data().size());
+    assertEquals(1, result2.data().size());
+    assertEquals("/search?size=2&page=1&clientIdContains=&sortBy=id&order=asc", result1.next());
+    assertEquals("/search?size=2&page=&clientIdContains=&sortBy=id&order=asc", result2.next());
+
   }
 
   /**

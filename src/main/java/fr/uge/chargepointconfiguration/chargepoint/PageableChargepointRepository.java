@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PageableChargepointRepository
       extends PagingAndSortingRepository<Chargepoint, Integer> {
-  Page<Chargepoint> findAllByClientIdContaining(Pageable pageable, String clientId);
+  Page<Chargepoint> findAllByClientIdContainingIgnoreCase(Pageable pageable, String clientId);
 }

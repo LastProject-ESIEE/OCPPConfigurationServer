@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 
 /**
@@ -44,10 +44,10 @@ public class ChargepointController {
    */
   @Operation(summary = "Get all the chargepoints")
   @ApiResponse(responseCode = "200",
-          description = "Found all the chargepoints",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = Chargepoint.class))
-          })
+        description = "Found all the chargepoints",
+        content = { @Content(mediaType = "application/json",
+              schema = @Schema(implementation = Chargepoint.class))
+        })
   @GetMapping(value = "/all")
   public List<ChargepointDto> getAllChargepoints() {
     return chargepointService.getAllChargepoints();
@@ -85,17 +85,26 @@ public class ChargepointController {
               schema = @Schema(implementation = Chargepoint.class))
         })
   @GetMapping(value = "/search")
-  public List<ChargepointDto> searchChargepoints(
-        @RequestParam int size,
+  public PageDto<ChargepointDto> searchChargepoints(
+        @RequestParam(required = false, defaultValue = "10") int size,
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "") String clientIdContains,
         @RequestParam(required = false, defaultValue = "id") String sortBy,
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
-    return chargepointService.search(
-          PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
-          clientIdContains
-    );
+    var total = chargepointService.countTotal();
+    var nextPage = (((page + 1) * size) <= total) ? ((page + 1) + "") : "";
+
+    return new PageDto<>(total,
+          page,
+          size,
+          chargepointService.search(
+                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
+                clientIdContains
+          ),
+          "/search?size=%d&page=%s&clientIdContains=%s&sortBy=%s&order=%s".formatted(
+                size, nextPage, clientIdContains, sortBy, order
+          ));
   }
 
 }
