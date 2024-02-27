@@ -47,8 +47,8 @@ export function NavBar() {
             })
             .catch(error => {
                 console.error("ERROR ", error);
-                setUser({firstName: "Prénom", lastName: "Nom", role: "ADMINISTRATOR"});
-                setUserRole("ADMINISTRATOR");
+                setUser({firstName: "Prénom", lastName: "Nom", role: "Inconnu"});
+                setUserRole("VIZUALISER");
             });
         const matchingButton = buttons.find(item => {
             const buttonPath = `/home${item.href}`;
