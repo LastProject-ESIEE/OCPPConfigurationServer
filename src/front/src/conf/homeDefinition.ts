@@ -82,4 +82,23 @@ export const buttons: ButtonData[] = [
             }
         ]
     },
+    {
+        roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
+        label: "Logs",
+        href: "/logs",
+        subButtons: [
+            {
+                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
+                label: "Fonctionnel",
+                href: "/business",
+                subButtons: []
+            },
+            {
+                roles: ["ADMINISTRATOR", "EDITOR"],
+                label: "Technique",
+                href: "/technical",
+                subButtons: []
+            }
+        ]
+    },
 ]

@@ -37,6 +37,11 @@ root.render(
                         <Route path="" element={<About/>}/>
                         <Route path="new" element={<Error/>}/>
                     </Route>
+                    <Route path="logs">
+                        <Route path="" element={<Navigate to="business"/>}/>
+                        <Route path="business" element={<About/>}/>
+                        <Route path="technical" element={<Error/>}/>
+                    </Route>
                     <Route path="myAccount" element={<Account/>}/>
                 </Route>
                 <Route path="*" element={<Error/>}/>
