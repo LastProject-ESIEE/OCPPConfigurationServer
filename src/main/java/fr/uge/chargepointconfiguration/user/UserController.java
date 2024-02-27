@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/user")
+@Tag(name = "User", description = "The user API")
 public class UserController {
 
   private final UserService userService;
@@ -36,8 +38,18 @@ public class UserController {
    * @param id The id of the user.
    * @return Details about the user.
    */
+  @Operation(summary = "Get a user by its id.")
+  @ApiResponse(responseCode = "200",
+        description = "Found the corresponding users",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class)
+        )
+  )
   @GetMapping("/{id}")
-  public UserDto getUserById(@PathVariable int id) {
+  public UserDto getUserById(
+        @Parameter(description = "The user you are looking for.")
+        @PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
     System.out.println("getUser " + id);
     return userService.getUserById(id).toDto();
@@ -48,12 +60,20 @@ public class UserController {
    *
    * @return Details about all the users.
    */
+  @Operation(summary = "Get all users.")
+  @ApiResponse(responseCode = "200",
+        description = "Found all users",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class)
+        )
+  )
   @GetMapping("/all")
   public List<UserDto> getAllUsers() {
     return userService.getAllUsers()
-            .stream()
-            .map(User::toDto)
-            .toList();
+          .stream()
+          .map(User::toDto)
+          .toList();
   }
 
   /**
@@ -61,6 +81,14 @@ public class UserController {
    *
    * @return Details about the current user.
    */
+  @Operation(summary = "Get the current authenticated user.")
+  @ApiResponse(responseCode = "200",
+        description = "Found the authenticated user",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class)
+        )
+  )
   @GetMapping("/me")
   public UserDto getAuthenticatedUser() {
     return userService.getAuthenticatedUser().toDto();
@@ -74,52 +102,18 @@ public class UserController {
    */
   @Operation(summary = "Update password")
   @ApiResponse(responseCode = "200",
-      description = "Update the password of the current user",
-      content = { @Content(mediaType = "application/json",
-          schema = @Schema(implementation = User.class))
-      })
+        description = "Update the password of the current user",
+        content = @Content(mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class))
+        )
   @PostMapping("/updatePassword")
-  public ResponseEntity<UserDto> postUpdatePasswordUser(
-          @Parameter(
-                  name = "JSON with old and new password",
-                  description = "Old and new password",
-                  example = """
-                          {
-                            "oldPassword": "String",
-                            "newPassword": "String"
-                          }""",
-                  required = true)
-          @RequestBody ChangePasswordUserDto changePasswordUserDto) {
+  public ResponseEntity<UserDto> postNewPasswordUser(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "Old and new password.",
+              required = true
+        )
+        @RequestBody ChangePasswordUserDto changePasswordUserDto) {
     var user = userService.updatePassword(changePasswordUserDto).toDto();
-    return new ResponseEntity<>(user, HttpStatus.OK);
-  }
-
-  /**
-   * Updadate the role of the user.
-   *
-   * @param changeRoleUserDto a ChangeRoleUserDto.
-   * @return a ResponseEntity of UserDto.
-   */
-  @Operation(summary = "Update role")
-  @ApiResponse(responseCode = "200",
-          description = "Update the role of the current user",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = User.class))
-          })
-  @PostMapping("/updateRole")
-  public ResponseEntity<UserDto> postUpdateRoleUser(
-          @Parameter(
-                  name = "JSON with id and new role of the user",
-                  description = "Update the role of the user",
-                  example = """
-                          {
-                            "id": "int",
-                            "role": "String"
-                          }
-                          """,
-                  required = true)
-          @RequestBody ChangeRoleUserDto changeRoleUserDto) {
-    var user = userService.updateRole(changeRoleUserDto).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }
