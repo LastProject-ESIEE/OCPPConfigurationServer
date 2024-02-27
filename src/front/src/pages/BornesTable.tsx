@@ -1,9 +1,8 @@
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
-import { ChargePoint, ChargePointStatus, searchChargePoint } from "../conf/chargePointController";
+import { ChargePoint, searchChargePoint } from "../conf/chargePointController";
 import { Link } from "react-router-dom";
-import { maxHeight } from "@mui/system";
 
 const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
 
@@ -37,7 +36,7 @@ export function ChargePointTable() {
     useEffect(() => {
       searchChargePoint(PAGE_SIZE).then((result: PageRequest<ChargePoint> | undefined) => {
         if(!result){
-          setError("Problème lors de la récupération des bornes.")
+          setError("Erreur lors de la récupération des bornes.")
           return
         }
         setTableData(result.data)
@@ -51,6 +50,7 @@ export function ChargePointTable() {
       key: "charge-point-table",
       data: tableData,
       hasMore: hasMore,
+      error: error,
       onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
       formatter: (chargePoint) => {
         return (
@@ -80,7 +80,7 @@ export function ChargePointTable() {
         const nextPage = currentPage + 1;
         searchChargePoint(1,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
           if(!result){
-            setError("Problème lors de la récupération des bornes.")
+            setError("Erreur lors de la récupération des bornes.")
             return
           }
           setTableData([...tableData, ...(result?.data ?? [])])

@@ -35,6 +35,7 @@ export type InfinityScrollItemsTableProps<T> = {
     columns: TableColumnDefinition[], // table columns definition
     data: T[], // items displayed in the table
     hasMore: boolean, // boolean that check if there is no more element
+    error: string | undefined,
     onSelection: (item: T) => void, // function call when an element is selected in the list
     formatter: (item: T, index: number) => JSX.Element // function that transform an item to a JSX element
     fetchData: () => T[], // function that fetch next items
@@ -74,7 +75,16 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                             dataLength={props.data.length}
                             next={() => props.fetchData()}
                             hasMore={props.hasMore}
-                            loader={<h5>Chargement...</h5>}
+                            loader={
+                                <>
+                                    {(props.error != undefined) && (
+                                        <Typography variant="h6" color={"red"} textAlign={"center"}>{props.error}</Typography>
+                                    )}
+                                    {(props.error == undefined) && (
+                                        <Typography variant="h6" textAlign={"center"}>Chargement...</Typography>
+                                    )}
+                                </>
+                            }
                             scrollableTarget={"scrollableDiv"}
                         >
                         {props.data.map((item: T, index) => props.formatter(item, index))}
