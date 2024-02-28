@@ -116,7 +116,7 @@ public class ConfigurationServer extends WebSocketServer {
   public void onError(WebSocket conn, Exception ex) {
     LOGGER.error("an error occurred on connection "
             + (conn == null ? "" : conn.getRemoteSocketAddress())
-            + ": "
+            + " : "
             + ex);
   }
 
