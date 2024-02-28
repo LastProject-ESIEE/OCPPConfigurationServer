@@ -23,7 +23,7 @@ public class TechnicalLogService {
   public List<TechnicalLog>  getTechnicalLogByComponentAndLevel(
       TechnicalLog.Component component,
       Level level) {
-    return technicalLogRepository.findAllByComponentAndLevel(component, level);
+    return technicalLogRepository.findAllByComponentAndLevel(component, level.name());
   }
 
   public long countTotal() {

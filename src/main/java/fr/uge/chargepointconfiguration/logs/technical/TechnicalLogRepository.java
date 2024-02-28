@@ -34,7 +34,7 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLog, Int
    */
   List<TechnicalLog> findAllByComponentAndLevel(
           TechnicalLog.Component component,
-          Level level);
+          String level);
 
   /**
    * Method to return all technical logs by the criticality.
@@ -42,7 +42,7 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLog, Int
    * @param level {@link Level}
    * @return the list of technical logs by criticality.
    */
-  List<TechnicalLog> findAllByLevel(Level level);
+  List<TechnicalLog> findAllByLevel(String level);
 
 
 }

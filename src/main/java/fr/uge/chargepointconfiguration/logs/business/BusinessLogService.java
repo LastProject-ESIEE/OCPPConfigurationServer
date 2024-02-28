@@ -39,7 +39,7 @@ public class BusinessLogService {
   public List<BusinessLog> getAllByChargepointId(int chargepointId) {
     var chargepoint = chargepointRepository.findById(chargepointId).orElseThrow();
     // TODO : exception BAD REQUEST si id est pas un nombre
-    return businessLogRepository.findAllByChargepointId(chargepoint);
+    return businessLogRepository.findAllByChargepoint(chargepoint);
   }
 
   public long countTotal() {

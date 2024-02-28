@@ -25,5 +25,5 @@ public interface BusinessLogRepository extends CrudRepository<BusinessLog, Integ
 
   Page<BusinessLog> findAll(Pageable pageable);
 
-  List<BusinessLog> findAllByChargepointId(Chargepoint chargepointId);
+  List<BusinessLog> findAllByChargepoint(Chargepoint chargepointId);
 }
