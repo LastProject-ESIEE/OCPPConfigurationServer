@@ -57,8 +57,8 @@ public class BusinessLogService {
           .stream()
           .map(log -> new BusinessLogDto(log.getId(),
                 log.getDate(),
-                log.getUser(),
-                log.getChargepoint(),
+                log.getUser() != null ? log.getUser().toDto() : null,
+                log.getChargepoint() != null ? log.getChargepoint().toDto() : null,
                 log.getCategory(),
                 log.getLevel(),
                 log.getCompleteLog()))

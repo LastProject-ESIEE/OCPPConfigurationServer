@@ -1,8 +1,10 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.Configuration;
+import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.status.Status;
+import fr.uge.chargepointconfiguration.status.StatusDto;
 import java.sql.Timestamp;
 
 /**
@@ -24,6 +26,6 @@ public record ChargepointDto(
     String constructor,
     String clientId,
     String serverAddress,
-    Configuration configuration,
-    Status status) {
+    ConfigurationDto configuration,
+    StatusDto status) {
 }

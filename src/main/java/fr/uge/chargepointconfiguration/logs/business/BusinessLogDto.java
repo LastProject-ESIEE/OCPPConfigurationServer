@@ -1,8 +1,10 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
 import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
 import fr.uge.chargepointconfiguration.user.User;
+import fr.uge.chargepointconfiguration.user.UserDto;
 import java.sql.Timestamp;
 
 /**
@@ -18,8 +20,8 @@ import java.sql.Timestamp;
 public record BusinessLogDto(
     int id,
     Timestamp date,
-    User user,
-    Chargepoint chargepoint,
+    UserDto user,
+    ChargepointDto chargepoint,
     BusinessLog.Category category,
     String level,
     String completeLog) {

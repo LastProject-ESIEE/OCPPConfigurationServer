@@ -205,8 +205,8 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
   public BusinessLogDto toDto() {
     return new BusinessLogDto(this.id,
         this.date,
-        this.user,
-        this.chargepoint,
+        user != null ? this.user.toDto() : null,
+        chargepoint != null ? this.chargepoint.toDto() : null,
         this.category,
         this.level,
         this.completeLog);
