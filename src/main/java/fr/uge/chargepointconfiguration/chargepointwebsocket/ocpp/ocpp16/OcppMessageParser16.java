@@ -18,7 +18,10 @@ public class OcppMessageParser16 implements OcppMessageParser {
     return switch (webSocketMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST -> Optional.of(
               JsonParser.stringToObject(BootNotificationRequest16.class,
-              webSocketMessage.data()));
+                      webSocketMessage.data()));
+      case STATUS_FIRMWARE_REQUEST -> Optional.of(
+              JsonParser.stringToObject(FirmwareStatusNotificationRequest16.class,
+                      webSocketMessage.data()));
       default -> Optional.empty();
     };
   }
@@ -35,6 +38,9 @@ public class OcppMessageParser16 implements OcppMessageParser {
       case RESET_REQUEST -> Optional.of(
               JsonParser.stringToObject(ResetResponse16.class,
                       responseMessage.data()));
+      case UPDATE_FIRMWARE_REQUEST -> Optional.of(
+              JsonParser.stringToObject(UpdateFirmwareRequest16.class,
+                      "{}")); // Empty value because it is an acknowledgement
       default -> Optional.empty();
     };
   }

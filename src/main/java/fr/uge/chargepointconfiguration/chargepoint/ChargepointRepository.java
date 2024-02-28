@@ -1,15 +1,18 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * Repository for the charge point.
  */
 @Repository
-public interface ChargepointRepository extends CrudRepository<Chargepoint, Integer> {
+public interface ChargepointRepository extends CrudRepository<Chargepoint, Integer>,
+      PagingAndSortingRepository<Chargepoint, Integer> {
 
   /**
    * Returns a Chargepoint from the database according to the serial number and vendor.
@@ -28,4 +31,6 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
    * @return A list of Chargepoints or an empty list if no chargepoints are registered.
    */
   List<Chargepoint> findAll();
+
+  Page<Chargepoint> findAllByClientIdContainingIgnoreCase(Pageable pageable, String clientId);
 }

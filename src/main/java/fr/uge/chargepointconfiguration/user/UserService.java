@@ -3,6 +3,7 @@ package fr.uge.chargepointconfiguration.user;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -83,5 +84,22 @@ public class UserService {
     }
     user.setRole(role);
     return userRepository.save(user);
+  }
+
+  public long countTotal() {
+    return userRepository.count();
+  }
+
+  /**
+   * Search for {@link UserDto} with a pagination.
+   *
+   * @param pageable The page requested
+   * @return the list of corresponding {@link UserDto}
+   */
+  public List<UserDto> getPage(PageRequest pageable) {
+    return userRepository.findAll(pageable)
+          .stream()
+          .map(User::toDto)
+          .toList();
   }
 }

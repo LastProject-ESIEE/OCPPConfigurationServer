@@ -1,13 +1,17 @@
 package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * Repository for the firmware.
  */
-public interface FirmwareRepository extends CrudRepository<Firmware, Integer> {
+public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
+      PagingAndSortingRepository<Firmware, Integer> {
 
   /**
    * Returns a Firmware from the database according to the version.
@@ -18,9 +22,19 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer> {
   Firmware findByVersion(String version);
 
   /**
+   * Returns all the firmwares from the database according to the compatibility table.
+   *
+   * @param typeAllowed {@link TypeAllowed} which is the compatibility for a firmware.
+   * @return {@link Firmware}.
+   */
+  List<Firmware> findAllByTypesAllowedContainsOrderByVersionAsc(TypeAllowed typeAllowed);
+
+  /**
    * Return a list of registered Firmwares from database.
    *
    * @return A list of Firmwares or an empty list if no firmwares are registered.
    */
   List<Firmware> findAll();
+
+  Page<Firmware> findAll(Pageable pageable);
 }

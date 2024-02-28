@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Component;
 import java.util.Objects;
 
@@ -7,7 +8,7 @@ import java.util.Objects;
  * For a full name, we give the correct OCPP 1.6 and OCPP 2.0.1 key (and component).<br>
  * It is used for translating the given configuration file from the database and for the front.
  */
-public enum ConfigurationTranscriptor {
+public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscriptorDto> {
 
   LIGHT_INTENSITY(1,
           "Intensité de la LED",
@@ -153,5 +154,10 @@ public enum ConfigurationTranscriptor {
       case 6 -> STATION_PASSWORD;
       default -> throw new IllegalStateException("Unknown key");
     };
+  }
+
+  @Override
+  public ConfigurationTranscriptorDto toDto() {
+    return new ConfigurationTranscriptorDto(id, fullName, regexRule);
   }
 }

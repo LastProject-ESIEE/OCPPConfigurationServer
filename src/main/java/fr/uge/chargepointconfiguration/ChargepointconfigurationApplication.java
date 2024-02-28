@@ -4,10 +4,14 @@ import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ConfigurationServer;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 import fr.uge.chargepointconfiguration.user.UserRepository;
 import java.net.InetSocketAddress;
 import java.util.Objects;
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,6 +29,8 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
   private final ConfigurationRepository configurationRepository;
+  private final CustomLogger logger;
+
 
   /**
    * The class's constructor.<br>
@@ -37,13 +43,16 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
                                              ChargepointRepository chargepointRepository,
                                              FirmwareRepository firmwareRepository,
                                              StatusRepository statusRepository,
-                                             ConfigurationRepository configurationRepository) {
+                                             ConfigurationRepository configurationRepository,
+                                             CustomLogger customLogger) {
     this.userRepository = userRepository;
     this.chargepointRepository = chargepointRepository;
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
     this.configurationRepository = configurationRepository;
+    this.logger = customLogger;
   }
+
 
   /**
    * Launches the server by instantiating the application and running it.
@@ -62,6 +71,15 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    */
   @Override
   public void run(String... args) throws Exception {
+    logger.log(new BusinessLog(
+        BusinessLog.Category.CONFIG,
+        Level.INFO.name(),
+        "Configuration created"));
+    logger.log(new TechnicalLog(
+        TechnicalLog.Component.DATABASE,
+        Level.INFO.name(),
+        "mylog"));
+
     var websocketUrl = System.getenv("WEBSOCKET_URL");
     var websocketPortString = System.getenv("WEBSOCKET_PORT");
     if (websocketUrl == null || websocketPortString == null) {
