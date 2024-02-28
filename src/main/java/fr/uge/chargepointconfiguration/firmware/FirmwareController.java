@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.firmware;
 
 import fr.uge.chargepointconfiguration.shared.PageDto;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -119,16 +121,19 @@ public class FirmwareController {
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = firmwareService.countTotal();
-    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
 
-    return new PageDto<>(total,
-          page,
-          size,
-          firmwareService.getPage(
+    var data = firmwareService.getPage(
                 PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ),
-          "/search?size=%d&page=%s&sortBy=%s&order=%s".formatted(
-                size, nextPage, sortBy, order
-          ));
+          ).stream()
+          .map(entity -> new FirmwareDto(entity.getId(),
+                entity.getUrl(),
+                entity.getVersion(),
+                entity.getConstructor(),
+                entity.getTypesAllowed().stream().map(TypeAllowed::toDto)
+                      .collect(Collectors.toSet())
+          ))
+          .toList();
+
+    return new PageDto<>(total, page, size, data);
   }
 }

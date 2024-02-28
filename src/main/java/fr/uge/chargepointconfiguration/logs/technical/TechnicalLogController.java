@@ -91,17 +91,19 @@ public class TechnicalLogController {
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = technicalLogService.countTotal();
-    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
 
-    return new PageDto<>(total,
-          page,
-          size,
-          technicalLogService.getPage(
+    var data = technicalLogService.getPage(
                 PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ),
-          "/search?size=%d&page=%s&sortBy=%s&order=%s".formatted(
-                size, nextPage, sortBy, order
-          ));
+          )
+          .stream()
+          .map(log -> new TechnicalLogDto(log.getId(),
+                log.getDate(),
+                log.getComponent(),
+                log.getLevel(),
+                log.getCompleteLog()))
+          .toList();
+
+    return new PageDto<>(total, page, size, data);
   }
 
 }

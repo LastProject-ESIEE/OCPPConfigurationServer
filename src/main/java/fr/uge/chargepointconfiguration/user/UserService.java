@@ -91,15 +91,13 @@ public class UserService {
   }
 
   /**
-   * Search for {@link UserDto} with a pagination.
+   * Search for {@link User} with a pagination.
    *
    * @param pageable The page requested
-   * @return the list of corresponding {@link UserDto}
+   * @return the list of corresponding {@link User}
    */
-  public List<UserDto> getPage(PageRequest pageable) {
+  public List<User> getPage(PageRequest pageable) {
     return userRepository.findAll(pageable)
-          .stream()
-          .map(User::toDto)
-          .toList();
+          .stream().toList();
   }
 }
