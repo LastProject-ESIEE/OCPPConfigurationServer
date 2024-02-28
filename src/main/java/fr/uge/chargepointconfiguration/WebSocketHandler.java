@@ -1,19 +1,12 @@
 package fr.uge.chargepointconfiguration;
 
-import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.notification.WebSocketNotification;
-import fr.uge.chargepointconfiguration.configuration.Configuration;
-import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
