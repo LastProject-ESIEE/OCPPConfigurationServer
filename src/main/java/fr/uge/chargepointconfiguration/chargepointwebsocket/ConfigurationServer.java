@@ -88,6 +88,7 @@ public class ConfigurationServer extends WebSocketServer {
             + " additional info: "
             + reason);
     chargePoints.remove(conn.getRemoteSocketAddress());
+    conn.close();
   }
 
   @Override
@@ -118,6 +119,10 @@ public class ConfigurationServer extends WebSocketServer {
             + (conn == null ? "" : conn.getRemoteSocketAddress())
             + " : "
             + ex);
+    if (conn != null) {
+      chargePoints.remove(conn.getRemoteSocketAddress());
+      conn.close();
+    }
   }
 
   @Override
