@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { NavBar } from "./NavBar";
 import events from "events";
-import { ChargePointStatus, WebSocketChargePointNotification } from "./conf/chargePointController";
+import { WebSocketChargePointNotification } from "./conf/chargePointController";
 
 // Define backend server port
 const BACKEND_PORT = 8080
