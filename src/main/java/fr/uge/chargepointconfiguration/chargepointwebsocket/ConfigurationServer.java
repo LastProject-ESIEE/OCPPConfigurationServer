@@ -88,6 +88,7 @@ public class ConfigurationServer extends WebSocketServer {
             + " additional info: "
             + reason);
     chargePoints.remove(conn.getRemoteSocketAddress());
+    conn.close();
   }
 
   @Override
@@ -115,9 +116,13 @@ public class ConfigurationServer extends WebSocketServer {
   @Override
   public void onError(WebSocket conn, Exception ex) {
     LOGGER.error("an error occurred on connection "
-            + conn.getRemoteSocketAddress()
-            + ":"
+            + (conn == null ? "" : conn.getRemoteSocketAddress())
+            + " : "
             + ex);
+    if (conn != null) {
+      chargePoints.remove(conn.getRemoteSocketAddress());
+      conn.close();
+    }
   }
 
   @Override

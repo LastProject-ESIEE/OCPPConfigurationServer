@@ -94,6 +94,7 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
                 firmwareRepository,
                 statusRepository
         );
+        server.setReuseAddr(true);
         server.run();
       });
     } catch (NumberFormatException e) {
