@@ -42,8 +42,8 @@ public class Firmware implements DtoEntity<FirmwareDto> {
 
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(name = "compatibility",
-          joinColumns = @JoinColumn(name = "id_type_allowed"),
-          inverseJoinColumns = @JoinColumn(name = "id_firmware"))
+          joinColumns = @JoinColumn(name = "id_firmware"),
+          inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
   private Set<TypeAllowed> typesAllowed;
 
   /**

@@ -1,5 +1,11 @@
 import { PageRequest } from "../pages/DisplayTable"
 
+// Websocket notification for charge point status update
+export type WebSocketChargePointNotification = {
+    id: number,
+    status: ChargePointStatus,
+}
+
 // Status type definition
 export type ChargePointStatus = {
     error: string,
