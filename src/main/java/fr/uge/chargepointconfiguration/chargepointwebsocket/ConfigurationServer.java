@@ -115,8 +115,8 @@ public class ConfigurationServer extends WebSocketServer {
   @Override
   public void onError(WebSocket conn, Exception ex) {
     LOGGER.error("an error occurred on connection "
-            + conn.getRemoteSocketAddress()
-            + ":"
+            + (conn == null ? "" : conn.getRemoteSocketAddress())
+            + ": "
             + ex);
   }
 
