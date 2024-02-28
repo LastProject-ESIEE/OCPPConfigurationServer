@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
@@ -16,6 +16,14 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer> {
    * @return The correct Firmware or null if the firmware couldn't be found.
    */
   Firmware findByVersion(String version);
+
+  /**
+   * Returns all the firmwares from the database according to the compatibility table.
+   *
+   * @param typeAllowed {@link TypeAllowed} which is the compatibility for a firmware.
+   * @return {@link Firmware}.
+   */
+  List<Firmware> findAllByTypesAllowedContainsOrderByVersionAsc(TypeAllowed typeAllowed);
 
   /**
    * Return a list of registered Firmwares from database.

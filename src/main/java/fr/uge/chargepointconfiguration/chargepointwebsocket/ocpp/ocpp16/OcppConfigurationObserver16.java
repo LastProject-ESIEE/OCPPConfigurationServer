@@ -7,8 +7,6 @@ import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
-import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
-import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketRequestMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
@@ -17,7 +15,6 @@ import fr.uge.chargepointconfiguration.configuration.ConfigurationTranscriptor;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
-import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -62,6 +59,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       case BootNotificationRequest16 b -> processBootNotification(b, chargePointManager);
       case ChangeConfigurationResponse16 c -> processConfigurationResponse(c, chargePointManager);
       case ResetResponse16 r -> processResetResponse();
+      case FirmwareStatusNotificationRequest16 f -> processFirmwareStatusResponse(f,
+              chargePointManager);
       // TODO : Add switch case for the update firmware response and status firmware request.
       default -> {
         // Do nothing
@@ -188,18 +187,24 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   private void processFirmwareRequest(ChargePointManager chargePointManager) {
     var status = currentChargepoint.getStatus();
+    var firmware = currentChargepoint.getConfiguration().getFirmware();
+    var link = firmware.getUrl();
+    if (link.isEmpty()) {
+      status.setStatus(Status.StatusProcess.PENDING);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      status.setStep(Status.Step.CONFIGURATION);
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+      processConfigurationRequest(chargePointManager);
+      return;
+    }
     status.setStatus(Status.StatusProcess.PROCESSING);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
-    // TODO : Send a update firmware request !
-    status = currentChargepoint.getStatus();
-    status.setStatus(Status.StatusProcess.PENDING);
-    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-    status.setStep(Status.Step.CONFIGURATION);
-    currentChargepoint.setStatus(status);
-    chargepointRepository.save(currentChargepoint);
-    processConfigurationRequest(chargePointManager);
+    var firmwareRequest = new UpdateFirmwareRequest16(
+            link, LocalDateTime.now().toString());
+    sender.sendMessage(firmwareRequest, chargePointManager);
   }
 
   private void processResetResponse() {
@@ -208,5 +213,34 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     status.setState(false);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     chargepointRepository.save(currentChargepoint);
+  }
+
+  private void processFirmwareStatusResponse(FirmwareStatusNotificationRequest16 f,
+                                             ChargePointManager chargePointManager) {
+    switch (f.status()) {
+      case "Installed" -> {
+        var status = currentChargepoint.getStatus();
+        status.setStatus(Status.StatusProcess.PENDING);
+        status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+        status.setStep(Status.Step.CONFIGURATION);
+        currentChargepoint.setStatus(status);
+        chargepointRepository.save(currentChargepoint);
+        var reset = new ResetRequest16("Hard");
+        sender.sendMessage(reset, chargePointManager);
+      }
+      case "DownloadFailed",
+              "InstallationFailed",
+              "Idle" -> {
+        var status = currentChargepoint.getStatus();
+        status.setStatus(Status.StatusProcess.FAILED);
+        status.setError(f.status());
+        status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+        currentChargepoint.setStatus(status);
+        chargepointRepository.save(currentChargepoint);
+      }
+      default -> {
+        // Ignore, the chargepoint is downloading/installing.
+      }
+    }
   }
 }
