@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
-import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,11 +50,11 @@ public class TechnicalLogController {
   @ApiResponse(responseCode = "200",
           description = "Found the list of technical logs",
           content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TechnicalLog.class))
+                  schema = @Schema(implementation = TechnicalLogEntity.class))
           })
   @GetMapping(value = "/{component}/{level}")
-  public List<TechnicalLog> getTechnicalLogByComponentAndLevel(
-          @Parameter @PathVariable TechnicalLog.Component component,
+  public List<TechnicalLogEntity> getTechnicalLogByComponentAndLevel(
+          @Parameter @PathVariable TechnicalLogEntity.Component component,
           @Parameter @PathVariable Level level) {
     return technicalLogService.getTechnicalLogByComponentAndLevel(component, level);
   }

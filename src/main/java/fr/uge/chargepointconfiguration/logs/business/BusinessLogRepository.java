@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,17 +13,17 @@ import org.springframework.stereotype.Repository;
  * Repository for the business log.
  */
 @Repository
-public interface BusinessLogRepository extends CrudRepository<BusinessLog, Integer>,
-      PagingAndSortingRepository<BusinessLog, Integer> {
+public interface BusinessLogRepository extends CrudRepository<BusinessLogEntity, Integer>,
+      PagingAndSortingRepository<BusinessLogEntity, Integer> {
 
   /**
    * Method to return all business logs.
    *
    * @return a list of all business logs.
    */
-  List<BusinessLog> findAll();
+  List<BusinessLogEntity> findAll();
 
-  Page<BusinessLog> findAll(Pageable pageable);
+  Page<BusinessLogEntity> findAll(Pageable pageable);
 
-  List<BusinessLog> findAllByChargepoint(Chargepoint chargepointId);
+  List<BusinessLogEntity> findAllByChargepoint(Chargepoint chargepointId);
 }
