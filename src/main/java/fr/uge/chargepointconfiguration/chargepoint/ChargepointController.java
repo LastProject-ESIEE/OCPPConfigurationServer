@@ -108,18 +108,16 @@ public class ChargepointController {
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = chargepointService.countTotal();
-    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
 
-    return new PageDto<>(total,
-          page,
-          size,
-          chargepointService.search(
+    var data = chargepointService.search(
                 PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
                 clientIdContains
-          ),
-          "/search?size=%d&page=%s&clientIdContains=%s&sortBy=%s&order=%s".formatted(
-                size, nextPage, clientIdContains, sortBy, order
-          ));
+          )
+          .stream()
+          .map(Chargepoint::toDto)
+          .toList();
+
+    return new PageDto<>(total, page, size, data);
   }
 
 }

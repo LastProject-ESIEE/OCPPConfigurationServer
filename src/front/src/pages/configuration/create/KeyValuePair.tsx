@@ -1,4 +1,4 @@
-import {Configuration, GlobalState, Key} from "./GlobalState";
+import { Configuration, GlobalState, Key } from "./GlobalState";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";

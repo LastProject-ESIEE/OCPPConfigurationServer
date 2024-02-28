@@ -1,9 +1,9 @@
 package fr.uge.chargepointconfiguration.logs;
 
 import fr.uge.chargepointconfiguration.logs.business.BusinessLogRepository;
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
-import fr.uge.chargepointconfiguration.logs.sealed.Log;
-import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
+import fr.uge.chargepointconfiguration.logs.sealed.LogEntity;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.logs.technical.TechnicalLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,13 +34,13 @@ public class CustomLoggerService {
   /**
    * Saves a log into the database in the corresponding table according to the log type.
    *
-   * @param log {@link Log}
+   * @param log {@link LogEntity}
    * @return The used log.
    */
-  public Log save(Log log) {
+  public LogEntity save(LogEntity log) {
     return switch (log) {
-      case BusinessLog businessLog -> businessLogRepository.save(businessLog);
-      case TechnicalLog technicalLog -> technicalLogRepository.save(technicalLog);
+      case BusinessLogEntity businessLogEntity -> businessLogRepository.save(businessLogEntity);
+      case TechnicalLogEntity technicalLogEntity -> technicalLogRepository.save(technicalLogEntity);
     };
   }
 }

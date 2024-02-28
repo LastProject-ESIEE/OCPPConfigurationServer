@@ -1,23 +1,9 @@
 package fr.uge.chargepointconfiguration.logs.sealed;
 
-import org.apache.logging.log4j.Level;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
 
 /**
- * Interface used to define a log.
+ * Interface used by {@link CustomLogger}.
  */
 public sealed interface Log permits BusinessLog, TechnicalLog {
-
-  /**
-   * Get the level as interface type.
-   *
-   * @return String version of {@link Level}
-   */
-  String getLevel();
-
-  /**
-   * Display all the infos of a log.
-   *
-   * @return String containing of the datas from a log.
-   */
-  String text();
 }

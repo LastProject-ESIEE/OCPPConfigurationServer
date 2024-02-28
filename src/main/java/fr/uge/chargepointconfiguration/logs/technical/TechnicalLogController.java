@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
-import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,11 +50,11 @@ public class TechnicalLogController {
   @ApiResponse(responseCode = "200",
           description = "Found the list of technical logs",
           content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TechnicalLog.class))
+                  schema = @Schema(implementation = TechnicalLogEntity.class))
           })
   @GetMapping(value = "/{component}/{level}")
-  public List<TechnicalLog> getTechnicalLogByComponentAndLevel(
-          @Parameter @PathVariable TechnicalLog.Component component,
+  public List<TechnicalLogEntity> getTechnicalLogByComponentAndLevel(
+          @Parameter @PathVariable TechnicalLogEntity.Component component,
           @Parameter @PathVariable Level level) {
     return technicalLogService.getTechnicalLogByComponentAndLevel(component, level);
   }
@@ -91,17 +91,19 @@ public class TechnicalLogController {
         @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = technicalLogService.countTotal();
-    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
 
-    return new PageDto<>(total,
-          page,
-          size,
-          technicalLogService.getPage(
+    var data = technicalLogService.getPage(
                 PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ),
-          "/search?size=%d&page=%s&sortBy=%s&order=%s".formatted(
-                size, nextPage, sortBy, order
-          ));
+          )
+          .stream()
+          .map(log -> new TechnicalLogDto(log.getId(),
+                log.getDate(),
+                log.getComponent(),
+                log.getLevel(),
+                log.getCompleteLog()))
+          .toList();
+
+    return new PageDto<>(total, page, size, data);
   }
 
 }

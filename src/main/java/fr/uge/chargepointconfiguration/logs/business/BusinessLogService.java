@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +36,7 @@ public class BusinessLogService {
    * @param chargepointId the id of the chargepoint.
    * @return a list of business logs by chargepoint.
    */
-  public List<BusinessLog> getAllByChargepointId(int chargepointId) {
+  public List<BusinessLogEntity> getAllByChargepointId(int chargepointId) {
     var chargepoint = chargepointRepository.findById(chargepointId).orElseThrow();
     // TODO : exception BAD REQUEST si id est pas un nombre
     return businessLogRepository.findAllByChargepoint(chargepoint);
@@ -47,20 +47,13 @@ public class BusinessLogService {
   }
 
   /**
-   * Search for {@link BusinessLogDto} with a pagination.
+   * Search for {@link BusinessLogEntity} with a pagination.
    *
    * @param pageable The page requested
-   * @return the list of corresponding {@link BusinessLogDto}
+   * @return the list of corresponding {@link BusinessLogEntity}
    */
-  public List<BusinessLogDto> getPage(PageRequest pageable) {
+  public List<BusinessLogEntity> getPage(PageRequest pageable) {
     return businessLogRepository.findAll(pageable)
-          .stream()
-          .map(log -> new BusinessLogDto(log.getId(),
-                log.getDate(),
-                log.getUser(),
-                log.getChargepoint(),
-                log.getCategory(),
-                log.getCompleteLog()))
-          .toList();
+          .stream().toList();
   }
 }

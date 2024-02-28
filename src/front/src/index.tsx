@@ -6,12 +6,14 @@ import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-d
 import Login from "./pages/Login";
 import About from "./pages/About";
 import Error from "./pages/Error";
-import CreateConfig from "./pages/configuration/CreateConfig";
+import CreateConfig from "./pages/configuration/create/CreateConfig";
 import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
-import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
+import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
+import { BusinessLogTable } from "./pages/BusinessLogTable";
+import ConfigurationTable, { ConfigurationEditPage } from "./pages/configuration/display/ConfigurationTable";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -26,7 +28,7 @@ root.render(
                 <Route path="home" element={<Home/>}>
                     <Route path="" element={<Navigate to="chargepoint"/>}/>
                     <Route path="configuration">
-                        <Route path="" element={<ConfigurationListPage/>}/>
+                        <Route path="" element={<ConfigurationTable/>}/>
                         <Route path="edit/:id" element={<ConfigurationEditPage/>}/>
                         <Route path="new" element={<CreateConfig/>}/>
                     </Route>
@@ -44,8 +46,8 @@ root.render(
                     </Route>
                     <Route path="logs">
                         <Route path="" element={<Navigate to="business"/>}/>
-                        <Route path="business" element={<About/>}/>
-                        <Route path="technical" element={<Error/>}/>
+                        <Route path="business" element={<BusinessLogTable/>}/>
+                        <Route path="technical" element={<TechnicalLogTable/>}/>
                     </Route>
                     <Route path="myAccount" element={<Account/>}/>
                 </Route>

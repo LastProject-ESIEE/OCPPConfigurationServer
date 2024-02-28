@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.firmware.FirmwareDto;
 import java.sql.Timestamp;
 
 /**
@@ -18,5 +19,5 @@ public record ConfigurationDto(
     String description,
     Timestamp lastEdit,
     String configuration,
-    Firmware firmware) {
+    FirmwareDto firmware) {
 }

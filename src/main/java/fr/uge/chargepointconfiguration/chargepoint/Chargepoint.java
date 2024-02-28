@@ -189,8 +189,8 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
           constructor,
           clientId,
           serverAddress,
-          configuration,
-          status);
+          configuration.toDto(),
+          status.toDto());
   }
 
   @Override
