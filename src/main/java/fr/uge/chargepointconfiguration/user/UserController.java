@@ -97,23 +97,50 @@ public class UserController {
   /**
    * Update the password of the user.
    *
-   * @param changePasswordUserDto a ChangePassworddUserDto.
+   * @param changePasswordUserDto a ChangePasswordUserDto.
    * @return a ResponseEntity of UserDto.
    */
   @Operation(summary = "Update password")
   @ApiResponse(responseCode = "200",
         description = "Update the password of the current user",
-        content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class))
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class)
         )
+  )
   @PostMapping("/updatePassword")
-  public ResponseEntity<UserDto> postNewPasswordUser(
+  public ResponseEntity<UserDto> updatePassword(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "Old and new password.",
               required = true
         )
         @RequestBody ChangePasswordUserDto changePasswordUserDto) {
     var user = userService.updatePassword(changePasswordUserDto).toDto();
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  /**
+   * Updadate the role of the user.
+   *
+   * @param changeRoleUserDto a ChangeRoleUserDto.
+   * @return a ResponseEntity of UserDto.
+   */
+  @Operation(summary = "Update role")
+  @ApiResponse(responseCode = "200",
+        description = "Update the role of the current user",
+        content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = UserDto.class)
+        )
+  )
+  @PostMapping("/updateRole")
+  public ResponseEntity<UserDto> updateRole(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "JSON with id and new role of the user.",
+              required = true
+        )
+        @RequestBody ChangeRoleUserDto changeRoleUserDto) {
+    var user = userService.updateRole(changeRoleUserDto).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 }
