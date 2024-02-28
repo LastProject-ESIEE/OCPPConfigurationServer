@@ -177,7 +177,7 @@ public final class TechnicalLogEntity implements LogEntity {
     return getId() == that.getId()
            && Objects.equals(getDate(), that.getDate())
            && getComponent() == that.getComponent()
-           && getLevel() == that.getLevel()
+           && getLevel().equals(that.getLevel())
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
