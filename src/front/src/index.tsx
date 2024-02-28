@@ -10,7 +10,6 @@ import CreateConfig from "./pages/configuration/create/CreateConfig";
 import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
-import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
 import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
 import { BusinessLogTable } from "./pages/BusinessLogTable";
