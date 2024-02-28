@@ -2,7 +2,7 @@ import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
 import { TechnicalLog, searchTechnicalLog } from "../conf/technicalLogController";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 10; // Max items displayed in the technical log table
 
