@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.WebSocketMessage;
@@ -41,10 +42,10 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   /**
    * Constructor for the OCPP 2.0 configuration observer.
    *
-   * @param sender websocket channel to send message
+   * @param sender                websocket channel to send message
    * @param chargepointRepository charge point repository
-   * @param firmwareRepository firmware repository
-   * @param statusRepository charge point status repository
+   * @param firmwareRepository    firmware repository
+   * @param statusRepository      charge point status repository
    */
   public OcppConfigurationObserver2(OcppMessageSender sender,
                                     ChargepointRepository chargepointRepository,
@@ -78,6 +79,12 @@ public class OcppConfigurationObserver2 implements OcppObserver {
 
   }
 
+  private void notifyStatusUpdate(int id, Status status) {
+    WebSocketHandler.sendMessageToUsers(
+            new ChargePointWebsocketNotification(id, status)
+    );
+  }
+
   private void processBootNotification(
           BootNotificationRequest20 bootNotificationRequest,
           ChargePointManager chargePointManager) {
@@ -104,7 +111,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
-    WebSocketHandler.sendMessageToUsers("Charge point x connected !");
+    notifyStatusUpdate(currentChargepoint.getId(), status);
     // Send BootNotification Response
     var response = new BootNotificationResponse20(
             LocalDateTime.now().toString(),
@@ -147,12 +154,16 @@ public class OcppConfigurationObserver2 implements OcppObserver {
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       currentChargepoint.setStatus(status);
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
     } else {
       status.setState(true);
       status.setStatus(Status.StatusProcess.PENDING);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       currentChargepoint.setStatus(status);
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
       var setVariableList = new ArrayList<SetVariableData>();
       while (!queue.isEmpty()) {
         setVariableList.add(queue.poll());
@@ -173,6 +184,8 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     status.setStatus(Status.StatusProcess.PROCESSING);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
+    // Dispatch information to users
+    notifyStatusUpdate(currentChargepoint.getId(), status);
     chargepointRepository.save(currentChargepoint);
     // TODO : Send a update firmware request !
     status = currentChargepoint.getStatus();
@@ -181,6 +194,8 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     status.setStep(Status.Step.CONFIGURATION);
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
+    // Dispatch information to users
+    notifyStatusUpdate(currentChargepoint.getId(), status);
     processConfigurationRequest(chargePointManager);
   }
 
@@ -206,11 +221,15 @@ public class OcppConfigurationObserver2 implements OcppObserver {
       status.setError(failedConfig.toString());
       currentChargepoint.setStatus(status);
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
       return;
     }
     status.setStatus(Status.StatusProcess.FINISHED);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
+    // Dispatch information to users
+    notifyStatusUpdate(currentChargepoint.getId(), status);
   }
 }
