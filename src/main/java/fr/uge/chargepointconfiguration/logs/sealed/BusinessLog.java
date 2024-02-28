@@ -186,6 +186,7 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
            && Objects.equals(getDate(), that.getDate())
            && Objects.equals(getUser(), that.getUser())
            && getCategory() == that.getCategory()
+           && Objects.equals(getLevel(), that.getLevel())
            && Objects.equals(getCompleteLog(), that.getCompleteLog());
   }
 
@@ -196,6 +197,7 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
             getUser(),
             getChargepoint(),
             getCategory(),
+            getLevel(),
             getCompleteLog());
   }
 
@@ -203,9 +205,10 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
   public BusinessLogDto toDto() {
     return new BusinessLogDto(this.id,
         this.date,
-        this.user,
-        this.chargepoint,
+        user != null ? this.user.toDto() : null,
+        chargepoint != null ? this.chargepoint.toDto() : null,
         this.category,
+        this.level,
         this.completeLog);
   }
 
@@ -213,6 +216,7 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
   public String text() {
     return date + " "
            + "{" + category + "} "
+           + "{" + level + "} "
            + "(" + id + ") "
            + "user " + (user == null ? "null" : user.getId()) + " "
            + "chargepoint " + (chargepoint == null ? "null" : chargepoint.getId()) + " "
@@ -227,6 +231,7 @@ public final class BusinessLog implements Log, DtoEntity<BusinessLogDto> {
            + ", user='" + user + '\''
            + ", chargePoint='" + chargepoint + '\''
            + ", category='" + category + '\''
+           + ", level='" + level + '\''
            + ", completeLog='" + completeLog + '\''
            + '}';
   }
