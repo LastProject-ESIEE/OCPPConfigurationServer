@@ -11,6 +11,7 @@ import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
 import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
+import { BusinessLogTable } from "./pages/BusinessLogTable";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -43,7 +44,7 @@ root.render(
                     </Route>
                     <Route path="logs">
                         <Route path="" element={<Navigate to="business"/>}/>
-                        <Route path="business" element={<About/>}/>
+                        <Route path="business" element={<BusinessLogTable/>}/>
                         <Route path="technical" element={<Error/>}/>
                     </Route>
                     <Route path="myAccount" element={<Account/>}/>
