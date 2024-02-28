@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
@@ -78,6 +79,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   }
 
+  private void notifyStatusUpdate(int id, Status status) {
+    WebSocketHandler.sendMessageToUsers(
+            new ChargePointWebsocketNotification(id, status)
+    );
+  }
+
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16,
           ChargePointManager chargePointManager) {
@@ -107,7 +114,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     // TODO : Add log, the chargepoint is now connected
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
-    WebSocketHandler.sendMessageToUsers("Charge point x connected !");
+    notifyStatusUpdate(currentChargepoint.getId(), status);
     // Send BootNotification Response
     var response = new BootNotificationResponse16(
             LocalDateTime.now().toString(),
@@ -149,12 +156,16 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       status.setStatus(Status.StatusProcess.FINISHED);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
     } else {
       sender.sendMessage(config, chargePointManager);
       var status = currentChargepoint.getStatus();
       status.setStatus(Status.StatusProcess.PROCESSING);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
     }
   }
 
@@ -168,6 +179,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
           currentChargepoint.setStatus(status);
           chargepointRepository.save(currentChargepoint);
+          // Dispatch information to users
+          notifyStatusUpdate(currentChargepoint.getId(), status);
           var reset = new ResetRequest16("Hard");
           sender.sendMessage(reset, chargePointManager);
         } else {
@@ -180,6 +193,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         status.setError(response.status());
         currentChargepoint.setStatus(status);
         chargepointRepository.save(currentChargepoint);
+        // Dispatch information to users
+        notifyStatusUpdate(currentChargepoint.getId(), status);
         queue.clear();
       }
     }
@@ -195,6 +210,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       status.setStep(Status.Step.CONFIGURATION);
       currentChargepoint.setStatus(status);
       chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      notifyStatusUpdate(currentChargepoint.getId(), status);
       processConfigurationRequest(chargePointManager);
       return;
     }
@@ -202,6 +219,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
     chargepointRepository.save(currentChargepoint);
+    // Dispatch information to users
+    notifyStatusUpdate(currentChargepoint.getId(), status);
     var firmwareRequest = new UpdateFirmwareRequest16(
             link, LocalDateTime.now().toString());
     sender.sendMessage(firmwareRequest, chargePointManager);
@@ -213,6 +232,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     status.setState(false);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     chargepointRepository.save(currentChargepoint);
+    // Dispatch information to users
+    notifyStatusUpdate(currentChargepoint.getId(), status);
   }
 
   private void processFirmwareStatusResponse(FirmwareStatusNotificationRequest16 f,
