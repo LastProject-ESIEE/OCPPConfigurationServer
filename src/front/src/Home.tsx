@@ -61,9 +61,9 @@ wsManager.startWebSocket()
 
 export function Home() {
     return (
-        <div className="App">
-            <NavBar />
-            <Outlet />
+        <div className="App" style={{maxWidth: "true", height: "100vh", overflow: "hidden"}}>
+          <NavBar/>
+          <Outlet />
         </div>
     );
 }
