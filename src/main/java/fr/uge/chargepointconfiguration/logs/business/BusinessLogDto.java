@@ -21,5 +21,6 @@ public record BusinessLogDto(
     User user,
     Chargepoint chargepoint,
     BusinessLog.Category category,
+    String level,
     String completeLog) {
 }
