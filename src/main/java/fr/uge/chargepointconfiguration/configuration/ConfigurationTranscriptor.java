@@ -158,6 +158,6 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
 
   @Override
   public ConfigurationTranscriptorDto toDto() {
-    return new ConfigurationTranscriptorDto(id, fullName);
+    return new ConfigurationTranscriptorDto(id, fullName, regexRule);
   }
 }
