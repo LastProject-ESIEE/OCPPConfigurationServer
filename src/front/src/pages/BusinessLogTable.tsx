@@ -4,7 +4,7 @@ import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, T
 import { BusinessLog, searchBusinessLog } from "../conf/businessLogController";
 // import { Link } from "react-router-dom";
 
-const PAGE_SIZE = 10; // Max items displayed in the businessLog table
+const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 
 const businessLogTableColumns: TableColumnDefinition[] = [
     {
