@@ -10,6 +10,7 @@ import CreateConfig from "./pages/configuration/create/CreateConfig";
 import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
+import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
 import { BusinessLogTable } from "./pages/BusinessLogTable";
 import ConfigurationTable, { ConfigurationEditPage } from "./pages/configuration/display/ConfigurationTable";
@@ -46,7 +47,7 @@ root.render(
                     <Route path="logs">
                         <Route path="" element={<Navigate to="business"/>}/>
                         <Route path="business" element={<BusinessLogTable/>}/>
-                        <Route path="technical" element={<Error/>}/>
+                        <Route path="technical" element={<TechnicalLogTable/>}/>
                     </Route>
                     <Route path="myAccount" element={<Account/>}/>
                 </Route>
