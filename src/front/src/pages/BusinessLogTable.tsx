@@ -58,7 +58,7 @@ export function BusinessLogTable() {
         formatter: (businessLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + businessLog.id}  paddingTop={1} maxWidth={"true"}>
-                    <Link key={"chargepoint-edit-path-" + businessLog.id}  to={{ pathname: 'display/' + businessLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+                    {/*<Link key={"chargepoint-edit-path-" + businessLog.id}  to={{ pathname: 'display/' + businessLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>*/}
                         <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12/businessLogTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
@@ -83,7 +83,7 @@ export function BusinessLogTable() {
                                 </Grid>
                             </Grid>
                         </ListItemButton>
-                    </Link>
+                    {/*</Link>*/}
                 </Box>
             )
         },
