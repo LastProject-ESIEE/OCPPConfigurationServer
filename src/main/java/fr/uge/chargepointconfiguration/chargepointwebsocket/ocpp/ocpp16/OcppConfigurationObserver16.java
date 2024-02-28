@@ -16,6 +16,7 @@ import fr.uge.chargepointconfiguration.configuration.ConfigurationTranscriptor;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private final StatusRepository statusRepository;
   private final Queue<ChangeConfigurationRequest16> queue = new LinkedList<>();
   private Chargepoint currentChargepoint;
+  private String firmwareVersion;
+  private String targetFirmwareVersion;
 
 
   /**
@@ -88,6 +91,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16,
           ChargePointManager chargePointManager) {
+    firmwareVersion = bootNotificationRequest16.firmwareVersion();
     // Get charge point from database
     currentChargepoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
             bootNotificationRequest16.chargePointSerialNumber(),
@@ -106,6 +110,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
     var status = currentChargepoint.getStatus();
     var config = currentChargepoint.getConfiguration();
+    targetFirmwareVersion = config.getFirmware().getVersion();
     status.setState(true);
     status.setStatus(Status.StatusProcess.PENDING);
     var statusLastTime = status.getLastUpdate();
@@ -203,7 +208,15 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private void processFirmwareRequest(ChargePointManager chargePointManager) {
     var status = currentChargepoint.getStatus();
     var firmware = currentChargepoint.getConfiguration().getFirmware();
-    var link = firmware.getUrl();
+    var typesAllowed = firmware.getTypesAllowed();
+    var link = "";
+    for (var typeAllowed : typesAllowed) {
+      if (typeAllowed.getType().equals(currentChargepoint.getType())
+              && typeAllowed.getConstructor().equals(currentChargepoint.getConstructor())) {
+        link = fetchUrlFromFirstCompatibleVersion(typeAllowed);
+        break;
+      }
+    }
     if (link.isEmpty()) {
       status.setStatus(Status.StatusProcess.PENDING);
       status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
@@ -226,6 +239,26 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     sender.sendMessage(firmwareRequest, chargePointManager);
   }
 
+  private String fetchUrlFromFirstCompatibleVersion(TypeAllowed typeAllowed) {
+    var firmwares = firmwareRepository
+            .findAllByTypeAllowed(typeAllowed);
+    for (var firmware : firmwares) {
+      var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
+      if (comparison > 0) {
+        // TODO : Log the firmware update
+        return firmware.getVersion().compareTo(firmwareVersion) > 0 ? firmware.getUrl() : "";
+      } else if (comparison == 0) {
+        // TODO : Log, it is the same firmware version
+        return "";
+      } else {
+        // TODO : Log, cannot downgrade
+        return "";
+      }
+    }
+    // TODO : Log, cannot find compatible firmware
+    return "";
+  }
+
   private void processResetResponse() {
     var status = currentChargepoint.getStatus();
     status.setStatus(Status.StatusProcess.FINISHED);
@@ -243,7 +276,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         var status = currentChargepoint.getStatus();
         status.setStatus(Status.StatusProcess.PENDING);
         status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-        status.setStep(Status.Step.CONFIGURATION);
         currentChargepoint.setStatus(status);
         chargepointRepository.save(currentChargepoint);
         var reset = new ResetRequest16("Hard");
