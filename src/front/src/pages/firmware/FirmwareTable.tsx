@@ -10,17 +10,11 @@ import { Link } from "react-router-dom";
 import { Firmware, searchFirmware } from "../../conf/FirmwareController";
 
 
-const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
+const PAGE_SIZE = 10; // Max items displayed in the firmware table
 
 const firmwareTableColumns: TableColumnDefinition[] = [
     {
         title: "Version",
-        /*
-        filter: {
-          apiField: "containsTitle",
-          onChange: value => console.log("Filtering on : " + value)
-        }
-        */
     },
     {
         title: "Constructeur",
@@ -40,7 +34,7 @@ function FirmwareTable() {
     useEffect(() => {
         searchFirmware(PAGE_SIZE).then((result: PageRequest<Firmware> | undefined) => {
             if (!result) {
-                setError("Erreur lors de la récupération des bornes.")
+                setError("Erreur lors de la récupération des firmwares.")
                 return
             }
             setTableData(result.data)
@@ -51,7 +45,7 @@ function FirmwareTable() {
 
     let props: InfinityScrollItemsTableProps<Firmware> = {
         columns: firmwareTableColumns,
-        key: "charge-point-table",
+        key: "firmware-table",
         data: tableData,
         hasMore: hasMore,
         error: error,
@@ -95,7 +89,7 @@ function FirmwareTable() {
             const nextPage = currentPage + 1;
             searchFirmware(PAGE_SIZE, nextPage).then((result: PageRequest<Firmware> | undefined) => {
                 if (!result) {
-                    setError("Erreur lors de la récupération des bornes.")
+                    setError("Erreur lors de la récupération des firmwares.")
                     return
                 }
                 setTableData([...tableData, ...result.data])
