@@ -6,7 +6,9 @@ import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 import fr.uge.chargepointconfiguration.user.UserRepository;
 import java.net.InetSocketAddress;
@@ -71,13 +73,13 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    */
   @Override
   public void run(String... args) throws Exception {
-    logger.log(new BusinessLog(
-        BusinessLog.Category.CONFIG,
-        Level.INFO.name(),
-        "Configuration created"));
-    logger.log(new TechnicalLog(
-        TechnicalLog.Component.DATABASE,
-        Level.INFO.name(),
+    logger.log(Level.INFO,
+        new BusinessLog(null,
+            null,
+            BusinessLogEntity.Category.CONFIG,
+            "Configuration created"));
+    logger.warn(new TechnicalLog(
+        TechnicalLogEntity.Component.DATABASE,
         "mylog"));
 
     var websocketUrl = System.getenv("WEBSOCKET_URL");
@@ -89,10 +91,10 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       var websocketPort = Integer.parseInt(websocketPortString);
       Thread.ofPlatform().start(() -> {
         var server = new ConfigurationServer(
-                new InetSocketAddress(websocketUrl, websocketPort),
-                chargepointRepository,
-                firmwareRepository,
-                statusRepository
+            new InetSocketAddress(websocketUrl, websocketPort),
+            chargepointRepository,
+            firmwareRepository,
+            statusRepository
         );
         server.setReuseAddr(true);
         server.run();

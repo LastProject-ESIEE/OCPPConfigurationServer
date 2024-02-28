@@ -1,9 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
-import fr.uge.chargepointconfiguration.user.User;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.user.UserDto;
 import java.sql.Timestamp;
 
@@ -14,7 +12,7 @@ import java.sql.Timestamp;
  * @param date Date when the log had been created.
  * @param user User logged currently implied with this log, null if not.
  * @param chargepoint Chargepoint implied with this log, null if not.
- * @param category {@link BusinessLog.Category}
+ * @param category {@link BusinessLogEntity.Category}
  * @param completeLog All the log in one String.
  */
 public record BusinessLogDto(
@@ -22,7 +20,7 @@ public record BusinessLogDto(
     Timestamp date,
     UserDto user,
     ChargepointDto chargepoint,
-    BusinessLog.Category category,
+    BusinessLogEntity.Category category,
     String level,
     String completeLog) {
 }

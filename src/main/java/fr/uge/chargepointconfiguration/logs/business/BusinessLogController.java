@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,12 +49,15 @@ public class BusinessLogController {
         description = "Found the list of business logs",
         content = @Content(
               mediaType = "application/json",
-              schema = @Schema(implementation = BusinessLog.class)
+              schema = @Schema(implementation = BusinessLogEntity.class)
         )
   )
   @GetMapping(value = "/{id}")
   public List<BusinessLogDto> getBusinessLogByChargepointId(@Parameter @PathVariable int id) {
-    return businessLogService.getAllByChargepointId(id).stream().map(BusinessLog::toDto).toList();
+    return businessLogService.getAllByChargepointId(id)
+        .stream()
+        .map(BusinessLogEntity::toDto)
+        .toList();
   }
 
   /**
