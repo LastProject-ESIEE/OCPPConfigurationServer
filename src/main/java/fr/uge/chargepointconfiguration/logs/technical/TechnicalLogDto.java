@@ -17,6 +17,6 @@ public record TechnicalLogDto(
     int id,
     Timestamp date,
     TechnicalLog.Component component,
-    Level level,
+    String level,
     String completeLog) {
 }

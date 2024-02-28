@@ -3,6 +3,7 @@ package fr.uge.chargepointconfiguration.configuration;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,4 +55,26 @@ public class ConfigurationService {
     return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
   }
 
+  public long countTotal() {
+    return configurationRepository.count();
+  }
+
+  /**
+   * Search for {@link ConfigurationDto} with a pagination.
+   *
+   * @param pageable The page requested
+   * @return the list of corresponding {@link ConfigurationDto}
+   */
+  public List<ConfigurationDto> getPage(PageRequest pageable) {
+    return configurationRepository.findAll(pageable)
+          .stream()
+          .map(entity -> new ConfigurationDto(entity.getId(),
+                entity.getName(),
+                entity.getDescription(),
+                entity.getLastEdit(),
+                entity.getConfiguration(),
+                entity.getFirmware()
+          ))
+          .toList();
+  }
 }

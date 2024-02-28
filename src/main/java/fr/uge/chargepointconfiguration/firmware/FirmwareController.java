@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,9 +11,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,16 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Firmware", description = "The firmware API")
 public class FirmwareController {
 
-  private final FirmwareRepository firmwareRepository;
+  private final FirmwareService firmwareService;
 
   /**
    * FirmwareController's constructor.
    *
-   * @param firmwareRepository A FirmwareRepository.
+   * @param firmwareService A FirmwareRepository.
    */
   @Autowired
-  public FirmwareController(FirmwareRepository firmwareRepository) {
-    this.firmwareRepository = firmwareRepository;
+  public FirmwareController(FirmwareService firmwareService) {
+    this.firmwareService = firmwareService;
   }
 
   /**
@@ -50,7 +54,7 @@ public class FirmwareController {
   )
   @GetMapping(value = "/all")
   public List<FirmwareDto> getAllFirmwares() {
-    return firmwareRepository.findAll().stream().map(Firmware::toDto).toList();
+    return firmwareService.getAllFirmwares().stream().map(Firmware::toDto).toList();
   }
 
   /**
@@ -79,6 +83,52 @@ public class FirmwareController {
   public Optional<FirmwareDto> getFirmwareById(
       @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
-    return Optional.of(firmwareRepository.findById(id).orElseThrow().toDto());
+    return Optional.of(firmwareService.getFirmwareById(id).orElseThrow().toDto());
+  }
+
+
+  /**
+   * Search for {@link FirmwareDto} with a pagination.
+   *
+   * @param size Desired size of the requested page.
+   * @param page Requested page.
+   * @param sortBy The column you want to sort by. Must be an attribute of
+   *               the {@link FirmwareDto}.
+   * @param order The order of the sort. Must be "asc" or "desc".
+   * @return A page containing a list of {@link FirmwareDto}
+   */
+  @Operation(summary = "Search for configurations")
+  @ApiResponse(responseCode = "200",
+        description = "Found configurations",
+        content = { @Content(mediaType = "application/json",
+              schema = @Schema(implementation = FirmwareDto.class))
+        })
+  @GetMapping(value = "/search")
+  public PageDto<FirmwareDto> getPage(
+        @Parameter(description = "Desired size of the requested page.")
+        @RequestParam(required = false, defaultValue = "10") int size,
+
+        @Parameter(description = "Requested page.")
+        @RequestParam(required = false, defaultValue = "0") int page,
+
+        @Parameter(description =
+              "The column you want to sort by. Must be an attribute of the configuration.")
+        @RequestParam(required = false, defaultValue = "id") String sortBy,
+
+        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+        @RequestParam(required = false, defaultValue = "asc") String order
+  ) {
+    var total = firmwareService.countTotal();
+    var nextPage = (((page + 1) * size) < total) ? ((page + 1) + "") : "";
+
+    return new PageDto<>(total,
+          page,
+          size,
+          firmwareService.getPage(
+                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+          ),
+          "/search?size=%d&page=%s&sortBy=%s&order=%s".formatted(
+                size, nextPage, sortBy, order
+          ));
   }
 }

@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,6 +39,28 @@ public class BusinessLogService {
   public List<BusinessLog> getAllByChargepointId(int chargepointId) {
     var chargepoint = chargepointRepository.findById(chargepointId).orElseThrow();
     // TODO : exception BAD REQUEST si id est pas un nombre
-    return businessLogRepository.findAllByChargepointId(chargepoint);
+    return businessLogRepository.findAllByChargepoint(chargepoint);
+  }
+
+  public long countTotal() {
+    return businessLogRepository.count();
+  }
+
+  /**
+   * Search for {@link BusinessLogDto} with a pagination.
+   *
+   * @param pageable The page requested
+   * @return the list of corresponding {@link BusinessLogDto}
+   */
+  public List<BusinessLogDto> getPage(PageRequest pageable) {
+    return businessLogRepository.findAll(pageable)
+          .stream()
+          .map(log -> new BusinessLogDto(log.getId(),
+                log.getDate(),
+                log.getUser(),
+                log.getChargepoint(),
+                log.getCategory(),
+                log.getCompleteLog()))
+          .toList();
   }
 }

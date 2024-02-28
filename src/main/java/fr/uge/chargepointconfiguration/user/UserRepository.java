@@ -1,15 +1,18 @@
 package fr.uge.chargepointconfiguration.user;
 
-import fr.uge.chargepointconfiguration.user.User;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * Repository for the user.
  */
 @Repository
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends CrudRepository<User, Integer>,
+      PagingAndSortingRepository<User, Integer> {
 
   /**
    * Returns a User from the database according to the email.
@@ -22,4 +25,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
   User findById(int id);
 
   List<User> findAll();
+
+  Page<User> findAll(Pageable pageable);
 }
