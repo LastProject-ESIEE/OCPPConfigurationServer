@@ -47,21 +47,13 @@ public class BusinessLogService {
   }
 
   /**
-   * Search for {@link BusinessLogDto} with a pagination.
+   * Search for {@link BusinessLog} with a pagination.
    *
    * @param pageable The page requested
-   * @return the list of corresponding {@link BusinessLogDto}
+   * @return the list of corresponding {@link BusinessLog}
    */
-  public List<BusinessLogDto> getPage(PageRequest pageable) {
+  public List<BusinessLog> getPage(PageRequest pageable) {
     return businessLogRepository.findAll(pageable)
-          .stream()
-          .map(log -> new BusinessLogDto(log.getId(),
-                log.getDate(),
-                log.getUser() != null ? log.getUser().toDto() : null,
-                log.getChargepoint() != null ? log.getChargepoint().toDto() : null,
-                log.getCategory(),
-                log.getLevel(),
-                log.getCompleteLog()))
-          .toList();
+          .stream().toList();
   }
 }

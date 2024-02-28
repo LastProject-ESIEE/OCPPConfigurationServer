@@ -71,12 +71,10 @@ public class ChargepointService {
    * @param clientIdContains the pattern for ClientId
    * @return the list of corresponding chargepoint
    */
-  public List<ChargepointDto> search(PageRequest pageable, String clientIdContains) {
+  public List<Chargepoint> search(PageRequest pageable, String clientIdContains) {
     return chargepointRepository
           .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
-          .stream()
-          .map(Chargepoint::toDto)
-          .toList();
+          .stream().toList();
   }
 
   public long countTotal() {

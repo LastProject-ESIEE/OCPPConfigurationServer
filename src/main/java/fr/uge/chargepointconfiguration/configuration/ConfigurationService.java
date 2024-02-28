@@ -60,21 +60,12 @@ public class ConfigurationService {
   }
 
   /**
-   * Search for {@link ConfigurationDto} with a pagination.
+   * Search for {@link Configuration} with a pagination.
    *
    * @param pageable The page requested
-   * @return the list of corresponding {@link ConfigurationDto}
+   * @return the list of corresponding {@link Configuration}
    */
-  public List<ConfigurationDto> getPage(PageRequest pageable) {
-    return configurationRepository.findAll(pageable)
-          .stream()
-          .map(entity -> new ConfigurationDto(entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getLastEdit(),
-                entity.getConfiguration(),
-                entity.getFirmware().toDto()
-          ))
-          .toList();
+  public List<Configuration> getPage(PageRequest pageable) {
+    return configurationRepository.findAll(pageable).stream().toList();
   }
 }

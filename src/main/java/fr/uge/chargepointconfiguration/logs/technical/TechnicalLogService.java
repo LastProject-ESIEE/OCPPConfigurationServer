@@ -31,19 +31,13 @@ public class TechnicalLogService {
   }
 
   /**
-   * Search for {@link TechnicalLogDto} with a pagination.
+   * Search for {@link TechnicalLog} with a pagination.
    *
    * @param pageable         The page requested
-   * @return the list of corresponding {@link TechnicalLogDto}
+   * @return the list of corresponding {@link TechnicalLog}
    */
-  public List<TechnicalLogDto> getPage(PageRequest pageable) {
+  public List<TechnicalLog> getPage(PageRequest pageable) {
     return technicalLogRepository.findAll(pageable)
-          .stream()
-          .map(log -> new TechnicalLogDto(log.getId(),
-                log.getDate(),
-                log.getComponent(),
-                log.getLevel(),
-                log.getCompleteLog()))
-          .toList();
+          .stream().toList();
   }
 }
