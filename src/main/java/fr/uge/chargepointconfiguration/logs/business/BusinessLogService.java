@@ -60,6 +60,7 @@ public class BusinessLogService {
                 log.getUser(),
                 log.getChargepoint(),
                 log.getCategory(),
+                log.getLevel(),
                 log.getCompleteLog()))
           .toList();
   }
