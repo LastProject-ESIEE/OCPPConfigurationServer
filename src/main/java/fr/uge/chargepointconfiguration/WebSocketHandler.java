@@ -1,7 +1,15 @@
 package fr.uge.chargepointconfiguration;
 
+import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
+import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
+import fr.uge.chargepointconfiguration.chargepoint.notification.WebSocketNotification;
+import fr.uge.chargepointconfiguration.configuration.Configuration;
+import fr.uge.chargepointconfiguration.firmware.Firmware;
+import fr.uge.chargepointconfiguration.status.Status;
+import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -13,36 +21,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  * Define the handler which manage clients websocket connection.
  */
 public class WebSocketHandler extends TextWebSocketHandler {
-  // TODO: Refactor concurrency with maybe a ConcurrentArrayList or something like that
   private static final Object lock = new Object();
   private static final ArrayList<WebSocketSession> usersSession = new ArrayList<>();
-
-  // TODO: handleTextMessage and handleMessage maybe removed as we don't need to received messages
-  /**
-   * Handle TextMessage sent by a client.
-   *
-   * @param session client websocket session
-   * @param message received TextMessage
-   */
-  @Override
-  public void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) {
-    System.out.println("handleTextMessage");
-  }
-
-  /**
-   * Handle message sent by a client.
-   *
-   * @param session client websocket session
-   * @param message message received
-   * @throws IOException throw on sendMessage error (ex: connection closed)
-   */
-  @Override
-  public void handleMessage(WebSocketSession session,
-                            WebSocketMessage<?> message) throws IOException {
-    System.out.println("handleMessage sent by client: " + session.getRemoteAddress());
-    String receivedMessage = (String) message.getPayload();
-    session.sendMessage(new TextMessage("Received: " + receivedMessage));
-  }
 
   /**
    * Call after a client websocket connection.
@@ -87,16 +67,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
   /**
    * Send a text message to all clients connected to the websocket server.
    *
-   * @param message Message content to be sent
+   * @param notificationMessage Websocket notification message
    */
-  public static void sendMessageToUsers(String message) {
+  public static void sendMessageToUsers(WebSocketNotification notificationMessage) {
+    var textMessage = new TextMessage(JsonParser.objectToJsonString(notificationMessage));
     synchronized (lock) {
       usersSession.forEach(webSocketSession -> {
         try {
-          webSocketSession.sendMessage(new TextMessage(message));
+          webSocketSession.sendMessage(textMessage);
         } catch (IOException e) {
-          System.out.println("Failed to sent a message to the client: " + message);
-          throw new RuntimeException(e);
+          System.out.println("Failed to sent a message to the client: " + e.getMessage());
         }
       });
     }
