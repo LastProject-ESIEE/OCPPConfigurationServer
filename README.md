@@ -52,6 +52,12 @@ Then check style could be executed locally through the plugin menu.
 
 ## Running tests
 
+## Running the chargepoints generator
+The python scriptis used to generate chargepoints and status into the database.   
+You will need python3 as well as pymysql installed : ```pip install pymysql```.   
+You can run it by typing ```python3 generator.py -h```.  
+It will display informations on the program and the arguments.
+
 
 
 
