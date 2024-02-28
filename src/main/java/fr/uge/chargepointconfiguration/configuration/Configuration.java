@@ -160,7 +160,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
           description,
         lastEdit,
         configuration,
-        firmware);
+        firmware.toDto());
   }
 
   @Override
