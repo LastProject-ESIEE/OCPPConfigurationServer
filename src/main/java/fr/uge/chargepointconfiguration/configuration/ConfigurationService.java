@@ -73,7 +73,7 @@ public class ConfigurationService {
                 entity.getDescription(),
                 entity.getLastEdit(),
                 entity.getConfiguration(),
-                entity.getFirmware()
+                entity.getFirmware().toDto()
           ))
           .toList();
   }
