@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -113,5 +114,24 @@ public class ConfigurationController {
     ));
     return new ResponseEntity<>(configuration,
         HttpStatus.CREATED);
+  }
+
+  /**
+   * Returns a list of {@link ConfigurationTranscriptor}.
+   *
+   * @return list of {@link ConfigurationTranscriptor}.
+   */
+  @Operation(summary = "Get all fullname key configuration")
+  @ApiResponse(responseCode = "200",
+      description = "Found all fullname key configuration.",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationTranscriptorDto.class)
+      )
+  )
+  @GetMapping(value = "/transcriptor")
+  public List<ConfigurationTranscriptorDto> getAllConfigurationTranscriptor() {
+    return Arrays.stream(ConfigurationTranscriptor.values())
+        .map(ConfigurationTranscriptor::toDto)
+        .toList();
   }
 }
