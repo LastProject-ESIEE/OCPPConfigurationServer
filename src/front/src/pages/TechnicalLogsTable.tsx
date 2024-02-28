@@ -4,7 +4,7 @@ import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, T
 import { TechnicalLog, searchTechnicalLog } from "../conf/technicalLogController";
 import { Link } from "react-router-dom";
 
-const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
+const PAGE_SIZE = 10; // Max items displayed in the technical log table
 
 const technicalLogTableColumns: TableColumnDefinition[] = [
     {
@@ -52,7 +52,7 @@ export function TechnicalLogTable() {
         formatter: (technicalLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + technicalLog.id}  paddingTop={1} maxWidth={"true"}>
-                    <Link key={"chargepoint-edit-path-" + technicalLog.id}  to={{ pathname: 'display/' + technicalLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+                    {/*<Link key={"chargepoint-edit-path-" + technicalLog.id}  to={{ pathname: 'display/' + technicalLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>*/}
                         <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12/technicalLogTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
@@ -66,7 +66,7 @@ export function TechnicalLogTable() {
                                 </Grid>
                             </Grid>
                         </ListItemButton>
-                    </Link>
+                    {/*</Link>*/}
                 </Box>
             )
         },
