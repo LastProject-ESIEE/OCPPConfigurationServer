@@ -66,7 +66,7 @@ public class TechnicalLogController {
    * @param page Requested page.
    * @param sortBy The column you want to sort by. Must be an attribute of
    *               the {@link TechnicalLogDto}.
-   * @param order The order of the sort. must be "asc" or "desc".
+   * @param order The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link TechnicalLogDto}
    */
   @Operation(summary = "Search for technical logs")
