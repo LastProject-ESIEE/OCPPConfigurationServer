@@ -246,7 +246,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
       if (comparison > 0) {
         // TODO : Log the firmware update
-        return firmware.getVersion().compareTo(firmwareVersion) > 0 ? firmware.getUrl() : "";
+        if (firmware.getVersion().compareTo(firmwareVersion) > 0) {
+          return firmware.getUrl();
+        }
       } else if (comparison == 0) {
         // TODO : Log, it is the same firmware version
         return "";
