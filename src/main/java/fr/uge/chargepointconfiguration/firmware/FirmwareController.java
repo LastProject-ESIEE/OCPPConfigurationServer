@@ -94,7 +94,7 @@ public class FirmwareController {
    * @param page Requested page.
    * @param sortBy The column you want to sort by. Must be an attribute of
    *               the {@link FirmwareDto}.
-   * @param order The order of the sort. must be "asc" or "desc".
+   * @param order The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link FirmwareDto}
    */
   @Operation(summary = "Search for configurations")

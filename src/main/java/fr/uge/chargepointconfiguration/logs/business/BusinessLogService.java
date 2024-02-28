@@ -49,7 +49,7 @@ public class BusinessLogService {
   /**
    * Search for {@link BusinessLogDto} with a pagination.
    *
-   * @param pageable         The page requested
+   * @param pageable The page requested
    * @return the list of corresponding {@link BusinessLogDto}
    */
   public List<BusinessLogDto> getPage(PageRequest pageable) {

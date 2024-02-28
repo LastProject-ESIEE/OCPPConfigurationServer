@@ -156,12 +156,12 @@ public class UserController {
    * @param page Requested page.
    * @param sortBy The column you want to sort by. Must be an attribute of
    *               the {@link UserDto}.
-   * @param order The order of the sort. must be "asc" or "desc".
+   * @param order The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link UserDto}
    */
-  @Operation(summary = "Search for configurations")
+  @Operation(summary = "Search for users")
   @ApiResponse(responseCode = "200",
-        description = "Found configurations",
+        description = "Found users",
         content = { @Content(mediaType = "application/json",
               schema = @Schema(implementation = UserDto.class))
         })
@@ -174,7 +174,7 @@ public class UserController {
         @RequestParam(required = false, defaultValue = "0") int page,
 
         @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the configuration.")
+              "The column you want to sort by. Must be an attribute of the users.")
         @RequestParam(required = false, defaultValue = "id") String sortBy,
 
         @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
