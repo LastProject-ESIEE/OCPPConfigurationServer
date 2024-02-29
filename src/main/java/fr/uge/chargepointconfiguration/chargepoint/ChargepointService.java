@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
+import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 import java.util.List;
 import java.util.Optional;
@@ -43,14 +44,17 @@ public class ChargepointService {
    * @return A chargepoint created with its information.
    */
   public ChargepointDto save(CreateChargepointDto createChargepointDto) {
+    var status = statusRepository.save(new Status());
+    var configuration = configurationRepository.findById(createChargepointDto.configuration())
+        .orElseThrow();
     var chargepoint = chargepointRepository.save(new Chargepoint(
-          createChargepointDto.serialNumberChargepoint(),
-          createChargepointDto.type(),
-          createChargepointDto.constructor(),
-          createChargepointDto.clientId(),
-          createChargepointDto.serverAddress(),
-          configurationRepository.findById(createChargepointDto.configuration()).orElseThrow(),
-          statusRepository.findById(createChargepointDto.status()).orElseThrow()
+        createChargepointDto.serialNumberChargepoint(),
+        createChargepointDto.type(),
+        createChargepointDto.constructor(),
+        createChargepointDto.clientId(),
+        "192.168.0.5",  // TODO variable environnement
+        configuration,
+        status
     ));
     return chargepoint.toDto();
   }
@@ -73,8 +77,8 @@ public class ChargepointService {
    */
   public List<Chargepoint> search(PageRequest pageable, String clientIdContains) {
     return chargepointRepository
-          .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
-          .stream().toList();
+        .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
+        .stream().toList();
   }
 
   public long countTotal() {

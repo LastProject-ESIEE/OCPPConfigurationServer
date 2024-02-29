@@ -14,7 +14,8 @@ import { UserTable } from "./pages/UserTable";
 import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
 import { BusinessLogTable } from "./pages/BusinessLogTable";
-import ConfigurationTable, { ConfigurationEditPage} from "./pages/configuration/display/ConfigurationTable";
+import ConfigurationTable, { ConfigurationEditPage } from "./pages/configuration/display/ConfigurationTable";
+import CreateChargepoint from "./pages/chargepoint/CreateChargepoint";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -35,6 +36,7 @@ root.render(
                     </Route>
                     <Route path="chargepoint">
                         <Route path="" element={<ChargePointTable/>}/>
+                        <Route path="new" element={<CreateChargepoint/>}/>
                         <Route path="display/:id" element={<Error/>}/>
                     </Route>
                     <Route path="firmware">

@@ -5,7 +5,7 @@ import {
     TableColumnDefinition
 } from "../../DisplayTable";
 import React, { useEffect } from "react";
-import { Box, Grid, ListItemButton, Typography } from "@mui/material";
+import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { Configuration, searchConfiguration } from "../../../conf/configurationController";
 
@@ -68,15 +68,17 @@ function ConfigurationTable() {
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{configuration.name}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{configuration.name}</Typography>
                                 </Grid>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{configuration.description}</Typography>
+                                    <Tooltip title={configuration.description}>
+                                        <Typography variant="body1" align="center" noWrap={true}>{configuration.description}</Typography>
+                                    </Tooltip>
                                 </Grid>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{new Date(configuration.lastEdit).toLocaleString()}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{new Date(configuration.lastEdit).toLocaleString()}</Typography>
                                 </Grid>
                             </Grid>
                         </ListItemButton>

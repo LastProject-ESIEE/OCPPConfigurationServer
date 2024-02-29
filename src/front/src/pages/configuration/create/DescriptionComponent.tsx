@@ -1,13 +1,13 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, Input, Paper } from "@mui/material";
+import { ErrorState, GlobalState } from "../../../conf/configurationController";
 
 function DescriptionComponent(props: {
     globalState: GlobalState;
     setGlobalState: Dispatch<SetStateAction<GlobalState>>,
     errorState: ErrorState
 }) {
-    const backgroundColor = props.errorState.description === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
+    const backgroundColor = props.errorState.description === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
     return (
         <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, backgroundColor}}>
