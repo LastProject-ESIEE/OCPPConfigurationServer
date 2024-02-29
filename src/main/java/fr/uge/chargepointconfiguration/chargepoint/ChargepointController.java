@@ -36,23 +36,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChargepointController {
 
   private final ChargepointService chargepointService;
-  private final ConfigurationService configurationService;
-  private final StatusService statusService;
 
   /**
    * ChargepointController's constructor.
    *
    * @param chargepointService   A ChargePointService.
-   * @param configurationService A ConfigurationService.
-   * @param statusService        A StatusService.
    */
   @Autowired
-  public ChargepointController(ChargepointService chargepointService,
-                               ConfigurationService configurationService,
-                               StatusService statusService) {
+  public ChargepointController(ChargepointService chargepointService) {
     this.chargepointService = chargepointService;
-    this.configurationService = configurationService;
-    this.statusService = statusService;
   }
 
   /**

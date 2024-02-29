@@ -1,11 +1,8 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
-import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusDto;
-import java.sql.Timestamp;
 
 /**
  * DTO to read chargepoint in database.

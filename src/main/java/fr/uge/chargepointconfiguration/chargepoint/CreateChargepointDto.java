@@ -1,9 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.uge.chargepointconfiguration.configuration.Configuration;
-import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.status.Status;
 
 /**
  * DTO to create configuration in database.
