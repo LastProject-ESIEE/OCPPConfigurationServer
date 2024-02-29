@@ -5,7 +5,7 @@ import { ChargePoint, WebSocketChargePointNotification, searchChargePoint } from
 import { Link } from "react-router-dom";
 import { wsManager } from "../Home";
 
-const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
+const PAGE_SIZE = 30; // Max items displayed in the chargepoint table
 
 const chargePointTableColumns: TableColumnDefinition[] = [
   {

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { Firmware, searchFirmware } from "../../conf/FirmwareController";
 
 
-const PAGE_SIZE = 10; // Max items displayed in the firmware table
+const PAGE_SIZE = 30; // Max items displayed in the firmware table
 
 const firmwareTableColumns: TableColumnDefinition[] = [
     {

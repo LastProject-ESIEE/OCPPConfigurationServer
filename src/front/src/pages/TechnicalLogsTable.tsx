@@ -4,7 +4,7 @@ import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, T
 import { TechnicalLog, searchTechnicalLog } from "../conf/technicalLogController";
 // import { Link } from "react-router-dom";
 
-const PAGE_SIZE = 10; // Max items displayed in the technical log table
+const PAGE_SIZE = 30; // Max items displayed in the technical log table
 
 const technicalLogTableColumns: TableColumnDefinition[] = [
     {

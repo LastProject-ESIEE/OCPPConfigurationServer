@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { Configuration, searchConfiguration } from "../../../conf/configurationController";
 
 
-const PAGE_SIZE = 10; // Max items displayed in the configuration table
+const PAGE_SIZE = 30; // Max items displayed in the configuration table
 
 const configurationTableColumns: TableColumnDefinition[] = [
     {
