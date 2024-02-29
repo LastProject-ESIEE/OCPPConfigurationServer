@@ -1,4 +1,4 @@
-import { Box, Grid, ListItemButton, Typography } from "@mui/material";
+import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
 import { TechnicalLog, searchTechnicalLog } from "../conf/technicalLogController";
@@ -56,13 +56,15 @@ export function TechnicalLogTable() {
                         <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12/technicalLogTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{new Date(technicalLog.date).toLocaleString()}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{new Date(technicalLog.date).toLocaleString()}</Typography>
                                 </Grid>
                                 <Grid item xs={12/technicalLogTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{technicalLog.component}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{technicalLog.component}</Typography>
                                 </Grid>
                                 <Grid item xs={12/technicalLogTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{technicalLog.completeLog}</Typography>
+                                    <Tooltip title={technicalLog.completeLog}>
+                                        <Typography variant="body1" align="center" noWrap={true}>{technicalLog.completeLog}</Typography>
+                                    </Tooltip>
                                 </Grid>
                             </Grid>
                         </ListItemButton>
