@@ -48,3 +48,30 @@ export async function searchChargePoint(
     }
     return undefined
 }
+
+export type CreateChargepointDto = {
+    serialNumber : string,
+    type: string,
+    constructor: string,
+    clientId: string,
+    configuration: number,
+}
+
+
+export async function postNewChargepoint(chargepoint: CreateChargepointDto): Promise<boolean> {
+
+    let request = await fetch("/api/chargepoint/create",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(chargepoint)
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.error("Couldn't save chargepoint, error code: " + request.status)
+        return false
+    }
+}

@@ -7,7 +7,7 @@ export type Configuration = {
     name: string,
     description: string,
     lastEdit: Date,
-    keyValues: string,
+    configuration: string,
     firmware: Firmware
 }
 
@@ -16,7 +16,7 @@ export type Configuration = {
  */
 export var noConfig: Configuration = {
     description: "",
-    keyValues: "",
+    configuration: "",
     firmware: {
         id: -1,
         version:"",
