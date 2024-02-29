@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointService;
 import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.shared.PageDto;
@@ -34,11 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Configuration", description = "The configuration API")
 public class ConfigurationController {
 
-  private final ChargepointService chargepointService;
-
   private final ConfigurationService configurationService;
-
-  private final StatusService statusService;
 
   /**
    * ConfigurationController's constructor.
@@ -46,12 +43,8 @@ public class ConfigurationController {
    * @param configurationService A ConfigurationService doing database manipulations.
    */
   @Autowired
-  public ConfigurationController(ChargepointService chargepointService,
-                                 ConfigurationService configurationService,
-                                 StatusService statusService) {
-    this.chargepointService = chargepointService;
+  public ConfigurationController(ConfigurationService configurationService) {
     this.configurationService = configurationService;
-    this.statusService = statusService;
   }
 
   /**
@@ -106,18 +99,7 @@ public class ConfigurationController {
             )
       )
       @RequestBody CreateConfigurationDto createConfigurationDto) {
-    var status = statusService.save();
-    var configuration = configurationService.save(createConfigurationDto);
-    chargepointService.save(new CreateChargepointDto(
-        "ACE0272306",
-        "Eve Single S-line",
-        "Alfen BV",
-        "BRS",
-        "www.brs-prod.com",
-        configuration.id(),
-        status.id()
-    ));
-    return new ResponseEntity<>(configuration,
+    return new ResponseEntity<>(configurationService.save(createConfigurationDto),
         HttpStatus.CREATED);
   }
 

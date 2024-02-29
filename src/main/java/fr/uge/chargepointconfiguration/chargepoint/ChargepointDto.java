@@ -8,7 +8,7 @@ import fr.uge.chargepointconfiguration.status.StatusDto;
 import java.sql.Timestamp;
 
 /**
- * DTO to read configuration in database.
+ * DTO to read chargepoint in database.
  *
  * @param id Database id of the chargepoint stored.
  * @param serialNumberChargepoint The chargepoint's unique serial id.
