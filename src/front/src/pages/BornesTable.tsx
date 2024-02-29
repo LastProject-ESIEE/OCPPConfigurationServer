@@ -72,7 +72,7 @@ export function ChargePointTable() {
       error: error,
       onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
       formatter: (chargePoint) => {
-        let color = chargePoint.status.state ? '#28FD41' : '#FF7552'
+        let color = chargePoint.status.state ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
         return (
           <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
               <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'display/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
