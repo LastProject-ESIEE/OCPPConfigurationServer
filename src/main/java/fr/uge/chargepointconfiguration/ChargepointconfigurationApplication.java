@@ -73,15 +73,6 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    */
   @Override
   public void run(String... args) throws Exception {
-    logger.log(Level.INFO,
-            new BusinessLog(null,
-                    null,
-                    BusinessLogEntity.Category.CONFIG,
-                    "Configuration created"));
-    logger.warn(new TechnicalLog(
-            TechnicalLogEntity.Component.DATABASE,
-            "mylog"));
-
     var websocketUrl = System.getenv("WEBSOCKET_URL");
     var websocketPortString = System.getenv("WEBSOCKET_PORT");
     if (websocketUrl == null || websocketPortString == null) {
