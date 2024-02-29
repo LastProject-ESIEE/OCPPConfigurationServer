@@ -1,8 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.configuration.Configuration;
-import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.status.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DTO to create configuration in database.
@@ -11,16 +9,12 @@ import fr.uge.chargepointconfiguration.status.Status;
  * @param type                    The commercial name of the chargepoint.
  * @param constructor             The chargepoint's manufacturer.
  * @param clientId                The client's name of the chargepoint.
- * @param serverAddress           The server's URL of the chargepoint.
  * @param configuration           A JSON containing the chargepoint's configuration.
- * @param status                  {@link Status}.
  */
 public record CreateChargepointDto(
-    String serialNumberChargepoint,
+    @JsonProperty("serialNumber")String serialNumberChargepoint,
     String type,
     String constructor,
     String clientId,
-    String serverAddress,
-    int configuration,
-    int status) {
+    int configuration) {
 }

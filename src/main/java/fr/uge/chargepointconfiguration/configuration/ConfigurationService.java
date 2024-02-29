@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,6 @@ public class ConfigurationService {
         createConfigurationDto.description(),
         createConfigurationDto.configuration(),
         firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
-    // TODO create status and chargepoint
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
   }
@@ -53,6 +53,11 @@ public class ConfigurationService {
    */
   public List<ConfigurationGeneralDto> getAllConfigurations() {
     return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
+  }
+
+  public Optional<ConfigurationDto> getConfigurationById(int id) {
+    // TODO : exception BAD REQUEST si id est pas un nombre
+    return Optional.of(configurationRepository.findById(id).orElseThrow().toDto());
   }
 
   public long countTotal() {
