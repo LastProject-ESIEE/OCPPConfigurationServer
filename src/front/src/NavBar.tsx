@@ -30,7 +30,7 @@ export function NavBar() {
     
     // Update the currentButton state when the URL changes
     useEffect(() => {
-        fetch("api/user/me")
+        fetch("/api/user/me")
             .then(response => {
                 if (response.ok) {
                     return response.json();

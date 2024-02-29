@@ -6,6 +6,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessagePars
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,7 +35,8 @@ public class ChargePointManager {
                             OcppMessageSender ocppMessageSender,
                             ChargepointRepository chargepointRepository,
                             FirmwareRepository firmwareRepository,
-                            StatusRepository statusRepository) {
+                            StatusRepository statusRepository,
+                            CustomLogger logger) {
     this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
@@ -44,7 +46,8 @@ public class ChargePointManager {
             ocppMessageSender,
             chargepointRepository,
             firmwareRepository,
-            statusRepository
+            statusRepository,
+            logger
     );
   }
 

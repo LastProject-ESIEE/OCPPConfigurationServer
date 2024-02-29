@@ -30,7 +30,7 @@ class WebSocketListener extends events.EventEmitter {
       let websocketAddress = `${protocol}${window.location.hostname}${isLocal ? ":" + BACKEND_PORT : ""}/websocket/chargepoint`
       console.log("Connecting to the websocket address: " + websocketAddress)
       this.websocket = new WebSocket(websocketAddress);
-
+      
       this.websocket.onopen = (ev: Event) => {
           console.log('Websocket connected to the server');
           this.connected = true

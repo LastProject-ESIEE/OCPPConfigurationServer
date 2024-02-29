@@ -6,6 +6,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.OcppConfigurationObserver16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.OcppConfigurationObserver2;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
 
 /**
@@ -27,13 +28,15 @@ public interface OcppObserver {
                                              OcppMessageSender ocppMessageSender,
                                              ChargepointRepository chargepointRepository,
                                              FirmwareRepository firmwareRepository,
-                                             StatusRepository statusRepository) {
+                                             StatusRepository statusRepository,
+                                             CustomLogger logger) {
     return switch (ocppVersion) {
       case V1_6 -> new OcppConfigurationObserver16(
               ocppMessageSender,
               chargepointRepository,
               firmwareRepository,
-              statusRepository
+              statusRepository,
+              logger
       );
       case V2 -> new OcppConfigurationObserver2(
               ocppMessageSender,

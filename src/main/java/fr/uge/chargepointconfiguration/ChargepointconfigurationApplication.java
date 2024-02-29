@@ -73,15 +73,6 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
    */
   @Override
   public void run(String... args) throws Exception {
-    logger.log(Level.INFO,
-        new BusinessLog(null,
-            null,
-            BusinessLogEntity.Category.CONFIG,
-            "Configuration created"));
-    logger.warn(new TechnicalLog(
-        TechnicalLogEntity.Component.DATABASE,
-        "mylog"));
-
     var websocketUrl = System.getenv("WEBSOCKET_URL");
     var websocketPortString = System.getenv("WEBSOCKET_PORT");
     if (websocketUrl == null || websocketPortString == null) {
@@ -91,10 +82,11 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       var websocketPort = Integer.parseInt(websocketPortString);
       Thread.ofPlatform().start(() -> {
         var server = new ConfigurationServer(
-            new InetSocketAddress(websocketUrl, websocketPort),
-            chargepointRepository,
-            firmwareRepository,
-            statusRepository
+                new InetSocketAddress(websocketUrl, websocketPort),
+                chargepointRepository,
+                firmwareRepository,
+                statusRepository,
+                logger
         );
         server.setReuseAddr(true);
         server.run();

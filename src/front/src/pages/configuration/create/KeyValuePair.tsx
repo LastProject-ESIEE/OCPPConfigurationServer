@@ -1,13 +1,13 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { ConfigurationEntry, GlobalState, Key } from "../../../conf/configurationController";
+import { GlobalState, KeyValueConfiguration, Transcriptor } from "../../../conf/configurationController";
 
 function KeyValuePair(props: {
-    selectedKey: Key,
+    selectedKey: Transcriptor,
     setGlobalState: Dispatch<SetStateAction<GlobalState>>,
-    setSelectedKeys: React.Dispatch<React.SetStateAction<Key[]>>,
-    selectedKeys: Key[]
+    setSelectedKeys: React.Dispatch<React.SetStateAction<Transcriptor[]>>,
+    selectedKeys: Transcriptor[]
 }): JSX.Element {
     const {
         selectedKey,
@@ -21,7 +21,7 @@ function KeyValuePair(props: {
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const newValue = event.target.value
         setCurrentValue(newValue)
-        const newKey: ConfigurationEntry = {
+        const newKey: KeyValueConfiguration = {
             key: selectedKey,
             value: newValue
         }
@@ -48,7 +48,7 @@ function KeyValuePair(props: {
     return (
         <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
             <Grid item sm={4}>
-                <Typography>{selectedKey.keyName}</Typography>
+                <Typography>{selectedKey.fullName}</Typography>
             </Grid>
             <Grid item sm={1}>
                 <p>:</p>

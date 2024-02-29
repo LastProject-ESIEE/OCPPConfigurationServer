@@ -9,7 +9,7 @@ function FirmwareComponent(props: {
 }) {
     //const [firmware, setFirmware] = useState(props.globalState.firmware);
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
-    const backgroundColor = props.errorState.firmware === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
+    const backgroundColor = props.errorState.firmware === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
     useEffect(() => {
         const fetchFirmwareList = async () => {
