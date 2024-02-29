@@ -33,7 +33,7 @@ export type InfinityScrollItemsTableProps<T> = {
 
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
     return (
-        <Box maxWidth={"true"} paddingTop={2} border={1} borderColor="green">
+        <Box maxWidth={"true"} paddingTop={2}>
             {/*Display table columns*/}
             <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"} paddingBottom={1} >
                 {props.columns.map(column => {
