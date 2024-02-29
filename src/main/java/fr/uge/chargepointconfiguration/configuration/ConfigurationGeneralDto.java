@@ -6,8 +6,12 @@ import java.sql.Timestamp;
 /**
  * Configuration DTO which contains general information name and description.
  *
- * @param name        configuration name
- * @param description configuration description
+ * @param id            unique id of the configuration
+ * @param name          configuration name
+ * @param description   configuration description
+ * @param lastEdit      date of the last edit
+ * @param configuration JSON containing the {key : values}
+ * @param firmware      {@link FirmwareDto} liked to the configuration
  */
 public record ConfigurationGeneralDto(
       int id,
