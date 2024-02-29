@@ -79,16 +79,16 @@ export function ChargePointTable() {
                   <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                              <Typography variant="body1" align="center">{chargePoint.clientId}</Typography>
+                              <Typography variant="body1" align="center" noWrap={true}>{chargePoint.clientId}</Typography>
                           </Grid>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                              <Typography variant="body1" align="center">{chargePoint.status.step}</Typography>
+                              <Typography variant="body1" align="center" noWrap={true}>{chargePoint.status.step}</Typography>
                           </Grid>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                              <Typography variant="body1" align="center">{chargePoint.status.status}</Typography>
+                              <Typography variant="body1" align="center" noWrap={true}>{chargePoint.status.status}</Typography>
                           </Grid>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                              <Typography variant="body1" align="center">{new Date(chargePoint.status.lastUpdate).toLocaleString()}</Typography>
+                              <Typography variant="body1" align="center" noWrap={true}>{new Date(chargePoint.status.lastUpdate).toLocaleString()}</Typography>
                           </Grid>
                       </Grid>
                   </ListItemButton>

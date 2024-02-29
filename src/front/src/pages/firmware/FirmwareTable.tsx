@@ -5,7 +5,7 @@ import {
     TableColumnDefinition
 } from "../DisplayTable";
 import React, { useEffect } from "react";
-import { Box, Grid, ListItemButton, Typography } from "@mui/material";
+import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Firmware, searchFirmware } from "../../conf/FirmwareController";
 
@@ -69,15 +69,17 @@ function FirmwareTable() {
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{firmware.version}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{firmware.version}</Typography>
                                 </Grid>
                                 <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{firmware.constructor}</Typography>
+                                    <Typography variant="body1" align="center" noWrap={true}>{firmware.constructor}</Typography>
                                 </Grid>
                                 <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{firmware.url}</Typography>
+                                    <Tooltip title={firmware.url}>
+                                        <Typography variant="body1" align="center" noWrap={true}>{firmware.url}</Typography>
+                                    </Tooltip>
                                 </Grid>
                             </Grid>
                         </ListItemButton>
