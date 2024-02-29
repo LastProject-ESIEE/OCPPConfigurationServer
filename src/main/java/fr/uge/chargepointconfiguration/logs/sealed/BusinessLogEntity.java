@@ -54,12 +54,12 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
    * The quote for user ("user") are here to specify the database H2 that
    * user isn't the key word user, but a field user in the database.
    */
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "user_id", referencedColumnName = "id",
       columnDefinition = "int default NULL")
   private User user = null;
 
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne(cascade = CascadeType.MERGE)
   @JoinColumn(name = "chargepoint_id", referencedColumnName = "id_chargepoint",
       columnDefinition = "int default NULL")
   private Chargepoint chargepoint = null;
