@@ -1,4 +1,4 @@
-import { Box, Grid, ListItemButton, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Grid, ListItemButton, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
 import { Role, searchUser, User } from "../conf/userController";
@@ -33,6 +33,7 @@ export function UserTable() {
     const [hasMore, setHasMore] = React.useState(true);
     const [error, setError] = React.useState<string | undefined>(undefined);
     const [userRoleList, setUserRoleList] = useState<Role[]>([]);
+    const [me, setMe] = useState<User | undefined>(undefined);
 
     useEffect(() => {
         searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
@@ -55,6 +56,44 @@ export function UserTable() {
         fetchRoleList();
     }, []);
 
+    useEffect(() => {
+        const fetchRoleList = async () => {
+            const response = await fetch('/api/user/me');
+            const data = await response.json();
+            setMe(data);
+            console.log(data);
+        }
+        fetchRoleList();
+    }, []);
+
+    function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
+        let role = event.target.value as Role
+        fetch("/api/user/updateRole", {
+            method: "POST",
+            body: JSON.stringify({
+                id: user.id,
+                role: role
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (response.ok) {
+                if (!user) {
+                    return;
+                }
+                let updatedUser = tableData.find(u => u.id === user.id)
+                if (!updatedUser) {
+                    console.log("User id for the update notification is not found.")
+                    return
+                }
+                // Update role of user
+                user.role = role
+                setTableData([...tableData])
+            }
+        })
+            console.log(event.target.value as string)
+    } 
 
     let props: InfinityScrollItemsTableProps<User> = {
         columns: userTableColumns,
@@ -66,71 +105,50 @@ export function UserTable() {
         formatter: (user) => {
             return (
                 <Box key={"box-configuration-edit-path-" + user.id}  paddingTop={1} maxWidth={"true"}>
-                        <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
-                            <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                                <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{user.lastName}</Typography>
-                                </Grid>
-                                <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{user.firstName}</Typography>
-                                </Grid>
-                                <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-                                    <Select
-                                        value={user.role}
-                                        style={{
-                                            textAlign: "center"
-                                        }}
-                                        onChange={event => {
-                                            let role = event.target.value as Role
-                                            fetch("/api/user/updateRole", {
-                                                method: "POST",
-                                                body: JSON.stringify({
-                                                    id: user.id,
-                                                    role: role
-                                                }),
-                                                headers: {
-                                                    "Content-Type": "application/json"
-                                                }
-                                            }).then(response => {
-                                                if (response.ok) {
-                                                    if (!user) {
-                                                        return;
-                                                    }
-                                                    let updatedUser = tableData.find(u => u.id === user.id)
-                                                    if (!updatedUser) {
-                                                        console.log("User id for the update notification is not found.")
-                                                        return
-                                                    }
-                                                    // Update role of user
-                                                    user.role = role
-                                                    setTableData([...tableData])
-                                                }
-                                            })
-                                            console.log(event.target.value as string)
-                                        }}
-                                        fullWidth={true}>
-
-                                        {userRoleList && userRoleList
-                                            .filter(role => role !== user.role)
-                                            .map(role => {
-                                                return (
-                                                    <MenuItem
-                                                        key={"menuItem" + role.toString()}
-                                                        value={role.toString()}
-                                                        selected={user.role === role}
-                                                    >
-                                                        {englishRoleToFrench(role.toString())}
-                                                    </MenuItem>
-                                                )
-                                            }
-                                        )}
-                                    </Select>
-                                </Grid>
-                                <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-
-                                </Grid>
+                    <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                        <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                                <Typography variant="body1" align="center">{user.lastName}</Typography>
                             </Grid>
-                        </ListItemButton>
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                                <Typography variant="body1" align="center">{user.firstName}</Typography>
+                            </Grid>
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                                <Select
+                                    disabled={user.id === me?.id}
+                                    value={user.role}
+                                    style={{
+                                        border: 0,
+                                        textAlign: "center",
+                                        marginTop: 10,
+                                        marginBottom: 10
+                                    }}
+                                    onChange={event => {onChangeEvent(event, user)}}
+                                    fullWidth={true} size="small" variant="standard">
+
+                                    {userRoleList && userRoleList
+                                        .map(role => {
+                                            return (
+                                                <MenuItem
+                                                    key={"menuItem" + role.toString()}
+                                                    value={role}
+                                                    disabled={role === user.role}
+                                                    style={{
+                                                        border: 0
+                                                    }}
+                                                >
+                                                    {englishRoleToFrench(role.toString())}
+                                                </MenuItem>
+                                            )
+                                        }
+                                    )}
+                                </Select>
+                            </Grid>
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+
+                            </Grid>
+                        </Grid>
+                    </ListItemButton>
                 </Box>
             )
         },
