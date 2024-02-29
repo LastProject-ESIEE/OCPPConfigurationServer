@@ -204,7 +204,6 @@ public class UserController {
   @GetMapping(value = "/allRoles")
   public List<User.Role> getAllRoles() {
     return Arrays.stream(User.Role.values())
-            //.filter(r -> r != getAuthenticatedUser().role())
             .toList();
   }
 }

@@ -22,7 +22,6 @@ export async function searchUser(
         let content = await request.json()
         let user = (content as PageRequest<User>)
         if (user != null) {
-            console.log(user)
             return user
         } else {
             console.log("Fetch user page failed " + content)

@@ -1,20 +1,19 @@
 import { Box, Grid, ListItemButton, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
+import {
+    InfinityScrollItemsTable,
+    InfinityScrollItemsTableProps,
+    PageRequest,
+    TableColumnDefinition
+} from "./DisplayTable";
 import { Role, searchUser, User } from "../conf/userController";
 import { englishRoleToFrench } from "../NavBar";
 
-const PAGE_SIZE = 10; // Max items displayed in the user table
+const PAGE_SIZE = 30; // Max items displayed in the user table
 
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
-        /*
-        filter: {
-          apiField: "containsTitle",
-          onChange: value => console.log("Filtering on : " + value)
-        }
-        */
     },
     {
         title: "Prénom",
@@ -23,7 +22,7 @@ const userTableColumns: TableColumnDefinition[] = [
         title: "Rôle",
     },
     {
-        title: "",
+        title: "", // extra column for delete button later
     }
 ]
 
@@ -51,19 +50,17 @@ export function UserTable() {
             const response = await fetch('/api/user/allRoles');
             const data = await response.json();
             setUserRoleList(data);
-            console.log(data);
         }
         fetchRoleList();
     }, []);
 
     useEffect(() => {
-        const fetchRoleList = async () => {
+        const fetchCurrentUser = async () => {
             const response = await fetch('/api/user/me');
             const data = await response.json();
             setMe(data);
-            console.log(data);
         }
-        fetchRoleList();
+        fetchCurrentUser();
     }, []);
 
     function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
@@ -79,6 +76,8 @@ export function UserTable() {
             }
         }).then(response => {
             if (response.ok) {
+                // TODO : refactor to use the DTO in the response
+
                 if (!user) {
                     return;
                 }
