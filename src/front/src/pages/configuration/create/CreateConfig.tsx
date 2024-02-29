@@ -78,7 +78,7 @@ function LeftSection(props: {
 }
 
 function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> }) {
-
+    console.log(props.globalState)
     const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
 
     return (

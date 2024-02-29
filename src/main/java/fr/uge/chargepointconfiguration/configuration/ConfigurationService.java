@@ -48,6 +48,26 @@ public class ConfigurationService {
   }
 
   /**
+   * Update a configuration.
+   *
+   * @param updateConfigurationDto All the necessary information for a configuration update.
+   * @return A configuration created with its information.
+   */
+  public Optional<ConfigurationDto> update(UpdateConfigurationDto updateConfigurationDto) {
+    var currentConfiguration = configurationRepository.findById(updateConfigurationDto.id());
+    return currentConfiguration.map(configuration -> {
+      configuration.setName(updateConfigurationDto.name());
+      configuration.setDescription(updateConfigurationDto.configuration());
+      configuration.setConfiguration(updateConfigurationDto.configuration());
+      configuration.setFirmware(
+              firmwareRepository.findById(updateConfigurationDto.firmware()).orElseThrow()
+      );
+      configurationRepository.save(configuration);
+      return configuration.toDto();
+    });
+  }
+
+  /**
    * Get all the configurations.
    *
    * @return A list of configurations.

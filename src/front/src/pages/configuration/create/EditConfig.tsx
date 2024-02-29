@@ -14,7 +14,6 @@ export function ConfigurationEditPage() {
 
     // Fetch the configuration
     useEffect(() => {
-        
         console.log(configurationId)
         if(!configurationId){
             setError("Identifiant de la configuration non valide.")

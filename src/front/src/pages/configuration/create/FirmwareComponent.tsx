@@ -7,7 +7,7 @@ function FirmwareComponent(props: {
     setGlobalState: Dispatch<SetStateAction<GlobalState>>,
     errorState: ErrorState
 }) {
-    const [firmware, setFirmware] = useState("");
+    //const [firmware, setFirmware] = useState(props.globalState.firmware);
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
     const backgroundColor = props.errorState.firmware === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
@@ -21,7 +21,6 @@ function FirmwareComponent(props: {
         fetchFirmwareList();
     }, []);
 
-
     return (
         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
 
@@ -31,9 +30,9 @@ function FirmwareComponent(props: {
                 </Grid>
                 <Grid xs={7} item>
                     <Select
-                        value={firmware}
+                        value={props.globalState.firmware}
                         onChange={event => {
-                            setFirmware(event.target.value as string)
+                            //setFirmware(event.target.value as string)
                             props.setGlobalState(prevState => {
                                 return {
                                     configuration: prevState.configuration,
@@ -42,12 +41,17 @@ function FirmwareComponent(props: {
                                     name: prevState.name
                                 }
                             })
+                            
                         }}
                         fullWidth={true}>
-
-                        {firmwareList && firmwareList.map((item) => (
-                            <MenuItem key={item.id} value={item.id} selected={true}>{item.version}</MenuItem>
-                        ))}
+                        {firmwareList && firmwareList.map((item) => {
+                            let selected = false;
+                            if(props.globalState.firmware == item.version){
+                                selected=true
+                            }
+                            return (
+                            <MenuItem key={"firmware-"+ item.id} value={item.version} selected={selected}>{item.version}</MenuItem>
+                        )})}
                     </Select>
                 </Grid>
                 {props.errorState.firmware !== "" &&

@@ -80,6 +80,25 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   }
 
   /**
+   *  Configuration's constructor without all values.
+   *
+   * @param id configuration id in the database.
+   * @param name configuration name.
+   * @param configuration configuration definition
+   * @param firmware configuration firmware version
+   */
+  public Configuration(int id,
+                       String name,
+                       String configuration,
+                       Firmware firmware) {
+    this.id = id;
+    this.name = Objects.requireNonNull(name);
+    this.configuration = Objects.requireNonNull(configuration);
+    lastEdit = new Timestamp(System.currentTimeMillis());
+    this.firmware = Objects.requireNonNull(firmware);
+  }
+
+  /**
    * Empty constructor. Should not be called.
    */
   public Configuration() {

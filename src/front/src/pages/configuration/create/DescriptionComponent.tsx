@@ -27,6 +27,7 @@ function DescriptionComponent(props: {
                                 }
                             })
                         }}
+                        value={props.globalState.description}
                         multiline minRows={4} maxRows={6} fullWidth={true}
                         placeholder="Description de la configuration"/>
                 </Grid>
