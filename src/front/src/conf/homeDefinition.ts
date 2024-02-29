@@ -38,10 +38,16 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
+                label: "Créer une borne",
+                href: "/new",
+                subButtons: []
+            },
+            {
+                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
                 label: "Liste des bornes",
                 href: "",
                 subButtons: []
-            }
+            },
         ]
     },
     {
