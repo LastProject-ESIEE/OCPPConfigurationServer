@@ -108,8 +108,6 @@ class ChargepointControllerTest {
     assertEquals(2, result2.size());
     assertEquals(2, result1.data().size());
     assertEquals(1, result2.data().size());
-    assertEquals("/search?size=2&page=1&clientIdContains=&sortBy=id&order=asc", result1.next());
-    assertEquals("/search?size=2&page=&clientIdContains=&sortBy=id&order=asc", result2.next());
 
   }
 

@@ -1,10 +1,11 @@
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
-import { ChargePoint, searchChargePoint } from "../conf/chargePointController";
+import { ChargePoint, WebSocketChargePointNotification, searchChargePoint } from "../conf/chargePointController";
 import { Link } from "react-router-dom";
+import { wsManager } from "../Home";
 
-const PAGE_SIZE = 10; // Max items displayed in the chargepoint table
+const PAGE_SIZE = 30; // Max items displayed in the chargepoint table
 
 const chargePointTableColumns: TableColumnDefinition[] = [
   {
@@ -33,6 +34,25 @@ export function ChargePointTable() {
     const [hasMore, setHasMore] = React.useState(true);
     const [error, setError] = React.useState<string | undefined>(undefined);
 
+    // Add event listener on the websocket connection
+    useEffect(() => {
+      let callBack =  (message: WebSocketChargePointNotification) => {
+         let chargePoint = tableData.find(p => p.id === message.id)
+         if(!chargePoint){
+          console.log("Charge point id for the update notification is not found.")
+          return
+        }
+        // Update charge point status
+        chargePoint.status = Object.assign({}, message.status)
+        setTableData([...tableData]) 
+      }
+      wsManager.addListener('charge-point-update', callBack)
+      return () => {
+        wsManager.removeListener('charge-point-update', callBack)
+      };
+    }, [tableData])
+
+    // Fetch first charge point page on component load
     useEffect(() => {
       searchChargePoint(PAGE_SIZE).then((result: PageRequest<ChargePoint> | undefined) => {
         if(!result){
@@ -43,7 +63,6 @@ export function ChargePointTable() {
         setHasMore(result.total > PAGE_SIZE)
       });
     }, [])
-    
 
     let props: InfinityScrollItemsTableProps<ChargePoint> = {
       columns: chargePointTableColumns,
@@ -53,10 +72,11 @@ export function ChargePointTable() {
       error: error,
       onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
       formatter: (chargePoint) => {
+        let color = chargePoint.status.state ? '#28FD41' : '#FF7552'
         return (
           <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
               <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'display/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
-                  <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                  <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
                               <Typography variant="body1" align="center">{chargePoint.clientId}</Typography>
