@@ -1,8 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import fr.uge.chargepointconfiguration.configuration.ConfigurationService;
 import fr.uge.chargepointconfiguration.shared.PageDto;
-import fr.uge.chargepointconfiguration.status.StatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
