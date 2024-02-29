@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -192,5 +193,23 @@ public class UserController {
           "/search?size=%d&page=%s&sortBy=%s&order=%s".formatted(
                 size, nextPage, sortBy, order
           ));
+  }
+
+  /**
+   * Get all available roles for users.
+   *
+   * @return a list of roles.
+   */
+  @Operation(summary = "Get all availables roles")
+  @ApiResponse(responseCode = "200",
+          description = "Found roles",
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = User.Role.class))
+          })
+  @GetMapping(value = "/allRoles")
+  public List<User.Role> getAllRoles() {
+    return Arrays.stream(User.Role.values())
+            //.filter(r -> r != getAuthenticatedUser().role())
+            .toList();
   }
 }

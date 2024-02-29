@@ -82,6 +82,9 @@ public class UserService {
     if (!test) {
       throw new IllegalArgumentException("This role doesn't exist. Verify your parameter.");
     }
+    if (user.getId() == getAuthenticatedUser().getId()) {
+      throw new IllegalArgumentException("You can't change your role.");
+    }
     user.setRole(role);
     return userRepository.save(user);
   }

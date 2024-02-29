@@ -11,6 +11,7 @@ import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
 import { ConfigurationEditPage, ConfigurationListPage } from './pages/Configuration';
+import { UserTable } from "./pages/UserTable";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -38,7 +39,7 @@ root.render(
                         <Route path="new" element={<Error/>}/>
                     </Route>
                     <Route path="account">
-                        <Route path="" element={<About/>}/>
+                        <Route path="" element={<UserTable/>}/>
                         <Route path="new" element={<Error/>}/>
                     </Route>
                     <Route path="logs">
