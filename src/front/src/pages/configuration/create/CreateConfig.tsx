@@ -5,7 +5,7 @@ import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
 import KeyValuePair from "./KeyValuePair";
-import { ErrorState, GlobalState, Key, postNewConfiguration } from '../../../conf/configurationController';
+import { Configuration, ConfigurationEntry, ErrorState, GlobalState, Key, getConfiguration, postNewConfiguration } from '../../../conf/configurationController';
 
 
 function AddKeyValuePair(props: {
@@ -108,7 +108,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
     );
 }
 
-function FirmwareUpdate() {
+function CreateConfig(props: {id?: number}) {
 
     const [globalState, setGlobalState] = useState<GlobalState>({
         name: "",
@@ -122,6 +122,7 @@ function FirmwareUpdate() {
         description: "",
         firmware: ""
     })
+
 
     function check(globalState: GlobalState): boolean {
         setErrorState({
@@ -165,6 +166,27 @@ function FirmwareUpdate() {
         }
     }
 
+    // Fetch the configuration
+    useEffect(() => {
+        if(!props.id){
+            return
+        }
+        console.log(props.id)
+        getConfiguration(props.id).then(result => {
+            if(!result){
+                console.log("Eroooooooor")
+                //setError("Erreur lors de la récupération de la configuration.")
+                return
+            }
+            setGlobalState({
+                configuration: JSON.parse(result.configuration) as ConfigurationEntry[],
+                description: result.description,
+                firmware: result.firmware.version,
+                name: result.name,
+            })
+        });
+    }, [])
+
     return (
         <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
             <Grid container spacing={15}>
@@ -184,4 +206,4 @@ function FirmwareUpdate() {
     );
 }
 
-export default FirmwareUpdate;
+export default CreateConfig;

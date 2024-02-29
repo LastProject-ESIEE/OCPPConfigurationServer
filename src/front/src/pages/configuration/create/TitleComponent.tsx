@@ -27,6 +27,7 @@ function TitleComponent(props: {
                                 }
                             })
                         }}
+                        value={props.globalState.name}
                         fullWidth={true}
                         placeholder="Titre"/>
                 </Grid>

@@ -58,11 +58,8 @@ export async function searchConfiguration(
 }
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
-        .join(", ")
-
-    myConfig = "{" + myConfig + "}"
-
+    let myConfig = globalStateResponseFormatter(configuration)
+    
     console.log(JSON.parse(myConfig))
 
     let request = await fetch(window.location.origin + "/api/configuration/create",
@@ -91,7 +88,7 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
     let request = await fetch(window.location.origin + `/api/configuration/${id}`)
     if(request.ok){
         let content = await request.json()
-        let configuration = JSON.parse(content) as Configuration
+        let configuration = content as Configuration
         if(configuration != null){
             console.log(configuration)
             return configuration
@@ -102,4 +99,38 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
         console.log("Fetch configuration list failed, error code:" +  request.status)
     }
     return undefined
+}
+
+export async function postUpdateConfiguration(configuration: GlobalState): Promise<boolean> {
+    let myConfig = globalStateResponseFormatter(configuration)
+
+    console.log(JSON.parse(myConfig))
+
+    let request = await fetch(window.location.origin + "/api/configuration/create",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: configuration.name,
+                description: configuration.description,
+                configuration: myConfig,
+                firmware: configuration.firmware
+            })
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.log("Fetch configuration list failed, error code:" + request.status)
+        return false
+    }
+}
+
+function globalStateResponseFormatter(configuration : GlobalState){
+    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
+        .join(", ")
+
+    myConfig = "{" + myConfig + "}"
+    return myConfig
 }
