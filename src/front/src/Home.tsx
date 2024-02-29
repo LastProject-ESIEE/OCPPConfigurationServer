@@ -25,11 +25,12 @@ class WebSocketListener extends events.EventEmitter {
         console.error("WebSocket connection is already established.")
         return
       }
-      let protocol = window.location.hostname.startsWith("localhost") || window.location.hostname.startsWith("127.0.0.1") ? "ws://" : "wss://"
-      let websocketAddress = `${protocol}${window.location.hostname}:${BACKEND_PORT}/websocket/chargepoint`
+      let isLocal = window.location.hostname.startsWith("localhost") || window.location.hostname.startsWith("127.0.0.1")
+      let protocol = isLocal ? "ws://" : "wss://"
+      let websocketAddress = `${protocol}${window.location.hostname}${isLocal ? ":" + BACKEND_PORT : ""}/websocket/chargepoint`
       console.log("Connecting to the websocket address: " + websocketAddress)
       this.websocket = new WebSocket(websocketAddress);
-
+      
       this.websocket.onopen = (ev: Event) => {
           console.log('Websocket connected to the server');
           this.connected = true
