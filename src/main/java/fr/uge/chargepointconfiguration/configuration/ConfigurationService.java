@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class ConfigurationService {
    * ConfigurationService's constructor.
    *
    * @param configurationRepository A ConfigurationRepository accessing to database.
-   * @param firmwareRepository A FirmwareRepository accessing to database.
+   * @param firmwareRepository      A FirmwareRepository accessing to database.
    */
   @Autowired
   public ConfigurationService(ConfigurationRepository configurationRepository,
@@ -37,10 +38,10 @@ public class ConfigurationService {
    */
   public ConfigurationDto save(CreateConfigurationDto createConfigurationDto) {
     var configuration = configurationRepository.save(new Configuration(
-        createConfigurationDto.name(),
-        createConfigurationDto.description(),
-        createConfigurationDto.configuration(),
-        firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
+            createConfigurationDto.name(),
+            createConfigurationDto.description(),
+            createConfigurationDto.configuration(),
+            firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
     // TODO create status and chargepoint
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
@@ -53,6 +54,15 @@ public class ConfigurationService {
    */
   public List<ConfigurationGeneralDto> getAllConfigurations() {
     return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
+  }
+
+  /**
+   * Get a configuration by id.
+   *
+   * @return Selected configurations.
+   */
+  public Optional<ConfigurationDto> getConfiguration(int id) {
+    return configurationRepository.findById(id).map(Configuration::toDto);
   }
 
   public long countTotal() {

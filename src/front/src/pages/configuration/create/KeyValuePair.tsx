@@ -1,7 +1,7 @@
-import { Configuration, GlobalState, Key } from "./GlobalState";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import { ConfigurationEntry, GlobalState, Key } from "../../../conf/configurationController";
 
 function KeyValuePair(props: {
     selectedKey: Key,
@@ -21,7 +21,7 @@ function KeyValuePair(props: {
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const newValue = event.target.value
         setCurrentValue(newValue)
-        const newKey: Configuration = {
+        const newKey: ConfigurationEntry = {
             key: selectedKey,
             value: newValue
         }

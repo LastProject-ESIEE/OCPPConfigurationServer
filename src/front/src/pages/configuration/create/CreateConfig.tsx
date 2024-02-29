@@ -1,41 +1,12 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
 import confKeys from "../../../conf/confKeys";
-import { ErrorState, GlobalState, Key } from "./GlobalState";
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
 import KeyValuePair from "./KeyValuePair";
+import { ErrorState, GlobalState, Key, postNewConfiguration } from '../../../conf/configurationController';
 
-
-export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
-        .join(", ")
-
-    myConfig = "{" + myConfig + "}"
-
-    console.log(JSON.parse(myConfig))
-
-    let request = await fetch(window.location.origin + "/api/configuration/create",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: configuration.name,
-                description: configuration.description,
-                configuration: myConfig,
-                firmware: configuration.firmware
-            })
-        })
-    if (request.ok) {
-        return true
-    } else {
-        console.log("Fetch configuration list failed, error code:" + request.status)
-        return false
-    }
-}
 
 function AddKeyValuePair(props: {
     setSelectedKeys: React.Dispatch<React.SetStateAction<Key[]>>,

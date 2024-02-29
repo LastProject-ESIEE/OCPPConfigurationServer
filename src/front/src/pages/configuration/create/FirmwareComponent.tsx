@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
+import { ErrorState, GlobalState } from "../../../conf/configurationController";
 
 function FirmwareComponent(props: {
     globalState: GlobalState;

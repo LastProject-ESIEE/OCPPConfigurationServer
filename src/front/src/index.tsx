@@ -13,7 +13,8 @@ import Account from "./pages/Account";
 import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
 import { BusinessLogTable } from "./pages/BusinessLogTable";
-import ConfigurationTable, { ConfigurationEditPage } from "./pages/configuration/display/ConfigurationTable";
+import { ConfigurationEditPage } from './pages/configuration/create/EditConfig';
+import ConfigurationTable from './pages/configuration/display/ConfigurationTable';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

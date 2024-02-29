@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, Input, Paper } from "@mui/material";
+import { ErrorState, GlobalState } from "../../../conf/configurationController";
 
 function DescriptionComponent(props: {
     globalState: GlobalState;

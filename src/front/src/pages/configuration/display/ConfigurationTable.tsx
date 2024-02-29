@@ -6,7 +6,6 @@ import {
 } from "../../DisplayTable";
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
 import { Configuration, searchConfiguration } from "../../../conf/configurationController";
 
 
@@ -102,14 +101,3 @@ function ConfigurationTable() {
 }
 
 export default ConfigurationTable;
-
-export function ConfigurationEditPage() {
-    // Get id from router parameter
-    const { id } = useParams();
-
-    return (
-        <Box>
-            <p>Édition de la configuration {id}</p>
-        </Box>
-    );
-}
