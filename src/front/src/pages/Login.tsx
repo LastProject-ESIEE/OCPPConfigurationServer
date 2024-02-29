@@ -70,7 +70,8 @@ function Login() {
                                 borderRadius: '4px',
                                 color: 'red',
                                 fontWeight: 'bold',
-                                display: 'block'
+                                display: 'block',
+                                textAlign: "center"
                             }}>
                                 Mauvais identifiant et/ou mot passe. Veuillez réessayer
                             </div>
