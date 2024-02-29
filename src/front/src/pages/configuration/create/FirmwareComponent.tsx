@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ErrorState, GlobalState } from "./GlobalState";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
+import { ErrorState, GlobalState } from "../../../conf/configurationController";
 
 function FirmwareComponent(props: {
     globalState: GlobalState;
@@ -9,7 +9,7 @@ function FirmwareComponent(props: {
 }) {
     const [firmware, setFirmware] = useState("");
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
-    const backgroundColor = props.errorState.firmware === "" ? '' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
+    const backgroundColor = props.errorState.firmware === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
     useEffect(() => {
         const fetchFirmwareList = async () => {
