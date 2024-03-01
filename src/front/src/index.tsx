@@ -24,7 +24,7 @@ root.render(
             <Routes>
                 {/*TODO: remplacer par les vrais components dans les routes*/}
                 <Route path="" element={<Login/>}/>
-                <Route path="about" element={<About/>}/>
+            <Route path="about" element={<About/>}/>
                 <Route path="home" element={<Home/>}>
                     <Route path="" element={<Navigate to="chargepoint"/>}/>
                     <Route path="configuration">

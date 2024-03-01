@@ -9,7 +9,7 @@ function Error() {
             <Grid alignContent={"center"}>
                 <Grid xs={12}>
                     <Box textAlign={"center"}>
-                        <img src="assets/logo-brs.png" alt="logo de BRS"/>
+                        <img src="/assets/logo-brs.png" alt="logo de BRS"/>
                     </Box>
                 </Grid>
                 <Grid xs={12}>
