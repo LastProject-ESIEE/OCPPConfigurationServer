@@ -25,6 +25,7 @@ public interface OcppObserver {
    * @return OcppObserver
    */
   static OcppObserver instantiateFromVersion(OcppVersion ocppVersion,
+                                             ChargePointManager chargePointManager,
                                              OcppMessageSender ocppMessageSender,
                                              ChargepointRepository chargepointRepository,
                                              FirmwareRepository firmwareRepository,
@@ -33,6 +34,7 @@ public interface OcppObserver {
     return switch (ocppVersion) {
       case V1_6 -> new OcppConfigurationObserver16(
               ocppMessageSender,
+              chargePointManager,
               chargepointRepository,
               firmwareRepository,
               statusRepository,
@@ -40,6 +42,7 @@ public interface OcppObserver {
       );
       case V2 -> new OcppConfigurationObserver2(
               ocppMessageSender,
+              chargePointManager,
               chargepointRepository,
               firmwareRepository,
               statusRepository
@@ -47,7 +50,7 @@ public interface OcppObserver {
     };
   }
 
-  void onMessage(OcppMessage ocppMessage, ChargePointManager chargePointManager);
+  void onMessage(OcppMessage ocppMessage);
 
   void onConnection(ChargePointManager chargePointManager);
 

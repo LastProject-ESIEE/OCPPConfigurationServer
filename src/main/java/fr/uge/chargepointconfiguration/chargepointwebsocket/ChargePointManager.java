@@ -49,6 +49,7 @@ public class ChargePointManager {
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
     this.ocppObserver = OcppObserver.instantiateFromVersion(ocppVersion,
+            this,
             ocppMessageSender,
             chargepointRepository,
             firmwareRepository,
@@ -110,7 +111,7 @@ public class ChargePointManager {
         // Weird message, ignore it.
       }
     }
-    ocppObserver.onMessage(message.orElseThrow(), this);
+    ocppObserver.onMessage(message.orElseThrow());
   }
 
   /**
