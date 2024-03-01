@@ -388,21 +388,32 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                   "firmware for the chargepoint ("
                           + currentChargepoint.getSerialNumberChargepoint()
                           + ") couldn't be downloaded, "
-                          + "check the internet connection of the chargepoint"));
+                          + "check the internet connection of the chargepoint, SKIPPING"));
         } else {
           logger.warn(new BusinessLog(null,
                   currentChargepoint,
                   BusinessLogEntity.Category.FIRM,
                   "firmware for the chargepoint ("
                           + currentChargepoint.getSerialNumberChargepoint()
-                          + ") couldn't be installed, check the given URL to the chargepoint"));
+                          + ") couldn't be installed, check the given URL to the chargepoint, "
+                          + "SKIPPING"));
         }
         var status = currentChargepoint.getStatus();
-        status.setStatus(Status.StatusProcess.FAILED);
-        status.setError(f.status());
+        //status.setStatus(Status.StatusProcess.FAILED);
+        //status.setError(f.status());
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          // ignore
+        }
+        status.setStatus(Status.StatusProcess.PENDING);
+        status.setStep(Status.Step.CONFIGURATION);
         status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         currentChargepoint.setStatus(status);
+        chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
         chargepointRepository.save(currentChargepoint);
+        var reset = new ResetRequest16("Hard");
+        sender.sendMessage(reset, chargePointManager);
       }
       default -> {
         // Ignore, the chargepoint is downloading/installing.
