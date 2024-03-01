@@ -150,11 +150,11 @@ public class ChargepointController {
               examples = @ExampleObject(
                   """
                   {
-                         "serialNumber": "the serial number of the chargepoint",
-                         "type": "the model type of the chargepoint",
-                         "constructor": "the constructor of the chargepoint",
-                         "clientId": "the surname of the chargepoint",
-                         "configuration": "the id of the configuration associated, -1 if none"
+                         "serialNumber": "string",
+                         "type": "string",
+                         "constructor": "string",
+                         "clientId": "string",
+                         "configuration": -1
                   }
                   """
               )
