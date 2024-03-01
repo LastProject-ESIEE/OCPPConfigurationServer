@@ -123,7 +123,7 @@ export function NavBar() {
                                               const disabled = item === currentButton;
                                               return (
                                                       <Link key={"navBar-link-top-button-" + index} to={{ pathname: `/home${item.href}`}} style={{ textDecoration: 'none', paddingTop: 1, marginRight: 5 }}>
-                                                         <Button key={"navBar-topbutton-" + index} disabled={disabled} style={{backgroundColor: disabled ? "#5277FF" : "#0B48CC"}}>
+                                                         <Button key={"navBar-topbutton-" + index} disabled={disabled} style={{backgroundColor: disabled ? "#0B48CC" : "#5277FF"}}>
                                                           <Typography variant="body2" align="center" color={"white"}>{item.label}</Typography>
                                                          </Button>
                                                       </Link>
@@ -143,7 +143,7 @@ export function NavBar() {
                                                     key={"navBar-link-bottom-button-" + index}
                                                     to={{ pathname: `/home${currentButton.href}${subButton.href}`}}
                                                     style={{ textDecoration: 'none', paddingTop: 1, marginRight: 5 }}>
-                                                     <Button key={"navBar-link-bottom-button-" + index}  disabled={disabled} style={{backgroundColor: disabled ? "#5277FF" : "#0B48CC", border: "white", borderColor: "white"}}>
+                                                     <Button key={"navBar-link-bottom-button-" + index}  disabled={disabled} style={{backgroundColor: disabled ? "#0B48CC" : "#5277FF", border: "white", borderColor: "white"}}>
                                                       <Typography variant="body2" align="center" color={"white"}>{subButton.label}</Typography>
                                                      </Button>
                                                   </Link>
