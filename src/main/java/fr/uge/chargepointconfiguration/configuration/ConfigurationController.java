@@ -1,9 +1,6 @@
 package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.chargepoint.ChargepointService;
-import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.shared.PageDto;
-import fr.uge.chargepointconfiguration.status.StatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,11 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Configuration", description = "The configuration API")
 public class ConfigurationController {
 
-  private final ChargepointService chargepointService;
-
   private final ConfigurationService configurationService;
-
-  private final StatusService statusService;
 
   /**
    * ConfigurationController's constructor.
@@ -48,12 +41,8 @@ public class ConfigurationController {
    * @param configurationService A ConfigurationService doing database manipulations.
    */
   @Autowired
-  public ConfigurationController(ChargepointService chargepointService,
-                                 ConfigurationService configurationService,
-                                 StatusService statusService) {
-    this.chargepointService = chargepointService;
+  public ConfigurationController(ConfigurationService configurationService) {
     this.configurationService = configurationService;
-    this.statusService = statusService;
   }
 
   /**
@@ -110,36 +99,25 @@ public class ConfigurationController {
   })
   @PostMapping("/create")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "The configuration to be sent to the controller.",
-                  required = true,
-                  content = @Content(
-                          examples = @ExampleObject(
-                                  """
-                                  {
-                                    "name": "the name of the configuration",
-                                    "description": "A short description about the configuration",
-                                    "configuration": "{key1: value1, key2: value2}",
-                                    "firmware": 0
-                                  }
-                                  """
-                          )
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "The configuration to be sent to the controller.",
+            required = true,
+            content = @Content(
+                  examples = @ExampleObject(
+                        """
+                        {
+                          "name": "the name of the configuration",
+                          "description": "A short description about the configuration",
+                          "configuration": "{key1: value1, key2: value2}",
+                          "firmware": 0
+                        }
+                        """
                   )
-          )
-          @RequestBody CreateConfigurationDto createConfigurationDto) {
-    var status = statusService.save();
-    var configuration = configurationService.save(createConfigurationDto);
-    chargepointService.save(new CreateChargepointDto(
-            "ACE0272306",
-            "Eve Single S-line",
-            "Alfen BV",
-            "BRS",
-            "www.brs-prod.com",
-            configuration.id(),
-            status.id()
-    ));
-    return new ResponseEntity<>(configuration,
-            HttpStatus.CREATED);
+            )
+      )
+      @RequestBody CreateConfigurationDto createConfigurationDto) {
+    return new ResponseEntity<>(configurationService.save(createConfigurationDto),
+        HttpStatus.CREATED);
   }
 
   /**

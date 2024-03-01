@@ -38,11 +38,10 @@ public class ConfigurationService {
    */
   public ConfigurationDto save(CreateConfigurationDto createConfigurationDto) {
     var configuration = configurationRepository.save(new Configuration(
-            createConfigurationDto.name(),
-            createConfigurationDto.description(),
-            createConfigurationDto.configuration(),
-            firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
-    // TODO create status and chargepoint
+        createConfigurationDto.name(),
+        createConfigurationDto.description(),
+        createConfigurationDto.configuration(),
+        firmwareRepository.findById(createConfigurationDto.firmware()).orElseThrow()));
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
   }

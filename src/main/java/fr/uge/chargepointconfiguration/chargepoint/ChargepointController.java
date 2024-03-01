@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.shared.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,8 +14,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +38,7 @@ public class ChargepointController {
   /**
    * ChargepointController's constructor.
    *
-   * @param chargepointService A ChargePointService.
+   * @param chargepointService   A ChargePointService.
    */
   @Autowired
   public ChargepointController(ChargepointService chargepointService) {
@@ -47,10 +52,10 @@ public class ChargepointController {
    */
   @Operation(summary = "Get all the chargepoints")
   @ApiResponse(responseCode = "200",
-        description = "Found all the chargepoints",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = Chargepoint.class))
-        })
+      description = "Found all the chargepoints",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Chargepoint.class))
+      })
   @GetMapping(value = "/all")
   public List<ChargepointDto> getAllChargepoints() {
     return chargepointService.getAllChargepoints();
@@ -65,16 +70,16 @@ public class ChargepointController {
    */
   @Operation(summary = "Get a chargepoint by its id")
   @ApiResponses(value = { @ApiResponse(responseCode = "200",
-          description = "Found the corresponding chargepoint",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = Chargepoint.class)) }),
-                          @ApiResponse(responseCode = "404",
-                  description = "This chargepoint does not exist",
-                  content = @Content) })
+      description = "Found the corresponding chargepoint",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Chargepoint.class)) }),
+      @ApiResponse(responseCode = "404",
+          description = "This chargepoint does not exist",
+          content = @Content) })
   @GetMapping(value = "/{id}")
   public Optional<ChargepointDto> getChargepointById(
-        @Parameter(description = "Id of the chargepoint your are looking for.")
-        @PathVariable int id) {
+      @Parameter(description = "Id of the chargepoint your are looking for.")
+      @PathVariable int id) {
     return chargepointService.getChargepointById(id);
   }
 
@@ -85,39 +90,78 @@ public class ChargepointController {
    */
   @Operation(summary = "Search for chargepoints")
   @ApiResponse(responseCode = "200",
-        description = "Found chargepoints",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = Chargepoint.class))
-        })
+      description = "Found chargepoints",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = Chargepoint.class))
+      })
   @GetMapping(value = "/search")
   public PageDto<ChargepointDto> searchChargepoints(
-        @Parameter(description = "Desired size of the requested page.")
-        @RequestParam(required = false, defaultValue = "10") int size,
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-        @Parameter(description = "Requested page.")
-        @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-        @Parameter(description = "Pattern to filter the client id with.")
-        @RequestParam(required = false, defaultValue = "") String clientIdContains,
+      @Parameter(description = "Pattern to filter the client id with.")
+      @RequestParam(required = false, defaultValue = "") String clientIdContains,
 
-        @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the chargepoint.")
-        @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the chargepoint.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-        @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order
   ) {
     var total = chargepointService.countTotal();
 
     var data = chargepointService.search(
-                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
-                clientIdContains
-          )
-          .stream()
-          .map(Chargepoint::toDto)
-          .toList();
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
+            clientIdContains
+        )
+        .stream()
+        .map(Chargepoint::toDto)
+        .toList();
 
     return new PageDto<>(total, page, size, data);
   }
 
+  /**
+   * Create a chargepoint.
+   *
+   * @param createChargepointDto All the necessary information for a chargepoint creation.
+   * @return A chargepoint created with its information and its http result status.
+   */
+  @Operation(summary = "Create a chargepoint")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201",
+          description = "Chargepoint created",
+          content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ChargepointDto.class)
+          )
+      )
+  })
+  @PostMapping("/create")
+  public ResponseEntity<ChargepointDto> registerChargepoint(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "The chargepoint to be sent to the controller.",
+          required = true,
+          content = @Content(
+              examples = @ExampleObject(
+                  """
+                  {
+                         "serialNumber": "the serial number of the chargepoint",
+                         "type": "the model type of the chargepoint",
+                         "constructor": "the constructor of the chargepoint",
+                         "clientId": "the surname of the chargepoint",
+                         "configuration": "the id of the configuration associated, -1 if none"
+                  }
+                  """
+              )
+          )
+      )
+      @RequestBody CreateChargepointDto createChargepointDto) {
+    return new ResponseEntity<>(chargepointService.save(createChargepointDto),
+        HttpStatus.CREATED);
+  }
 }

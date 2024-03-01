@@ -102,6 +102,10 @@ public class ConfigurationServer extends WebSocketServer {
                     + code
                     + " additional info: "
                     + reason));
+    var chargepoint = chargePoints.getOrDefault(conn.getRemoteSocketAddress(), null);
+    if (chargepoint != null) {
+      chargepoint.onDisconnection();
+    }
     chargePoints.remove(conn.getRemoteSocketAddress());
     conn.close();
   }

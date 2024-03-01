@@ -10,6 +10,7 @@ import CreateConfig from "./pages/configuration/create/CreateConfig";
 import Home from "./Home";
 import { ChargePointTable } from './pages/BornesTable';
 import Account from "./pages/Account";
+import { UserTable } from "./pages/UserTable";
 import { TechnicalLogTable } from "./pages/TechnicalLogsTable";
 import FirmwareTable from "./pages/firmware/FirmwareTable";
 import { BusinessLogTable } from "./pages/BusinessLogTable";
@@ -42,7 +43,7 @@ root.render(
                         <Route path="new" element={<Error/>}/>
                     </Route>
                     <Route path="account">
-                        <Route path="" element={<About/>}/>
+                        <Route path="" element={<UserTable/>}/>
                         <Route path="new" element={<Error/>}/>
                     </Route>
                     <Route path="logs">

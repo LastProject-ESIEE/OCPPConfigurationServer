@@ -48,7 +48,7 @@ function Account() {
 
     const handleButtonClick = () => {
         if (oldPassword !== "" && password1 === password2) {
-            fetch("../api/user/updatePassword", {
+            fetch("/api/user/updatePassword", {
                 method: "POST",
                 body: JSON.stringify({
                     oldPassword: oldPassword,
