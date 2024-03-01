@@ -24,7 +24,7 @@ const chargePointTableColumns: TableColumnDefinition[] = [
     title: "Status",
   },
   {
-    title: "Dernière activitée",
+    title: "Dernière activité",
   }
 ]
 
