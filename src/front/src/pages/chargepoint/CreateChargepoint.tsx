@@ -53,7 +53,7 @@ function CreateChargepoint() {
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
     const [configuration, setConfiguration] = useState<Configuration>(noConfig);
     const [chargepoint, setChargepoint] = useState<CreateChargepointDto>({
-        serialNumber: "GDFGDFGDF",
+        serialNumber: "",
         type: "",
         constructor: "",
         clientId: "",
@@ -67,14 +67,8 @@ function CreateChargepoint() {
                 return
             }
             setConfigurationList([noConfig, ...result])
-            console.log(result)
         })
     }, []);
-
-    useEffect(() => {
-        console.log("configuration choisie : ", configuration)
-    }, [configuration]);
-
 
     return (
         <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
