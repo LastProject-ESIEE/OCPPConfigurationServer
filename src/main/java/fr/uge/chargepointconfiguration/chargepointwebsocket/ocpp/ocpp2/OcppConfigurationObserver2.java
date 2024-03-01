@@ -33,6 +33,7 @@ import java.util.Queue;
  */
 public class OcppConfigurationObserver2 implements OcppObserver {
   private final OcppMessageSender sender;
+  private final ChargePointManager chargePointManager;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
   private final StatusRepository statusRepository;
@@ -48,21 +49,22 @@ public class OcppConfigurationObserver2 implements OcppObserver {
    * @param statusRepository      charge point status repository
    */
   public OcppConfigurationObserver2(OcppMessageSender sender,
+                                    ChargePointManager chargePointManager,
                                     ChargepointRepository chargepointRepository,
                                     FirmwareRepository firmwareRepository,
                                     StatusRepository statusRepository) {
     this.sender = sender;
+    this.chargePointManager = chargePointManager;
     this.chargepointRepository = chargepointRepository;
     this.firmwareRepository = firmwareRepository;
     this.statusRepository = statusRepository;
   }
 
   @Override
-  public void onMessage(OcppMessage ocppMessage,
-                        ChargePointManager chargePointManager) {
+  public void onMessage(OcppMessage ocppMessage) {
     switch (ocppMessage) {
-      case BootNotificationRequest20 b -> processBootNotification(b, chargePointManager);
-      case SetVariablesResponse20 r -> processConfigurationResponse(r, chargePointManager);
+      case BootNotificationRequest20 b -> processBootNotification(b);
+      case SetVariablesResponse20 r -> processConfigurationResponse(r);
       default -> {
         // Do nothing
       }
@@ -86,8 +88,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   }
 
   private void processBootNotification(
-          BootNotificationRequest20 bootNotificationRequest,
-          ChargePointManager chargePointManager) {
+          BootNotificationRequest20 bootNotificationRequest) {
 
     // Get charge point from database
     currentChargepoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
@@ -120,15 +121,15 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     );
     sender.sendMessage(response, chargePointManager);
     switch (status.getStep()) {
-      case Status.Step.CONFIGURATION -> processConfigurationRequest(chargePointManager);
-      case Status.Step.FIRMWARE -> processFirmwareRequest(chargePointManager);
+      case Status.Step.CONFIGURATION -> processConfigurationRequest();
+      case Status.Step.FIRMWARE -> processFirmwareRequest();
       default -> {
         // ignore
       }
     }
   }
 
-  private void processConfigurationRequest(ChargePointManager chargePointManager) {
+  private void processConfigurationRequest() {
     var configuration = currentChargepoint.getConfiguration().getConfiguration();
     var mapper = new ObjectMapper();
     HashMap<String, HashMap<String, String>> configMap;
@@ -179,7 +180,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     }
   }
 
-  private void processFirmwareRequest(ChargePointManager chargePointManager) {
+  private void processFirmwareRequest() {
     var status = currentChargepoint.getStatus();
     status.setStatus(Status.StatusProcess.PROCESSING);
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
@@ -196,11 +197,10 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     notifyStatusUpdate(currentChargepoint.getId(), status);
-    processConfigurationRequest(chargePointManager);
+    processConfigurationRequest();
   }
 
-  private void processConfigurationResponse(SetVariablesResponse20 response,
-                                            ChargePointManager chargePointManager) {
+  private void processConfigurationResponse(SetVariablesResponse20 response) {
     var noFailure = true;
     var failedConfig = new StringBuilder();
     for (var result : response.setVariableResult()) {
