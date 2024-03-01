@@ -68,15 +68,15 @@ function ConfigurationTable() {
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{configuration.name}</Typography>
+                                    <Typography noWrap variant="body1" align="center">{configuration.name}</Typography>
                                 </Grid>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{configuration.description}</Typography>
+                                    <Typography noWrap variant="body1" align="center">{configuration.description}</Typography>
                                 </Grid>
                                 <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
                                       justifyContent={"center"}>
-                                    <Typography variant="body1" align="center">{new Date(configuration.lastEdit).toLocaleString()}</Typography>
+                                    <Typography noWrap variant="body1" align="center">{new Date(configuration.lastEdit).toLocaleString()}</Typography>
                                 </Grid>
                             </Grid>
                         </ListItemButton>

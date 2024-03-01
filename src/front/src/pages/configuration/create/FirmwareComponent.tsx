@@ -41,7 +41,6 @@ function FirmwareComponent(props: {
                                     name: prevState.name
                                 }
                             })
-                            
                         }}
                         fullWidth={true}>
                         {firmwareList && firmwareList.map((item) => {
@@ -50,7 +49,7 @@ function FirmwareComponent(props: {
                                 selected=true
                             }
                             return (
-                            <MenuItem key={"firmware-"+ item.id} value={item.version} selected={selected}>{item.version}</MenuItem>
+                            <MenuItem key={"firmware-"+ item.id} value={item.id} selected={selected}>{item.version}</MenuItem>
                         )})}
                     </Select>
                 </Grid>

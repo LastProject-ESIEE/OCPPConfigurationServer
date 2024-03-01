@@ -1,6 +1,5 @@
 package fr.uge.chargepointconfiguration.configuration;
 
-import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointService;
 import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.shared.PageDto;
@@ -83,11 +82,10 @@ public class ConfigurationController {
   @ApiResponses(value = { @ApiResponse(responseCode = "200",
           description = "Found the corresponding configuration",
           content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationDto.class)) }),
-                          @ApiResponse(
-                                  responseCode = "404",
-                                  description = "This configuration does not exist",
-                                  content = @Content) })
+                  schema = @Schema(implementation = ConfigurationDto.class)) }), @ApiResponse(
+          responseCode = "404",
+          description = "This configuration does not exist",
+          content = @Content) })
   @GetMapping(value = "/{id}")
   public Optional<ConfigurationDto> getConfigurationById(
           @Parameter(description = "Id of the configuration your are looking for.")
@@ -102,14 +100,13 @@ public class ConfigurationController {
    * @return A configuration created with its information and its http result status.
    */
   @Operation(summary = "Create a configuration")
-  @ApiResponses(value = {
-          @ApiResponse(responseCode = "201",
-                  description = "Configuration created",
-                  content = @Content(
-                          mediaType = "application/json",
-                          schema = @Schema(implementation = ConfigurationDto.class)
-                  )
+  @ApiResponses(value = { @ApiResponse(responseCode = "201",
+          description = "Configuration created",
+          content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ConfigurationDto.class)
           )
+        )
   })
   @PostMapping("/create")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
@@ -119,13 +116,13 @@ public class ConfigurationController {
                   content = @Content(
                           examples = @ExampleObject(
                                   """
-                                          {
-                                            "name": "the name of the configuration",
-                                            "description": "A short description about the configuration",
-                                            "configuration": "{key1: value1, key2: value2}",
-                                            "firmware": 0
-                                          }
-                                          """
+                                  {
+                                    "name": "the name of the configuration",
+                                    "description": "A short description about the configuration",
+                                    "configuration": "{key1: value1, key2: value2}",
+                                    "firmware": 0
+                                  }
+                                  """
                           )
                   )
           )
@@ -144,6 +141,48 @@ public class ConfigurationController {
     return new ResponseEntity<>(configuration,
             HttpStatus.CREATED);
   }
+
+  /**
+   * Update a configuration.
+   *
+   * @param updateConfigurationDto All the necessary information for a configuration update.
+   * @return A configuration created with its information and its http result status.
+   */
+  @Operation(summary = "Update a configuration")
+  @ApiResponses(value = { @ApiResponse(responseCode = "201",
+          description = "Configuration updated",
+          content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ConfigurationDto.class)
+          )
+      )
+  })
+  @PostMapping("/update")
+  public ResponseEntity<ConfigurationDto> updateConfiguration(
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                  description = "The configuration to be sent to the controller.",
+                  required = true,
+                  content = @Content(
+                          examples = @ExampleObject(
+                                  """
+                                  {
+                                    "id": "id of the configuration to be updated"
+                                    "name": "the name of the configuration",
+                                    "description": "A short description about the configuration",
+                                    "configuration": "{key1: value1, key2: value2}",
+                                    "firmware": 0
+                                  }
+                                  """
+                          )
+                  )
+          )
+          @RequestBody UpdateConfigurationDto updateConfigurationDto) {
+    var configuration = configurationService.update(updateConfigurationDto);
+    return configuration
+            .map(configurationDto -> new ResponseEntity<>(configurationDto, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+  }
+
 
   /**
    * Returns a list of {@link ConfigurationTranscriptor}.

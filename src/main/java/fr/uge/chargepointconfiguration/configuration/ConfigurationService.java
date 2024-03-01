@@ -57,7 +57,7 @@ public class ConfigurationService {
     var currentConfiguration = configurationRepository.findById(updateConfigurationDto.id());
     return currentConfiguration.map(configuration -> {
       configuration.setName(updateConfigurationDto.name());
-      configuration.setDescription(updateConfigurationDto.configuration());
+      configuration.setDescription(updateConfigurationDto.description());
       configuration.setConfiguration(updateConfigurationDto.configuration());
       configuration.setFirmware(
               firmwareRepository.findById(updateConfigurationDto.firmware()).orElseThrow()

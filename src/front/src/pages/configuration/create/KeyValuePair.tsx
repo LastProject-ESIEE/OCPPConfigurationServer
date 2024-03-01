@@ -1,10 +1,12 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { GlobalState, KeyValueConfiguration, Transcriptor } from "../../../conf/configurationController";
+import { GlobalState, Transcriptor } from "../../../conf/configurationController";
 
 function KeyValuePair(props: {
     selectedKey: Transcriptor,
+    value: string,
+    globalState: GlobalState,
     setGlobalState: Dispatch<SetStateAction<GlobalState>>,
     setSelectedKeys: React.Dispatch<React.SetStateAction<Transcriptor[]>>,
     selectedKeys: Transcriptor[]
@@ -16,33 +18,80 @@ function KeyValuePair(props: {
         selectedKeys,
     } = props;
 
-    const [currentValue, setCurrentValue] = useState("");
+    //const [currentValue, setCurrentValue] = useState(props.value);
 
     function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const newValue = event.target.value
-        setCurrentValue(newValue)
+        //setCurrentValue(newValue)
+        /*
         const newKey: KeyValueConfiguration = {
             key: selectedKey,
             value: newValue
         }
+        */
         setGlobalState(prevState => {
             let updated = false;
+            console.log(prevState.configuration)
+            let itemValue = prevState.configuration.find(conf => conf.key.id === selectedKey.id)
+            if(itemValue){
+                itemValue.value = newValue
+                updated = true
+            }
+            /*
+            for(let key in prevState.configuration){
+                console.log(key)
+                if (Number(key) === newKey.key.id) {
+                    let itemValue = prevState.configuration.find(v => v.key.id == newKey.key.id)
+                    if(itemValue){
+                        itemValue.value = newKey.value
+                        updated = true
+                    }
+                    break;
+                }
+            }
+            */
+            /*
             prevState.configuration.forEach(conf => {
-                if (conf.key === newKey.key) {
+                if (conf.key.id === newKey.key.id) {
                     conf.value = newKey.value
                     updated = true
                 }
-            })
+            })*/
             if (!updated) {
-                prevState.configuration.push(newKey)
+                prevState.configuration = [...prevState.configuration, {
+                    key: selectedKey,
+                    value: newValue
+                }]
             }
             return {
-                configuration: prevState.configuration,
+                configuration: [...prevState.configuration],
                 firmware: prevState.firmware,
                 description: prevState.description,
                 name: prevState.name
             }
         })
+    }
+
+    const getValue = (keyId : number) => {
+        console.log(props.globalState.configuration)
+        return props.globalState.configuration.find(conf => conf.key.id === keyId)?.value ?? ""
+        /*
+            if(){
+                console.log("get value = " + conf.value)
+                return conf.value
+            }
+        })
+
+        for(let key in props.globalState.configuration){
+            if(Number(key) === keyId){
+                console.log("Set value = " + props.globalState.configuration[key])
+                return props.globalState.configuration[key]
+            }
+        }
+        
+        return ""
+        */
+        //return props.globalState.configuration.find(keyValue => keyValue.key.id == keyId)?.value ?? ""
     }
 
     return (
@@ -56,7 +105,7 @@ function KeyValuePair(props: {
             <Grid item sm={5}>
                 <Input
                     onChange={handleChange}
-                    value={currentValue}
+                    value={getValue(selectedKey.id)}
                     placeholder="valeur"/>
             </Grid>
             <Button

@@ -51,7 +51,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                 })}
             </Grid>
              {/*Display table content*/}
-            <Box key={"box-items-scrollable-list"} maxWidth={"true"} border={1} borderColor="gray" borderRadius={2} marginRight={2} marginLeft={2} padding={1}>
+            <Box key={"box-items-scrollable-list"} maxWidth={"true"} /*border={1} borderColor="gray" borderRadius={2}*/ marginRight={2} marginLeft={2} padding={1}>
                 <div id={"scrollableDiv"}
                 key={props.key + "-scrollableDiv-list"}                
                 style={{

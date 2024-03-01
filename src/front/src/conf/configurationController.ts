@@ -7,7 +7,7 @@ export type Configuration = {
     name: string,
     description: string,
     lastEdit: Date,
-    keyValues: string,
+    configuration: string,
     firmware: Firmware
 }
 
@@ -16,7 +16,7 @@ export type Configuration = {
  */
 export var noConfig: Configuration = {
     description: "",
-    keyValues: "",
+    configuration: "",
     firmware: {
         id: -1,
         version:"",
@@ -114,11 +114,13 @@ export async function searchConfiguration(
 }
 
 export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
+    /*
     let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
         .join(", ")
 
     myConfig = "{" + myConfig + "}"
-
+    */
+    let myConfig = globalStateResponseFormatter(configuration)
     console.log(JSON.parse(myConfig))
 
     let request = await fetch(window.location.origin + "/api/configuration/create",
@@ -160,18 +162,19 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
     return undefined
 }
 
-export async function postUpdateConfiguration(configuration: GlobalState): Promise<boolean> {
+export async function postUpdateConfiguration(id: number, configuration: GlobalState): Promise<boolean> {
     let myConfig = globalStateResponseFormatter(configuration)
 
     console.log(JSON.parse(myConfig))
 
-    let request = await fetch(window.location.origin + "/api/configuration/create",
+    let request = await fetch(window.location.origin + "/api/configuration/update",
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                id: id,
                 name: configuration.name,
                 description: configuration.description,
                 configuration: myConfig,
@@ -181,7 +184,7 @@ export async function postUpdateConfiguration(configuration: GlobalState): Promi
     if (request.ok) {
         return true
     } else {
-        console.log("Fetch configuration list failed, error code:" + request.status)
+        console.log("Update configuration failed, error code:" + request.status)
         return false
     }
 }
