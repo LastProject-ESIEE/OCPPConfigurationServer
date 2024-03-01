@@ -230,7 +230,7 @@ function CreateConfig(props: {id?: number}) {
                     key: transcriptors.find(t => t.id === Number(key)),
                     value: value,
                 } as KeyValueConfiguration));
-                console.log(config)
+
                 var configurationKeys: number[] = config.map(conf => conf.key.id)
                 setSelectedKeys(transcriptors.filter(key => configurationKeys.includes(key.id)))
                 setGlobalState({
