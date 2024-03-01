@@ -33,7 +33,7 @@ export type InfinityScrollItemsTableProps<T> = {
 
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
     return (
-        <Box maxWidth={"true"} paddingTop={1}>
+        <Box maxWidth={"true"} paddingTop={2}>
             {/*Display table columns*/}
             <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"} paddingBottom={1} >
                 {props.columns.map(column => {
@@ -51,7 +51,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                 })}
             </Grid>
              {/*Display table content*/}
-            <Box key={"box-items-scrollable-list"} maxWidth={"true"} /*border={1} borderColor="gray" borderRadius={2}*/ marginRight={2} marginLeft={2} padding={1}>
+            <Box key={"box-items-scrollable-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
                 <div id={"scrollableDiv"}
                 key={props.key + "-scrollableDiv-list"}                
                 style={{
