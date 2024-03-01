@@ -6,7 +6,7 @@ import {
 } from "../../DisplayTable";
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Configuration, searchConfiguration } from "../../../conf/configurationController";
 
 

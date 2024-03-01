@@ -45,7 +45,7 @@ function FirmwareComponent(props: {
                         fullWidth={true}>
                         {firmwareList && firmwareList.map((item) => {
                             let selected = false;
-                            if(props.globalState.firmware == item.version){
+                            if(props.globalState.firmware === item.version){
                                 selected=true
                             }
                             return (
