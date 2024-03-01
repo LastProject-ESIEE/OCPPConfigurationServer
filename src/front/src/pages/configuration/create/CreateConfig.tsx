@@ -1,14 +1,17 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Container, Grid, Paper, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, Container, Grid, Paper, TextField, Typography } from '@mui/material';
 import TitleComponent from "./TitleComponent";
 import FirmwareComponent from "./FirmwareComponent";
 import DescriptionComponent from "./DescriptionComponent";
 import KeyValuePair from "./KeyValuePair";
 import {
     ErrorState,
+    getConfiguration,
     getTranscriptors,
     GlobalState,
+    KeyValueConfiguration,
     postNewConfiguration,
+    postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
 
@@ -101,9 +104,7 @@ function LeftSection(props: {
     );
 }
 
-function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> }) {
-
-    const [selectedKeys, setSelectedKeys] = useState<Transcriptor[]>([]);
+function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> , selectedKeys: Transcriptor[], setSelectedKeys: Dispatch<SetStateAction<Transcriptor[]>> }) {
     const backgroundColor = 'rgb(249, 246, 251)'
 
     return (
@@ -116,16 +117,18 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                     <Grid xs={7} item>
 
                         <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
-                            <AddKeyValuePair setSelectedKeys={setSelectedKeys} selectedKeys={selectedKeys}/>
-                            {selectedKeys.length !== 0 && (
+                            <AddKeyValuePair setSelectedKeys={props.setSelectedKeys} selectedKeys={props.selectedKeys}/>
+                            {props.selectedKeys.length !== 0 && (
                                 <Grid sx={{pt: 1, pb: 1}} direction="column" container alignItems="center"
                                       justifyContent="space-evenly">
-                                    {selectedKeys.map((key) => {
+                                    {props.selectedKeys.map((key) => {
                                         return (
                                             <KeyValuePair
                                                 key={key.id}
-                                                selectedKeys={selectedKeys}
-                                                setSelectedKeys={setSelectedKeys}
+                                                value={/*props.globalState.configuration.find(v => v.key == key)?.value ??*/ ""}
+                                                globalState={props.globalState}
+                                                selectedKeys={props.selectedKeys}
+                                                setSelectedKeys={props.setSelectedKeys}
                                                 selectedKey={key}
                                                 setGlobalState={props.setGlobalState}/>
                                         )
@@ -137,10 +140,10 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                 </Grid>
             </Paper>
         </Box>
-);
+    );
 }
 
-function FirmwareUpdate() {
+function CreateConfig(props: {id?: number}) {
 
     const [globalState, setGlobalState] = useState<GlobalState>({
         name: "",
@@ -154,6 +157,9 @@ function FirmwareUpdate() {
         description: "",
         firmware: ""
     })
+    
+    const [selectedKeys, setSelectedKeys] = useState<Transcriptor[]>([]);
+    const [loaded, setLoaded] = useState(false);
 
     function check(globalState: GlobalState): boolean {
         setErrorState({
@@ -193,27 +199,78 @@ function FirmwareUpdate() {
     function handleSubmit() {
         console.log(globalState)
         if (!check(globalState)) {
+            // If props.id not undefined then it's an update
+            if(props.id){
+                postUpdateConfiguration(props.id, globalState)
+                return
+            }
             postNewConfiguration(globalState) // manage response to display error or success
         }
     }
 
+    // Fetch the configuration
+    useEffect(() => {
+        if(!props.id){
+            setLoaded(true)
+            return
+        }
+        getConfiguration(props.id).then(result => {
+            if(!result){
+                console.log("Erreur lors de la récupération de la configuration.")
+                //setError("Erreur lors de la récupération de la configuration.")
+                return
+            }
+
+            //console.log(config)
+            getTranscriptors().then(transcriptors => {
+                if (!transcriptors) {
+                    return
+                }
+                let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => ({
+                    key: transcriptors.find(t => t.id === Number(key)),
+                    value: value,
+                } as KeyValueConfiguration));
+
+                var configurationKeys: number[] = config.map(conf => conf.key.id)
+                setSelectedKeys(transcriptors.filter(key => configurationKeys.includes(key.id)))
+                setGlobalState({
+                    configuration: config,
+                    description: result.description,
+                    firmware: result.firmware.id + "",
+                    name: result.name,
+                })
+                setLoaded(true)
+            })
+        });
+    }, [props.id])
+
     return (
-        <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
-            <Grid container spacing={15}>
-                <Grid item xs={12} md={6}>
-                    <LeftSection errorState={errorState} globalState={globalState} setGlobalState={setGlobalState}/>
+        <Box>
+            {loaded && (
+                <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
+                <Grid container spacing={15}>
+                    <Grid item xs={12} md={6}>
+                        <LeftSection errorState={errorState} globalState={globalState} setGlobalState={setGlobalState}/>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <RightSection globalState={globalState} setGlobalState={setGlobalState} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys}/>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <RightSection globalState={globalState} setGlobalState={setGlobalState}/>
-                </Grid>
-            </Grid>
-            <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
-                {/* TODO : fixer le bouton en bas */}
-                <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
-                        color="primary">Valider</Button>
-            </Box>
-        </Container>
+                <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+                    {/* TODO : fixer le bouton en bas */}
+                    <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
+                            color="primary">Valider</Button>
+                </Box>
+            </Container>
+            )}
+            {!loaded && (
+                <Box maxWidth={"true"} maxHeight={"true"} justifyContent={"center"}>
+                    <Typography variant='h5' textAlign={"center"}>Chargement des informations...</Typography>
+                </Box>
+            )}
+        </Box>
+
     );
 }
 
-export default FirmwareUpdate;
+export default CreateConfig;

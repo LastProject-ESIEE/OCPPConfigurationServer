@@ -6,7 +6,7 @@ import {
 } from "../../DisplayTable";
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Configuration, searchConfiguration } from "../../../conf/configurationController";
 
 
@@ -54,8 +54,8 @@ function ConfigurationTable() {
         formatter: (configuration) => {
             return (
                 <Box key={"box-configuration-edit-path-" + configuration.id} paddingTop={1} maxWidth={"true"}>
-                    {/*<Link key={"chargepoint-edit-path-" + configuration.id} to={{pathname: 'display/' + configuration.id}}
-                          style={{textDecoration: 'none', paddingTop: 10}}>*/}
+                    <Link key={"chargepoint-edit-path-" + configuration.id} to={{pathname: 'edit/' + configuration.id}}
+                          style={{textDecoration: 'none', paddingTop: 10}}>
                         <ListItemButton style={{
                             maxWidth: "true",
                             height: "5vh",
@@ -82,7 +82,7 @@ function ConfigurationTable() {
                                 </Grid>
                             </Grid>
                         </ListItemButton>
-                    {/*</Link>*/}
+                    </Link>
                 </Box>
             )
         },
@@ -104,14 +104,3 @@ function ConfigurationTable() {
 }
 
 export default ConfigurationTable;
-
-export function ConfigurationEditPage() {
-    // Get id from router parameter
-    const { id } = useParams();
-
-    return (
-        <Box>
-            <p>Édition de la configuration {id}</p>
-        </Box>
-    );
-}
