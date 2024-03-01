@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class ConfigurationService {
       configuration.setName(updateConfigurationDto.name());
       configuration.setDescription(updateConfigurationDto.description());
       configuration.setConfiguration(updateConfigurationDto.configuration());
+      configuration.setLastEdit(new Timestamp(System.currentTimeMillis()));
       configuration.setFirmware(
               firmwareRepository.findById(updateConfigurationDto.firmware()).orElseThrow()
       );
