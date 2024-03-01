@@ -27,7 +27,7 @@ export function NavBar() {
     const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
     const [userRole, setUserRole] = useState<any>(null);
     const [user, setUser] = useState<any>(null);
-    
+
     // Update the currentButton state when the URL changes
     useEffect(() => {
         fetch("/api/user/me")
@@ -52,15 +52,15 @@ export function NavBar() {
         });
         setCurrentButton(matchingButton);
     }, [location.pathname]);
-  
+
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
       setAnchorElNav(event.currentTarget);
     };
-  
+
     const handleCloseNavMenu = () => {
       setAnchorElNav(null);
     };
-  
+
     return (
       <AppBar position="static">
           <Container maxWidth={false} style={{paddingLeft: 10, paddingRight: 10}}>
@@ -68,7 +68,7 @@ export function NavBar() {
                   {/*Mini menu*/}
                   <Box key={"little-menu-bar"} sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                       <IconButton
-                      key={"litle-menu-bar-icon"} 
+                      key={"litle-menu-bar-icon"}
                       size="large"
                       aria-label="account of current user"
                       aria-controls="menu-appbar"
@@ -123,10 +123,10 @@ export function NavBar() {
                                               const disabled = item === currentButton;
                                               return (
                                                       <Link key={"navBar-link-top-button-" + index} to={{ pathname: `/home${item.href}`}} style={{ textDecoration: 'none', paddingTop: 1, marginRight: 5 }}>
-                                                         <Button key={"navBar-topbutton-" + index} disabled={disabled} style={{backgroundColor: disabled ? "#5277FF" : "#0B48CC"}}>
+                                                         <Button key={"navBar-topbutton-" + index} disabled={disabled} style={{backgroundColor: disabled ? "#0B48CC" : "#5277FF"}}>
                                                           <Typography variant="body2" align="center" color={"white"}>{item.label}</Typography>
                                                          </Button>
-                                                      </Link>    
+                                                      </Link>
                                                   )
                                           }
                                       )}
@@ -139,14 +139,14 @@ export function NavBar() {
                                           .map((subButton, index) => {
                                               const disabled = location.pathname === `/home${currentButton.href}${subButton.href}`
                                               return (
-                                                  <Link 
-                                                    key={"navBar-link-bottom-button-" + index}  
-                                                    to={{ pathname: `/home${currentButton.href}${subButton.href}`}} 
+                                                  <Link
+                                                    key={"navBar-link-bottom-button-" + index}
+                                                    to={{ pathname: `/home${currentButton.href}${subButton.href}`}}
                                                     style={{ textDecoration: 'none', paddingTop: 1, marginRight: 5 }}>
-                                                     <Button key={"navBar-link-bottom-button-" + index}  disabled={disabled} style={{backgroundColor: disabled ? "#5277FF" : "#0B48CC", border: "white", borderColor: "white"}}>
+                                                     <Button key={"navBar-link-bottom-button-" + index}  disabled={disabled} style={{backgroundColor: disabled ? "#0B48CC" : "#5277FF", border: "white", borderColor: "white"}}>
                                                       <Typography variant="body2" align="center" color={"white"}>{subButton.label}</Typography>
                                                      </Button>
-                                                  </Link>    
+                                                  </Link>
                                               )
                                           })}
                               </Grid>
@@ -176,7 +176,7 @@ export function NavBar() {
                                       aria-label={"logout"}
                                       style={{fontSize: 'inherit'}}
                                   >
-                                      <Avatar src={"assets/power-off.png"} alt={"logout"}
+                                      <Avatar src={"/assets/power-off.png"} alt={"logout"}
                                               style={{
                                                   width: '1em',
                                                   height: 'auto'
@@ -204,14 +204,14 @@ export function NavBar() {
       </AppBar>
     );
   }
-  
+
   function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}){
       const [open, setOpen] = React.useState(false);
-  
+
       const handleClick = () => {
         setOpen(!open);
       };
-  
+
       return (
           <List
           sx={{ width: '100%', maxWidth: 360/*, bgcolor: 'background.paper'*/ }}
@@ -229,9 +229,9 @@ export function NavBar() {
                           .map((item) => {
                                   return item.subButtons.map((subButton) => {
                                       return (
-                                              <Link 
-                                              key={"link-menu-page-redirect-" + item.label + "-" + subButton.label}  
-                                              to={{ pathname: `/home${item.href}${subButton.href}`}} 
+                                              <Link
+                                              key={"link-menu-page-redirect-" + item.label + "-" + subButton.label}
+                                              to={{ pathname: `/home${item.href}${subButton.href}`}}
                                               style={{ textDecoration: 'none', color: 'black', maxWidth: "true"}}>
                                                       <ListItemButton
                                                       key={"link-button-menu-page-redirect-" + item.label + "-" + subButton.label}
@@ -240,7 +240,7 @@ export function NavBar() {
                                                           <Typography variant="body1">{subButton.label}</Typography>
                                                       </ListItemButton>
                                               </Link>
-                         
+
                                       )
                                   })
                               }
