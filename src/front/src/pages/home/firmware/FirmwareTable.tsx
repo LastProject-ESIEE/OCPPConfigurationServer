@@ -3,11 +3,11 @@ import {
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
-} from "../DisplayTable";
+} from "../../../sharedComponents/DisplayTable";
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Firmware, searchFirmware } from "../../conf/FirmwareController";
+import { Firmware, searchFirmware } from "../../../conf/FirmwareController";
 
 
 const PAGE_SIZE = 30; // Max items displayed in the firmware table

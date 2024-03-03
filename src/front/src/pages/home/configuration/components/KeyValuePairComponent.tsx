@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button, Grid, Input } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { GlobalState, Transcriptor } from "../../../conf/configurationController";
+import { GlobalState, Transcriptor } from "../../../../conf/configurationController";
 
-function KeyValuePair(props: {
+function KeyValuePairComponent(props: {
     selectedKey: Transcriptor,
     value: string,
     globalState: GlobalState,
@@ -126,4 +126,4 @@ function KeyValuePair(props: {
     )
 }
 
-export default KeyValuePair;
+export default KeyValuePairComponent;

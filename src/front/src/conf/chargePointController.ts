@@ -1,4 +1,4 @@
-import { PageRequest } from "../pages/DisplayTable"
+import { PageRequest } from "../sharedComponents/DisplayTable"
 
 // Websocket notification for charge point status update
 export type WebSocketChargePointNotification = {

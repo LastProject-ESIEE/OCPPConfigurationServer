@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { Button, Grid, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { englishRoleToFrench } from "../NavBar";
+import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
 
 function Account() {
     const [user, setUser] = useState<any>(null);

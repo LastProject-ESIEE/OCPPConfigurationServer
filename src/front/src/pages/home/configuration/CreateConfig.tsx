@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Autocomplete, Box, Button, Container, Grid, Paper, TextField, Typography } from '@mui/material';
-import TitleComponent from "./TitleComponent";
-import FirmwareComponent from "./FirmwareComponent";
-import DescriptionComponent from "./DescriptionComponent";
-import KeyValuePair from "./KeyValuePair";
+import TitleComponent from "./components/TitleComponent";
+import FirmwareComponent from "./components/FirmwareComponent";
+import DescriptionComponent from "./components/DescriptionComponent";
+import KeyValuePairComponent from "./components/KeyValuePairComponent";
 import {
     ErrorState,
     getConfiguration,
@@ -123,7 +123,7 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
                                       justifyContent="space-evenly">
                                     {props.selectedKeys.map((key) => {
                                         return (
-                                            <KeyValuePair
+                                            <KeyValuePairComponent
                                                 key={key.id}
                                                 value={/*props.globalState.configuration.find(v => v.key == key)?.value ??*/ ""}
                                                 globalState={props.globalState}

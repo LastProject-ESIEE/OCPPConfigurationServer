@@ -5,9 +5,9 @@ import {
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
-} from "./DisplayTable";
-import { Role, searchUser, User } from "../conf/userController";
-import { englishRoleToFrench } from "../NavBar";
+} from "../../../sharedComponents/DisplayTable";
+import { Role, searchUser, User } from "../../../conf/userController";
+import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
 
@@ -26,7 +26,7 @@ const userTableColumns: TableColumnDefinition[] = [
     }
 ]
 
-export function UserTable() {
+function UserTable() {
     const [tableData, setTableData] = React.useState<User[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
@@ -167,3 +167,5 @@ export function UserTable() {
 
     return InfinityScrollItemsTable(props)
 }
+
+export default UserTable;
