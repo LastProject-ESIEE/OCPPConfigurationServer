@@ -4,9 +4,14 @@ import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Configuration, getAllConfigurations, noConfig } from "../../../conf/configurationController";
-import { CreateChargepointDto, postNewChargepoint } from "../../../conf/chargePointController";
+import {
+    CreateChargepointDto,
+    getChargepointById,
+    postNewChargepoint,
+    updateChargepoint
+} from "../../../conf/chargePointController";
 
-function DisplayConfiguration({configuration}: { configuration: Configuration | undefined }) {
+function DisplayConfiguration({configuration}: { configuration?: Configuration }) {
 
     return (
         <Box sx={{height: "100%"}}>
@@ -48,24 +53,56 @@ function DisplayConfiguration({configuration}: { configuration: Configuration | 
     )
 }
 
-function CreateChargepoint() {
+function CreateChargepoint(props: {id?: number}) {
 
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
+
+    const [serialNumber, setSerialNumber] = useState<string>("")
+    const [type, setType] = useState<string>("")
+    const [constructor, setConstructor] = useState<string>("")
+    const [clientId, setClientId] = useState<string>("")
     const [configuration, setConfiguration] = useState<Configuration>(noConfig);
+
     const [chargepoint, setChargepoint] = useState<CreateChargepointDto>({
-        serialNumber: "",
-        type: "",
-        constructor: "",
-        clientId: "",
-        configuration: noConfig.id,
+        serialNumber: serialNumber,
+        type: type,
+        constructor: constructor,
+        clientId: clientId,
+        configuration: configuration.id,
     });
 
+    useEffect(() => {
+        if (!props.id) {
+            return
+        }
+        getChargepointById(props.id).then(result => {
+            if (result === undefined) {
+                return
+            }
+            console.log(result)
+            setSerialNumber(result.serialNumberChargepoint)
+            setType(result.type)
+            setConstructor(result.constructor)
+            setClientId(result.clientId)
+
+            const config = result.configuration ? result.configuration : noConfig
+            setConfiguration(config)
+            setChargepoint({
+                serialNumber: result.serialNumberChargepoint,
+                type: result.type,
+                constructor: result.constructor,
+                clientId: result.clientId,
+                configuration: config.id
+            })
+        })
+    }, [props.id]);
 
     useEffect(() => {
         getAllConfigurations().then((result) => {
             if (result === undefined) {
                 return
             }
+            // to display the choice in the list
             setConfigurationList([noConfig, ...result])
         })
     }, []);
@@ -76,31 +113,47 @@ function CreateChargepoint() {
                 <Grid item xs={12} md={6}>
                     <Box>
                         <FormInput name={"N° Série"}
-                                   onChange={val => setChargepoint(prevState => {
-                                       prevState.serialNumber = val
-                                       return prevState
-                                   })}
+                                   onChange={val => {
+                                       setSerialNumber(val)
+                                       setChargepoint(prevState => {
+                                           prevState.serialNumber = val
+                                           return prevState
+                                       })
+                                   }}
+                                   value={serialNumber}
                                    checkIsWrong={value => value === "abc"}
                         />
                         <FormInput name={"Client ID"}
-                                   onChange={val => setChargepoint(prevState => {
-                                       prevState.clientId = val
-                                       return prevState
-                                   })}
+                                   onChange={val => {
+                                       setClientId(val)
+                                       setChargepoint(prevState => {
+                                           prevState.clientId = val
+                                           return prevState
+                                       })
+                                   }}
+                                   value={clientId}
                                    checkIsWrong={value => value === "abc"}
                         />
                         <FormInput name={"Constructeur"}
-                                   onChange={val => setChargepoint(prevState => {
-                                       prevState.constructor = val
-                                       return prevState
-                                   })}
+                                   onChange={val => {
+                                       setConstructor(val)
+                                       setChargepoint(prevState => {
+                                           prevState.constructor = val
+                                           return prevState
+                                       })
+                                   }}
+                                   value={constructor}
                                    checkIsWrong={value => value === "abc"}
                         />
                         <FormInput name={"Modèle"}
-                                   onChange={val => setChargepoint(prevState => {
-                                       prevState.type = val
-                                       return prevState
-                                   })}
+                                   onChange={val => {
+                                       setType(val)
+                                       setChargepoint(prevState => {
+                                           prevState.type = val
+                                           return prevState
+                                       })
+                                   }}
+                                   value={type}
                                    checkIsWrong={value => value === "abc"}
                         />
                         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}>
@@ -114,11 +167,11 @@ function CreateChargepoint() {
                                         value={configuration.id}
                                         onChange={event => {
                                             const val = event.target.value as number
+                                            setConfiguration(configurationList.find(conf => conf.id === val) as Configuration)
                                             setChargepoint(prevState => {
                                                 prevState.configuration = val
                                                 return prevState
                                             })
-                                            setConfiguration(configurationList.find(conf => conf.id === val) as Configuration)
                                         }}
                                         fullWidth={true}>
                                         {configurationList && configurationList.map((configuration) => (
@@ -139,7 +192,7 @@ function CreateChargepoint() {
                         pt={2}
                     >
                         <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                onClick={() => postNewChargepoint(chargepoint)}>Valider</Button>
+                                onClick={handleSubmit}>Valider</Button>
                     </Box>
 
                 </Grid>
@@ -149,6 +202,14 @@ function CreateChargepoint() {
             </Grid>
         </Container>
     );
+
+    function handleSubmit() {
+        if (props.id) {
+            return updateChargepoint(props.id, chargepoint);
+        } else {
+            return postNewChargepoint(chargepoint);
+        }
+    }
 }
 
 export default CreateChargepoint;

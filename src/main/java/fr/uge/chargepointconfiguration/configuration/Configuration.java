@@ -24,6 +24,8 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "configuration")
 public class Configuration implements DtoEntity<ConfigurationDto> {
 
+  public static final int NO_CONFIG_ID = -1;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id_configuration")

@@ -47,8 +47,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(
       name = "id_configuration",
-      referencedColumnName = "id_configuration",
-      nullable = false
+      referencedColumnName = "id_configuration"
   )
   private Configuration configuration;
 
@@ -189,7 +188,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
           constructor,
           clientId,
           serverAddress,
-          configuration.toDto(),
+          configuration != null ? configuration.toDto() : null,
           status.toDto());
   }
 
@@ -202,7 +201,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
            + ", constructor='" + constructor + '\''
            + ", clientId='" + clientId + '\''
            + ", serverAddress='" + serverAddress + '\''
-           + ", configuration='" + configuration + '\''
+           + ", configuration='" + (configuration != null ? configuration : "null") + '\''
            + ", status=" + status
            + '}';
   }

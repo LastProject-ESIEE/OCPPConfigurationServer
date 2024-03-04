@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
 import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
@@ -83,5 +84,31 @@ public class ChargepointService {
 
   public long countTotal() {
     return chargepointRepository.count();
+  }
+
+  /**
+   * Update a chargepoint and returns the updated chargepoint.
+   *
+   * @param id id of the chargepoint to update
+   * @param newValues the new values chargepoint
+   * @return the updated chargepoint
+   */
+  public Chargepoint update(int id, CreateChargepointDto newValues) {
+
+    var chargepoint = chargepointRepository.findById(id).orElseThrow();
+    chargepoint.setSerialNumberChargepoint(newValues.serialNumberChargepoint());
+    chargepoint.setClientId(newValues.clientId());
+    chargepoint.setConstructor(newValues.constructor());
+    chargepoint.setType(newValues.type());
+
+    if (newValues.configuration() == Configuration.NO_CONFIG_ID) {
+      chargepoint.setConfiguration(null);
+    } else {
+      chargepoint.setConfiguration(
+            configurationRepository.findById(newValues.configuration()).orElseThrow()
+      );
+    }
+
+    return chargepointRepository.save(chargepoint);
   }
 }

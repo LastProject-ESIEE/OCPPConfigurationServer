@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,7 +55,7 @@ public class ChargepointController {
   @ApiResponse(responseCode = "200",
       description = "Found all the chargepoints",
       content = { @Content(mediaType = "application/json",
-          schema = @Schema(implementation = Chargepoint.class))
+          schema = @Schema(implementation = ChargepointDto.class))
       })
   @GetMapping(value = "/all")
   public List<ChargepointDto> getAllChargepoints() {
@@ -72,7 +73,7 @@ public class ChargepointController {
   @ApiResponses(value = { @ApiResponse(responseCode = "200",
       description = "Found the corresponding chargepoint",
       content = { @Content(mediaType = "application/json",
-          schema = @Schema(implementation = Chargepoint.class)) }),
+          schema = @Schema(implementation = ChargepointDto.class)) }),
       @ApiResponse(responseCode = "404",
           description = "This chargepoint does not exist",
           content = @Content) })
@@ -92,7 +93,7 @@ public class ChargepointController {
   @ApiResponse(responseCode = "200",
       description = "Found chargepoints",
       content = { @Content(mediaType = "application/json",
-          schema = @Schema(implementation = Chargepoint.class))
+          schema = @Schema(implementation = ChargepointDto.class))
       })
   @GetMapping(value = "/search")
   public PageDto<ChargepointDto> searchChargepoints(
@@ -163,5 +164,39 @@ public class ChargepointController {
       @RequestBody CreateChargepointDto createChargepointDto) {
     return new ResponseEntity<>(chargepointService.save(createChargepointDto),
         HttpStatus.CREATED);
+  }
+
+
+  /**
+   * Returns an optional of chargepoint according to the given id.<br>
+   * It is empty if the repository could not find a chargepoint.
+   *
+   * @param id An int.
+   * @return An optional of chargepoint.
+   */
+  @Operation(summary = "Update a chargepoint by its id")
+  @ApiResponses({
+      @ApiResponse(
+            responseCode = "200",
+            description = "Updated the corresponding chargepoint",
+            content = {
+                @Content(mediaType = "application/json",
+                      schema = @Schema(implementation = ChargepointDto.class)
+                )
+            }
+      ),
+      @ApiResponse(
+            responseCode = "404",
+            description = "This chargepoint does not exist",
+            content = @Content
+      )
+  })
+  @PatchMapping("/{id}")
+  public ChargepointDto updateChargepoint(
+        @Parameter(description = "Id of the chargepoint your are looking for.")
+        @PathVariable int id,
+
+        @RequestBody CreateChargepointDto createChargepointDto) {
+    return chargepointService.update(id, createChargepointDto).toDto();
   }
 }
