@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageResponse;
-import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.RegistrationStatus;
 import java.util.Objects;
 
 /**

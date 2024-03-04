@@ -1,4 +1,4 @@
-package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp;
+package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data;
 
 /**
  * Defines the status given to a message.<br>
