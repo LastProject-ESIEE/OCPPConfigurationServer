@@ -28,7 +28,8 @@ import java.util.Objects;
 import java.util.Queue;
 
 /**
- * Defines the OCPP configuration message for the visitor.
+ * Defines the OCPP 1.6 observer.<br>
+ * An observer is defined by the interface {@link OcppObserver}.
  */
 public class OcppConfigurationObserver16 implements OcppObserver {
   private final OcppMessageSender sender;
@@ -43,12 +44,14 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
 
   /**
-   * Constructor for the OCPP 1.6 configuration observer.
+   * {@link OcppConfigurationObserver16}'s constructor.
    *
-   * @param sender                websocket channel to send message
-   * @param chargepointRepository charge point repository
-   * @param firmwareRepository    firmware repository
-   * @param statusRepository      charge point status repository
+   * @param sender {@link OcppMessageSender}.
+   * @param chargePointManager {@link ChargePointManager}.
+   * @param chargepointRepository {@link ChargepointRepository}.
+   * @param firmwareRepository {@link FirmwareRepository}.
+   * @param statusRepository {@link StatusRepository}.
+   * @param logger {@link CustomLogger}.
    */
   public OcppConfigurationObserver16(OcppMessageSender sender,
                                      ChargePointManager chargePointManager,
@@ -56,16 +59,17 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                                      FirmwareRepository firmwareRepository,
                                      StatusRepository statusRepository,
                                      CustomLogger logger) {
-    this.sender = sender;
+    this.sender = Objects.requireNonNull(sender);
     this.chargePointManager = Objects.requireNonNull(chargePointManager);
-    this.chargepointRepository = chargepointRepository;
-    this.firmwareRepository = firmwareRepository;
-    this.statusRepository = statusRepository;
+    this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.statusRepository = Objects.requireNonNull(statusRepository);
     this.logger = Objects.requireNonNull(logger);
   }
 
   @Override
   public void onMessage(OcppMessage ocppMessage) {
+    Objects.requireNonNull(ocppMessage);
     switch (ocppMessage) {
       case BootNotificationRequest16 b -> processBootNotification(b);
       case ChangeConfigurationResponse16 c -> processConfigurationResponse(c);
@@ -79,14 +83,22 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   @Override
   public void onConnection(ChargePointManager chargePointManager) {
-
+    Objects.requireNonNull(chargePointManager);
+    // TODO : Is this method really useful ?
   }
 
   @Override
   public void onDisconnection(ChargePointManager chargePointManager) {
-
+    Objects.requireNonNull(chargePointManager);
+    // TODO : Is this method really useful ?
   }
 
+  /**
+   * Processes the received {@link BootNotificationRequest16} sent by the chargepoint.<br>
+   * It is here where we start the automation of the configuration/firmware update.
+   *
+   * @param bootNotificationRequest16 {@link BootNotificationRequest16}.
+   */
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16) {
     firmwareVersion = bootNotificationRequest16.firmwareVersion();
@@ -143,6 +155,11 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the configuration.<br>
+   * It searches in database the configuration for the chargepoint,
+   * loads the key-value and sends a {@link ChangeConfigurationRequest16} for the chargepoint.<br>
+   */
   private void processConfigurationRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     if (queue.isEmpty()) {
@@ -201,6 +218,13 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the {@link ChangeConfigurationResponse16} sent by the chargepoint.<br>
+   * If the change has been rejected, we stop the update.<br>
+   * Otherwise, we continue.
+   *
+   * @param response {@link ChangeConfigurationResponse16}.
+   */
   private void processConfigurationResponse(ChangeConfigurationResponse16 response) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     switch (response.status()) {
@@ -244,6 +268,15 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the firmware.<br>
+   * It searches in database the firmware target for the chargepoint.<br>
+   * We upgrade the firmware step by step, meaning,
+   * we choose the closest firmware to the current firmware.<br>
+   * Example :<br>
+   * The firmware target is 5.8.7, and the current target is 5.4.8.<br>
+   * We upgrade to 5.5 > 5.6 > 5.7 > 5.8.
+   */
   private void processFirmwareRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var status = currentChargepoint.getStatus();
@@ -293,6 +326,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     sender.sendMessage(firmwareRequest, chargePointManager);
   }
 
+  /**
+   * Fetches the first compatible firmware version from the database.
+   *
+   * @param typeAllowed {@link TypeAllowed}.
+   * @return The URL for downloading the firmware.
+   */
   private String fetchUrlFromFirstCompatibleVersion(TypeAllowed typeAllowed) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var firmwares = firmwareRepository
@@ -341,6 +380,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     return "";
   }
 
+  /**
+   * Processes the received {@link ResetResponse16}.
+   */
   private void processResetResponse() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var status = currentChargepoint.getStatus();
@@ -352,6 +394,14 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
   }
 
+  /**
+   * Processes the current firmware installation status.<br>
+   * If the download has failed or the installation has failed,
+   * we stop the process.<br>
+   * Otherwise, we continue as normal.
+   *
+   * @param f {@link FirmwareStatusNotificationRequest16}.
+   */
   private void processFirmwareStatusResponse(FirmwareStatusNotificationRequest16 f) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     switch (f.status()) {
