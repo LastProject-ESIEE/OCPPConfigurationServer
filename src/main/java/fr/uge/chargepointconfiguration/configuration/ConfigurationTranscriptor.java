@@ -24,7 +24,7 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
           new Component(""),
           ""),
 
-  VENDOR_NAME(3,
+  CHARGEPOINT_IDENTITY(3,
           "Nom de la borne",
           "Identity",
           "Identity",
@@ -148,7 +148,7 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
     return switch (id) {
       case 1 -> LIGHT_INTENSITY;
       case 2 -> NETWORK_PROFILE;
-      case 3 -> VENDOR_NAME;
+      case 3 -> CHARGEPOINT_IDENTITY;
       case 4 -> LOCAL_AUTH_LIST;
       case 5 -> STATION_MAX_CURRENT;
       case 6 -> STATION_PASSWORD;
