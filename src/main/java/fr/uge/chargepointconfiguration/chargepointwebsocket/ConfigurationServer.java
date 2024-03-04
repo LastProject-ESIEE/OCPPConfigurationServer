@@ -31,11 +31,11 @@ public class ConfigurationServer extends WebSocketServer {
   /**
    * {@link ConfigurationServer}'s constructor.
    *
-   * @param address The remote address to connect to.
+   * @param address               The remote address to connect to.
    * @param chargepointRepository {@link ChargepointRepository}.
-   * @param firmwareRepository {@link FirmwareRepository}.
-   * @param statusRepository {@link StatusRepository}.
-   * @param logger {@link CustomLogger}.
+   * @param firmwareRepository    {@link FirmwareRepository}.
+   * @param statusRepository      {@link StatusRepository}.
+   * @param logger                {@link CustomLogger}.
    */
   public ConfigurationServer(InetSocketAddress address,
                              ChargepointRepository chargepointRepository,
@@ -53,50 +53,16 @@ public class ConfigurationServer extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     Objects.requireNonNull(conn);
     Objects.requireNonNull(handshake);
-    //conn.send("Welcome to the server!");
     logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "new connection to " + conn.getRemoteSocketAddress()));
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
-    chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
-            new ChargePointManager(ocppVersion.orElseThrow(),
-                    (ocppMessage, chargePointManager) -> {
-                      switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-                        case REQUEST -> {
-                          var request = new WebSocketRequestMessage(
-                                  MessageType.REQUEST.getCallType(),
-                                  chargePointManager.getCurrentId(),
-                                  WebSocketMessage
-                                          .MessageTypeRequest
-                                          .ocppMessageToEnum(ocppMessage),
-                                  JsonParser.objectToJsonString(ocppMessage)
-                          );
-                          chargePointManager.setPendingRequest(request);
-                          conn.send(request.toString());
-                          logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
-                                  "sent request to " + conn.getRemoteSocketAddress()
-                                          + " : " + request));
-                        }
-                        case RESPONSE -> {
-                          var response = new WebSocketResponseMessage(
-                                  MessageType.RESPONSE.getCallType(),
-                                  chargePointManager.getCurrentId(),
-                                  JsonParser.objectToJsonString(ocppMessage));
-                          // TODO : Change the creation to be smaller
-                          conn.send(
-                                  response.toString());
-                          logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
-                                  "sent response to " + conn.getRemoteSocketAddress()
-                                          + " : " + response));
-                        }
-                        default -> // ignore
-                                logger.error(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
-                                        "tried to send an unknown packet"));
-                      }
-                    },
-                    chargepointRepository,
-                    firmwareRepository,
-                    statusRepository,
-                    logger));
+    if (ocppVersion.isPresent()) {
+      chargePoints.putIfAbsent(conn.getRemoteSocketAddress(),
+              instantiate(ocppVersion.orElseThrow(), conn));
+    } else {
+      logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
+              "Unknown OCPP version !"));
+    }
   }
 
   @Override
@@ -163,8 +129,10 @@ public class ConfigurationServer extends WebSocketServer {
                     + " : "
                     + ex));
     if (conn != null) {
-      chargePoints.remove(conn.getRemoteSocketAddress());
-      conn.close();
+      var chargepoint = chargePoints.get(conn.getRemoteSocketAddress());
+      if (chargepoint != null) {
+        chargepoint.onError(ex);
+      }
     }
   }
 
@@ -172,5 +140,53 @@ public class ConfigurationServer extends WebSocketServer {
   public void onStart() {
     logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "server started successfully"));
+  }
+
+  /**
+   * Instantiates the {@link ChargePointManager} according to the OCPP version.
+   *
+   * @param ocppVersion {@link OcppVersion}.
+   * @param conn The web socket connection.
+   * @return {@link ChargePointManager}.
+   */
+  private ChargePointManager instantiate(OcppVersion ocppVersion, WebSocket conn) {
+    return new ChargePointManager(ocppVersion,
+            (ocppMessage, chargePointManager) -> {
+              switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
+                case REQUEST -> {
+                  var request = new WebSocketRequestMessage(
+                          MessageType.REQUEST.getCallType(),
+                          chargePointManager.getCurrentId(),
+                          WebSocketMessage
+                                  .MessageTypeRequest
+                                  .ocppMessageToEnum(ocppMessage),
+                          JsonParser.objectToJsonString(ocppMessage)
+                  );
+                  chargePointManager.setPendingRequest(request);
+                  conn.send(request.toString());
+                  logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
+                          "sent request to " + conn.getRemoteSocketAddress()
+                                  + " : " + request));
+                }
+                case RESPONSE -> {
+                  var response = new WebSocketResponseMessage(
+                          MessageType.RESPONSE.getCallType(),
+                          chargePointManager.getCurrentId(),
+                          JsonParser.objectToJsonString(ocppMessage));
+                  conn.send(
+                          response.toString());
+                  logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
+                          "sent response to " + conn.getRemoteSocketAddress()
+                                  + " : " + response));
+                }
+                default -> // ignore
+                        logger.error(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
+                                "tried to send an unknown packet"));
+              }
+            },
+            chargepointRepository,
+            firmwareRepository,
+            statusRepository,
+            logger);
   }
 }
