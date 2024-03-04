@@ -24,7 +24,7 @@ import org.hibernate.annotations.SQLRestriction;
       set is_deleted = true
       where id = ?
       """)
-@SQLRestriction("is_deleted = 0")
+@SQLRestriction("not is_deleted")
 public class User implements DtoEntity<UserDto> {
 
   /**
