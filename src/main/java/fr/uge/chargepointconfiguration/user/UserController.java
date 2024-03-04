@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -205,5 +206,11 @@ public class UserController {
   public List<User.Role> getAllRoles() {
     return Arrays.stream(User.Role.values())
             .toList();
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable int id) {
+    userService.delete(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
