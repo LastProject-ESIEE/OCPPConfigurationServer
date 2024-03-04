@@ -74,7 +74,10 @@ public class ConfigurationService {
    * @return A list of configurations.
    */
   public List<ConfigurationGeneralDto> getAllConfigurations() {
-    return configurationRepository.findAll().stream().map(ConfigurationGeneralDto::from).toList();
+    return configurationRepository.findAllByOrderByIdDesc()
+          .stream()
+          .map(ConfigurationGeneralDto::from)
+          .toList();
   }
 
   /**
@@ -97,6 +100,6 @@ public class ConfigurationService {
    * @return the list of corresponding {@link Configuration}
    */
   public List<Configuration> getPage(PageRequest pageable) {
-    return configurationRepository.findAll(pageable).stream().toList();
+    return configurationRepository.findAllByOrderByIdDesc(pageable).stream().toList();
   }
 }

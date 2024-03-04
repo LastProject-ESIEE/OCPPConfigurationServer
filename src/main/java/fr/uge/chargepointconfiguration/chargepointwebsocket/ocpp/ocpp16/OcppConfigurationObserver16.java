@@ -335,7 +335,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private String fetchUrlFromFirstCompatibleVersion(TypeAllowed typeAllowed) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var firmwares = firmwareRepository
-            .findAllByTypeAllowed(typeAllowed);
+            .findAllByTypeAllowedOrderByIdDesc(typeAllowed);
     for (var firmware : firmwares) {
       var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
       if (comparison > 0) {

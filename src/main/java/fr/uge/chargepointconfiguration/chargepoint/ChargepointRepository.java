@@ -30,7 +30,9 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
    *
    * @return A list of Chargepoints or an empty list if no chargepoints are registered.
    */
-  List<Chargepoint> findAll();
+  List<Chargepoint> findAllByOrderByIdDesc();
 
-  Page<Chargepoint> findAllByClientIdContainingIgnoreCase(Pageable pageable, String clientId);
+  Page<Chargepoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
+        Pageable pageable,
+        String clientId);
 }
