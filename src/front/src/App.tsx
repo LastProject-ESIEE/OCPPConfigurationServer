@@ -14,6 +14,7 @@ import UserTable from "./pages/home/account/UserTable";
 import BusinessLogTable from "./pages/home/logs/BusinessLogTable";
 import TechnicalLogTable from "./pages/home/logs/TechnicalLogTable";
 import Account from "./pages/home/account/Account";
+import ChargepointEditPage from "./pages/home/chargepoint/ChargepointEditPage";
 
 
 function App(): JSX.Element {
@@ -33,7 +34,7 @@ function App(): JSX.Element {
                         <Route path="chargepoint">
                             <Route path="" element={<ChargePointTable/>}/>
                             <Route path="new" element={<CreateChargepoint/>}/>
-                            <Route path="display/:id" element={<Error/>}/>
+                            <Route path="edit/:id" element={<ChargepointEditPage/>}/>
                         </Route>
                         <Route path="firmware">
                             <Route path="" element={<FirmwareTable/>}/>
