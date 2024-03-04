@@ -1,7 +1,12 @@
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
-import { ChargePoint, WebSocketChargePointNotification, searchChargePoint } from "../conf/chargePointController";
+import {
+    InfinityScrollItemsTable,
+    InfinityScrollItemsTableProps,
+    PageRequest,
+    TableColumnDefinition
+} from "../../../sharedComponents/DisplayTable";
+import { ChargePoint, searchChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
 import { Link } from "react-router-dom";
 import { wsManager } from "../Home";
 
@@ -28,7 +33,7 @@ const chargePointTableColumns: TableColumnDefinition[] = [
   }
 ]
 
-export function ChargePointTable() {
+function ChargePointTable() {
     const [tableData, setTableData] = React.useState<ChargePoint[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
@@ -112,3 +117,5 @@ export function ChargePointTable() {
 
     return InfinityScrollItemsTable(props)
 }
+
+export default ChargePointTable;

@@ -1,4 +1,4 @@
-import { PageRequest } from "../pages/DisplayTable"
+import { PageRequest } from "../sharedComponents/DisplayTable"
 import { ChargePoint } from "./chargePointController";
 
 export type BusinessLog = {

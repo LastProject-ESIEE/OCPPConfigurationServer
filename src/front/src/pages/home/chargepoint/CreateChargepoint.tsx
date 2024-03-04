@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Grid, MenuItem, Paper, Select } from "@mui/material";
-import FormInput from "../FormInput";
+import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { Configuration, getAllConfigurations, noConfig } from "../../conf/configurationController";
-import { CreateChargepointDto, postNewChargepoint } from "../../conf/chargePointController";
+import { Configuration, getAllConfigurations, noConfig } from "../../../conf/configurationController";
+import { CreateChargepointDto, postNewChargepoint } from "../../../conf/chargePointController";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration | undefined }) {
 

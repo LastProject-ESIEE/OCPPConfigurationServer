@@ -1,7 +1,12 @@
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import React, { useEffect } from "react";
-import { InfinityScrollItemsTable, InfinityScrollItemsTableProps, PageRequest, TableColumnDefinition } from "./DisplayTable";
-import { TechnicalLog, searchTechnicalLog } from "../conf/technicalLogController";
+import {
+    InfinityScrollItemsTable,
+    InfinityScrollItemsTableProps,
+    PageRequest,
+    TableColumnDefinition
+} from "../../../sharedComponents/DisplayTable";
+import { searchTechnicalLog, TechnicalLog } from "../../../conf/technicalLogController";
 // import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 30; // Max items displayed in the technical log table
@@ -24,7 +29,7 @@ const technicalLogTableColumns: TableColumnDefinition[] = [
     }
 ]
 
-export function TechnicalLogTable() {
+function TechnicalLogTable() {
     const [tableData, setTableData] = React.useState<TechnicalLog[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
@@ -88,3 +93,5 @@ export function TechnicalLogTable() {
 
     return InfinityScrollItemsTable(props)
 }
+
+export default TechnicalLogTable;

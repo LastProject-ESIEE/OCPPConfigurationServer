@@ -3,7 +3,7 @@ import {
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
-} from "../../DisplayTable";
+} from "../../../sharedComponents/DisplayTable";
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";

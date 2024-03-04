@@ -5,8 +5,8 @@ import {
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
-} from "./DisplayTable";
-import { BusinessLog, searchBusinessLog } from "../conf/businessLogController";
+} from "../../../sharedComponents/DisplayTable";
+import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
 // import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 30; // Max items displayed in the businessLog table
@@ -35,7 +35,7 @@ const businessLogTableColumns: TableColumnDefinition[] = [
     }
 ]
 
-export function BusinessLogTable() {
+function BusinessLogTable() {
     const [tableData, setTableData] = React.useState<BusinessLog[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
@@ -133,3 +133,5 @@ export function BusinessLogTable() {
 
     return InfinityScrollItemsTable(props)
 }
+
+export default BusinessLogTable;

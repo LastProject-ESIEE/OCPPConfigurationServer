@@ -1,4 +1,4 @@
-import { PageRequest } from "../pages/DisplayTable"
+import { PageRequest } from "../sharedComponents/DisplayTable"
 import { Firmware, TypeAllowed } from "./FirmwareController";
 
 // Configuration type definition
