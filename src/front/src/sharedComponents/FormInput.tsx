@@ -21,16 +21,15 @@ function FormInput({
                        placeholder = name,
                        value = ""
                    }: FormInputProps) {
-    const [currentValue, setCurrentValue] = useState(value);
     const [actualBackground, setActualBackground] = useState(backgroundColor);
 
     useEffect(() => {
-        if (checkIsWrong(currentValue)) {
+        if (checkIsWrong(value)) {
             setActualBackground('rgba(255, 0, 0, 0.2)')
         } else {
             setActualBackground(backgroundColor)
         }
-    }, [currentValue, backgroundColor, checkIsWrong]);
+    }, [value, backgroundColor, checkIsWrong]);
 
 
     return (
@@ -41,16 +40,13 @@ function FormInput({
                 </Grid>
                 <Grid item>
                     <Input
-                        value={currentValue}
+                        value={value}
                         sx={{mt: 1}}
-                        onChange={event => {
-                            onChange(event.target.value)
-                            setCurrentValue(event.target.value)
-                        }}
+                        onChange={event => onChange(event.target.value)}
                         fullWidth={true}
                         placeholder={placeholder}
                         required={required}
-                        error={checkIsWrong(currentValue)}
+                        error={checkIsWrong(value)}
                     />
                 </Grid>
             </Grid>
