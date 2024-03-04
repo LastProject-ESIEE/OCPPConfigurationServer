@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageResponse;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
+import java.util.Objects;
 
 /**
  * Confirms if the {@link ResetRequest16} has been accepted or not.<br>
@@ -10,4 +11,13 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationSta
  * @param status {@link RegistrationStatus}.
  */
 public record ResetResponse16(RegistrationStatus status) implements OcppMessageResponse {
+
+  /**
+   * {@link ResetResponse16}'s constructor.
+   *
+   * @param status {@link RegistrationStatus}.
+   */
+  public ResetResponse16 {
+    Objects.requireNonNull(status);
+  }
 }

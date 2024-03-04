@@ -54,7 +54,7 @@ public class ChargePointManager {
             chargepointRepository,
             firmwareRepository,
             statusRepository,
-            logger
+            Objects.requireNonNull(logger)
     );
   }
 
@@ -72,7 +72,7 @@ public class ChargePointManager {
    * If the current pending request is set,
    * we now wait for a response from the chargepoint.
    *
-   * @param pendingRequest The request sent to the chargepoint.
+   * @param pendingRequest The {@link WebSocketMessage} request sent to the chargepoint.
    */
   public void setPendingRequest(WebSocketMessage pendingRequest) {
     this.pendingRequest = pendingRequest;
@@ -89,7 +89,7 @@ public class ChargePointManager {
   /**
    * Processes the received websocket message according to the OCPP protocol.
    *
-   * @param webSocketMessage The websocket message sent to our server.
+   * @param webSocketMessage The {@link WebSocketMessage} sent to our server.
    */
   public void processMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
@@ -140,6 +140,7 @@ public class ChargePointManager {
    * @param status {@link Status}.
    */
   public void notifyStatusUpdate(int id, Status status) {
+    Objects.requireNonNull(status);
     WebSocketHandler.sendMessageToUsers(
             new ChargePointWebsocketNotification(id, status)
     );

@@ -29,17 +29,21 @@ public class ConfigurationServer extends WebSocketServer {
   private final CustomLogger logger;
 
   /**
-   * ConfigurationServer's constructor.
+   * {@link ConfigurationServer}'s constructor.
    *
-   * @param address InetSocketAddress.
+   * @param address The remote address to connect to.
+   * @param chargepointRepository {@link ChargepointRepository}.
+   * @param firmwareRepository {@link FirmwareRepository}.
+   * @param statusRepository {@link StatusRepository}.
+   * @param logger {@link CustomLogger}.
    */
   public ConfigurationServer(InetSocketAddress address,
                              ChargepointRepository chargepointRepository,
                              FirmwareRepository firmwareRepository,
                              StatusRepository statusRepository,
                              CustomLogger logger) {
-    super(address);
-    this.chargepointRepository = chargepointRepository;
+    super(Objects.requireNonNull(address));
+    this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.statusRepository = Objects.requireNonNull(statusRepository);
     this.logger = Objects.requireNonNull(logger);
@@ -47,6 +51,8 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
+    Objects.requireNonNull(conn);
+    Objects.requireNonNull(handshake);
     //conn.send("Welcome to the server!");
     logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "new connection to " + conn.getRemoteSocketAddress()));
@@ -95,6 +101,7 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+    Objects.requireNonNull(conn);
     logger.warn(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "closed "
                     + conn.getRemoteSocketAddress()
@@ -112,6 +119,8 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, String message) {
+    Objects.requireNonNull(conn);
+    Objects.requireNonNull(message);
     var remote = conn.getRemoteSocketAddress();
     var webSocketMessage = WebSocketMessage.parse(message);
     if (webSocketMessage.isEmpty()) {
@@ -138,12 +147,16 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onMessage(WebSocket conn, ByteBuffer message) {
+    Objects.requireNonNull(conn);
+    Objects.requireNonNull(message);
     logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "received ByteBuffer from " + conn.getRemoteSocketAddress()));
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
+    // Keep the case if conn is null
+    Objects.requireNonNull(ex);
     logger.error(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
             "an error occurred on connection "
                     + (conn == null ? "" : conn.getRemoteSocketAddress())
