@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.user;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,5 +103,23 @@ public class UserService {
   public List<User> getPage(PageRequest pageable) {
     return userRepository.findAll(pageable)
           .stream().toList();
+  }
+
+  /**
+   * Create a new user in the database.
+   *
+   * @param newUserDto contains parameters of the new user.
+   * @return the new User.
+   */
+  public User createUser(NewUserDto newUserDto) {
+    var password = passwordEncoder.encode(newUserDto.password());
+    var user = new User(
+            newUserDto.firstName(),
+            newUserDto.lastName(),
+            newUserDto.email(),
+            password,
+            newUserDto.role()
+    );
+    return userRepository.save(user);
   }
 }

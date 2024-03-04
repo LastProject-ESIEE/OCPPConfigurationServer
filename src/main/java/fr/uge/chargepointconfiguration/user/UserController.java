@@ -206,4 +206,27 @@ public class UserController {
     return Arrays.stream(User.Role.values())
             .toList();
   }
+
+  /**
+   * Create a new user in the database.
+   *
+   * @param newUserDto the user to create.
+   * @return a ResponseEntity of the user.
+   */
+  @Operation(summary = "Create new user")
+  @ApiResponse(responseCode = "200",
+          description = "User created",
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = UserDto.class))
+          })
+  @PostMapping(value = "/new")
+  public ResponseEntity<UserDto> addUser(
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                  description = "JSON with all parameters of the new user.",
+                  required = true
+          )
+          @RequestBody NewUserDto newUserDto) {
+    var user = userService.createUser(newUserDto).toDto();
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
 }

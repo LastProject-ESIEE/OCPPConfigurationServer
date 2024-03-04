@@ -14,6 +14,7 @@ import UserTable from "./pages/home/account/UserTable";
 import BusinessLogTable from "./pages/home/logs/BusinessLogTable";
 import TechnicalLogTable from "./pages/home/logs/TechnicalLogTable";
 import Account from "./pages/home/account/Account";
+import AddAccount from './pages/home/account/AddAccount';
 
 
 function App(): JSX.Element {
@@ -41,7 +42,7 @@ function App(): JSX.Element {
                         </Route>
                         <Route path="account">
                             <Route path="" element={<UserTable/>}/>
-                            <Route path="new" element={<Error/>}/>
+                            <Route path="new" element={<AddAccount/>}/>
                         </Route>
                         <Route path="logs">
                             <Route path="" element={<Navigate to="business"/>}/>
