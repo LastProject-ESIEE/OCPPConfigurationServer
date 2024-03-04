@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,25 @@ public class FirmwareService {
    */
   public List<Firmware> getPage(PageRequest pageable) {
     return firmwareRepository.findAll(pageable)
-          .stream().toList();
+            .stream().toList();
+  }
+
+
+  /**
+   * Create a configuration.
+   *
+   * @param createFirmwareDto All the necessary information for a firmware creation.
+   * @return A firmware created with its information.
+   */
+  public FirmwareDto save(CreateFirmwareDto createFirmwareDto) {
+    var configuration = firmwareRepository.save(
+            new Firmware(
+                    createFirmwareDto.url(),
+                    createFirmwareDto.version(),
+                    createFirmwareDto.constructor(),
+                    new HashSet<>()
+            )
+    );
+    return configuration.toDto();
   }
 }
