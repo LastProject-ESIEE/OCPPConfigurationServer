@@ -95,7 +95,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     }
     currentChargepoint.setState(true);
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
@@ -144,14 +143,12 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     }
     if (queue.isEmpty()) {
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
     } else {
       currentChargepoint.setState(true);
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
@@ -173,13 +170,11 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   private void processFirmwareRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
     chargepointRepository.save(currentChargepoint);
     // TODO : Send a update firmware request !
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStep(Chargepoint.Step.CONFIGURATION);
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
@@ -204,7 +199,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     if (!noFailure) {
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       currentChargepoint.setError(failedConfig.toString());
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
@@ -212,7 +206,6 @@ public class OcppConfigurationObserver2 implements OcppObserver {
       return;
     }
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
