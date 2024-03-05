@@ -8,6 +8,7 @@ export type TableColumnFilterDefinition = {
 
 export type TableColumnDefinition = {
     title: string,
+    size?: number,
     filter?: TableColumnFilterDefinition,
 }
 
@@ -33,34 +34,36 @@ export type InfinityScrollItemsTableProps<T> = {
 
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
     return (
-        <Box maxWidth={"true"} paddingTop={2}>
-            {/*Display table columns*/}
-            <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"} paddingBottom={1} >
-                {props.columns.map(column => {
-                    return (
-                        <Grid xs={12/props.columns.length} item key={"table-header-column-" + column.title} justifyContent={"center"}>
-                            <Typography variant="h6" textAlign={"center"}>{column.title}</Typography>
-                            {column.filter && (
-                                <Grid container maxWidth={"true"} justifyContent={"center"}>
-                                    <TextField placeholder={column.title} size="small">
-                                    </TextField>
-                                </Grid>
-                            )}
-                        </Grid>
-                    )
-                })}
-            </Grid>
+        <Box maxWidth={"true"} paddingTop={2} marginLeft={2}>
+            <Box marginRight={2}>
+                {/*Display table columns*/}
+                <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"} >
+                    {props.columns.map(column => {
+                        return (
+                            <Grid xs={column?.size ?? 12/props.columns.length} item key={"table-header-column-" + column.title} justifyContent={"center"}>
+                                <Typography variant="h6" textAlign={"center"}>{column.title}</Typography>
+                                {column.filter && (
+                                    <Grid container maxWidth={"true"} justifyContent={"center"}>
+                                        <TextField placeholder={column.title} size="small">
+                                        </TextField>
+                                    </Grid>
+                                )}
+                            </Grid>
+                        )
+                    })}
+                </Grid>
+            </Box>
              {/*Display table content*/}
             <Box key={"box-items-scrollable-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
                 <div id={"scrollableDiv"}
-                key={props.key + "-scrollableDiv-list"}                
+                key={props.key + "-scrollableDiv-list"}
                 style={{
                     height: "75vh",
                     overflow: 'auto',
                 }}>
                     <InfiniteScroll
                             key="scrollable-items-list"
-                            style={{border: 1, borderColor: "black", maxWidth: "true"}}
+                            style={{overflow:"hidden", border: 1, borderColor: "black", maxWidth: "true"}}
                             dataLength={props.data.length}
                             next={() => props.fetchData()}
                             hasMore={props.hasMore}
