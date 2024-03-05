@@ -229,7 +229,7 @@ public class UserController {
           @RequestBody NewUserDto newUserDto) {
     var user = userService.createUser(newUserDto);
     if (user == null) {
-      return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
     return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
