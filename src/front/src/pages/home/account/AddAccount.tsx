@@ -47,11 +47,13 @@ function AddAccount() {
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Mot de passe"}
                     onChange={password => setPassword1(password)}
+                    isPassword={true}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Confirmer le mot de passe"}
                     onChange={password => setPassword2(password)}
+                    isPassword={true}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
