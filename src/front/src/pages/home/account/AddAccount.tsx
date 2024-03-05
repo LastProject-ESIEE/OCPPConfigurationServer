@@ -32,28 +32,33 @@ function AddAccount() {
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Nom"}
                     onChange={lastName => setLastName(lastName)}
+                    value={lastName}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Prénom"}
                     onChange={firstName => setFirstName(firstName)}
+                    value={firstName}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Email"}
                     onChange={mail => setMail(mail)}
+                    value={mail}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Mot de passe"}
                     onChange={password => setPassword1(password)}
                     isPassword={true}
+                    value={password1}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                 <FormInput name={"Confirmer le mot de passe"}
                     onChange={password => setPassword2(password)}
                     isPassword={true}
+                    value={password2}
                 />
             </Grid>
             <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
