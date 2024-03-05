@@ -2,8 +2,6 @@ package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
-import fr.uge.chargepointconfiguration.status.Status;
-import fr.uge.chargepointconfiguration.status.StatusRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +18,17 @@ public class ChargepointService {
 
   private final ConfigurationRepository configurationRepository;
 
-  private final StatusRepository statusRepository;
-
   /**
    * ChargepointService's constructor.
    *
    * @param chargepointRepository   A ChargepointRepository accessing to database.
    * @param configurationRepository A ConfigurationRepository accessing to database.
-   * @param statusRepository        A StatusRepository accessing to database.
    */
   @Autowired
   public ChargepointService(ChargepointRepository chargepointRepository,
-                            ConfigurationRepository configurationRepository,
-                            StatusRepository statusRepository) {
+                            ConfigurationRepository configurationRepository) {
     this.chargepointRepository = chargepointRepository;
     this.configurationRepository = configurationRepository;
-    this.statusRepository = statusRepository;
   }
 
   /**
@@ -45,7 +38,6 @@ public class ChargepointService {
    * @return A chargepoint created with its information.
    */
   public ChargepointDto save(CreateChargepointDto createChargepointDto) {
-    var status = statusRepository.save(new Status());
     var configuration = configurationRepository.findById(createChargepointDto.configuration())
         .orElseThrow();
     var chargepoint = chargepointRepository.save(new Chargepoint(
@@ -54,8 +46,7 @@ public class ChargepointService {
         createChargepointDto.constructor(),
         createChargepointDto.clientId(),
         "192.168.0.5",  // TODO variable environnement
-        configuration,
-        status
+        configuration
     ));
     return chargepoint.toDto();
   }
