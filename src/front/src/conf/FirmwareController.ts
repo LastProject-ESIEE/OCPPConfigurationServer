@@ -18,7 +18,6 @@ export type Firmware = {
 }
 
 
-
 export async function searchFirmware(
     size: number = 10,
     page: number = 0,
@@ -42,7 +41,6 @@ export async function searchFirmware(
 }
 
 export async function postCreateFirmware(firmware: CreateFirmwareFormData): Promise<boolean> {
-
     console.log(JSON.stringify(firmware))
 
     let request = await fetch(window.location.origin + "/api/firmware/create",
