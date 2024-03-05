@@ -50,7 +50,7 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
    *
    * @return A list of Firmwares or an empty list if no firmwares are registered.
    */
-  List<Firmware> findAll();
+  List<Firmware> findAllByOrderByIdDesc();
 
-  Page<Firmware> findAll(Pageable pageable);
+  Page<Firmware> findAllByOrderByIdDesc(Pageable pageable);
 }

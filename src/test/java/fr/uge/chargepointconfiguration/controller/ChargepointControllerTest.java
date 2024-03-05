@@ -50,7 +50,7 @@ class ChargepointControllerTest {
     var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2, status2);
     chargepointRepository.save(chargepoint2);
 
-    assertEquals(List.of(chargepoint.toDto(), chargepoint2.toDto()), chargepointController.getAllChargepoints());
+    assertEquals(List.of(chargepoint2.toDto(), chargepoint.toDto()), chargepointController.getAllChargepoints());
   }
 
   /**

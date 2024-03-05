@@ -10,6 +10,8 @@ export type FormInputProps = {
     checkIsWrong?: (value: string) => boolean,
     placeholder?: string,
     value?: string,
+    isPassword?: boolean,
+    onError?: () => void
 }
 
 function FormInput({
@@ -19,17 +21,20 @@ function FormInput({
                        onChange,
                        checkIsWrong = val => false,
                        placeholder = name,
-                       value = ""
+                       value = "",
+                       isPassword = false,
+                       onError = () => {}
                    }: FormInputProps) {
     const [actualBackground, setActualBackground] = useState(backgroundColor);
 
     useEffect(() => {
         if (checkIsWrong(value)) {
             setActualBackground('rgba(255, 0, 0, 0.2)')
+            onError()
         } else {
             setActualBackground(backgroundColor)
         }
-    }, [value, backgroundColor, checkIsWrong]);
+    }, [value, backgroundColor, checkIsWrong, onError]);
 
 
     return (
@@ -42,6 +47,7 @@ function FormInput({
                     <Input
                         value={value}
                         sx={{mt: 1}}
+                        type={isPassword ? "password" : "text"} 
                         onChange={event => onChange(event.target.value)}
                         fullWidth={true}
                         placeholder={placeholder}

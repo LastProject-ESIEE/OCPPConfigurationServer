@@ -1,11 +1,10 @@
 package fr.uge.chargepointconfiguration.controller;
 
 import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import fr.uge.chargepointconfiguration.firmware.FirmwareController;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +40,7 @@ class FirmwareControllerTest {
     var firmware2 = new Firmware("www.alfen6-1-3.com", "6.1.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "S-type")));
     firmwareRepository.save(firmware2);
 
-    assertEquals(List.of(firmware.toDto(), firmware2.toDto()), firmwareController.getAllFirmwares());
+    assertEquals(List.of(firmware2.toDto(), firmware.toDto()), firmwareController.getAllFirmwares());
   }
 
   /**
@@ -51,7 +50,7 @@ class FirmwareControllerTest {
   @Test
   void getEmptyAllFirmwares() {
     System.out.println(firmwareController.getAllFirmwares());
-    System.out.println(firmwareRepository.findAll());
+    System.out.println(firmwareRepository.findAllByOrderByIdDesc());
     assertEquals(List.of(), firmwareController.getAllFirmwares());
   }
 

@@ -208,6 +208,36 @@ public class UserController {
             .toList();
   }
 
+  /**
+   * Create a new user in the database.
+   *
+   * @param createUserDto the user to create.
+   * @return a ResponseEntity of the user.
+   */
+  @Operation(summary = "Create new user")
+  @ApiResponse(responseCode = "201",
+          description = "User created",
+          content = { @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = UserDto.class))
+          })
+  @PostMapping(value = "/new")
+  public ResponseEntity<UserDto> addUser(
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                  description = "JSON with all parameters of the new user.",
+                  required = true
+          )
+          @RequestBody CreateUserDto createUserDto) {
+    User user;
+    try {
+      user = userService.createUser(createUserDto);
+    } catch (AlreadyCreatedException e) {
+      // TODO Gestion d'erreur
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
+    }
+    return new ResponseEntity<>(user.toDto(), HttpStatus.CREATED);
+  }
+  
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     userService.delete(id);
