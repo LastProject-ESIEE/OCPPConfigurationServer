@@ -47,10 +47,6 @@ function FormInput({
                     <Input
                         value={value}
                         sx={{mt: 1}}
-                        onChange={event => {
-                            onChange(event.target.value)
-                            setCurrentValue(event.target.value)
-                        }}
                         type={isPassword ? "password" : "text"} 
                         onChange={event => onChange(event.target.value)}
                         fullWidth={true}
