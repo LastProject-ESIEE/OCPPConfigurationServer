@@ -48,7 +48,6 @@ public interface OcppObserver {
               chargePointManager,
               chargepointRepository,
               firmwareRepository,
-              statusRepository,
               logger
       );
       case V2 -> new OcppConfigurationObserver2(

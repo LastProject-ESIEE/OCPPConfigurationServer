@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageParser;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
@@ -20,11 +21,8 @@ import java.util.Optional;
  * Manages the charge point by listening and sending messages to the charge point.
  */
 public class ChargePointManager {
-  private final OcppVersion ocppVersion;
   private final OcppMessageParser ocppMessageParser;
   private final ChargepointRepository chargepointRepository;
-  private final FirmwareRepository firmwareRepository;
-  private final StatusRepository statusRepository;
   private final OcppObserver ocppObserver;
   private long currentId = 1;
   private WebSocketMessage pendingRequest = null;
@@ -43,17 +41,14 @@ public class ChargePointManager {
                             FirmwareRepository firmwareRepository,
                             StatusRepository statusRepository,
                             CustomLogger logger) {
-    this.ocppVersion = Objects.requireNonNull(ocppVersion);
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
-    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
-    this.statusRepository = Objects.requireNonNull(statusRepository);
-    this.ocppObserver = OcppObserver.instantiateFromVersion(ocppVersion,
+    this.ocppObserver = OcppObserver.instantiateFromVersion(Objects.requireNonNull(ocppVersion),
             this,
             ocppMessageSender,
             chargepointRepository,
-            firmwareRepository,
-            statusRepository,
+            Objects.requireNonNull(firmwareRepository),
+            Objects.requireNonNull(statusRepository),
             Objects.requireNonNull(logger)
     );
   }
@@ -102,14 +97,15 @@ public class ChargePointManager {
       pendingRequest = null;
     }
     if (message.isEmpty()) {
+      ocppObserver.onDisconnection(this);
       return;
     }
     var ocppMessage = message.orElseThrow();
-    switch (OcppMessage.ocppMessageToMessageType(ocppMessage)) {
-      case REQUEST -> currentId = webSocketMessage.messageId();
-      default -> {
-        // Weird message, ignore it.
-      }
+    // Weird message, ignore it.
+    if (OcppMessage.ocppMessageToMessageType(ocppMessage) == MessageType.REQUEST) {
+      currentId = webSocketMessage.messageId();
+    } else {
+      currentId += 1;
     }
     ocppObserver.onMessage(message.orElseThrow());
   }
@@ -118,19 +114,29 @@ public class ChargePointManager {
    * Does something when the sender has been disconnected.
    */
   public void onDisconnection() {
-    var status = currentChargepoint.getStatus();
-    status.setState(false);
-    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-    currentChargepoint.setStatus(status);
-    chargepointRepository.save(currentChargepoint);
-    notifyStatusUpdate(currentChargepoint.getId(), status);
+    if (currentChargepoint != null) {
+      var status = currentChargepoint.getStatus();
+      status.setState(false);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+      notifyStatusUpdate(currentChargepoint.getId(), status);
+    }
   }
 
   /**
    * Does something if there is an error.
    */
-  public void onError() {
-    // TODO change borne status
+  public void onError(Exception ex) {
+    if (currentChargepoint != null) {
+      var status = currentChargepoint.getStatus();
+      status.setError(ex.toString());
+      status.setStatus(Status.StatusProcess.FAILED);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      currentChargepoint.setStatus(status);
+      chargepointRepository.save(currentChargepoint);
+      notifyStatusUpdate(currentChargepoint.getId(), status);
+    }
   }
 
   /**

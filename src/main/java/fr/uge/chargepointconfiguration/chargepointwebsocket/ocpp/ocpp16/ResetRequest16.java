@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageRequest;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.ResetType;
 import java.util.Objects;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Objects;
  *
  * @param type The reboot type (Hard or Soft).
  */
-public record ResetRequest16(String type) implements OcppMessageRequest {
+public record ResetRequest16(ResetType type) implements OcppMessageRequest {
 
   /**
    * {@link ResetRequest16}'s constructor.

@@ -23,5 +23,11 @@ public record ChangeConfigurationRequest16(String key, String value) implements 
   public ChangeConfigurationRequest16 {
     Objects.requireNonNull(key);
     Objects.requireNonNull(value);
+    if (key.length() > 50) {
+      throw new IllegalArgumentException("Key name cannot be longer than 50 characters.");
+    }
+    if (value.length() > 500) {
+      throw new IllegalArgumentException("Value cannot be more than 500 characters.");
+    }
   }
 }
