@@ -8,21 +8,25 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.OcppConfi
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import fr.uge.chargepointconfiguration.status.StatusRepository;
+import java.util.Objects;
 
 /**
- * Interface used to define an OCPP message from a visitor.
+ * Interface to defines the message observer.<br>
+ * It listens and processes the message sent by the chargepoint.
  */
 public interface OcppObserver {
 
   /**
-   * Instantiate an OcppObserver according to the used OCPP version.
+   * Instantiates the correct observer according to the {@link OcppVersion}.
    *
-   * @param ocppVersion           used ocpp version
-   * @param ocppMessageSender     websocket chanel to send message
-   * @param chargepointRepository charge point repository
-   * @param firmwareRepository    firmware repository
-   * @param statusRepository      status repository
-   * @return OcppObserver
+   * @param ocppVersion {@link OcppVersion}.
+   * @param chargePointManager {@link ChargePointManager}.
+   * @param ocppMessageSender {@link OcppMessageSender}.
+   * @param chargepointRepository {@link ChargepointRepository}.
+   * @param firmwareRepository {@link FirmwareRepository}.
+   * @param statusRepository {@link StatusRepository}.
+   * @param logger {@link CustomLogger}.
+   * @return {@link OcppObserver}.
    */
   static OcppObserver instantiateFromVersion(OcppVersion ocppVersion,
                                              ChargePointManager chargePointManager,
@@ -31,13 +35,19 @@ public interface OcppObserver {
                                              FirmwareRepository firmwareRepository,
                                              StatusRepository statusRepository,
                                              CustomLogger logger) {
+    Objects.requireNonNull(ocppVersion);
+    Objects.requireNonNull(chargePointManager);
+    Objects.requireNonNull(ocppMessageSender);
+    Objects.requireNonNull(chargepointRepository);
+    Objects.requireNonNull(firmwareRepository);
+    Objects.requireNonNull(statusRepository);
+    Objects.requireNonNull(logger);
     return switch (ocppVersion) {
       case V1_6 -> new OcppConfigurationObserver16(
               ocppMessageSender,
               chargePointManager,
               chargepointRepository,
               firmwareRepository,
-              statusRepository,
               logger
       );
       case V2 -> new OcppConfigurationObserver2(
@@ -50,9 +60,24 @@ public interface OcppObserver {
     };
   }
 
+  /**
+   * Does something when receiving a message.
+   *
+   * @param ocppMessage {@link OcppMessage}.
+   */
   void onMessage(OcppMessage ocppMessage);
 
+  /**
+   * Does something when a connection has been set.
+   *
+   * @param chargePointManager {@link ChargePointManager}.
+   */
   void onConnection(ChargePointManager chargePointManager);
 
+  /**
+   * Does something when a disconnection has been done.
+   *
+   * @param chargePointManager {@link ChargePointManager}.
+   */
   void onDisconnection(ChargePointManager chargePointManager);
 }

@@ -21,9 +21,9 @@ public interface BusinessLogRepository extends CrudRepository<BusinessLogEntity,
    *
    * @return a list of all business logs.
    */
-  List<BusinessLogEntity> findAll();
+  List<BusinessLogEntity> findAllByOrderByIdDesc();
 
-  Page<BusinessLogEntity> findAll(Pageable pageable);
+  Page<BusinessLogEntity> findAllByOrderByIdDesc(Pageable pageable);
 
-  List<BusinessLogEntity> findAllByChargepoint(Chargepoint chargepointId);
+  List<BusinessLogEntity> findAllByChargepointOrderByIdDesc(Chargepoint chargepointId);
 }

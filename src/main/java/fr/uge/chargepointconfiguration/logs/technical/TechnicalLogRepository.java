@@ -21,9 +21,9 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLogEntit
    *
    * @return a list of all technical logs.
    */
-  List<TechnicalLogEntity> findAll();
+  List<TechnicalLogEntity> findAllByOrderByIdDesc();
 
-  Page<TechnicalLogEntity> findAll(Pageable pageable);
+  Page<TechnicalLogEntity> findAllByOrderByIdDesc(Pageable pageable);
 
   /**
    * Method to return all technical logs by the component.
@@ -32,7 +32,7 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLogEntit
    * @param level {@link Level}
    * @return the list of technical logs by component.
    */
-  List<TechnicalLogEntity> findAllByComponentAndLevel(
+  List<TechnicalLogEntity> findAllByComponentAndLevelOrderByIdDesc(
           TechnicalLogEntity.Component component,
           String level);
 
@@ -42,7 +42,7 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLogEntit
    * @param level {@link Level}
    * @return the list of technical logs by criticality.
    */
-  List<TechnicalLogEntity> findAllByLevel(String level);
+  List<TechnicalLogEntity> findAllByLevelOrderByIdDesc(String level);
 
 
 }

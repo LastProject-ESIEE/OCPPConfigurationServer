@@ -7,7 +7,9 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ChargePointManager;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.OcppMessageSender;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
-import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.FirmwareStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.ResetType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotificationResponse20;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationTranscriptor;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
@@ -17,25 +19,23 @@ import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.status.Status;
-import fr.uge.chargepointconfiguration.status.StatusRepository;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 
 /**
- * Defines the OCPP configuration message for the visitor.
+ * Defines the OCPP 1.6 observer.<br>
+ * An observer is defined by the interface {@link OcppObserver}.
  */
 public class OcppConfigurationObserver16 implements OcppObserver {
   private final OcppMessageSender sender;
   private final ChargePointManager chargePointManager;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
-  private final StatusRepository statusRepository;
   private final Queue<ChangeConfigurationRequest16> queue = new LinkedList<>();
   private final CustomLogger logger;
   private String firmwareVersion;
@@ -43,50 +43,61 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
 
   /**
-   * Constructor for the OCPP 1.6 configuration observer.
+   * {@link OcppConfigurationObserver16}'s constructor.
    *
-   * @param sender                websocket channel to send message
-   * @param chargepointRepository charge point repository
-   * @param firmwareRepository    firmware repository
-   * @param statusRepository      charge point status repository
+   * @param sender                {@link OcppMessageSender}.
+   * @param chargePointManager    {@link ChargePointManager}.
+   * @param chargepointRepository {@link ChargepointRepository}.
+   * @param firmwareRepository    {@link FirmwareRepository}.
+   * @param logger                {@link CustomLogger}.
    */
   public OcppConfigurationObserver16(OcppMessageSender sender,
                                      ChargePointManager chargePointManager,
                                      ChargepointRepository chargepointRepository,
                                      FirmwareRepository firmwareRepository,
-                                     StatusRepository statusRepository,
                                      CustomLogger logger) {
-    this.sender = sender;
+    this.sender = Objects.requireNonNull(sender);
     this.chargePointManager = Objects.requireNonNull(chargePointManager);
-    this.chargepointRepository = chargepointRepository;
-    this.firmwareRepository = firmwareRepository;
-    this.statusRepository = statusRepository;
+    this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
+    this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
     this.logger = Objects.requireNonNull(logger);
   }
 
   @Override
   public void onMessage(OcppMessage ocppMessage) {
+    Objects.requireNonNull(ocppMessage);
     switch (ocppMessage) {
       case BootNotificationRequest16 b -> processBootNotification(b);
       case ChangeConfigurationResponse16 c -> processConfigurationResponse(c);
-      case ResetResponse16 r -> processResetResponse();
+      case ResetResponse16 ignored -> processResetResponse();
       case FirmwareStatusNotificationRequest16 f -> processFirmwareStatusResponse(f);
       default -> {
-        // Do nothing
+        // ignore
       }
     }
   }
 
   @Override
   public void onConnection(ChargePointManager chargePointManager) {
-
+    Objects.requireNonNull(chargePointManager);
+    // TODO : Is this method really useful ?
   }
 
   @Override
   public void onDisconnection(ChargePointManager chargePointManager) {
-
+    if (chargePointManager.getCurrentChargepoint() == null) {
+      // TODO : Reset the CSMS server address and the OCPP Version !
+      var reset = new ResetRequest16(ResetType.Hard);
+      sender.sendMessage(reset, chargePointManager);
+    }
   }
 
+  /**
+   * Processes the received {@link BootNotificationRequest16} sent by the chargepoint.<br>
+   * It is here where we start the automation of the configuration/firmware update.
+   *
+   * @param bootNotificationRequest16 {@link BootNotificationRequest16}.
+   */
   private void processBootNotification(
           BootNotificationRequest16 bootNotificationRequest16) {
     firmwareVersion = bootNotificationRequest16.firmwareVersion();
@@ -115,7 +126,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     targetFirmwareVersion = config.getFirmware().getVersion();
     status.setState(true);
     status.setStatus(Status.StatusProcess.PENDING);
-    var statusLastTime = status.getLastUpdate();
     status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     currentChargepoint.setStatus(status);
     logger.info(new BusinessLog(null,
@@ -143,15 +153,35 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the configuration.<br>
+   * It searches in database the configuration for the chargepoint,
+   * loads the key-value and sends a {@link ChangeConfigurationRequest16} for the chargepoint.<br>
+   */
+  @SuppressWarnings("unchecked")
   private void processConfigurationRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     if (queue.isEmpty()) {
       // The change configuration list is empty, so we load the configuration
       var configuration = currentChargepoint.getConfiguration().getConfiguration();
       var mapper = new ObjectMapper();
-      HashMap<String, String> configMap;
       try {
-        configMap = mapper.readValue(configuration, HashMap.class);
+        // Cast
+        HashMap<String, String> configMap = mapper.readValue(configuration, HashMap.class);
+        configMap.forEach((key, value) -> {
+          var configMessage = new ChangeConfigurationRequest16(
+                  ConfigurationTranscriptor.idToEnum(Integer.parseInt(key)).getOcpp16Key(),
+                  value
+          );
+          queue.add(configMessage);
+          logger.info(new BusinessLog(null,
+                  currentChargepoint,
+                  BusinessLogEntity.Category.CONFIG,
+                  "added configuration in the waiting list for the chargepoint ("
+                          + currentChargepoint.getSerialNumberChargepoint()
+                          + ") : "
+                          + configMessage));
+        });
       } catch (JsonProcessingException e) {
         logger.error(new BusinessLog(null,
                 currentChargepoint,
@@ -160,20 +190,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                         + currentChargepoint.getSerialNumberChargepoint()
                         + ")"));
         return;
-      }
-      for (Map.Entry<String, String> set :
-              configMap.entrySet()) {
-        var config = new ChangeConfigurationRequest16(
-                ConfigurationTranscriptor.idToEnum(Integer.parseInt(set.getKey())).getOcpp16Key(),
-                set.getValue());
-        queue.add(config);
-        logger.info(new BusinessLog(null,
-                currentChargepoint,
-                BusinessLogEntity.Category.CONFIG,
-                "added configuration in the waiting list for the chargepoint ("
-                        + currentChargepoint.getSerialNumberChargepoint()
-                        + ") : "
-                        + config));
       }
     }
     var config = queue.poll();
@@ -201,10 +217,17 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the {@link ChangeConfigurationResponse16} sent by the chargepoint.<br>
+   * If the change has been rejected, we stop the update.<br>
+   * Otherwise, we continue.
+   *
+   * @param response {@link ChangeConfigurationResponse16}.
+   */
   private void processConfigurationResponse(ChangeConfigurationResponse16 response) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     switch (response.status()) {
-      case "Accepted", "RebootRequired" -> {
+      case Accepted, RebootRequired -> {
         if (queue.isEmpty()) {
           var status = currentChargepoint.getStatus();
           status.setStatus(Status.StatusProcess.FINISHED);
@@ -213,7 +236,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           chargepointRepository.save(currentChargepoint);
           // Dispatch information to users
           chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
-          var reset = new ResetRequest16("Hard");
+          var reset = new ResetRequest16(ResetType.Hard);
           sender.sendMessage(reset, chargePointManager);
           logger.info(new BusinessLog(null,
                   currentChargepoint,
@@ -234,7 +257,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                         + ") has failed, see its status ! "));
         var status = currentChargepoint.getStatus();
         status.setStatus(Status.StatusProcess.FAILED);
-        status.setError(response.status());
+        status.setError(response.status().name());
         currentChargepoint.setStatus(status);
         chargepointRepository.save(currentChargepoint);
         // Dispatch information to users
@@ -244,6 +267,15 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
   }
 
+  /**
+   * Processes the firmware.<br>
+   * It searches in database the firmware target for the chargepoint.<br>
+   * We upgrade the firmware step by step, meaning,
+   * we choose the closest firmware to the current firmware.<br>
+   * Example :<br>
+   * The firmware target is 5.8.7, and the current target is 5.4.8.<br>
+   * We upgrade to 5.5 > 5.6 > 5.7 > 5.8.
+   */
   private void processFirmwareRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var status = currentChargepoint.getStatus();
@@ -293,10 +325,16 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     sender.sendMessage(firmwareRequest, chargePointManager);
   }
 
+  /**
+   * Fetches the first compatible firmware version from the database.
+   *
+   * @param typeAllowed {@link TypeAllowed}.
+   * @return The URL for downloading the firmware.
+   */
   private String fetchUrlFromFirstCompatibleVersion(TypeAllowed typeAllowed) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     var firmwares = firmwareRepository
-            .findAllByTypeAllowed(typeAllowed);
+            .findAllByTypeAllowedOrderByIdDesc(typeAllowed);
     for (var firmware : firmwares) {
       var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
       if (comparison > 0) {
@@ -341,21 +379,34 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     return "";
   }
 
+  /**
+   * Processes the received {@link ResetResponse16}.
+   */
   private void processResetResponse() {
-    var currentChargepoint = chargePointManager.getCurrentChargepoint();
-    var status = currentChargepoint.getStatus();
-    status.setStatus(Status.StatusProcess.FINISHED);
-    status.setState(false);
-    status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-    chargepointRepository.save(currentChargepoint);
-    // Dispatch information to users
-    chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
+    if (chargePointManager.getCurrentChargepoint() != null) {
+      var currentChargepoint = chargePointManager.getCurrentChargepoint();
+      var status = currentChargepoint.getStatus();
+      status.setStatus(Status.StatusProcess.FINISHED);
+      status.setState(false);
+      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
+      chargepointRepository.save(currentChargepoint);
+      // Dispatch information to users
+      chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
+    }
   }
 
+  /**
+   * Processes the current firmware installation status.<br>
+   * If the download has failed or the installation has failed,
+   * we stop the process.<br>
+   * Otherwise, we continue as normal.
+   *
+   * @param f {@link FirmwareStatusNotificationRequest16}.
+   */
   private void processFirmwareStatusResponse(FirmwareStatusNotificationRequest16 f) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     switch (f.status()) {
-      case "Installed" -> {
+      case Installed -> {
         logger.info(new BusinessLog(null,
                 currentChargepoint,
                 BusinessLogEntity.Category.FIRM,
@@ -367,7 +418,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         currentChargepoint.setStatus(status);
         chargepointRepository.save(currentChargepoint);
-        var reset = new ResetRequest16("Hard");
+        var reset = new ResetRequest16(ResetType.Hard);
         sender.sendMessage(reset, chargePointManager);
         logger.info(new BusinessLog(null,
                 currentChargepoint,
@@ -376,9 +427,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                         + currentChargepoint.getSerialNumberChargepoint()
                         + ")"));
       }
-      case "DownloadFailed",
-              "InstallationFailed" -> {
-        if (f.status().equals("DownloadFailed")) {
+      case DownloadFailed,
+              InstallationFailed -> {
+        if (f.status() == FirmwareStatus.DownloadFailed) {
           logger.warn(new BusinessLog(null,
                   currentChargepoint,
                   BusinessLogEntity.Category.FIRM,
@@ -409,7 +460,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         currentChargepoint.setStatus(status);
         chargePointManager.notifyStatusUpdate(currentChargepoint.getId(), status);
         chargepointRepository.save(currentChargepoint);
-        var reset = new ResetRequest16("Hard");
+        var reset = new ResetRequest16(ResetType.Hard);
         sender.sendMessage(reset, chargePointManager);
       }
       default -> {
