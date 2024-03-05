@@ -39,7 +39,7 @@ public class OcppMessageParser16 implements OcppMessageParser {
               JsonParser.stringToObject(ResetResponse16.class,
                       responseMessage.data()));
       case UPDATE_FIRMWARE_REQUEST -> Optional.of(
-              JsonParser.stringToObject(UpdateFirmwareRequest16.class,
+              JsonParser.stringToObject(UpdateFirmwareResponse16.class,
                       "{}")); // Empty value because it is an acknowledgement
       default -> Optional.empty();
     };
