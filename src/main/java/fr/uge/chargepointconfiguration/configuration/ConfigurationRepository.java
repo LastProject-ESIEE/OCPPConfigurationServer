@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfigurationRepository extends CrudRepository<Configuration, Integer>,
       PagingAndSortingRepository<Configuration, Integer> {
-  List<Configuration> findAll();
+  List<Configuration> findAllByOrderByIdDesc();
 
-  Page<Configuration> findAll(Pageable pageable);
+  Page<Configuration> findAllByOrderByIdDesc(Pageable pageable);
 
 }

@@ -61,7 +61,7 @@ public class ChargepointService {
   }
 
   public List<ChargepointDto> getAllChargepoints() {
-    return chargepointRepository.findAll().stream().map(Chargepoint::toDto).toList();
+    return chargepointRepository.findAllByOrderByIdDesc().stream().map(Chargepoint::toDto).toList();
   }
 
   public Optional<ChargepointDto> getChargepointById(int id) {
@@ -78,7 +78,7 @@ public class ChargepointService {
    */
   public List<Chargepoint> search(PageRequest pageable, String clientIdContains) {
     return chargepointRepository
-        .findAllByClientIdContainingIgnoreCase(pageable, clientIdContains)
+        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageable, clientIdContains)
         .stream().toList();
   }
 

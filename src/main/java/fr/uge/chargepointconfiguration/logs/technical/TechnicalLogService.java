@@ -23,7 +23,7 @@ public class TechnicalLogService {
   public List<TechnicalLogEntity>  getTechnicalLogByComponentAndLevel(
       TechnicalLogEntity.Component component,
       Level level) {
-    return technicalLogRepository.findAllByComponentAndLevel(component, level.name());
+    return technicalLogRepository.findAllByComponentAndLevelOrderByIdDesc(component, level.name());
   }
 
   public long countTotal() {
@@ -37,7 +37,7 @@ public class TechnicalLogService {
    * @return the list of corresponding {@link TechnicalLogEntity}
    */
   public List<TechnicalLogEntity> getPage(PageRequest pageable) {
-    return technicalLogRepository.findAll(pageable)
+    return technicalLogRepository.findAllByOrderByIdDesc(pageable)
           .stream().toList();
   }
 }

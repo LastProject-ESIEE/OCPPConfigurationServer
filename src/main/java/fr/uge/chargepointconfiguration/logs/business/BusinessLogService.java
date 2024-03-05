@@ -39,7 +39,7 @@ public class BusinessLogService {
   public List<BusinessLogEntity> getAllByChargepointId(int chargepointId) {
     var chargepoint = chargepointRepository.findById(chargepointId).orElseThrow();
     // TODO : exception BAD REQUEST si id est pas un nombre
-    return businessLogRepository.findAllByChargepoint(chargepoint);
+    return businessLogRepository.findAllByChargepointOrderByIdDesc(chargepoint);
   }
 
   public long countTotal() {
@@ -53,7 +53,7 @@ public class BusinessLogService {
    * @return the list of corresponding {@link BusinessLogEntity}
    */
   public List<BusinessLogEntity> getPage(PageRequest pageable) {
-    return businessLogRepository.findAll(pageable)
+    return businessLogRepository.findAllByOrderByIdDesc(pageable)
           .stream().toList();
   }
 }
