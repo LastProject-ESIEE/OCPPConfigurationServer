@@ -1,5 +1,5 @@
-import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
-import React, { useEffect } from "react";
+import { Box, Grid, Tooltip, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import {
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
@@ -7,13 +7,15 @@ import {
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
 import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
-// import { Link } from "react-router-dom";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 
 const businessLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
+        size:11.5/5,
         /*
         filter: {
           apiField: "containsTitle",
@@ -22,16 +24,24 @@ const businessLogTableColumns: TableColumnDefinition[] = [
         */
     },
     {
-        title: "User"
+        title: "User",
+        size:11.5/5,
     },
     {
-        title: "Chargepoint"
+        title: "Chargepoint",
+        size:11.5/5
     },
     {
         title: "Category",
+        size:11.5/5,
     },
     {
         title: "Log",
+        size:11.5/5,
+    },
+    {
+        title: "",
+        size: 0.5,
     }
 ]
 
@@ -65,55 +75,7 @@ function BusinessLogTable() {
         formatter: (businessLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + businessLog.id} paddingTop={1} maxWidth={"true"}>
-                    {/*<Link key={"chargepoint-edit-path-" + businessLog.id}  to={{ pathname: 'display/' + businessLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>*/}
-                    <ListItemButton style={{
-                        maxWidth: "true",
-                        height: "5vh",
-                        padding: 0,
-                        paddingTop: 3,
-                        borderRadius: 50,
-                        color: 'black',
-                        backgroundColor: '#E1E1E1'
-                    }}>
-                        <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                            <Grid item xs={12 / businessLogTableColumns.length} maxWidth={"true"}
-                                  justifyContent={"center"}>
-                                <Typography variant="body1" align="center"
-                                            noWrap={true}>{new Date(businessLog.date).toLocaleString()}</Typography>
-                            </Grid>
-                            <Grid item xs={12 / businessLogTableColumns.length} maxWidth={"true"}
-                                  justifyContent={"center"}>
-                                <Tooltip
-                                    title={businessLog.user != null && `${businessLog.user.firstName} ${businessLog.user.lastName}`}>
-                                    <Typography variant="body1" align="center" noWrap={true}>
-                                        {businessLog.user != null &&
-                                            `${businessLog.user.firstName} ${businessLog.user.lastName}`}
-                                    </Typography>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={12 / businessLogTableColumns.length} maxWidth={"true"}
-                                  justifyContent={"center"}>
-                                <Tooltip title={businessLog.chargepoint != null && businessLog.chargepoint.clientId}>
-                                    <Typography variant="body1" align="center" noWrap={true}>
-                                        {businessLog.chargepoint != null && businessLog.chargepoint.clientId}
-                                    </Typography>
-                                </Tooltip>
-                            </Grid>
-                            <Grid item xs={12 / businessLogTableColumns.length} maxWidth={"true"}
-                                  justifyContent={"center"}>
-                                <Typography variant="body1" align="center"
-                                            noWrap={true}>{businessLog.category}</Typography>
-                            </Grid>
-                            <Grid item xs={12 / businessLogTableColumns.length} maxWidth={"true"}
-                                  justifyContent={"center"}>
-                                <Tooltip title={businessLog.completeLog}>
-                                    <Typography variant="body1" align="center"
-                                                noWrap={true}>{businessLog.completeLog}</Typography>
-                                </Tooltip>
-                            </Grid>
-                        </Grid>
-                    </ListItemButton>
-                    {/*</Link>*/}
+                    <LogLineItemVMamar businessLog={businessLog}/>
                 </Box>
             )
         },
@@ -132,6 +94,89 @@ function BusinessLogTable() {
     }
 
     return InfinityScrollItemsTable(props)
+}
+
+function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Box onClick={() => setOpen(!open)}
+             style={{
+                 paddingTop: 3,
+                 paddingBottom: 3,
+                 borderRadius: open ? 25 : 50,
+                 backgroundColor: '#E1E1E1'
+             }}>
+            <Grid container maxWidth={"true"}
+                  flexDirection={"row"}
+                  alignItems={"center"}>
+                <Grid item xs={businessLogTableColumns[0].size}
+                      maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Typography variant="body1"
+                                align="center"
+                                noWrap={true}>
+                        {new Date(props.businessLog.date).toLocaleString()}</Typography>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[1].size}
+                      maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Tooltip
+                        title={props.businessLog.user != null && `${props.businessLog.user.firstName} ${props.businessLog.user.lastName}`}>
+                        <Typography variant="body1" align="center" noWrap={true}>
+                            {props.businessLog.user != null &&
+                                `${props.businessLog.user.firstName} ${props.businessLog.user.lastName}`}
+                        </Typography>
+                    </Tooltip>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[2].size} maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Tooltip title={props.businessLog.chargepoint != null && props.businessLog.chargepoint.clientId}>
+                        <Typography variant="body1" align="center" noWrap={true}>
+                            {props.businessLog.chargepoint != null && props.businessLog.chargepoint.clientId}
+                        </Typography>
+                    </Tooltip>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[3].size} maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Typography variant="body1" align="center"
+                                noWrap={true}>{props.businessLog.category}</Typography>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[4].size} maxWidth={"true"}
+                      justifyContent={"center"}>
+                    {!open
+                        ? <Tooltip title={props.businessLog.completeLog}>
+                            <Typography variant="body1"
+                                        align="center"
+                                        noWrap={true}>
+                                {props.businessLog.completeLog}
+                            </Typography>
+                        </Tooltip>
+                        : <Typography variant="inherit"
+                                      align="center"
+                                      noWrap={true}
+                                      color={'rgb(130,130,130)'}>
+                            {props.businessLog.completeLog}
+                        </Typography>}
+                </Grid>
+                <Grid item xs={businessLogTableColumns[5].size}>
+                    <Typography align={"center"}>
+                        {!open
+                            ? <ArrowDropDownIcon/>
+                            : <ArrowDropUpIcon/>}
+                    </Typography>
+                </Grid>
+            </Grid>
+            {open && (
+                <Typography align={"center"}
+                            marginLeft={"10vh"}
+                            marginRight={"10vh"}
+                            paddingTop={1}
+                            paddingBottom={1}>
+                    {props.businessLog.completeLog}</Typography>
+            )}
+        </Box>
+    )
 }
 
 export default BusinessLogTable;

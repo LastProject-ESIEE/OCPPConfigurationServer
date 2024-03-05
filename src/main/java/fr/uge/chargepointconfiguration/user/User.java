@@ -10,13 +10,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * User class represents a User in the database via JPA.<br>
  * A user has an ID, an email, a lastname, a firstname, a password and a role.
  */
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "app_user")
+@SQLDelete(sql = """
+      update user 
+      set is_deleted = true
+      where id = ?
+      """)
+@SQLRestriction("not is_deleted")
 public class User implements DtoEntity<UserDto> {
 
   /**
@@ -50,6 +58,9 @@ public class User implements DtoEntity<UserDto> {
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
   private Role role;
+
+  @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
+  private boolean isDeleted = false;
 
   /**
    * User's constructor.
@@ -192,6 +203,14 @@ public class User implements DtoEntity<UserDto> {
     this.role = role;
   }
 
+  public boolean isDeleted() {
+    return isDeleted;
+  }
+
+  public void setDeleted(boolean deleted) {
+    isDeleted = deleted;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -201,12 +220,12 @@ public class User implements DtoEntity<UserDto> {
       return false;
     }
     User user = (User) o;
-    return id == user.id && Objects.equals(email, user.email);
+    return id == user.id && Objects.equals(email, user.email) && isDeleted == user.isDeleted;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, email, lastName, firstName, password, role);
+    return Objects.hash(id, email, lastName, firstName, password, role, isDeleted);
   }
 
   @Override
@@ -227,6 +246,7 @@ public class User implements DtoEntity<UserDto> {
             + ", lastName='" + lastName + '\''
             + ", firstName='" + firstName + '\''
             + ", role=" + role
+            + ", isDeleted=" + isDeleted
             + '}';
   }
 }

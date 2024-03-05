@@ -1,7 +1,7 @@
 package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageResponse;
-import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.RegistrationStatus;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.data.RegistrationStatus;
 
 /**
  * Defines a response to the BootNotificationRequest.<br>

@@ -103,4 +103,40 @@ public class UserService {
     return userRepository.findAll(pageable)
           .stream().toList();
   }
+
+  /**
+   * Create a new user in the database.
+   *
+   * @param createUserDto contains parameters of the new user.
+   * @return the new User.
+   * @throws AlreadyCreatedException when the user is already created.
+   */
+  public User createUser(
+          CreateUserDto createUserDto
+  ) throws AlreadyCreatedException {
+    var password = passwordEncoder.encode(createUserDto.password());
+    var user = new User(
+            createUserDto.firstName(),
+            createUserDto.lastName(),
+            createUserDto.email(),
+            password,
+            createUserDto.role()
+    );
+    if (userRepository.findByEmail(user.getEmail()) != null) {
+      throw new AlreadyCreatedException();
+    }
+    return userRepository.save(user);
+  }
+  
+  /**
+   * Deletes a user from its id.
+   *
+   * @param id the id of the user to be deleted
+   */
+  public void delete(int id) {
+    if (getAuthenticatedUser().getId() == id) {
+      throw new IllegalArgumentException("Cannot delete yourself");
+    }
+    userRepository.delete(userRepository.findById(id));
+  }
 }

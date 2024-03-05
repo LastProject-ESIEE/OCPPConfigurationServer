@@ -80,7 +80,7 @@ function ChargePointTable() {
         let color = chargePoint.status.state ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
         return (
           <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
-              <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'display/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
+              <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'edit/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
                   <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                           <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>

@@ -94,6 +94,7 @@ public interface WebSocketMessage {
      * @return The correct enum if found, an OTHER by default.
      */
     public static MessageTypeRequest ocppMessageToEnum(OcppMessage ocppMessage) {
+      Objects.requireNonNull(ocppMessage);
       return switch (ocppMessage) {
         case BootNotificationRequest16 ignored -> BOOT_NOTIFICATION_REQUEST;
         case BootNotificationRequest20 ignored -> BOOT_NOTIFICATION_REQUEST;
@@ -113,6 +114,7 @@ public interface WebSocketMessage {
      * @return The correct enum if found, an OTHER by default.
      */
     public static MessageTypeRequest nameToEnum(String messageName) {
+      Objects.requireNonNull(messageName);
       return switch (messageName) {
         case "BootNotification" -> BOOT_NOTIFICATION_REQUEST;
         case "FirmwareStatusNotification" -> STATUS_FIRMWARE_REQUEST;
@@ -127,10 +129,11 @@ public interface WebSocketMessage {
   /**
    * Parse string message received from the web socket.
    *
-   * @param message - received message
-   * @return WebSocketMessage
+   * @param message Received message from the web socket connection.
+   * @return An optional of {@link WebSocketMessage}.
    */
   static Optional<WebSocketMessage> parse(String message) {
+    Objects.requireNonNull(message);
     // Split this line by 4 by default for a request type message.
     var array = message.substring(1, message.length() - 1).split(",", 4);
     var callType = Integer.parseInt(array[0]);

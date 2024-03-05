@@ -1,4 +1,5 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
+import { Configuration } from "./configurationController";
 
 // Websocket notification for charge point status update
 export type WebSocketChargePointNotification = {
@@ -22,7 +23,7 @@ export type ChargePoint = {
     type: string,
     constructor: string,
     clientId: string,
-    configuration: any,
+    configuration: Configuration,
     status: ChargePointStatus,
 }
 
@@ -32,19 +33,18 @@ export async function searchChargePoint(
         page: number = 0,
         filter?: {filterField: string, filterValue: string },
         sort?: { sortField: string, sortOrder: 'asc' | 'desc' }): Promise<PageRequest<ChargePoint> | undefined> {
-    
+
     let request = await fetch(window.location.origin + `/api/chargepoint/search?size=${size}&page=${page}`)
     if(request.ok){
         let content = await request.json()
         let chargePoint = (content as PageRequest<ChargePoint>)
         if(chargePoint != null){
-          console.log(chargePoint)
           return chargePoint
         }else{
-            console.log("Fetch charge point page failed " + content)
+            console.error("Fetch charge point page failed " + content)
         }
     }else{
-        console.log("Fetch configuration list failed, error code:" +  request.status)
+        console.error("Fetch configuration list failed, error code:" +  request.status)
     }
     return undefined
 }
@@ -74,4 +74,37 @@ export async function postNewChargepoint(chargepoint: CreateChargepointDto): Pro
         console.error("Couldn't save chargepoint, error code: " + request.status)
         return false
     }
+}
+
+export async function updateChargepoint(id: number, chargepoint: CreateChargepointDto) {
+    let request = await fetch(`/api/chargepoint/${id}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(chargepoint)
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.error("Couldn't update chargepoint, error code: " + request.status)
+        return false
+    }
+}
+
+export async function getChargepointById(id: number) {
+    let request = await fetch(`/api/chargepoint/${id}`)
+    if(request.ok){
+        let content = await request.json()
+        let chargePoint = (content as ChargePoint)
+        if(chargePoint != null){
+            return chargePoint
+        }else{
+            console.error("Fetch chargepoint failed " + content)
+        }
+    }else{
+        console.error("Fetch chargepoint failed, error code:" +  request.status)
+    }
+    return undefined
 }

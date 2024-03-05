@@ -1,17 +1,34 @@
 package fr.uge.chargepointconfiguration.chargepointwebsocket;
 
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
+import java.util.Objects;
+
 /**
- * A record to define a message received by the server from the remote.
+ * Defines the web socket request message.<br>
+ * It is sent before a {@link WebSocketResponseMessage}.
  *
- * @param callType    The call's type given by the message.
- * @param messageId   The message's id which is useful if we need to answer.
- * @param messageName An enumeration to define the message type.
+ * @param callType    The type of call defined by {@link MessageType}.
+ * @param messageId   The message's id.
+ * @param messageName {@link MessageTypeRequest}.
  * @param data        The data given by the message, it is in Json format.
  */
 public record WebSocketRequestMessage(int callType,
                                       long messageId,
                                       WebSocketMessage.MessageTypeRequest messageName,
                                       String data) implements WebSocketMessage {
+
+  /**
+   * {@link WebSocketRequestMessage}'s constructor.
+   *
+   * @param callType    The type of call defined by {@link MessageType}.
+   * @param messageId   The message's id.
+   * @param messageName {@link MessageTypeRequest}.
+   * @param data        The data given by the message, it is in Json format.
+   */
+  public WebSocketRequestMessage {
+    Objects.requireNonNull(messageName);
+    Objects.requireNonNull(data);
+  }
 
   @Override
   public boolean isRequest() {

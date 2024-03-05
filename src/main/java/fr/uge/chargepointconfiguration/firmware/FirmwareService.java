@@ -20,7 +20,7 @@ public class FirmwareService {
   }
 
   public List<Firmware> getAllFirmwares() {
-    return firmwareRepository.findAll();
+    return firmwareRepository.findAllByOrderByIdDesc();
   }
 
   public Optional<Firmware> getFirmwareById(int id) {
@@ -38,8 +38,8 @@ public class FirmwareService {
    * @return the list of corresponding {@link Firmware}
    */
   public List<Firmware> getPage(PageRequest pageable) {
-    return firmwareRepository.findAll(pageable)
-            .stream().toList();
+    return firmwareRepository.findAllByOrderByIdDesc(pageable)
+          .stream().toList();
   }
 
 

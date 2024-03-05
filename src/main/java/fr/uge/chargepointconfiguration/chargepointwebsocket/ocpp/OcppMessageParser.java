@@ -17,8 +17,8 @@ public interface OcppMessageParser {
    * into an OCPP message.<br>
    * Returns an empty optional if the packet is unknown.
    *
-   * @param webSocketMessage The received message.
-   * @return An optional of an OCPP message.
+   * @param webSocketMessage {@link WebSocketMessage}.
+   * @return An optional of an {@link OcppMessage}.
    */
   Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage);
 
@@ -28,20 +28,26 @@ public interface OcppMessageParser {
    * This method should be called after the server sent a request to the chargepoint.<br>
    * Returns an empty optional if the packet is unknown.
    *
-   * @param requestMessage The message the server sent to the chargepoint.
-   * @param responseMessage The message sent by the chargepoint.
-   * @return An optional of an OCPP message.
+   * @param requestMessage The {@link WebSocketMessage} the server sent to the chargepoint.
+   * @param responseMessage The {@link WebSocketMessage} response sent by the chargepoint.
+   * @return An optional of an {@link OcppMessage}.
    */
   Optional<OcppMessage> parseResponseMessage(WebSocketMessage requestMessage,
                                              WebSocketMessage responseMessage);
 
+  /**
+   * Parses the OCPP message into a String.
+   *
+   * @param message {@link OcppMessage}.
+   * @return The OCPP message into a formatted String.
+   */
   String transform(OcppMessage message);
 
   /**
    * Instantiate the correct parser according to the OCPP version.
    *
-   * @param ocppVersion OcppVersion.
-   * @return OcppMessageParser.
+   * @param ocppVersion {@link OcppVersion}.
+   * @return {@link OcppMessageParser}.
    */
   static OcppMessageParser instantiateFromVersion(OcppVersion ocppVersion) {
     Objects.requireNonNull(ocppVersion);

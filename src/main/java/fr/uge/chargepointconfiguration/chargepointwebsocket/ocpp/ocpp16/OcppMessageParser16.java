@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Parses an OCPP 1.6 message.
+ * Parses the OCPP 1.6 messages.
  */
 public class OcppMessageParser16 implements OcppMessageParser {
 
@@ -39,7 +39,7 @@ public class OcppMessageParser16 implements OcppMessageParser {
               JsonParser.stringToObject(ResetResponse16.class,
                       responseMessage.data()));
       case UPDATE_FIRMWARE_REQUEST -> Optional.of(
-              JsonParser.stringToObject(UpdateFirmwareRequest16.class,
+              JsonParser.stringToObject(UpdateFirmwareResponse16.class,
                       "{}")); // Empty value because it is an acknowledgement
       default -> Optional.empty();
     };
@@ -47,6 +47,7 @@ public class OcppMessageParser16 implements OcppMessageParser {
 
   @Override
   public String transform(OcppMessage message) {
+    Objects.requireNonNull(message);
     return JsonParser.objectToJsonString(message);
   }
 }
