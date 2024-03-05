@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { ButtonData, buttons } from "../conf/homeDefinition";
 import {
-    Avatar,
     Box,
     Button,
     Collapse,
