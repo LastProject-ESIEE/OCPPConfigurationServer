@@ -1,1 +1,0 @@
-INSERT INTO status (error) VALUES ('');
