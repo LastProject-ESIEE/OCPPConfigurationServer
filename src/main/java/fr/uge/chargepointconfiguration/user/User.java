@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
  * A user has an ID, an email, a lastname, a firstname, a password and a role.
  */
 @Entity
-@Table(name = "\"user\"")
+@Table(name = "app_user")
 @SQLDelete(sql = """
       update user 
       set is_deleted = true
