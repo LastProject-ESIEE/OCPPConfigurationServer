@@ -1,5 +1,5 @@
-import { Box, Grid, ListItemButton, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, Button, Grid, IconButton, MenuItem, Modal, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
@@ -8,6 +8,9 @@ import {
 } from "../../../sharedComponents/DisplayTable";
 import { Role, searchUser, User } from "../../../conf/userController";
 import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
 
@@ -27,12 +30,13 @@ const userTableColumns: TableColumnDefinition[] = [
 ]
 
 function UserTable() {
-    const [tableData, setTableData] = React.useState<User[]>([]);
-    const [currentPage, setCurrentPage] = React.useState(0);
-    const [hasMore, setHasMore] = React.useState(true);
-    const [error, setError] = React.useState<string | undefined>(undefined);
+    const [tableData, setTableData] = useState<User[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [error, setError] = useState<string | undefined>(undefined);
     const [userRoleList, setUserRoleList] = useState<Role[]>([]);
     const [me, setMe] = useState<User | undefined>(undefined);
+
 
     useEffect(() => {
         searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
@@ -92,7 +96,7 @@ function UserTable() {
             }
         })
             console.log(event.target.value as string)
-    } 
+    }
 
     let props: InfinityScrollItemsTableProps<User> = {
         columns: userTableColumns,
@@ -104,7 +108,7 @@ function UserTable() {
         formatter: (user) => {
             return (
                 <Box key={"box-configuration-edit-path-" + user.id}  paddingTop={1} maxWidth={"true"}>
-                    <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                    <Box style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                             <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.lastName}</Typography>
@@ -143,11 +147,17 @@ function UserTable() {
                                     )}
                                 </Select>
                             </Grid>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
+                                <DeleteUserModal
+                                    user={user} 
+                                    enabled={user.id === me?.id} 
+                                    setTableData={setTableData}
+                                    setError={setError}
+                                    setHasMore={setHasMore}
+                                />
                             </Grid>
                         </Grid>
-                    </ListItemButton>
+                    </Box>
                 </Box>
             )
         },
@@ -168,4 +178,98 @@ function UserTable() {
     return InfinityScrollItemsTable(props)
 }
 
+async function deleteUser(user: User) {
+    let request = await fetch("/api/user/" + user.id,
+        {
+            method: "DELETE"
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.error("Couldn't delete user, error code: " + request.status)
+        return false
+    }
+}
+
+function DeleteUserModal(props: {
+    user: User,
+    enabled: boolean,
+    setTableData: Dispatch<SetStateAction<User[]>>,
+    setError: Dispatch<SetStateAction<string | undefined>>,
+    setHasMore: Dispatch<SetStateAction<boolean>>
+}){
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    return (
+        <Box>
+            <IconButton
+                disabled={props.enabled}
+                onClick={handleOpen}
+            >
+                <DeleteIcon color="error"/>
+            </IconButton>
+            <Modal
+                open={open}
+                onClose={handleClose}
+            >
+                <Grid sx={{
+                    marginTop: "25%",
+                    marginLeft: "35%",
+                    boxShadow: 10,
+                    bgcolor: "background.paper",
+                    border: "2px solid #FFF",
+                    p: 4,
+                    width: 550,
+                    justifyContent: "center",
+                    textAlign: "center"
+                    }}>
+                    <Box>
+                        <Typography variant="h6" sx={{paddingBottom: 2}}>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</Typography>
+                        <Typography>{"Nom : " + props.user.lastName}</Typography>
+                        <Typography>{"Prénom : " + props.user.firstName}</Typography>
+                        <Typography sx={{paddingBottom: 2}}>{"Rôle : " + englishRoleToFrench(props.user.role.toString())}</Typography>
+                        <Button
+                            sx={{
+                                borderRadius: 28,
+                                marginRight: 5,
+                                marginTop: 2
+                            }}
+                            variant="contained"
+                            color="success"
+                            onClick={async () => {
+                                let value = await deleteUser(props.user)
+                                if (value) {
+                                    searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
+                                        if(!result){
+                                            props.setError("Erreur lors de la récupération des utilisateurs.")
+                                            return
+                                        }
+                                        props.setTableData(result.data)
+                                        props.setHasMore(result.total > PAGE_SIZE)
+                                    });
+                                }
+                            }}
+                        >
+                            <CheckIcon/>
+                        </Button>
+                        <Button
+                            sx={{
+                                borderRadius: 28,
+                                marginLeft: 5,
+                                marginTop: 2
+                            }}
+                            variant="contained"
+                            color="error"
+                            onClick={handleClose}
+                        >
+                            <CloseIcon/>
+                        </Button>
+                    </Box>
+                </Grid>
+            </Modal>
+        </Box>
+    )
+}
 export default UserTable;
