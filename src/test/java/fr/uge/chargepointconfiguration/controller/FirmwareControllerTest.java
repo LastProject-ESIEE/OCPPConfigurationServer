@@ -40,7 +40,7 @@ class FirmwareControllerTest {
     var firmware2 = new Firmware("www.alfen6-1-3.com", "6.1.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "S-type")));
     firmwareRepository.save(firmware2);
 
-    assertEquals(List.of(firmware.toDto(), firmware2.toDto()), firmwareController.getAllFirmwares());
+    assertEquals(List.of(firmware2.toDto(), firmware.toDto()), firmwareController.getAllFirmwares());
   }
 
   /**
