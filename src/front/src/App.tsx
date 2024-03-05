@@ -14,6 +14,7 @@ import UserTable from "./pages/home/account/UserTable";
 import BusinessLogTable from "./pages/home/logs/BusinessLogTable";
 import TechnicalLogTable from "./pages/home/logs/TechnicalLogTable";
 import Account from "./pages/home/account/Account";
+import CreateFirmware from './pages/home/firmware/CreateFirmware';
 
 
 function App(): JSX.Element {
@@ -37,7 +38,7 @@ function App(): JSX.Element {
                         </Route>
                         <Route path="firmware">
                             <Route path="" element={<FirmwareTable/>}/>
-                            <Route path="new" element={<Error/>}/>
+                            <Route path="new" element={<CreateFirmware/>}/>
                         </Route>
                         <Route path="account">
                             <Route path="" element={<UserTable/>}/>

@@ -106,7 +106,7 @@ function LeftSection(props: {
 
 function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> , selectedKeys: Transcriptor[], setSelectedKeys: Dispatch<SetStateAction<Transcriptor[]>> }) {
     const backgroundColor = 'rgb(249, 246, 251)'
-
+    
     return (
         <Box>
             <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, backgroundColor}}>
