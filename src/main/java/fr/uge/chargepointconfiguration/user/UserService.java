@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.user;
 
 import fr.uge.chargepointconfiguration.DtoEntity;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,9 @@ public class UserService {
             password,
             newUserDto.role()
     );
+    if (userRepository.findByEmail(user.getEmail()) != null) {
+      return null;
+    }
     return userRepository.save(user);
   }
 }

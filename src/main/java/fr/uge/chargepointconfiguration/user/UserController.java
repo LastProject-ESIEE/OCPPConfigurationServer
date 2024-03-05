@@ -226,7 +226,10 @@ public class UserController {
                   required = true
           )
           @RequestBody NewUserDto newUserDto) {
-    var user = userService.createUser(newUserDto).toDto();
-    return new ResponseEntity<>(user, HttpStatus.OK);
+    var user = userService.createUser(newUserDto);
+    if (user == null) {
+      return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+    }
+    return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
 }
