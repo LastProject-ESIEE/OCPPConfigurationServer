@@ -103,4 +103,16 @@ public class UserService {
     return userRepository.findAll(pageable)
           .stream().toList();
   }
+
+  /**
+   * Deletes a user from its id.
+   *
+   * @param id the id of the user to be deleted
+   */
+  public void delete(int id) {
+    if (getAuthenticatedUser().getId() == id) {
+      throw new IllegalArgumentException("Cannot delete yourself");
+    }
+    userRepository.delete(userRepository.findById(id));
+  }
 }
