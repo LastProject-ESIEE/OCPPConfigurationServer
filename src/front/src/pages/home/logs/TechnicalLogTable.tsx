@@ -73,7 +73,6 @@ function TechnicalLogTable() {
             return (
                 <Box key={"box-configuration-edit-path-" + technicalLog.id} paddingTop={1} maxWidth={"true"}>
                     <LogLineItemVMamar technicalLog={technicalLog}/>
-                    }
                 </Box>
             )
         },
