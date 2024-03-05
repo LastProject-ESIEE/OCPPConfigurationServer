@@ -20,7 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Table(name = "app_user")
 @SQLDelete(sql = """
-      update user 
+      update app_user 
       set is_deleted = true
       where id = ?
       """)
