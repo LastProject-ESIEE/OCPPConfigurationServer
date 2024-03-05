@@ -13,8 +13,8 @@ function AddAccount() {
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
-    const [toast, setToast] = useState(false); // A vier si toast sûrement
-    const [display, setDisplay] = useState(false); // A vier si toast sûrement
+    const [toast, setToast] = useState(false); // TODO Edit with the real toast later
+    const [display, setDisplay] = useState(false); // TODO Edit with the real toast later
 
     useEffect(() => {
         if (
@@ -78,15 +78,13 @@ function AddAccount() {
                             password: password1, 
                             role: role
                         }
-                        if (user !== undefined) {
-                            let returnValue = createNewUser(user)
-                            returnValue.then(value => {
-                                console.log("value : " + value)
-                                setToast(value)
-                                setDisplay(true)
-                            })
-                            console.log("toast : " + toast)
-                        }
+                        let returnValue = createNewUser(user)
+                        returnValue.then(value => {
+                            console.log("value : " + value)
+                            setToast(value)
+                            setDisplay(true)
+                        })
+                        console.log("toast : " + toast)
                     }
                 }
             >

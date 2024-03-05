@@ -45,8 +45,6 @@ function RoleComponent(props: {
                         )})}
                     </Select>
                 </Grid>
-                {
-                }
             </Grid>
         </Paper>
     )

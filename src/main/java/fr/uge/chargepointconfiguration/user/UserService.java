@@ -1,7 +1,5 @@
 package fr.uge.chargepointconfiguration.user;
 
-import fr.uge.chargepointconfiguration.DtoEntity;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,20 +107,22 @@ public class UserService {
   /**
    * Create a new user in the database.
    *
-   * @param newUserDto contains parameters of the new user.
+   * @param createUserDto contains parameters of the new user.
    * @return the new User.
    */
-  public User createUser(NewUserDto newUserDto) throws SQLIntegrityConstraintViolationException {
-    var password = passwordEncoder.encode(newUserDto.password());
+  public User createUser(
+          CreateUserDto createUserDto
+  ) throws AlreadyCreatedException {
+    var password = passwordEncoder.encode(createUserDto.password());
     var user = new User(
-            newUserDto.firstName(),
-            newUserDto.lastName(),
-            newUserDto.email(),
+            createUserDto.firstName(),
+            createUserDto.lastName(),
+            createUserDto.email(),
             password,
-            newUserDto.role()
+            createUserDto.role()
     );
     if (userRepository.findByEmail(user.getEmail()) != null) {
-      throw new SQLIntegrityConstraintViolationException();
+      throw new AlreadyCreatedException();
     }
     return userRepository.save(user);
   }

@@ -11,7 +11,7 @@ export type User = {
     role: Role
 }
 
-export type UserDto = {
+export type CreateUserDto = {
     email: string,
     lastName: string,
     firstName: string,
@@ -40,7 +40,7 @@ export async function searchUser(
     return undefined
 }
 
-export async function createNewUser(user: UserDto) {
+export async function createNewUser(user: CreateUserDto) {
 
     let request = await fetch("/api/user/new",
         {

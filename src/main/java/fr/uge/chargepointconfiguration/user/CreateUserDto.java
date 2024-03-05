@@ -9,7 +9,7 @@ package fr.uge.chargepointconfiguration.user;
  * @param password password encrypted of the user.
  * @param role role of the user.
  */
-public record NewUserDto(
+public record CreateUserDto(
         String firstName,
         String lastName,
         String email,
