@@ -1,7 +1,4 @@
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Box,
     Grid,
     Tooltip,
