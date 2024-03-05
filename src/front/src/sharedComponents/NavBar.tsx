@@ -19,6 +19,7 @@ import AppBar from "@mui/material/AppBar";
 import Typography from "@mui/material/Typography";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export function englishRoleToFrench(role: string): string {
     switch (role) {
@@ -188,11 +189,7 @@ export function NavBar() {
                                       aria-label={"logout"}
                                       style={{fontSize: 'inherit'}}
                                   >
-                                      <Avatar src={"/assets/power-off.png"} alt={"logout"}
-                                              style={{
-                                                  width: '1em',
-                                                  height: 'auto'
-                                              }}/>
+                                        <LogoutIcon style={{width: '1em',height: 'auto', color: 'black'}}/>
                                   </IconButton>
                               </Grid>
                               <Grid item>
