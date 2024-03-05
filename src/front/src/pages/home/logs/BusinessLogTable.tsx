@@ -9,7 +9,6 @@ import {
 import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-// import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 
@@ -76,9 +75,7 @@ function BusinessLogTable() {
         formatter: (businessLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + businessLog.id} paddingTop={1} maxWidth={"true"}>
-                    {/*<Link key={"chargepoint-edit-path-" + businessLog.id}  to={{ pathname: 'display/' + businessLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>*/}
                     <LogLineItemVMamar businessLog={businessLog}/>
-                    {/*</Link>*/}
                 </Box>
             )
         },

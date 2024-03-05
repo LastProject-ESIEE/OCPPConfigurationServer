@@ -14,7 +14,6 @@ import {
 import { searchTechnicalLog, TechnicalLog } from "../../../conf/technicalLogController";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-// import { Link } from "react-router-dom";
 
 const PAGE_SIZE = 30; // Max items displayed in the technical log table
 
@@ -73,9 +72,7 @@ function TechnicalLogTable() {
         formatter: (technicalLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + technicalLog.id} paddingTop={1} maxWidth={"true"}>
-                    {/*<Link key={"chargepoint-edit-path-" + technicalLog.id}  to={{ pathname: 'display/' + technicalLog.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>*/}
                     <LogLineItemVMamar technicalLog={technicalLog}/>
-                    {/*</Link>*/
                     }
                 </Box>
             )
