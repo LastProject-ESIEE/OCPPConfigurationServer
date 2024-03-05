@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -227,9 +228,13 @@ public class UserController {
                   required = true
           )
           @RequestBody NewUserDto newUserDto) {
-    var user = userService.createUser(newUserDto);
-    if (user == null) {
+    User user;
+    try {
+      user = userService.createUser(newUserDto);
+    } catch (SQLIntegrityConstraintViolationException e) {
+      // TODO Gestion d'erreur
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+
     }
     return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }

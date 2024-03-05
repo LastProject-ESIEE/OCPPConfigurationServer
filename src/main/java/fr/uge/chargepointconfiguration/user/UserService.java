@@ -112,7 +112,7 @@ public class UserService {
    * @param newUserDto contains parameters of the new user.
    * @return the new User.
    */
-  public User createUser(NewUserDto newUserDto) {
+  public User createUser(NewUserDto newUserDto) throws SQLIntegrityConstraintViolationException {
     var password = passwordEncoder.encode(newUserDto.password());
     var user = new User(
             newUserDto.firstName(),
@@ -122,7 +122,7 @@ public class UserService {
             newUserDto.role()
     );
     if (userRepository.findByEmail(user.getEmail()) != null) {
-      return null;
+      throw new SQLIntegrityConstraintViolationException();
     }
     return userRepository.save(user);
   }
