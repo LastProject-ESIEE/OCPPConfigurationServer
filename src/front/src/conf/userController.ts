@@ -11,6 +11,14 @@ export type User = {
     role: Role
 }
 
+export type CreateUserDto = {
+    email: string,
+    lastName: string,
+    firstName: string,
+    password: string,
+    role: Role
+}
+
 export async function searchUser(
     size: number = 10,
     page: number = 0,
@@ -30,4 +38,23 @@ export async function searchUser(
         console.log("Fetch user list failed, error code:" +  request.status)
     }
     return undefined
+}
+
+export async function createNewUser(user: CreateUserDto) {
+
+    let request = await fetch("/api/user/new",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.error("Couldn't save the user, error code: " + request.status)
+        return false
+    }
+    
 }

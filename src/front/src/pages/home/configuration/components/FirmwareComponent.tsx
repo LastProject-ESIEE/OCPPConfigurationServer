@@ -23,7 +23,6 @@ function FirmwareComponent(props: {
 
     return (
         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
-
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid xs={4} item>
                     <h4>Firmware : </h4>

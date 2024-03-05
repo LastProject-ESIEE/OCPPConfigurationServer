@@ -105,6 +105,30 @@ public class UserService {
   }
 
   /**
+   * Create a new user in the database.
+   *
+   * @param createUserDto contains parameters of the new user.
+   * @return the new User.
+   * @throws AlreadyCreatedException when the user is already created.
+   */
+  public User createUser(
+          CreateUserDto createUserDto
+  ) throws AlreadyCreatedException {
+    var password = passwordEncoder.encode(createUserDto.password());
+    var user = new User(
+            createUserDto.firstName(),
+            createUserDto.lastName(),
+            createUserDto.email(),
+            password,
+            createUserDto.role()
+    );
+    if (userRepository.findByEmail(user.getEmail()) != null) {
+      throw new AlreadyCreatedException();
+    }
+    return userRepository.save(user);
+  }
+  
+  /**
    * Deletes a user from its id.
    *
    * @param id the id of the user to be deleted

@@ -333,11 +333,11 @@ public class OcppConfigurationObserver16 implements OcppObserver {
    */
   private String fetchUrlFromFirstCompatibleVersion(TypeAllowed typeAllowed) {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
-    var firmwares = firmwareRepository
-            .findAllByTypeAllowedOrderByIdDesc(typeAllowed);
-    for (var firmware : firmwares) {
-      var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
-      if (comparison > 0) {
+    var comparison = targetFirmwareVersion.compareTo(firmwareVersion);
+    if (comparison > 0) {
+      var firmwares = firmwareRepository
+              .findAllByTypeAllowedAsc(typeAllowed);
+      for (var firmware : firmwares) {
         if (firmware.getVersion().compareTo(firmwareVersion) > 0) {
           logger.info(new BusinessLog(null,
                   currentChargepoint,
@@ -348,34 +348,30 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                           + firmware.getVersion()));
           return firmware.getUrl();
         }
-      } else if (comparison == 0) {
-        logger.info(new BusinessLog(null,
-                currentChargepoint,
-                BusinessLogEntity.Category.FIRM,
-                "chargepoint ("
-                        + currentChargepoint.getSerialNumberChargepoint()
-                        + ") is already updated"));
-        return "";
-      } else {
-        logger.warn(new BusinessLog(null,
-                currentChargepoint,
-                BusinessLogEntity.Category.FIRM,
-                "cannot downgrade chargepoint ("
-                        + currentChargepoint.getSerialNumberChargepoint()
-                        + ") (CURRENT : "
-                        + firmwareVersion
-                        + ", TARGET : "
-                        + firmware.getVersion()
-                        + ")"));
-        return "";
       }
+    } else if (comparison < 0) {
+      var firmwares = firmwareRepository
+              .findAllByTypeAllowedDesc(typeAllowed);
+      for (var firmware : firmwares) {
+        if (firmware.getVersion().compareTo(firmwareVersion) < 0) {
+          logger.info(new BusinessLog(null,
+                  currentChargepoint,
+                  BusinessLogEntity.Category.FIRM,
+                  "downgrading chargepoint ("
+                          + currentChargepoint.getSerialNumberChargepoint()
+                          + ") with firmware "
+                          + firmware.getVersion()));
+          return firmware.getUrl();
+        }
+      }
+    } else {
+      logger.info(new BusinessLog(null,
+              currentChargepoint,
+              BusinessLogEntity.Category.FIRM,
+              "chargepoint ("
+                      + currentChargepoint.getSerialNumberChargepoint()
+                      + ") is already updated"));
     }
-    logger.warn(new BusinessLog(null,
-            currentChargepoint,
-            BusinessLogEntity.Category.FIRM,
-            "cannot find compatible firmware for chargepoint ("
-                    + currentChargepoint.getSerialNumberChargepoint()
-                    + "), SKIPPING THIS PROCESS"));
     return "";
   }
 

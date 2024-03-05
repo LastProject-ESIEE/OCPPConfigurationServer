@@ -32,7 +32,18 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
   @Query("select f from Firmware f "
           + "join f.typesAllowed "
           + "where :typeAllowed member of f.typesAllowed order by f.version asc")
-  List<Firmware> findAllByTypeAllowedOrderByIdDesc(@Param("typeAllowed") TypeAllowed typeAllowed);
+  List<Firmware> findAllByTypeAllowedAsc(@Param("typeAllowed") TypeAllowed typeAllowed);
+
+  /**
+   * Returns all the firmwares from the database according to the compatibility table.
+   *
+   * @param typeAllowed {@link TypeAllowed} which is the compatibility for a firmware.
+   * @return {@link Firmware}.
+   */
+  @Query("select f from Firmware f "
+          + "join f.typesAllowed "
+          + "where :typeAllowed member of f.typesAllowed order by f.version desc")
+  List<Firmware> findAllByTypeAllowedDesc(@Param("typeAllowed") TypeAllowed typeAllowed);
 
   /**
    * Return a list of registered Firmwares from database.

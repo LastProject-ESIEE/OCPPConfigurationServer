@@ -10,6 +10,7 @@ export type FormInputProps = {
     checkIsWrong?: (value: string) => boolean,
     placeholder?: string,
     value?: string,
+    isPassword?: boolean,
     onError?: () => void
 }
 
@@ -21,7 +22,8 @@ function FormInput({
                        checkIsWrong = val => false,
                        placeholder = name,
                        value = "",
-                       onError = () => {},
+                       isPassword = false,
+                       onError = () => {}
                    }: FormInputProps) {
     const [actualBackground, setActualBackground] = useState(backgroundColor);
 
@@ -45,6 +47,7 @@ function FormInput({
                     <Input
                         value={value}
                         sx={{mt: 1}}
+                        type={isPassword ? "password" : "text"} 
                         onChange={event => onChange(event.target.value)}
                         fullWidth={true}
                         placeholder={placeholder}
