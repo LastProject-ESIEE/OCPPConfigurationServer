@@ -8,7 +8,6 @@ import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
-import fr.uge.chargepointconfiguration.status.StatusRepository;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -25,7 +24,6 @@ public class ConfigurationServer extends WebSocketServer {
   private final HashMap<InetSocketAddress, ChargePointManager> chargePoints = new HashMap<>();
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
-  private final StatusRepository statusRepository;
   private final CustomLogger logger;
 
   /**
@@ -34,18 +32,15 @@ public class ConfigurationServer extends WebSocketServer {
    * @param address               The remote address to connect to.
    * @param chargepointRepository {@link ChargepointRepository}.
    * @param firmwareRepository    {@link FirmwareRepository}.
-   * @param statusRepository      {@link StatusRepository}.
    * @param logger                {@link CustomLogger}.
    */
   public ConfigurationServer(InetSocketAddress address,
                              ChargepointRepository chargepointRepository,
                              FirmwareRepository firmwareRepository,
-                             StatusRepository statusRepository,
                              CustomLogger logger) {
     super(Objects.requireNonNull(address));
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
-    this.statusRepository = Objects.requireNonNull(statusRepository);
     this.logger = Objects.requireNonNull(logger);
   }
 
@@ -186,7 +181,6 @@ public class ConfigurationServer extends WebSocketServer {
             },
             chargepointRepository,
             firmwareRepository,
-            statusRepository,
             logger);
   }
 }
