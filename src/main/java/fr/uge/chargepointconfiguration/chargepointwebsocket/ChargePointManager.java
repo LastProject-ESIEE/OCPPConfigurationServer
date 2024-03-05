@@ -11,8 +11,6 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
-import fr.uge.chargepointconfiguration.status.Status;
-import fr.uge.chargepointconfiguration.status.StatusRepository;
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +37,6 @@ public class ChargePointManager {
                             OcppMessageSender ocppMessageSender,
                             ChargepointRepository chargepointRepository,
                             FirmwareRepository firmwareRepository,
-                            StatusRepository statusRepository,
                             CustomLogger logger) {
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
@@ -48,7 +45,6 @@ public class ChargePointManager {
             ocppMessageSender,
             chargepointRepository,
             Objects.requireNonNull(firmwareRepository),
-            Objects.requireNonNull(statusRepository),
             Objects.requireNonNull(logger)
     );
   }
@@ -115,12 +111,10 @@ public class ChargePointManager {
    */
   public void onDisconnection() {
     if (currentChargepoint != null) {
-      var status = currentChargepoint.getStatus();
-      status.setState(false);
-      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-      currentChargepoint.setStatus(status);
+      currentChargepoint.setState(false);
+      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
-      notifyStatusUpdate(currentChargepoint.getId(), status);
+      notifyStatusUpdate();
     }
   }
 
@@ -129,26 +123,20 @@ public class ChargePointManager {
    */
   public void onError(Exception ex) {
     if (currentChargepoint != null) {
-      var status = currentChargepoint.getStatus();
-      status.setError(ex.toString());
-      status.setStatus(Status.StatusProcess.FAILED);
-      status.setLastUpdate(new Timestamp(System.currentTimeMillis()));
-      currentChargepoint.setStatus(status);
+      currentChargepoint.setError(ex.toString());
+      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
+      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
-      notifyStatusUpdate(currentChargepoint.getId(), status);
+      notifyStatusUpdate();
     }
   }
 
   /**
-   * Notifies via the websocket the current {@link Status} of the {@link Chargepoint}.
-   *
-   * @param id The websocket message's id.
-   * @param status {@link Status}.
+   * Notifies via the websocket the current status of the current {@link Chargepoint}.
    */
-  public void notifyStatusUpdate(int id, Status status) {
-    Objects.requireNonNull(status);
+  public void notifyStatusUpdate() {
     WebSocketHandler.sendMessageToUsers(
-            new ChargePointWebsocketNotification(id, status)
+            ChargePointWebsocketNotification.from(currentChargepoint)
     );
   }
 }
