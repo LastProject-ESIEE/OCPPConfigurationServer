@@ -112,7 +112,6 @@ public class ChargePointManager {
   public void onDisconnection() {
     if (currentChargepoint != null) {
       currentChargepoint.setState(false);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
     }
@@ -125,7 +124,6 @@ public class ChargePointManager {
     if (currentChargepoint != null) {
       currentChargepoint.setError(ex.toString());
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
     }

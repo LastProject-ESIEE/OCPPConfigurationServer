@@ -223,6 +223,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   }
 
   public void setError(String error) {
+    updateLastUpdate();
     this.error = error;
   }
 
@@ -239,6 +240,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   }
 
   public void setState(boolean state) {
+    updateLastUpdate();
     this.state = state;
   }
 
@@ -247,6 +249,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   }
 
   public void setStep(Step step) {
+    updateLastUpdate();
     this.step = step;
   }
 
@@ -255,7 +258,12 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   }
 
   public void setStatusProcess(StatusProcess statusProcess) {
+    updateLastUpdate();
     this.statusProcess = statusProcess;
+  }
+
+  private void updateLastUpdate() {
+    lastUpdate = new Timestamp(System.currentTimeMillis());
   }
 
   @Override

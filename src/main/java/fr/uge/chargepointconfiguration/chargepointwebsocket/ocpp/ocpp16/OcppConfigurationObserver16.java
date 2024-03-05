@@ -125,7 +125,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     targetFirmwareVersion = config.getFirmware().getVersion();
     currentChargepoint.setState(true);
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     logger.info(new BusinessLog(null,
             currentChargepoint,
             BusinessLogEntity.Category.LOGIN,
@@ -199,14 +198,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                       + currentChargepoint.getSerialNumberChargepoint()
                       + ") is done ! "));
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
     } else {
       sender.sendMessage(config, chargePointManager);
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
@@ -226,7 +223,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       case Accepted, RebootRequired -> {
         if (queue.isEmpty()) {
           currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
-          currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
           chargepointRepository.save(currentChargepoint);
           // Dispatch information to users
           chargePointManager.notifyStatusUpdate();
@@ -296,7 +292,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                       + currentChargepoint.getSerialNumberChargepoint()
                       + ") is done ! "));
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       currentChargepoint.setStep(Chargepoint.Step.CONFIGURATION);
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
@@ -305,7 +300,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       return;
     }
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
-    currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
@@ -372,7 +366,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       var currentChargepoint = chargePointManager.getCurrentChargepoint();
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
       currentChargepoint.setState(false);
-      currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
@@ -398,7 +391,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                         + currentChargepoint.getSerialNumberChargepoint()
                         + ") has successfully installed the firmware"));
         currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-        currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         chargepointRepository.save(currentChargepoint);
         var reset = new ResetRequest16(ResetType.Hard);
         sender.sendMessage(reset, chargePointManager);
@@ -437,7 +429,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         }
         currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
         currentChargepoint.setStep(Chargepoint.Step.CONFIGURATION);
-        currentChargepoint.setLastUpdate(new Timestamp(System.currentTimeMillis()));
         chargePointManager.notifyStatusUpdate();
         chargepointRepository.save(currentChargepoint);
         var reset = new ResetRequest16(ResetType.Hard);
