@@ -109,6 +109,7 @@ public class UserService {
    *
    * @param createUserDto contains parameters of the new user.
    * @return the new User.
+   * @throws AlreadyCreatedException when the user is already created.
    */
   public User createUser(
           CreateUserDto createUserDto
