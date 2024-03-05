@@ -32,7 +32,7 @@ function FormInput({
         } else {
             setActualBackground(backgroundColor)
         }
-    }, [value, backgroundColor, checkIsWrong]);
+    }, [value, backgroundColor, checkIsWrong, onError]);
 
 
     return (
