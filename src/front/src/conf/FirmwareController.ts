@@ -123,7 +123,7 @@ export async function getTypeAllowed(): Promise<TypeAllowed[] | undefined> {
             console.log("Failed to fetch type allowed.")
         }
     }else{
-        console.log("Fetch type allowed list failed, error code:" +  request.status)
+        console.error("Fetch type allowed list failed, error code:" +  request.status)
     }
     return undefined
 }
