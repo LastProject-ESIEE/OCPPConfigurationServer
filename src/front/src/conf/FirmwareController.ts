@@ -79,7 +79,7 @@ export async function postCreateFirmware(firmware: CreateFirmwareFormData): Prom
     if (request.ok) {
         return true
     } else {
-        console.log("Create firmware failed, error code:" + request.status)
+        console.error("Create firmware failed, error code:" + request.status)
         return false
     }
 }
