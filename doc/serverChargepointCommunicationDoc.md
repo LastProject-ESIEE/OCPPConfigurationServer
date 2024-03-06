@@ -16,7 +16,7 @@ This application is ready to accept other OCPP version such as 2.0.1.
 
 > 3 : The OCPP 2.0.1 protocol is not yet implemented, see [Not implemented](#ocpp-201) for more explanation.
 
-> 4 : The status is an enum defined by the OCPP protocol and will be highlighted like this : <span style="background-color: #FFFF00">Test</span>.
+> 4 : The status is an enum defined by the OCPP protocol and will be highlighted like this : <ins>Test</ins>.
 
 ## Processes
 
@@ -31,8 +31,7 @@ On startup, the charge point sends a **BootNotificationRequest** to the server c
 
 After receiving this message, we search in the database a chargepoint with the same serial number and vendor.
 Then, the server responds with a **BootNotificationResponse** to the charge point containing these information :
-- The status (<span style="background-color: #FFFF00">Accepted</span> 
-or <span style="background-color: #FFFF00">Rejected</span>)* ;
+- The status (<ins>Accepted</ins> or <ins>Rejected</ins>)* ;
 - The current time* ;
 - The interval which the charge point should respect before sending a message*.
 
@@ -62,21 +61,18 @@ It is like an ACK packet in a IP/TCP communication.
 
 The chargepoint will sometimes send a **FirmwareStatusNotificationRequest** containing the status of the download.
 The status can be :
-- <span style="background-color: #FFFF00">Downloaded</span>, the firmware has been downloaded ;
-- <span style="background-color: #FFFF00">DownloadFailed</span>, the firmware couldn't be downloaded ;
-- <span style="background-color: #FFFF00">Downloading</span>, the chargepoint currently downloads the firmware ;
-- <span style="background-color: #FFFF00">Idle</span>, 
-the chargepoint is waiting for a process to finish before installing the firmware ;
-- <span style="background-color: #FFFF00">InstallationFailed</span>,
-the firmware couldn't be installed on the charge point ;
-- <span style="background-color: #FFFF00">Installing</span>, the chargepoint currently installs the firmware ;
-- <span style="background-color: #FFFF00">Installed</span>, the firmware has been installed on the chargepoint.
+- <ins>Downloaded</ins>, the firmware has been downloaded ;
+- <ins>DownloadFailed</ins>, the firmware couldn't be downloaded ;
+- <ins>Downloading</ins>, the chargepoint currently downloads the firmware ;
+- <ins>Idle</ins>, the chargepoint is waiting for a process to finish before installing the firmware ;
+- <ins>InstallationFailed</ins>, the firmware couldn't be installed on the charge point ;
+- <ins>Installing</ins>, the chargepoint currently installs the firmware ;
+- <ins>Installed</ins>, the firmware has been installed on the chargepoint.
 
-If the status is <span style="background-color: #FFFF00">DownloadFailed</span>
-/<span style="background-color: #FFFF00">InstallationFailed</span>, all the processes are stopped,
+If the status is <ins>DownloadFailed</ins>/<ins>InstallationFailed</ins>, all the processes are stopped,
 and we consider the process as FAILED.
 
-If the status is <span style="background-color: #FFFF00">Installed</span>, 
+If the status is <ins>Installed</ins>, 
 we continue by rebooting the machine and continue by switching the chargepoint into the CONFIGURATION mode.
 
 If the status is something else, we just wait for the confirmation of the installation of the firmware.
@@ -97,14 +93,12 @@ The server sends a **ChangeConfigurationRequest** containing :
 
 The charge point will respond with a **ChangeConfigurationResponse** containing a status.
 This status can be :
-- <span style="background-color: #FFFF00">Accepted</span>, the change has been accepted ;
-- <span style="background-color: #FFFF00">Rejected</span>, the change has been rejected because the value is wrong ;
-- <span style="background-color: #FFFF00">RebootRequired</span>,
-the change has been accepted but the chargepoint needs to reboot ;
-- <span style="background-color: #FFFF00">NotSupported</span>, the given key is not correct.
+- <ins>Accepted</ins>, the change has been accepted ;
+- <ins>Rejected</ins>, the change has been rejected because the value is wrong ;
+- <ins>RebootRequired</ins>, the change has been accepted but the chargepoint needs to reboot ;
+- <ins>NotSupported</ins>, the given key is not correct.
 
-If all the messages sent by the server are <span style="background-color: #FFFF00">Accepted</span> 
-or <span style="background-color: #FFFF00">RebootRequired</span>, 
+If all the messages sent by the server are <ins>Accepted</ins> or <ins>RebootRequired</ins>, 
 the configuration is finished, and we send the last order containing the new server address, 
 and we reboot the chargepoint.
 
