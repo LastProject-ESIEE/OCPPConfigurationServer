@@ -1,13 +1,12 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
-import { ErrorState, GlobalState } from "../../../../conf/configurationController";
+import { ErrorState } from "../../../../conf/configurationController";
 
-function FirmwareComponent(props: {
+export default function FirmwareComponent(props: {
     value: string;
     setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
 }) {
-    //const [firmware, setFirmware] = useState(props.globalState.firmware);
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
     const backgroundColor = props.errorState.firmware === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
@@ -31,7 +30,6 @@ function FirmwareComponent(props: {
                     <Select
                         value={props.value}
                         onChange={event => {
-                            //setFirmware(event.target.value as string)
                             props.setValue(event.target.value)
                         }}
                         fullWidth={true}>
@@ -52,5 +50,3 @@ function FirmwareComponent(props: {
         </Paper>
     )
 }
-
-export default FirmwareComponent;

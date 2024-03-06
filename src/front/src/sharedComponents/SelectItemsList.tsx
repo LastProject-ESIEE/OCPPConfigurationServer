@@ -36,7 +36,7 @@ export default function SelectItemsList<T>(props: {
 
     return (
         <Box>
-            <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3}}>
+            <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, background: "rgb(249, 246, 251)"}}>
                 <Grid direction={"column"} container justifyContent="space-between">
                     {/*Section displayed title*/}
                     <Grid xs={4} item>
@@ -79,45 +79,16 @@ export default function SelectItemsList<T>(props: {
                                 justifyContent="space-evenly">
                                 {props.selectedItems.map((item) => {
                                     return (
-                                        <Box key={"selected-item-" + item.id}>
-                                            <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
-                                                 {/*Button used to remove the element from the list*/}
-                                                <Button
-                                                    size={"large"}
-                                                    sx={{
-                                                        width: "30px", // Adjust as needed
-                                                        height: "30px", // Adjust as needed
-                                                        color: "error",
-                                                    }}
-                                                    color={"error"}
-                                                    onClick={() => {
-                                                        props.setSelectedItems([...(props.selectedItems.filter(i => i.id !== item.id))])
-                                                    }}
-                                                >
-                                                    <DeleteIcon/>
-                                                </Button>
-                                                {/*Element label*/}
-                                                <Grid item>
-                                                    <Typography>{item.label}</Typography>
-                                                </Grid>
-                                                {/*If input mode is activated then save element input value*/}
-                                                {(props.selectKind === "input") && (
-                                                    <Grid item marginLeft={2}>
-                                                        <Input
-                                                            onChange={event => {
-                                                                updateItemValue(item.id, event.target.value)
-                                                                if(!item.checker(event.target.value)){
-                                                                    event.currentTarget.setAttribute('backgroundColor', '#FF0000')
-                                                                    return
-                                                                }
-                                                                event.currentTarget.setAttribute('backgroundColor', '#FFFFFF')
-                                                            }}
-                                                            value={item.value}
-                                                            placeholder="valeur"/>
-                                                    </Grid>
-                                                )}
-                                        </Grid>
-                                    </Box>
+                                        <ListItem 
+                                            selectKind={props.selectKind}
+                                            item={item}
+                                            onInputChange={newValue => {
+                                                updateItemValue(item.id, newValue)
+                                            }}
+                                            onRemove={() => {
+                                                props.setSelectedItems([...(props.selectedItems.filter(i => i.id !== item.id))])
+                                            }}
+                                        />
                                     )
                                 })}
                             </Grid>
@@ -126,5 +97,54 @@ export default function SelectItemsList<T>(props: {
                 </Grid>
             </Paper>
         </Box>
+    )
+}
+
+
+function ListItem<T>(props: {item: KeyValueItem<T>, selectKind: SelectItemKind, onInputChange: (value: string) => void, onRemove: () => void}){
+    const [backgroundColor, setBackgroundColor] = useState("rgb(249, 246, 251)");
+
+    return (
+        <Box key={"selected-item-" + props.item.id}>
+            <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
+                {/*Button used to remove the element from the list*/}
+                <Button
+                    size={"large"}
+                    sx={{
+                        width: "30px", // Adjust as needed
+                        height: "30px", // Adjust as needed
+                        color: "error",
+                    }}
+                    color={"error"}
+                    onClick={() => {
+                        props.onRemove()
+                    }}
+                >
+                    <DeleteIcon/>
+                </Button>
+                {/*Element label*/}
+                <Grid item>
+                    <Typography>{props.item.label}</Typography>
+                </Grid>
+                {/*If input mode is activated then save element input value*/}
+                {(props.selectKind === "input") && (
+                    <Grid item marginLeft={2}>
+                        <Input
+                            style={{backgroundColor: backgroundColor, borderRadius: 5}}
+                            onChange={event => {
+                                props.onInputChange(event.target.value)
+                                if(!props.item.checker(event.target.value)){
+                                    setBackgroundColor("rgba(255, 0, 0, 0.2)")
+                                    return
+                                }
+                                setBackgroundColor("rgb(249, 246, 251)")
+                            }}
+                            value={props.item.value}
+                            placeholder="valeur"
+                            />
+                    </Grid>
+                )}
+            </Grid>
+    </Box>
     )
 }
