@@ -119,7 +119,6 @@ export async function getTypeAllowed(): Promise<TypeAllowed[] | undefined> {
         let content = await request.json()
         let typesAllowed = content as TypeAllowed[]
         if(typesAllowed != null){
-            console.log(typesAllowed)
             return typesAllowed
         }else{
             console.log("Failed to fetch type allowed.")
