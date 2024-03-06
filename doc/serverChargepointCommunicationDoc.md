@@ -39,7 +39,7 @@ Then, the server would check the current state of the charge point before doing 
 ### Firmware process
 
 If the chargepoint is in FIRMWARE mode in the database, the server will compare the firmware target 
-in the linked configuration of the charge point to the current charge point's firmware.
+in the linked configuration of the chargepoint to the current chargepoint's firmware.
 
 If the target firmware is the same as the current firmware, 
 we just skip this process and put the charge point into CONFIGURATION mode.
