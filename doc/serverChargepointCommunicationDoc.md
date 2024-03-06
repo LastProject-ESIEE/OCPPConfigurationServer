@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document is about the process and the description of the server to charge points and charge points to server.
+This document is about the process and the description of the server to chargepoints and chargepoints to server.
 The processes will be explained with examples and according to the OCPP protocol (1.6).
 
 This application is ready to accept other OCPP version such as 2.0.1.
