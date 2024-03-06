@@ -48,7 +48,7 @@ public record BootNotificationRequest16(String chargePointVendor,
     }
     if (chargeBoxSerialNumber != null && chargeBoxSerialNumber.length() > 25) {
       throw new IllegalArgumentException(
-              "Chargepoint serial number cannot be longer than 25 characters."
+              "Chargebox serial number cannot be longer than 25 characters."
       );
     }
     if (firmwareVersion != null && firmwareVersion.length() > 50) {
