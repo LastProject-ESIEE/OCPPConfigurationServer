@@ -1,4 +1,4 @@
-# OCCPConfigurationServer
+# OCPPConfigurationServer
 
 [![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![Package - OpenJDK](https://img.shields.io/badge/openjdk-%3E=21.0.1-blue?logo=openjdk&logoColor=white)
@@ -12,7 +12,7 @@
 
 ## Overview
 
-A web application to update or configure an electrical terminal via OCCP protocol.
+A web application to update or configure a charge point with OCPP protocol.
 
 ## Requirements
 
@@ -52,11 +52,11 @@ Then check style could be executed locally through the plugin menu.
 
 ## Running tests
 
-## Running the chargepoints generator
-The python scriptis used to generate chargepoints and status into the database.   
+## Running the charge points generator
+The python script is used to generate charge points and status into the database.   
 You will need python3 as well as pymysql installed : ```pip install pymysql```.   
 You can run it by typing ```python3 generator.py -h```.  
-It will display informations on the program and the arguments.
+It will display information on the program and the arguments.
 
 
 

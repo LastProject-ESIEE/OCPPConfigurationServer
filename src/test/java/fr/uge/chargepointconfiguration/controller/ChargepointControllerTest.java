@@ -5,7 +5,6 @@ import fr.uge.chargepointconfiguration.chargepoint.ChargepointController;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
-import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.util.List;
 import java.util.Set;
@@ -38,16 +37,14 @@ class ChargepointControllerTest {
    */
   @Test
   void getAllChargepoints() {
-    var status = new Status();
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);
-    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration, status);
+    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration);
     chargepointRepository.save(chargepoint);
 
-    var status2 = new Status();
     var firmware2 = new Firmware("www.alfen6-1-3.com", "6.1.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "S-type")));
     var configuration2 = new Configuration("NewConfig", "{}", firmware2);
-    var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2, status2);
+    var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2);
     chargepointRepository.save(chargepoint2);
 
     assertEquals(List.of(chargepoint2.toDto(), chargepoint.toDto()), chargepointController.getAllChargepoints());
@@ -68,10 +65,9 @@ class ChargepointControllerTest {
    */
   @Test
   void getChargepointById(){
-    var status = new Status();
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);
-    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration, status);
+    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration);
     chargepointRepository.save(chargepoint);
 
     assertEquals(chargepoint.toDto(), chargepointController.getChargepointById(chargepoint.getId()).orElseThrow());
@@ -79,22 +75,19 @@ class ChargepointControllerTest {
 
   @Test
   public void searchChargepoints() {
-    var status = new Status();
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);
-    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration, status);
+    var chargepoint = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration);
     chargepointRepository.save(chargepoint);
 
-    var status3 = new Status();
     var firmware3 = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration3 = new Configuration("MyConfig", "{}", firmware3);
-    var chargepoint3 = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration3, status3);
+    var chargepoint3 = new Chargepoint("alfen_serial_number", "mega-type", "alfen", "COMMUNIAU_1", "localhost", configuration3);
     chargepointRepository.save(chargepoint3);
 
-    var status2 = new Status();
     var firmware2 = new Firmware("www.alfen6-1-3.com", "6.1.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "S-type")));
     var configuration2 = new Configuration("NewConfig", "{}", firmware2);
-    var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2, status2);
+    var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2);
     chargepointRepository.save(chargepoint2);
 
     var result1 = chargepointController.searchChargepoints(2, 0, "", "id", "asc");
