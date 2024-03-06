@@ -81,7 +81,7 @@ class ChangeConfigurationRequest16Test {
   }
 
   /**
-   * Should throw an {@link IllegalArgumentException} if the value is more than 500 characters
+   * Should throw an {@link IllegalArgumentException} if the value is more than 500 characters.
    */
   @Test
   public void throwsExceptionIfValueIsIncorrect() {
