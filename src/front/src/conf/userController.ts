@@ -1,6 +1,8 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 
-export enum Role { "VISUALIZER", "EDITOR", "ADMINISTRATOR" }
+//export enum Role { "VISUALIZER", "EDITOR", "ADMINISTRATOR" }
+
+export type Role = "VISUALIZER" | "EDITOR" | "ADMINISTRATOR"
 
 export type User = {
     id: number,

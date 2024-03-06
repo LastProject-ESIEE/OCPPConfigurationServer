@@ -19,7 +19,7 @@ function RoleComponent(props: {
         }
         fetchRoleList();
     }, []);
-
+    
     return (
         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
             <Grid container alignItems="center" justifyContent="space-between">
@@ -37,12 +37,14 @@ function RoleComponent(props: {
                         {userRoleList && userRoleList.map((role) => {
                             return (
                             <MenuItem
-                                key={"role-"+ role} 
+                                key={"role-"+ role}
                                 value={role}
+                                disabled={role === props.role}
                             >
                                 {englishRoleToFrench(role.toString())}
                             </MenuItem>
                         )})}
+                        
                     </Select>
                 </Grid>
             </Grid>

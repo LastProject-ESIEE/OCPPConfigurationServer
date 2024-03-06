@@ -1,5 +1,5 @@
-import { Box, Grid, ListItemButton, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import {
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
@@ -8,6 +8,7 @@ import {
 } from "../../../sharedComponents/DisplayTable";
 import { Role, searchUser, User } from "../../../conf/userController";
 import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
+import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
 
@@ -27,12 +28,13 @@ const userTableColumns: TableColumnDefinition[] = [
 ]
 
 function UserTable() {
-    const [tableData, setTableData] = React.useState<User[]>([]);
-    const [currentPage, setCurrentPage] = React.useState(0);
-    const [hasMore, setHasMore] = React.useState(true);
-    const [error, setError] = React.useState<string | undefined>(undefined);
+    const [tableData, setTableData] = useState<User[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [error, setError] = useState<string | undefined>(undefined);
     const [userRoleList, setUserRoleList] = useState<Role[]>([]);
     const [me, setMe] = useState<User | undefined>(undefined);
+
 
     useEffect(() => {
         searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
@@ -91,8 +93,7 @@ function UserTable() {
                 setTableData([...tableData])
             }
         })
-            console.log(event.target.value as string)
-    } 
+    }
 
     let props: InfinityScrollItemsTableProps<User> = {
         columns: userTableColumns,
@@ -103,8 +104,8 @@ function UserTable() {
         onSelection: user => { console.log("Selected item : " + user.id) },
         formatter: (user) => {
             return (
-                <Box key={"box-configuration-edit-path-" + user.id}  paddingTop={1} maxWidth={"true"}>
-                    <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                <Box key={"box-configuration-edit-path-" + user.id} margin={1} maxWidth={"true"}>
+                    <Box style={{maxWidth: "true", margin: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                             <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.lastName}</Typography>
@@ -143,11 +144,17 @@ function UserTable() {
                                     )}
                                 </Select>
                             </Grid>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
-
+                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
+                                <DeleteUserModalComponent
+                                    user={user} 
+                                    enabled={user.id === me?.id} 
+                                    setTableData={setTableData}
+                                    setError={setError}
+                                    setHasMore={setHasMore}
+                                />
                             </Grid>
                         </Grid>
-                    </ListItemButton>
+                    </Box>
                 </Box>
             )
         },
