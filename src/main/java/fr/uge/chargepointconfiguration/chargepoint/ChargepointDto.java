@@ -1,7 +1,6 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
-import fr.uge.chargepointconfiguration.status.Status;
 import fr.uge.chargepointconfiguration.status.StatusDto;
 
 /**
@@ -14,7 +13,7 @@ import fr.uge.chargepointconfiguration.status.StatusDto;
  * @param clientId The client's name of the chargepoint.
  * @param serverAddress The server's URL of the chargepoint.
  * @param configuration A JSON containing the chargepoint's configuration.
- * @param status {@link Status}.
+ * @param status {@link StatusDto}.
  */
 public record ChargepointDto(
     int id,
