@@ -48,13 +48,6 @@ export type ErrorState = {
     description: string,
 }
 
-export type GlobalState = {
-    name: string,
-    description: string,
-    configuration: KeyValueConfiguration[],
-    firmware: string
-}
-
 export type Transcriptor = {
     id: number,
     fullName: string,

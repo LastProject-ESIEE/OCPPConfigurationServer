@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Grid, Input, Paper } from "@mui/material";
-import { ErrorState, GlobalState } from "../../../../conf/configurationController";
+import { ErrorState } from "../../../../conf/configurationController";
 
-function TitleComponent(props: {
+export default function TitleComponent(props: {
     value: string;
     setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
@@ -31,5 +31,3 @@ function TitleComponent(props: {
         </Paper>
     )
 }
-
-export default TitleComponent;

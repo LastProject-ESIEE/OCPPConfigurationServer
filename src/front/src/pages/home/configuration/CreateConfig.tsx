@@ -1,15 +1,13 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Container, Grid, Paper, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Button, Container, Grid } from '@mui/material';
 import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
-import KeyValuePairComponent from "./components/KeyValuePairComponent";
 import {
     CreateConfigurationData,
     ErrorState,
     getConfiguration,
     getTranscriptors,
-    GlobalState,
     KeyValueConfiguration,
     postNewConfiguration,
     postUpdateConfiguration,
@@ -18,127 +16,7 @@ import {
 import LoadingPage from '../../../sharedComponents/LoadingPage';
 import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectItemsList';
 
-
-function AddKeyValuePair(props: {
-    setSelectedKeys: React.Dispatch<React.SetStateAction<Transcriptor[]>>,
-    selectedKeys: Transcriptor[],
-}) {
-    const {
-        setSelectedKeys,
-        selectedKeys,
-    } = props;
-
-    const [selectedKey, setSelectedKey] = useState<Transcriptor | null>(null);
-    const [options, setOptions] = useState<Transcriptor[]>([]);
-
-    useEffect(() => {
-        getTranscriptors()
-            .then(transcriptors => {
-                if (transcriptors === undefined) {
-                    return
-                }
-                setOptions(transcriptors.filter(key => !selectedKeys.map(selected => selected.id).includes(key.id)))
-            })
-        // setOptions(confKeys.filter(key => !selectedKeys.map(selected => selected.id).includes(key.id)));
-    }, [selectedKeys])
-
-    useEffect(() => {
-        getTranscriptors()
-            .then(transcriptors => {
-                if (transcriptors === undefined) {
-                    return
-                }
-                setOptions(transcriptors)
-            })
-    }, []);
-
-    const updateOptions = () => {
-        if (selectedKey === null) {
-            return; // Handle potential error or prevent unnecessary updates
-        }
-
-        const newSelectedKeys = [selectedKey, ...selectedKeys];
-
-        setSelectedKey(null);
-        // setOptions(options.filter(key => !newSelectedKeys.includes(key)));
-        setSelectedKeys(newSelectedKeys);
-    };
-
-    return (
-        <Grid container alignItems="center" justifyContent="space-evenly">
-            <Grid item>
-                <Autocomplete
-                    disabled={options.length === 0}
-                    onChange={(event, value) => {
-                        setSelectedKey(value);
-                    }}
-                    sx={{width: 300}}
-                    disablePortal
-                    options={options}
-                    getOptionLabel={option => option.fullName}
-                    value={selectedKey}
-                    renderInput={(params) => <TextField {...params} label="Clé"/>}
-                />
-            </Grid>
-            <Grid item>
-                <Button size={"large"} onClick={updateOptions} variant="contained" type="submit"
-                        sx={{borderRadius: 100}}>
-                    <span style={{fontSize: "larger", fontWeight: "bolder"}}>+</span>
-                </Button>
-            </Grid>
-        </Grid>
-    )
-}
-
-
-function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> , selectedKeys: Transcriptor[], setSelectedKeys: Dispatch<SetStateAction<Transcriptor[]>> }) {
-    const backgroundColor = 'rgb(249, 246, 251)'
-    
-    return (
-        <Box>
-            <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, backgroundColor}}>
-                <Grid direction={"column"} container justifyContent="space-between">
-                    <Grid xs={4} item>
-                        <h4>Champs de la configuration :</h4>
-                    </Grid>
-                    <Grid xs={7} item>
-
-                        <Box sx={{pt: 1, pb: 1}} style={{maxHeight: '60vh', overflow: 'auto'}}>
-                            <AddKeyValuePair setSelectedKeys={props.setSelectedKeys} selectedKeys={props.selectedKeys}/>
-                            {props.selectedKeys.length !== 0 && (
-                                <Grid sx={{pt: 1, pb: 1}} direction="column" container alignItems="center"
-                                      justifyContent="space-evenly">
-                                    {props.selectedKeys.map((key) => {
-                                        return (
-                                            <KeyValuePairComponent
-                                                key={key.id}
-                                                value={/*props.globalState.configuration.find(v => v.key == key)?.value ??*/ ""}
-                                                globalState={props.globalState}
-                                                selectedKeys={props.selectedKeys}
-                                                setSelectedKeys={props.setSelectedKeys}
-                                                selectedKey={key}
-                                                setGlobalState={props.setGlobalState}/>
-                                        )
-                                    })}
-                                </Grid>
-                            )}
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Paper>
-        </Box>
-    );
-}
-
 function CreateConfig(props: {id?: number}) {
-/*
-    const [globalState, setGlobalState] = useState<GlobalState>({
-        name: "",
-        description: "",
-        configuration: [],
-        firmware: ""
-    })
-*/
     const [errorState, setErrorState] = useState<ErrorState>({
         name: "",
         description: "",
@@ -147,8 +25,6 @@ function CreateConfig(props: {id?: number}) {
     const [title, setTitle] = useState("");
     const [firmware, setFirmware] = useState("");
     const [description, setDescription] = useState("");
-    
-    //const [selectedKeys, setSelectedKeys] = useState<Transcriptor[]>([]);
     const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [loaded, setLoaded] = useState(false);
@@ -256,8 +132,6 @@ function CreateConfig(props: {id?: number}) {
                 setLoaded(true)
             });
         })
-
-
     }, [props.id])
 
     return (
