@@ -15,9 +15,15 @@ const PAGE_SIZE = 30; // Max items displayed in the user table
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
+        filter: {
+            apiField: "lastName",
+        }
     },
     {
         title: "Prénom",
+        filter: {
+            apiField: "firstName",
+        }
     },
     {
         title: "Rôle",
@@ -26,6 +32,7 @@ const userTableColumns: TableColumnDefinition[] = [
         title: "", // extra column for delete button later
     }
 ]
+
 
 function UserTable() {
     const [tableData, setTableData] = useState<User[]>([]);

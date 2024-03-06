@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export type TableColumnFilterDefinition = {
     apiField: string,
-    onChange: (newValue: string) => void,
+    //onChange: (newValue: string) => void,
 }
 
 export type TableColumnDefinition = {
