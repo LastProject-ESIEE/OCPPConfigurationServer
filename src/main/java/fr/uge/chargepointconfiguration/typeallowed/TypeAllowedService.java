@@ -35,8 +35,8 @@ public class TypeAllowedService {
    *
    * @return The list of all type allowed.
    */
-  public List<TypeAllowedDto> getAll() {
-    return typeAllowedRepository.findAll().stream().map(TypeAllowed::toDto).toList();
+  public List<TypeAllowed> getAll() {
+    return typeAllowedRepository.findAll();
   }
 
 }
