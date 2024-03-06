@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.user;
 
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,11 +97,13 @@ public class UserService {
   /**
    * Search for {@link User} with a pagination.
    *
+   * @param request the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link User}
    */
-  public List<User> getPage(PageRequest pageable) {
-    return userRepository.findAll(pageable)
+  public List<User> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, User.class);
+    return userRepository.findAll(condition, pageable)
           .stream().toList();
   }
 

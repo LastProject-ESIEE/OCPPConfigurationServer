@@ -154,40 +154,46 @@ public class UserController {
   /**
    * Search for {@link UserDto} with a pagination.
    *
-   * @param size Desired size of the requested page.
-   * @param page Requested page.
-   * @param sortBy The column you want to sort by. Must be an attribute of
-   *               the {@link UserDto}.
-   * @param order The order of the sort. Must be "asc" or "desc".
+   * @param size    Desired size of the requested page.
+   * @param page    Requested page.
+   * @param sortBy  The column you want to sort by. Must be an attribute of
+   *                the {@link UserDto}.
+   * @param request the request used to search
+   * @param order   The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link UserDto}
    */
   @Operation(summary = "Search for users")
   @ApiResponse(responseCode = "200",
-        description = "Found users",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class))
-        })
+      description = "Found users",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class))
+      })
   @GetMapping(value = "/search")
-  public PageDto<UserDto> getPage(
-        @Parameter(description = "Desired size of the requested page.")
-        @RequestParam(required = false, defaultValue = "10") int size,
+  public PageDto<UserDto> searchWithPage(
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-        @Parameter(description = "Requested page.")
-        @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-        @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the users.")
-        @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the users.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-        @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = userService.countTotal();
-    var data = userService.getPage(
-                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ).stream()
-          .map(User::toDto)
-          .toList();
+    var data = userService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+        )
+        .stream()
+        .map(User::toDto)
+        .toList();
     return new PageDto<>(total, page, size, data);
   }
 
