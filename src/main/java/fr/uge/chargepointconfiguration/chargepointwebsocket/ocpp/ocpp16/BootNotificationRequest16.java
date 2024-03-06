@@ -31,9 +31,31 @@ public record BootNotificationRequest16(String chargePointVendor,
   public BootNotificationRequest16 {
     Objects.requireNonNull(chargePointVendor);
     Objects.requireNonNull(chargePointModel);
-    Objects.requireNonNull(chargeBoxSerialNumber);
-    Objects.requireNonNull(chargeBoxSerialNumber);
-    Objects.requireNonNull(firmwareVersion);
+    if (chargePointVendor.length() > 20) {
+      throw new IllegalArgumentException(
+              "Chargepoint vendor name cannot be longer than 20 characters."
+      );
+    }
+    if (chargePointModel.length() > 20) {
+      throw new IllegalArgumentException(
+              "Chargepoint model name cannot be longer than 20 characters."
+      );
+    }
+    if (chargePointSerialNumber != null && chargePointSerialNumber.length() > 25) {
+      throw new IllegalArgumentException(
+              "Chargepoint serial number cannot be longer than 25 characters."
+      );
+    }
+    if (chargeBoxSerialNumber != null && chargeBoxSerialNumber.length() > 25) {
+      throw new IllegalArgumentException(
+              "Chargepoint serial number cannot be longer than 25 characters."
+      );
+    }
+    if (firmwareVersion != null && firmwareVersion.length() > 50) {
+      throw new IllegalArgumentException(
+              "Chargepoint firmware version cannot be longer than 50 characters."
+      );
+    }
   }
 
 }
