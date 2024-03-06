@@ -3,6 +3,7 @@ package fr.uge.chargepointconfiguration.user;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer>,
-      PagingAndSortingRepository<User, Integer> {
+      PagingAndSortingRepository<User, Integer>,
+    JpaSpecificationExecutor<User> {
 
   /**
    * Returns a User from the database according to the email.
