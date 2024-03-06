@@ -3,8 +3,8 @@ import { Grid, MenuItem, Paper, Select } from "@mui/material";
 import { ErrorState, GlobalState } from "../../../../conf/configurationController";
 
 function FirmwareComponent(props: {
-    globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    value: string;
+    setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
 }) {
     //const [firmware, setFirmware] = useState(props.globalState.firmware);
@@ -29,22 +29,15 @@ function FirmwareComponent(props: {
                 </Grid>
                 <Grid xs={7} item>
                     <Select
-                        value={props.globalState.firmware}
+                        value={props.value}
                         onChange={event => {
                             //setFirmware(event.target.value as string)
-                            props.setGlobalState(prevState => {
-                                return {
-                                    configuration: prevState.configuration,
-                                    firmware: event.target.value as string,
-                                    description: prevState.description,
-                                    name: prevState.name
-                                }
-                            })
+                            props.setValue(event.target.value)
                         }}
                         fullWidth={true}>
                         {firmwareList && firmwareList.map((item) => {
                             let selected = false;
-                            if(props.globalState.firmware === item.version){
+                            if(props.value === item.version){
                                 selected=true
                             }
                             return (

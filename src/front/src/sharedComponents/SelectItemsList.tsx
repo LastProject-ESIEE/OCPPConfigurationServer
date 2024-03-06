@@ -5,11 +5,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 export type SelectItemKind = 'input' | 'values'
 
 export type KeyValueItem<T> = {
-    label: string,
-    item: T,
-    value: string, 
-    id: string,
-    checker: (value: string) => boolean,
+    label: string, //Item label displayed in the select box
+    item: T, // Item cotained in the list
+    value: string, // Input value for the corresponding item
+    id: string, // Item id (must be unique)
+    checker: (value: string) => boolean, // Checker of the input value (only works for the list kind input)
+    // a message on checker error can be added here
 }
 
 export default function SelectItemsList<T>(props: {
@@ -19,7 +20,6 @@ export default function SelectItemsList<T>(props: {
     selectedItems: KeyValueItem<T>[],
     selectKind: SelectItemKind,
     setSelectedItems: React.Dispatch<React.SetStateAction<KeyValueItem<T>[]>>,
-    validation: (items: KeyValueItem<T>[]) => void
 }){
     const [selectedItem, setSelectedItem] = useState<KeyValueItem<T> | null>(null);
 
@@ -106,6 +106,11 @@ export default function SelectItemsList<T>(props: {
                                                         <Input
                                                             onChange={event => {
                                                                 updateItemValue(item.id, event.target.value)
+                                                                if(!item.checker(event.target.value)){
+                                                                    event.currentTarget.setAttribute('backgroundColor', '#FF0000')
+                                                                    return
+                                                                }
+                                                                event.currentTarget.setAttribute('backgroundColor', '#FFFFFF')
                                                             }}
                                                             value={item.value}
                                                             placeholder="valeur"/>

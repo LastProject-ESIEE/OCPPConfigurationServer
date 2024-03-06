@@ -37,7 +37,7 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
             }
             setFormData({
                 constructor: result.constructor,
-                typesAllowed: formData.typesAllowed,
+                typesAllowed: result.typesAllowed,
                 url: result.url,
                 version: result.version
             })
@@ -51,7 +51,9 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                     id: item.id + "",
                     checker: inputValue => inputValue !== ""
                 }
-                setSelectedItems([...selectedItems, keyValueItem])
+                setSelectedItems(prevSelectedItems => {
+                    return [...prevSelectedItems, keyValueItem]
+                })
             })
             setLoaded(true)
         });
@@ -116,12 +118,10 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                         >
                             <Button sx={{borderRadius: 28}} variant="contained" color="primary"
                                     onClick={() => {
-                                        
-                                        let typesAllowed = new Set<TypeAllowed>
+                                        let typesAllowed = new Set<TypeAllowed>()
                                         selectedItems.forEach(item => {
                                             typesAllowed.add(item.item)
                                         })
-            
                                         let firmware: CreateFirmwareFormData = {
                                             constructor: formData.constructor,
                                             url: formData.url,
@@ -148,20 +148,6 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                             selectKind="values"
                             setSelectedItems={setSelectedItems}
                             selectedItems={selectedItems}
-                            validation={items => {
-                                let typesAllowed = new Set<TypeAllowed>
-                                items.forEach(item => {
-                                    typesAllowed.add(item.item)
-                                })
-                                let firmware: CreateFirmwareFormData = {
-                                    constructor: formData.constructor,
-                                    url: formData.url,
-                                    typesAllowed: typesAllowed,
-                                    version: formData.version,
-                                }
-                                postCreateFirmware(firmware)
-                                return true;
-                            }}
                         />
                     </Grid>
                 </Grid>

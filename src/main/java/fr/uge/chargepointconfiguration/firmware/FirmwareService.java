@@ -1,14 +1,10 @@
 package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
-import fr.uge.chargepointconfiguration.configuration.UpdateConfigurationDto;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedRepository;
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,7 +18,9 @@ public class FirmwareService {
   private final TypeAllowedRepository typeAllowedRepository;
 
   @Autowired
-  public FirmwareService(FirmwareRepository firmwareRepository, TypeAllowedRepository typeAllowedRepository) {
+  public FirmwareService(
+          FirmwareRepository firmwareRepository,
+          TypeAllowedRepository typeAllowedRepository) {
     this.firmwareRepository = firmwareRepository;
     this.typeAllowedRepository = typeAllowedRepository;
   }

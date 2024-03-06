@@ -3,8 +3,8 @@ import { Grid, Input, Paper } from "@mui/material";
 import { ErrorState, GlobalState } from "../../../../conf/configurationController";
 
 function DescriptionComponent(props: {
-    globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+    value: string;
+    setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
 }) {
     const backgroundColor = props.errorState.description === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
@@ -18,16 +18,9 @@ function DescriptionComponent(props: {
                 <Grid xs={7} item>
                     <Input
                         onChange={event => {
-                            props.setGlobalState(prevState => {
-                                return {
-                                    configuration: prevState.configuration,
-                                    firmware: prevState.firmware,
-                                    description: event.target.value,
-                                    name: prevState.name
-                                }
-                            })
+                            props.setValue(event.target.value)
                         }}
-                        value={props.globalState.description}
+                        value={props.value}
                         multiline minRows={4} maxRows={6} fullWidth={true}
                         placeholder="Description de la configuration"/>
                 </Grid>

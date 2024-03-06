@@ -11,6 +11,14 @@ export type Configuration = {
     firmware: Firmware
 }
 
+// Create 
+export type CreateConfigurationData = {
+    name: string,
+    description: string,
+    configuration: KeyValueConfiguration[],
+    firmware: string
+}
+
 /**
  * Default value to tell the backend there is no selected configuration for a chargepoint
  */
@@ -113,15 +121,8 @@ export async function searchConfiguration(
     return undefined
 }
 
-export async function postNewConfiguration(configuration: GlobalState): Promise<boolean> {
-    /*
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
-        .join(", ")
-
-    myConfig = "{" + myConfig + "}"
-    */
-    let myConfig = globalStateResponseFormatter(configuration)
-    console.log(JSON.parse(myConfig))
+export async function postNewConfiguration(configurationData: CreateConfigurationData): Promise<boolean> {
+    let myConfig = globalStateResponseFormatter(configurationData)
 
     let request = await fetch(window.location.origin + "/api/configuration/create",
         {
@@ -130,10 +131,10 @@ export async function postNewConfiguration(configuration: GlobalState): Promise<
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                name: configuration.name,
-                description: configuration.description,
+                name: configurationData.name,
+                description: configurationData.description,
                 configuration: myConfig,
-                firmware: configuration.firmware
+                firmware: configurationData.firmware
             })
         })
     if (request.ok) {
@@ -162,8 +163,8 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
     return undefined
 }
 
-export async function postUpdateConfiguration(id: number, configuration: GlobalState): Promise<boolean> {
-    let myConfig = globalStateResponseFormatter(configuration)
+export async function postUpdateConfiguration(id: number, configurationData: CreateConfigurationData): Promise<boolean> {
+    let myConfig = globalStateResponseFormatter(configurationData)
 
     console.log(JSON.parse(myConfig))
 
@@ -175,10 +176,10 @@ export async function postUpdateConfiguration(id: number, configuration: GlobalS
             },
             body: JSON.stringify({
                 id: id,
-                name: configuration.name,
-                description: configuration.description,
+                name: configurationData.name,
+                description: configurationData.description,
                 configuration: myConfig,
-                firmware: configuration.firmware
+                firmware: configurationData.firmware
             })
         })
     if (request.ok) {
@@ -189,8 +190,8 @@ export async function postUpdateConfiguration(id: number, configuration: GlobalS
     }
 }
 
-function globalStateResponseFormatter(configuration : GlobalState){
-    let myConfig = configuration.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
+function globalStateResponseFormatter(configurationData : CreateConfigurationData){
+    let myConfig = configurationData.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
         .join(", ")
 
     myConfig = "{" + myConfig + "}"

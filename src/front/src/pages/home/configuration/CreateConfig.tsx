@@ -5,6 +5,7 @@ import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
 import KeyValuePairComponent from "./components/KeyValuePairComponent";
 import {
+    CreateConfigurationData,
     ErrorState,
     getConfiguration,
     getTranscriptors,
@@ -14,6 +15,8 @@ import {
     postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
+import LoadingPage from '../../../sharedComponents/LoadingPage';
+import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectItemsList';
 
 
 function AddKeyValuePair(props: {
@@ -87,22 +90,6 @@ function AddKeyValuePair(props: {
     )
 }
 
-function LeftSection(props: {
-    globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
-    errorState: ErrorState
-}) {
-    return (
-        <Box>
-            <TitleComponent errorState={props.errorState} globalState={props.globalState}
-                            setGlobalState={props.setGlobalState}/>
-            <FirmwareComponent errorState={props.errorState} globalState={props.globalState}
-                               setGlobalState={props.setGlobalState}/>
-            <DescriptionComponent errorState={props.errorState} globalState={props.globalState}
-                                  setGlobalState={props.setGlobalState}/>
-        </Box>
-    );
-}
 
 function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatch<SetStateAction<GlobalState>> , selectedKeys: Transcriptor[], setSelectedKeys: Dispatch<SetStateAction<Transcriptor[]>> }) {
     const backgroundColor = 'rgb(249, 246, 251)'
@@ -144,24 +131,29 @@ function RightSection(props: { globalState: GlobalState; setGlobalState: Dispatc
 }
 
 function CreateConfig(props: {id?: number}) {
-
+/*
     const [globalState, setGlobalState] = useState<GlobalState>({
         name: "",
         description: "",
         configuration: [],
         firmware: ""
     })
-
+*/
     const [errorState, setErrorState] = useState<ErrorState>({
         name: "",
         description: "",
         firmware: ""
     })
+    const [title, setTitle] = useState("");
+    const [firmware, setFirmware] = useState("");
+    const [description, setDescription] = useState("");
     
-    const [selectedKeys, setSelectedKeys] = useState<Transcriptor[]>([]);
+    //const [selectedKeys, setSelectedKeys] = useState<Transcriptor[]>([]);
+    const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [loaded, setLoaded] = useState(false);
 
-    function check(globalState: GlobalState): boolean {
+    function check(): boolean {
         setErrorState({
             name: "",
             description: "",
@@ -169,7 +161,7 @@ function CreateConfig(props: {id?: number}) {
         })
 
         let error = false;
-        if (globalState.name.length === 0) {
+        if (title.length === 0) {
             setErrorState((prevState) => ({
                 ...prevState,
                 name: "Le titre est obligatoire.",
@@ -177,7 +169,7 @@ function CreateConfig(props: {id?: number}) {
             error = true;
         }
 
-        if (globalState.name.length > 50) {
+        if (title.length > 50) {
             setErrorState((prevState) => ({
                 ...prevState,
                 name: "Le titre ne peut pas dépasser 50 caractères.",
@@ -185,7 +177,7 @@ function CreateConfig(props: {id?: number}) {
             error = true;
         }
 
-        if (globalState.firmware.length === 0) {
+        if (firmware.length === 0) {
             setErrorState((prevState) => ({
                 ...prevState,
                 firmware: "Le firmware est obligatoire.",
@@ -197,33 +189,58 @@ function CreateConfig(props: {id?: number}) {
     }
 
     function handleSubmit() {
-        console.log(globalState)
-        if (!check(globalState)) {
+        if (!check()) {
+            let resultData: CreateConfigurationData = {
+                name: title,
+                configuration: selectedKeys.map(keyValueTranscriptor => {
+                    return {
+                        key: keyValueTranscriptor.item,
+                        value: keyValueTranscriptor.value,
+                    }
+                }),
+                description: description,
+                firmware: firmware,
+            }
             // If props.id not undefined then it's an update
             if(props.id){
-                postUpdateConfiguration(props.id, globalState)
+                postUpdateConfiguration(props.id, resultData)
                 return
             }
-            postNewConfiguration(globalState) // manage response to display error or success
+            postNewConfiguration(resultData) // manage response to display error or success
         }
     }
 
+
+
     // Fetch the configuration
     useEffect(() => {
-        if(!props.id){
-            setLoaded(true)
-            return
-        }
-        getConfiguration(props.id).then(result => {
-            if(!result){
-                console.log("Erreur lors de la récupération de la configuration.")
-                //setError("Erreur lors de la récupération de la configuration.")
+        getTranscriptors().then(transcriptors => {
+            if (!transcriptors) {
                 return
             }
+            // Load transcriptors
+            let items: KeyValueItem<Transcriptor>[] = transcriptors.map(transcriptor => {
+                return {
+                    id: transcriptor.id + "",
+                    checker: item => {
+                        return true;//RegExp(transcriptor.regex).exec(item)
+                    },
+                    item: transcriptor,
+                    label: transcriptor.fullName,
+                    value: ""
+                }}
+            )
+            setKeys(items)
 
-            //console.log(config)
-            getTranscriptors().then(transcriptors => {
-                if (!transcriptors) {
+            if(!props.id){
+                setLoaded(true)
+                return
+            }
+            // If props.id is defined then it's an update
+            getConfiguration(props.id).then(result => {
+                if(!result){
+                    console.log("Erreur lors de la récupération de la configuration.")
+                    //setError("Erreur lors de la récupération de la configuration.")
                     return
                 }
                 let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => ({
@@ -232,16 +249,15 @@ function CreateConfig(props: {id?: number}) {
                 } as KeyValueConfiguration));
 
                 var configurationKeys: number[] = config.map(conf => conf.key.id)
-                setSelectedKeys(transcriptors.filter(key => configurationKeys.includes(key.id)))
-                setGlobalState({
-                    configuration: config,
-                    description: result.description,
-                    firmware: result.firmware.id + "",
-                    name: result.name,
-                })
+                setSelectedKeys(items.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
+                setTitle(result.name)
+                setFirmware(result.firmware.version)
+                setDescription(result.description)
                 setLoaded(true)
-            })
-        });
+            });
+        })
+
+
     }, [props.id])
 
     return (
@@ -250,10 +266,22 @@ function CreateConfig(props: {id?: number}) {
                 <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
                 <Grid container spacing={15}>
                     <Grid item xs={12} md={6}>
-                        <LeftSection errorState={errorState} globalState={globalState} setGlobalState={setGlobalState}/>
+                        <Box>
+                            <TitleComponent errorState={errorState} value={title} setValue={setTitle}/>
+                            <FirmwareComponent errorState={errorState} value={firmware} setValue={setFirmware}/>
+                            <DescriptionComponent errorState={errorState} value={description} setValue={setDescription}/>
+                        </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <RightSection globalState={globalState} setGlobalState={setGlobalState} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys}/>
+                        {/*<RightSection globalState={globalState} setGlobalState={setGlobalState} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} />*/}
+                        <SelectItemsList
+                            title='Champs de la configuration'
+                            keyTitle='Clés'
+                            items={keys}
+                            selectKind='input'
+                            selectedItems={selectedKeys}
+                            setSelectedItems={setSelectedKeys}
+                        />
                     </Grid>
                 </Grid>
                 <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
@@ -264,9 +292,7 @@ function CreateConfig(props: {id?: number}) {
             </Container>
             )}
             {!loaded && (
-                <Box maxWidth={"true"} maxHeight={"true"} justifyContent={"center"}>
-                    <Typography variant='h5' textAlign={"center"}>Chargement des informations...</Typography>
-                </Box>
+                <LoadingPage/>
             )}
         </Box>
 
