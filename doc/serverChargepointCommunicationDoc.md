@@ -119,10 +119,10 @@ We could not find the correct *Component* object for the **SetVariablesRequest**
 for this chargepoint.
 
 However, the component "none" does not seem to work when giving new value to a key, it will always respond by
-a Rejected.
+a <ins>Rejected</ins>.
 
-Moreover, here is a list of all the known Component for Alfen BV (for firmware >= 6.1).
-These components are the only components recognized by ALfen BV's chargepoints (Eve Single S-Line).
+These components are the only components recognized by ALfen BV's chargepoints (Eve Single S-Line) with
+a firmware newer than 6.1.
 
 > Note : When marked by a *, it means the *Component* is an OCPP standard, see the 
 > [official documentation](https://openchargealliance.org/protocols/open-charge-point-protocol/#OCPP2.0.1).
