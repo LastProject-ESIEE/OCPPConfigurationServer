@@ -95,7 +95,6 @@ function UserTable() {
                 setTableData([...tableData])
             }
         })
-            console.log(event.target.value as string)
     }
 
     let props: InfinityScrollItemsTableProps<User> = {
@@ -208,64 +207,72 @@ function DeleteUserModal(props: {
                 disabled={props.enabled}
                 onClick={handleOpen}
             >
-                <DeleteIcon color="error"/>
+                <DeleteIcon color={(!props.enabled) ? "error" : "disabled"}/>
             </IconButton>
             <Modal
                 open={open}
                 onClose={handleClose}
             >
                 <Grid sx={{
-                    marginTop: "25%",
-                    marginLeft: "35%",
-                    boxShadow: 10,
-                    bgcolor: "background.paper",
-                    border: "2px solid #FFF",
-                    p: 4,
-                    width: 550,
-                    justifyContent: "center",
-                    textAlign: "center"
-                    }}>
+                        boxShadow: 10,
+                        bgcolor: "background.paper",
+                        border: "2px solid #FFF",
+                        p: 4,
+                        maxWidth: 550,
+                        justifyContent: "center",
+                        textAlign: "center",
+                        position: 'absolute' as 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                    container
+                    >
                     <Box>
                         <Typography variant="h6" sx={{paddingBottom: 2}}>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</Typography>
                         <Typography>{"Nom : " + props.user.lastName}</Typography>
                         <Typography>{"Prénom : " + props.user.firstName}</Typography>
-                        <Typography sx={{paddingBottom: 2}}>{"Rôle : " + englishRoleToFrench(props.user.role.toString())}</Typography>
-                        <Button
-                            sx={{
-                                borderRadius: 28,
-                                marginRight: 5,
-                                marginTop: 2
-                            }}
-                            variant="contained"
-                            color="success"
-                            onClick={async () => {
-                                let value = await deleteUser(props.user)
-                                if (value) {
-                                    searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
-                                        if(!result){
-                                            props.setError("Erreur lors de la récupération des utilisateurs.")
-                                            return
+                        <Typography>{"Rôle : " + englishRoleToFrench(props.user.role.toString())}</Typography>
+                        <Grid container>
+                            <Grid item xs={12} md={6}>
+                                <Button
+                                    sx={{
+                                        borderRadius: 28,
+                                        marginTop: 2
+                                    }}
+                                    variant="contained"
+                                    color="success"
+                                    onClick={async () => {
+                                        let value = await deleteUser(props.user)
+                                        if (value) {
+                                            searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
+                                                if(!result){
+                                                    props.setError("Erreur lors de la récupération des utilisateurs.")
+                                                    return
+                                                }
+                                                props.setTableData(result.data)
+                                                props.setHasMore(result.total > PAGE_SIZE)
+                                            });
                                         }
-                                        props.setTableData(result.data)
-                                        props.setHasMore(result.total > PAGE_SIZE)
-                                    });
-                                }
-                            }}
-                        >
-                            <CheckIcon/>
-                        </Button>
-                        <Button
-                            sx={{
-                                borderRadius: 28,
-                                marginLeft: 5,
-                                marginTop: 2
-                            }}
-                            variant="contained"
-                            color="error"
-                            onClick={handleClose}
-                        >
-                            <CloseIcon/>
-                        </Button>
+                                    }}
+                                >
+                                    <CheckIcon/>
+                                </Button>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Button
+                                    sx={{
+                                        borderRadius: 28,
+                                        marginTop: 2
+                                    }}
+                                    variant="contained"
+                                    color="error"
+                                    onClick={handleClose}
+                                >
+                                    <CloseIcon/>
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </Grid>
             </Modal>
