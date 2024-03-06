@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.firmware;
 
 import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
 import fr.uge.chargepointconfiguration.configuration.CreateConfigurationDto;
+import fr.uge.chargepointconfiguration.configuration.UpdateConfigurationDto;
 import fr.uge.chargepointconfiguration.shared.PageDto;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -172,7 +174,15 @@ public class FirmwareController {
                                     "url": "http://exemple.com",
                                     "version": "6.0.54",
                                     "constructor": "Alfen BV",
-                                    "typeAllowed": [{},{}]
+                                    "typesAllowed": [{
+                                      id: 1,
+                                      constructor: "Alfen BV"
+                                      type: "NGX9"
+                                    },{
+                                      id: 2,
+                                      constructor: "Alfen BV"
+                                      type: "NGX99"
+                                    }]
                                   }
                                   """
                           )
@@ -181,4 +191,55 @@ public class FirmwareController {
           @RequestBody CreateFirmwareDto createFirmwareDto) {
     return new ResponseEntity<>(firmwareService.save(createFirmwareDto), HttpStatus.CREATED);
   }
+
+  /**
+   * Update a firmware.
+   *
+   * @param createFirmwareDto All the necessary information for a firmware update.
+   * @return A firmware updated by the given information and its http result status.
+   */
+  @Operation(summary = "Update a firmware")
+  @ApiResponses(value = { @ApiResponse(responseCode = "201",
+          description = "Firmware updated",
+          content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = CreateFirmwareDto.class)
+          )
+      )
+  })
+  @PatchMapping("/update/{id}")
+  public ResponseEntity<FirmwareDto> updateConfiguration(
+          @Parameter(description = "Id of the firmware your are looking for.")
+          @PathVariable int id,
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                  description = "The firmware to be sent to the controller.",
+                  required = true,
+                  content = @Content(
+                          examples = @ExampleObject(
+                                  """
+                                  {
+                                    "url": "http://exemple.com",
+                                    "version": "6.0.54",
+                                    "constructor": "Alfen BV",
+                                    "typesAllowed": [{
+                                      id: 1,
+                                      constructor: "Alfen BV"
+                                      type: "NGX9"
+                                    },{
+                                      id: 2,
+                                      constructor: "Alfen BV"
+                                      type: "NGX99"
+                                    }]
+                                  }
+                                  """
+                          )
+                  )
+          )
+          @RequestBody CreateFirmwareDto createFirmwareDto) {
+    var firmware = firmwareService.update(id, createFirmwareDto);
+    return firmware
+            .map(firmwareDto -> new ResponseEntity<>(firmwareDto, HttpStatus.OK))
+            .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+  }
+
 }

@@ -55,7 +55,7 @@ function FirmwareTable() {
         formatter: (firmware) => {
             return (
                 <Box key={"box-configuration-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
-                    <Link key={"chargepoint-edit-path-" + firmware.id} to={{pathname: 'display/' + firmware.id}}
+                    <Link key={"firmware-edit-path-" + firmware.id} to={{pathname: 'edit/' + firmware.id}}
                           style={{textDecoration: 'none', paddingTop: 10}}>
                         <ListItemButton style={{
                             maxWidth: "true",

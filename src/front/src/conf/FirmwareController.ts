@@ -17,7 +17,6 @@ export type Firmware = {
     typesAllowed: Set<TypeAllowed>
 }
 
-
 export async function searchFirmware(
     size: number = 10,
     page: number = 0,
@@ -40,6 +39,24 @@ export async function searchFirmware(
     return undefined
 }
 
+export async function getFirmware(id: number): Promise<Firmware | undefined> {
+
+    let request = await fetch(`/api/firmware/${id}`)
+    if(request.ok){
+        let content = await request.json()
+        let firmware = content as Firmware
+        if(firmware){
+            console.log(firmware)
+            return firmware
+        }else{
+            console.log("Failed to fetch firmware with id :" + id, content)
+        }
+    }else{
+        console.log("Fetch firmware failed, error code:" +  request.status)
+    }
+    return undefined
+}
+
 export async function postCreateFirmware(firmware: CreateFirmwareFormData): Promise<boolean> {
     console.log(JSON.stringify(firmware))
 
@@ -57,7 +74,7 @@ export async function postCreateFirmware(firmware: CreateFirmwareFormData): Prom
             body: JSON.stringify({
                 version: firmware.version,
                 url: firmware.url,
-                constructeur: firmware.constructeur,
+                constructor: firmware.constructor,
                 typesAllowed: typesArray,
             })
         })
@@ -69,9 +86,36 @@ export async function postCreateFirmware(firmware: CreateFirmwareFormData): Prom
     }
 }
 
+export async function updateFirmware(id: number, firmware: CreateFirmwareFormData): Promise<boolean> {
+    let typesArray: TypeAllowed[] = []
+    firmware.typesAllowed.forEach(item => {
+        typesArray.push(item)
+    })
+
+    let request = await fetch(`/api/firmware/update/${id}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                version: firmware.version,
+                url: firmware.url,
+                constructor: firmware.constructor,
+                typesAllowed: typesArray,
+            })
+        })
+    if (request.ok) {
+        return true
+    } else {
+        console.error("Couldn't update firmware, error code: " + request.status)
+        return false
+    }
+}
+
 export async function getTypeAllowed(): Promise<TypeAllowed[] | undefined> {
 
-    let request = await fetch(window.location.origin + `/api/type/all`)
+    let request = await fetch(`/api/type/all`)
     if(request.ok){
         let content = await request.json()
         let typesAllowed = content as TypeAllowed[]

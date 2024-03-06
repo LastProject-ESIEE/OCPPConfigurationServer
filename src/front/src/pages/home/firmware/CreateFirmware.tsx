@@ -1,34 +1,63 @@
 import { Box, Button, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import FormInput from "../../../sharedComponents/FormInput";
-import { TypeAllowed, getTypeAllowed, postCreateFirmware } from "../../../conf/FirmwareController";
+import { TypeAllowed, getFirmware, getTypeAllowed, postCreateFirmware, updateFirmware } from "../../../conf/FirmwareController";
 import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
-
-
-type CreateOrEditFirmwareProps = {
-    version: string,
-    url: string,
-    constructeur: string,
-}
-
+import LoadingPage from "../../../sharedComponents/LoadingPage";
 
 export type CreateFirmwareFormData = {
     version: string,
     url: string,
-    constructeur: string,
+    constructor: string,
     typesAllowed: Set<TypeAllowed>
 }
 
-
-export default function CreateFirmware(props: {data?: CreateFirmwareFormData}) {
+export default function CreateFirmware(props: {id?: number, data?: CreateFirmwareFormData}) {
     const [formData, setFormData] = useState<CreateFirmwareFormData>(props.data ?? {
         version: "",
         url: "",
-        constructeur: "",
+        constructor: "",
         typesAllowed: new Set<TypeAllowed>()
     });
     const [typeAllowedList, setTypeAllowedList] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [selectedItems, setSelectedItems] = useState<KeyValueItem<TypeAllowed>[]>([]);
+    const [loaded, setLoaded] = useState(false);
+
+
+    // Fetch the firmware
+    useEffect(() => {
+        if(!props.id){
+            setLoaded(true)
+            return
+        }
+        getFirmware(props.id).then(result => {
+            if(!result){
+                console.log("Erreur lors de la récupération du firmware.")
+                return
+            }
+            setFormData({
+                constructor: result.constructor,
+                typesAllowed: formData.typesAllowed,
+                url: result.url,
+                version: result.version
+            })
+            // Clear selected items
+            setSelectedItems([])
+            result.typesAllowed.forEach(item => {
+                let keyValueItem: KeyValueItem<TypeAllowed> = {
+                    item: item,
+                    label: item.constructor + "-" + item.type,
+                    value: "",
+                    id: item.id + "",
+                    checker: inputValue => inputValue !== ""
+                }
+                setSelectedItems([...selectedItems, keyValueItem])
+            })
+            setLoaded(true)
+        });
+    }, [props.id])
+
+
 
     // Fetch first charge point page on component load
     useEffect(() => {
@@ -39,7 +68,6 @@ export default function CreateFirmware(props: {data?: CreateFirmwareFormData}) {
             setTypeAllowedList(result.map(v => {
                 return {
                     item: v,
-                    selected: false,
                     label: v.constructor + "-" + v.type,
                     value: "",
                     id: v.id + "",
@@ -50,86 +78,98 @@ export default function CreateFirmware(props: {data?: CreateFirmwareFormData}) {
         }, [])
 
     return (
-        <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
-            <Grid container spacing={15}>
-                <Grid item xs={12} md={6}>
-                    <Box>
-                        <FormInput name={"Version"}
-                                   onChange={val => setFormData(prevState => {
-                                       return {...prevState, version: val}
-                                   })}
-                                   checkIsWrong={value => value === "abc"}
-                                   value={formData.version}
-                        />
-                        <FormInput name={"URL"}
-                                   onChange={val => setFormData(prevState => {
-                                    return {...prevState, url: val}
-                                   })}
-                                   checkIsWrong={value => value === "abc"}
-                                   value={formData.url}
-                        />
-                        <FormInput name={"Constructeur"}
-                                   onChange={val => setFormData(prevState => {
-                                    return {...prevState, constructeur: val}
-                                   })}
-                                   checkIsWrong={value => value === "abc"}
-                                   value={formData.constructeur}
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            boxSizing: 'border-box',
-                        }}
-                        pt={2}
-                    >
-                        <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                onClick={() => {
-                                    
-                                    let typesAllowed = new Set<TypeAllowed>
-                                    selectedItems.forEach(item => {
-                                        typesAllowed.add(item.item)
-                                    })
-        
-                                    let firmware: CreateFirmwareFormData = {
-                                        constructeur: formData.constructeur,
-                                        url: formData.url,
-                                        typesAllowed: typesAllowed,
-                                        version: formData.version,
+        <Box>
+            {loaded && (
+                <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
+                <Grid container spacing={15}>
+                    <Grid item xs={12} md={6}>
+                        <Box>
+                            <FormInput name={"Version"}
+                                    onChange={val => setFormData(prevState => {
+                                        return {...prevState, version: val}
+                                    })}
+                                    checkIsWrong={value => value === "abc"}
+                                    value={formData.version}
+                            />
+                            <FormInput name={"URL"}
+                                    onChange={val => setFormData(prevState => {
+                                        return {...prevState, url: val}
+                                    })}
+                                    checkIsWrong={value => value === "abc"}
+                                    value={formData.url}
+                            />
+                            <FormInput name={"Constructeur"}
+                                    onChange={val => setFormData(prevState => {
+                                        return {...prevState, constructor: val}
+                                    })}
+                                    checkIsWrong={value => value === "abc"}
+                                    value={formData.constructor}
+                            />
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                boxSizing: 'border-box',
+                            }}
+                            pt={2}
+                        >
+                            <Button sx={{borderRadius: 28}} variant="contained" color="primary"
+                                    onClick={() => {
+                                        
+                                        let typesAllowed = new Set<TypeAllowed>
+                                        selectedItems.forEach(item => {
+                                            typesAllowed.add(item.item)
+                                        })
+            
+                                        let firmware: CreateFirmwareFormData = {
+                                            constructor: formData.constructor,
+                                            url: formData.url,
+                                            typesAllowed: typesAllowed,
+                                            version: formData.version,
+                                        }
+                                        // If id is defined then it's a firmware update
+                                        if(props.id){
+                                            updateFirmware(props.id, firmware)
+                                            return
+                                        }
+                                        // Otherwise it's a firmware creation
+                                        postCreateFirmware(firmware)
                                     }
-                                    postCreateFirmware(firmware)
-                                }
-                                }>Valider</Button>
-                    </Box>
+                                    }>Valider</Button>
+                        </Box>
 
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <SelectItemsList 
+                            title={"Modèles compatibles"}
+                            keyTitle={"Modèles"}
+                            items={typeAllowedList} 
+                            selectKind="values"
+                            setSelectedItems={setSelectedItems}
+                            selectedItems={selectedItems}
+                            validation={items => {
+                                let typesAllowed = new Set<TypeAllowed>
+                                items.forEach(item => {
+                                    typesAllowed.add(item.item)
+                                })
+                                let firmware: CreateFirmwareFormData = {
+                                    constructor: formData.constructor,
+                                    url: formData.url,
+                                    typesAllowed: typesAllowed,
+                                    version: formData.version,
+                                }
+                                postCreateFirmware(firmware)
+                                return true;
+                            }}
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <SelectItemsList 
-                        title={"Modèles compatibles"}
-                        keyTitle={"Modèles"}
-                        items={typeAllowedList} 
-                        selectKind="values"
-                        setSelectedItems={setSelectedItems}
-                        selectedItems={selectedItems}
-                        validation={items => {
-                            let typesAllowed = new Set<TypeAllowed>
-                            items.forEach(item => {
-                                typesAllowed.add(item.item)
-                            })
-                            let firmware: CreateFirmwareFormData = {
-                                constructeur: formData.constructeur,
-                                url: formData.url,
-                                typesAllowed: typesAllowed,
-                                version: formData.version,
-                            }
-                            postCreateFirmware(firmware)
-                            return true;
-                        }}
-                    />
-                </Grid>
-            </Grid>
-        </Container>
+            </Container>
+            )}
+            {!loaded && (<LoadingPage/>)}
+        </Box>
+
     );
 }
 

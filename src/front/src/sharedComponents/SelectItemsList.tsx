@@ -8,7 +8,6 @@ export type KeyValueItem<T> = {
     label: string,
     item: T,
     value: string, 
-    selected: boolean,
     id: string,
     checker: (value: string) => boolean,
 }
@@ -24,21 +23,10 @@ export default function SelectItemsList<T>(props: {
 }){
     const [selectedItem, setSelectedItem] = useState<KeyValueItem<T> | null>(null);
 
-    const updateItemSelection = (id: string, state: boolean) => {
-        props.setSelectedItems(prevItemList => {
-            return prevItemList.map(el => {
-                if(el.id == id){
-                    return {...el, selected: state}
-                }
-                return el
-            })
-        })
-    }
-
     const updateItemValue = (id: string, value: string) => {
         props.setSelectedItems(prevItemList => {
             return prevItemList.map(el => {
-                if(el.id == id){
+                if(el.id === id){
                     return {...el, value: value}
                 }
                 return el
@@ -65,7 +53,7 @@ export default function SelectItemsList<T>(props: {
                                 /*disableClearable*/
                                 sx={{width: 300}}
                                 disablePortal
-                                options={props.items.filter(item => !props.selectedItems.find(otherItem => otherItem.id == item.id))}
+                                options={props.items.filter(item => !props.selectedItems.find(otherItem => otherItem.id === item.id))}
                                 getOptionLabel={element => element ? element.label : ""}
                                 value={selectedItem}
                                 renderInput={(params) => <TextField {...params} label={props.keyTitle}/>}
@@ -113,7 +101,7 @@ export default function SelectItemsList<T>(props: {
                                                     <Typography>{item.label}</Typography>
                                                 </Grid>
                                                 {/*If input mode is activated then save element input value*/}
-                                                {(props.selectKind == "input") && (
+                                                {(props.selectKind === "input") && (
                                                     <Grid item marginLeft={2}>
                                                         <Input
                                                             onChange={event => {
