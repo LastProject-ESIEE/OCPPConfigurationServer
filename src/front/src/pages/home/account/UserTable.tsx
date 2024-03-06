@@ -279,4 +279,5 @@ function DeleteUserModal(props: {
         </Box>
     )
 }
+
 export default UserTable;
