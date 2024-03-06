@@ -172,7 +172,7 @@ public class FirmwareController {
                                     "url": "http://exemple.com",
                                     "version": "6.0.54",
                                     "constructor": "Alfen BV",
-                                    "typeAllowed": {key1: value1, key2: value2}
+                                    "typeAllowed": [{},{}]
                                   }
                                   """
                           )

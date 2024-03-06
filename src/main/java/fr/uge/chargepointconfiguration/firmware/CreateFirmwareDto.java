@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.firmware;
 
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedDto;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,5 +16,5 @@ public record CreateFirmwareDto(
         String url,
         String version,
         String constructor,
-        Set<TypeAllowedDto> typesAllowed) {
+        List<TypeAllowedDto> typesAllowed) {
 }

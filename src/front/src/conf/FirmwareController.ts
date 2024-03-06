@@ -43,6 +43,11 @@ export async function searchFirmware(
 export async function postCreateFirmware(firmware: CreateFirmwareFormData): Promise<boolean> {
     console.log(JSON.stringify(firmware))
 
+    let typesArray: TypeAllowed[] = []
+    firmware.typesAllowed.forEach(item => {
+        typesArray.push(item)
+    })
+
     let request = await fetch(window.location.origin + "/api/firmware/create",
         {
             method: "POST",
@@ -53,6 +58,7 @@ export async function postCreateFirmware(firmware: CreateFirmwareFormData): Prom
                 version: firmware.version,
                 url: firmware.url,
                 constructeur: firmware.constructeur,
+                typesAllowed: typesArray,
             })
         })
     if (request.ok) {
