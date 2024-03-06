@@ -95,7 +95,8 @@ class ChangeConfigurationRequest16Test {
                     or the constructor would not be happy with you.
                     You really do not want to have the constructor angry at you and if it is the case,
                     well, farewell and good luck my friend, because you'll need luck to survive !
-                    Oh no, the constructor is here... Please have mercy, NOOOOOOOOOOOOOOOOOOOOOO"""
+                    Oh no, the constructor is here... Please have mercy, NOOOOOOOOOOOOOOOOOOOOOO
+            """
     ));
   }
 }
