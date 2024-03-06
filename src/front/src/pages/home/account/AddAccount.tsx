@@ -9,7 +9,7 @@ function AddAccount() {
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
     const [mail, setMail] = useState("");
-    const [role, setRole] = useState<Role>(Role.VISUALIZER);
+    const [role, setRole] = useState<Role>("VISUALIZER");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
@@ -80,11 +80,9 @@ function AddAccount() {
                         }
                         let returnValue = createNewUser(user)
                         returnValue.then(value => {
-                            console.log("value : " + value)
                             setToast(value)
                             setDisplay(true)
                         })
-                        console.log("toast : " + toast)
                     }
                 }
             >
