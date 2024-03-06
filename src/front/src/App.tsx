@@ -16,6 +16,9 @@ import TechnicalLogTable from "./pages/home/logs/TechnicalLogTable";
 import Account from "./pages/home/account/Account";
 import AddAccount from './pages/home/account/AddAccount';
 import ChargepointEditPage from "./pages/home/chargepoint/ChargepointEditPage";
+import CreateFirmware from './pages/home/firmware/CreateFirmware';
+import EditFirmwarePage from './pages/home/firmware/EditFirmware';
+
 
 function App(): JSX.Element {
     return (
@@ -38,7 +41,8 @@ function App(): JSX.Element {
                         </Route>
                         <Route path="firmware">
                             <Route path="" element={<FirmwareTable/>}/>
-                            <Route path="new" element={<Error/>}/>
+                            <Route path="new" element={<CreateFirmware/>}/>
+                            <Route path="edit/:id" element={<EditFirmwarePage/>}/>
                         </Route>
                         <Route path="account">
                             <Route path="" element={<UserTable/>}/>

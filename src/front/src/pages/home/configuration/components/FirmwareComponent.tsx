@@ -1,13 +1,12 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
-import { ErrorState, GlobalState } from "../../../../conf/configurationController";
+import { ErrorState } from "../../../../conf/configurationController";
 
-function FirmwareComponent(props: {
-    globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+export default function FirmwareComponent(props: {
+    value: string;
+    setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
 }) {
-    //const [firmware, setFirmware] = useState(props.globalState.firmware);
     const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
     const backgroundColor = props.errorState.firmware === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
 
@@ -29,22 +28,14 @@ function FirmwareComponent(props: {
                 </Grid>
                 <Grid xs={7} item>
                     <Select
-                        value={props.globalState.firmware}
+                        value={props.value}
                         onChange={event => {
-                            //setFirmware(event.target.value as string)
-                            props.setGlobalState(prevState => {
-                                return {
-                                    configuration: prevState.configuration,
-                                    firmware: event.target.value as string,
-                                    description: prevState.description,
-                                    name: prevState.name
-                                }
-                            })
+                            props.setValue(event.target.value)
                         }}
                         fullWidth={true}>
                         {firmwareList && firmwareList.map((item) => {
                             let selected = false;
-                            if(props.globalState.firmware === item.version){
+                            if(props.value === item.version){
                                 selected=true
                             }
                             return (
@@ -59,5 +50,3 @@ function FirmwareComponent(props: {
         </Paper>
     )
 }
-
-export default FirmwareComponent;
