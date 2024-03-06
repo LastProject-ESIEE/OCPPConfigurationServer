@@ -48,7 +48,7 @@ public class TypeAllowedController {
           })
   @GetMapping(value = "/all")
   public List<TypeAllowedDto> getAllTypeAllowed() {
-    return typeAllowedService.getAll();
+    return typeAllowedService.getAll().stream().map(TypeAllowed::toDto).toList();
   }
 
 }
