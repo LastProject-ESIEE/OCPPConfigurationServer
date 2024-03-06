@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
 
@@ -81,131 +81,123 @@ function Account() {
     }
 
     return (
-        <Box style={{
-            fontSize: "3em"
-        }}>
-            <Grid container spacing={2} marginTop={"10%"}>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Nom :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.lastName) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Prénom :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.firstName) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Adresse mail :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.email) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Rôle :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && englishRoleToFrench(user.role)) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Mot de passe :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2} alignItems={"stretch"}>
-                    <TextField
-                        id={"oldPassword"}
-                        label={"Ancien mot de passe"}
-                        type={"password"}
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid item xs={5} md={1}>
-                    <Button
-                        type={"submit"}
-                        disabled={isButtonDisabled}
-                        onClick={handleButtonClick}
-                        style={isButtonDisabled ? {
-                                backgroundColor: "#DBDBDB",
-                                color: "black",
-                                borderRadius: "30px",
-                                fontSize: "0.5em"
-                            } : {
-                                backgroundColor: "#C8FAC7",
-                                color: "black",
-                                borderRadius: "30px",
-                                fontSize: "0.5em"
-                        }}
-                    >
-                        Changer
-                    </Button>
-                </Grid>
-                <Grid item xs={3} md={6}>
-                    <Box marginLeft={"60%"}>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2} alignItems={"stretch"}>
-                    <TextField
-                        id={"password1"}
-                        label={"Nouveau mot de passe"}
-                        type={"password"}
-                        value={password1}
-                        onChange={(e) => setPassword1(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid item xs={3} md={6}>
-                    <Box marginLeft={"60%"}>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <TextField
-                        id={"password2"}
-                        label={"Nouveau mot de passe"}
-                        type={"password"}
-                        value={password2}
-                        onChange={(e) => setPassword2(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid xs={12}>
-                    <Box style={{
-                        fontSize: "0.5em",
-                        textAlign: "center",
-                        marginTop: "20px"
-                    }}>
-                        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-                    </Box>
-                    <Box style={{
-                        fontSize: "0.5em",
-                        textAlign: "center",
-                        marginTop: "20px"
-                    }}>
-                        {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
-                    </Box>
+        <Grid container direction={"row"} sx={{alignContent: "center", width: "100%", textAlign: "center"}}>
+            <Grid item xs={12} md={6} sx={{p: 5, display: "flex", justifyContent: "flex-end"}}>
+                <Paper
+                    elevation={0} 
+                    variant="outlined" 
+                    sx={{
+                        backgroundColor: 'rgb(249, 246, 251)', 
+                        borderColor: 'rgba(226,229,233,255)', 
+                        borderWidth: 2, 
+                        width: "100%", 
+                        height: "100%",
+                        maxWidth: "50%"
+                    }}
+                >
+                    <Grid container direction={"column"} textAlign={"center"} justifyContent={"space-between"} sx={{height: "100%", paddingTop: 8, paddingBottom: 8}}>
+                        <Grid item>
+                            <Typography variant="h6">
+                                <b>Nom :</b> {(user && user.lastName) || "Inconnu"}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h6">
+                                <b>Prénom :</b> {(user && user.firstName) || "Inconnu"}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h6">
+                                <b>Adresse mail :</b> {(user && user.email) || "Inconnu"}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                        <Typography variant="h6">
+                                <b>Rôle :</b> {(user && englishRoleToFrench(user.role)) || "Inconnu"}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Grid>
+            <Grid item xs={12} md={6} sx={{p: 5, alignItems: "center"}}>
+                <Grid sx={{maxWidth: "50%"}}>
+                    <Grid item>
+                        <Typography variant="h6">
+                            <b>Changer de mot de passe :</b>
+                        </Typography>
+                    </Grid>
+                    <Grid item container direction={"column"}>
+                        <TextField
+                            id={"oldPassword"}
+                            label={"Ancien mot de passe"}
+                            type={"password"}
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                            sx={{marginTop: 2}}
+                        >
+                        </TextField>
+                        <TextField
+                            id={"password1"}
+                            label={"Nouveau mot de passe"}
+                            type={"password"}
+                            value={password1}
+                            onChange={(e) => setPassword1(e.target.value)}
+                            sx={{marginTop: 2}}
+                        >
+                        </TextField>
+                        <TextField
+                            id={"password2"}
+                            label={"Nouveau mot de passe"}
+                            type={"password"}
+                            value={password2}
+                            onChange={(e) => setPassword2(e.target.value)}
+                            sx={{marginTop: 2}}
+                        >
+                        </TextField>
+
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            type={"submit"}
+                            disabled={isButtonDisabled}
+                            onClick={handleButtonClick}
+                            style={isButtonDisabled ? {
+                                    backgroundColor: "#DBDBDB",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    fontSize: "1em",
+                                    marginTop: 16.5
+                                } : {
+                                    backgroundColor: "#C8FAC7",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    fontSize: "0.5em",
+                                    marginTop: 16.5
+                            }}
+                        >
+                            Changer
+                        </Button>
+                    </Grid>
                 </Grid>
             </Grid>
-        </Box>
+            {/* TODO : Change with the toast later */}
+            <Grid xs={12}>
+                <Box style={{
+                    fontSize: "0.5em",
+                    textAlign: "center",
+                    marginTop: "20px"
+                }}>
+                    {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+                </Box>
+                <Box style={{
+                    fontSize: "0.5em",
+                    textAlign: "center",
+                    marginTop: "20px"
+                }}>
+                    {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
+                </Box>
+            </Grid>
+        </Grid>
     );
 }
 
