@@ -21,10 +21,10 @@ This application is ready to accept other OCPP version such as 2.0.1.
 ### First boot
 
 On startup, the charge point sends a **BootNotificationRequest** to the server containing these information :
-- The charge point's constructor [X] ;
-- The charge point's model [X] ;
-- The charge point's serial number [X] ;
-- The charge box serial number ;
+- The charge point's constructor         [X] ;
+- The charge point's model                 [X] ;
+- The charge point's serial number     [X] ;
+- The charge box serial number               ;
 - The charge point's firmware version [X].
 
 After receiving this message, we search in the database a charge point with the same serial number and vendor.
