@@ -9,30 +9,31 @@ This application is ready to accept other OCPP version such as 2.0.1.
 
 ## Warning
 
-> 1 : If a field is required for our application, it will be marked like that [X].
+> 1 : If a field is required for our application, it will be marked like that *.
 
 > 2 : The communication between the two machines is a request-response, meaning, for every request sent a response 
 > is expected.
 
 > 3 : The OCPP 2.0.1 protocol is not yet implemented, see [Not implemented](#ocpp-201) for more explanation.
 
+> 4 : The status is an enum defined by the OCPP protocol and will be highlighted like this : <mark>Test</mark>.
+
 ## Processes
 
 ### First boot
 
 On startup, the charge point sends a **BootNotificationRequest** to the server containing these information :
-- The charge point's constructor         [X] ;
-- The charge point's model                 [X] ;
-- The charge point's serial number     [X] ;
-- The charge box serial number               ;
-- The charge point's firmware version [X].
+- The chargepoint's constructor* ;
+- The chargepoint's model* ;
+- The chargepoint's serial number* ;
+- The chargebox serial number ;
+- The chargepoint's firmware version*.
 
 After receiving this message, we search in the database a chargepoint with the same serial number and vendor.
 Then, the server responds with a **BootNotificationResponse** to the charge point containing these information :
-- The status (it can be Accepted (We found a corresponding charge point in the database)
-Rejected (we did not find a corresponding charge point)) [X] ;
-- The current time [X] ;
-- The interval which the charge point should respect before sending a message [X].
+- The status (<mark>Accepted</mark> or <mark>Rejected</mark>)* ;
+- The current time* ;
+- The interval which the charge point should respect before sending a message*.
 
 Then, the server would check the current state of the charge point before doing anything.
 
@@ -42,61 +43,66 @@ If the chargepoint is in FIRMWARE mode in the database, the server will compare 
 in the linked configuration of the chargepoint to the current chargepoint's firmware.
 
 If the target firmware is the same as the current firmware, 
-we just skip this process and put the charge point into CONFIGURATION mode.
+we just skip this process and put the chargepoint into [CONFIGURATION mode](#configuration-process).
 
 If the target firmware is not the same, we downgrade or upgrade the firmware, step by step.
+
+> Note : Downgrading process is in progress ! It is not fully stable right now.
 
 During the firmware process, the server will choose intermediary firmwares before installing the target firmware,
 so the process is technically a loop until the target firmware has been installed.
 
 The process is started by the server sending an **UpdateFirmwareRequest** containing :
-- The URL (FTP or HTTP/S) for the firmware file (.fwi) [X] ;
-- The retrieve date when the charge point should download the firmware [X].
+- The URL (FTP or HTTP/S) for the firmware file (.fwi)* ;
+- The retrieve date when the charge point should download the firmware*.
 
-The charge point should respond with an **UpdateFirmwareResponse** which is an empty message.
+The chargepoint should respond with an **UpdateFirmwareResponse** which is an empty message.
 It is like an ACK packet in a IP/TCP communication.
 
-The charge point will sometimes send a **FirmwareStatusNotificationRequest** containing the status of the download.
+The chargepoint will sometimes send a **FirmwareStatusNotificationRequest** containing the status of the download.
 The status can be :
-- Downloaded, the firmware has been downloaded ;
-- DownloadFailed, the firmware couldn't be downloaded ;
-- Downloading, the charge point currently downloads the firmware ;
-- Idle, the charge point is waiting for a process to finish before installing the firmware ;
-- InstallationFailed, the firmware couldn't be installed on the charge point ;
-- Installing, the charge point currently installs the firmware ;
-- Installed, the firmware has been installed on the charge point.
+- <mark>Downloaded</mark>, the firmware has been downloaded ;
+- <mark>DownloadFailed</mark>, the firmware couldn't be downloaded ;
+- <mark>Downloading</mark>, the chargepoint currently downloads the firmware ;
+- <mark>Idle</mark>, the chargepoint is waiting for a process to finish before installing the firmware ;
+- <mark>InstallationFailed</mark>, the firmware couldn't be installed on the charge point ;
+- <mark>Installing</mark>, the chargepoint currently installs the firmware ;
+- <mark>Installed</mark>, the firmware has been installed on the chargepoint.
 
-If the status is DownloadFailed/InstallationFailed, all the processes are stopped.
+If the status is <mark>DownloadFailed</mark>/<mark>InstallationFailed</mark>, all the processes are stopped,
+and we consider the process as FAILED.
 
-If the status is Installed, we continue by rebooting the machine and continue by switching the charge point into
-the CONFIGURATION mode.
+If the status is <mark>Installed</mark>, 
+we continue by rebooting the machine and continue by switching the chargepoint into the CONFIGURATION mode.
 
 If the status is something else, we just wait for the confirmation of the installation of the firmware.
 
 ### Configuration process
 
-If the charge point is in CONFIGURATION mode in the database, the server will compare the last update date in 
+If the chargepoint is in CONFIGURATION mode in the database, the server will compare the last update date in 
 the linked configuration and the last update date in the chargepoint table.
 
-If the configuration date is more recent than the charge point date, we skip this process.
+If the configuration date is more recent than the chargepoint date, we skip this process.
+We consider the process to be FINISHED.
 
 Else, we search for the key/value in the configuration, and we send n packets for n key/value.
 
 The server sends a **ChangeConfigurationRequest** containing :
-- The key [X] ;
-- The value [X] ;
+- The key* ;
+- The value* ;
 
 The charge point will respond with a **ChangeConfigurationResponse** containing a status.
 This status can be :
-- Accepted, the change has been accepted ;
-- Rejected, the change has been rejected because the value is wrong ;
-- RebootRequired, the change has been accepted but the charge point needs to reboot ;
-- NotSupported, the given key is not correct.
+- <mark>Accepted</mark>, the change has been accepted ;
+- <mark>Rejected</mark>, the change has been rejected because the value is wrong ;
+- <mark>RebootRequired</mark>, the change has been accepted but the chargepoint needs to reboot ;
+- <mark>NotSupported</mark>, the given key is not correct.
 
-If all the messages sent by the server are Accepted or RebootRequired, the configuration is finished,
-and we send the last order containing the new server address, and we reboot the charge point.
+If all the messages sent by the server are <mark>Accepted</mark> or <mark>RebootRequired</mark>, 
+the configuration is finished, and we send the last order containing the new server address, 
+and we reboot the chargepoint.
 
-If not, we stop the process.
+If not, we stop the process, and we switch the status of the chargepoint as FAILED.
 
 ## Other
 
@@ -107,36 +113,37 @@ If not, we stop the process.
 #### OCPP 2.0.1
 
 The OCPP 2.0.1 protocol is not implemented because this application has been tested with Alfen BV's charge points
-(Eve Single S-Line). 
+(Eve Single S-Line), and the implementation of the 2.0.1 protocol is not fully done by Alfen BV. 
 
 We could not find the correct *Component* object for the **SetVariablesRequest**, except a Component called "none"
-for this charge point.
+for this chargepoint.
 
 However, the component "none" does not seem to work when giving new value to a key, it will always respond by
 a Rejected.
 
 Moreover, here is a list of all the known Component for Alfen BV (for firmware >= 6.1).
+These components are the only components recognized by ALfen BV's chargepoints (Eve Single S-Line).
 
-> Note : When marked by a [X], it means the *Component* is an OCPP standard, see the 
+> Note : When marked by a *, it means the *Component* is an OCPP standard, see the 
 > [official documentation](https://openchargealliance.org/protocols/open-charge-point-protocol/#OCPP2.0.1).
 
-- AlignedDataCtrlr [X] ;
-- AuthCtrlr [X] ;
-- AuthCacheCtrlr [X] ;
-- ChargingStation [X] ;
-- ClockCtrlr [X] ;
-- DeviceDataCtrlr [X] ;
-- DisplayMessageCtrlr [X] ;
-- LocalAuthListCtrlr [X] ;
-- MonitoringCtrlr [X] ;
+- AlignedDataCtrlr* ;
+- AuthCtrlr* ;
+- AuthCacheCtrlr* ;
+- ChargingStation* ;
+- ClockCtrlr* ;
+- DeviceDataCtrlr* ;
+- DisplayMessageCtrlr* ;
+- LocalAuthListCtrlr* ;
+- MonitoringCtrlr* ;
 - none ;
-- OCPPCommCtrlr [X] ;
-- ReservationCtrlr [X] ;
-- SampledDataCtrlr [X] ;
-- SecurityCtrlr [X] ;
-- SmartChargingCtrlr [X] ;
-- TariffCostCtrlr [X] ;
-- TxCtrlr [X].
+- OCPPCommCtrlr* ;
+- ReservationCtrlr* ;
+- SampledDataCtrlr* ;
+- SecurityCtrlr* ;
+- SmartChargingCtrlr* ;
+- TariffCostCtrlr* ;
+- TxCtrlr*.
 
 
 
