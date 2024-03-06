@@ -1,4 +1,4 @@
-# How does the charge points communicate with the server ?
+# How does the chargepoints communicate with the server ?
 
 ## Overview
 
