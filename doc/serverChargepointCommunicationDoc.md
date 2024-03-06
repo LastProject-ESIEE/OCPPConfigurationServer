@@ -16,7 +16,8 @@ This application is ready to accept other OCPP version such as 2.0.1.
 
 > 3 : The OCPP 2.0.1 protocol is not yet implemented, see [Not implemented](#ocpp-201) for more explanation.
 
-> 4 : The status is an enum defined by the OCPP protocol and will be highlighted like this : <ins>Test</ins>.
+> 4 : Every time a status is mentionned, it is an enum defined by the OCPP protocol 
+and will be highlighted like this : <ins>Test</ins>.
 
 ## Processes
 
