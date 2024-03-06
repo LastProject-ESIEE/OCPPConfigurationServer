@@ -24,6 +24,7 @@ public class SearchUtils {
    * @param entity The entity to filter on
    * @param <T> The type of the entity
    * @return The JPA specification to use
+   * @throws IllegalArgumentException if the request contains fields not declared in the entity
    */
   public static <T> Specification<T> computeSpecification(String request, Class<T> entity) {
     Objects.requireNonNull(request);
@@ -33,8 +34,6 @@ public class SearchUtils {
     checkFieldsInEntity(entity, params);
 
     var conditions = params.stream()
-        .map(param -> new SearchCriteria(param.key(), param.operation(), param.value()))
-        .peek(System.out::println)
         .<Specification<T>>map(SearchUtils::getSpecification)
         .toList();
 
