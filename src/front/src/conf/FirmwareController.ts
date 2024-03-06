@@ -48,7 +48,7 @@ export async function getFirmware(id: number): Promise<Firmware | undefined> {
         if(firmware){
             return firmware
         }else{
-            console.log("Failed to fetch firmware with id :" + id, content)
+            console.error("Failed to fetch firmware with id :" + id, content)
         }
     }else{
         console.error("Fetch firmware failed, error code:" +  request.status)
