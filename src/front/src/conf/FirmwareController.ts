@@ -57,7 +57,6 @@ export async function getFirmware(id: number): Promise<Firmware | undefined> {
 }
 
 export async function postCreateFirmware(firmware: CreateFirmwareFormData): Promise<boolean> {
-    console.log(JSON.stringify(firmware))
 
     let typesArray: TypeAllowed[] = []
     firmware.typesAllowed.forEach(item => {
