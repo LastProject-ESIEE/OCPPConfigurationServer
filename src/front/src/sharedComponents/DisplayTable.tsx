@@ -1,4 +1,4 @@
-import { Box, Grid, TextField, Typography, Skeleton } from "@mui/material";
+import { Box, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export type TableColumnFilterDefinition = {
@@ -77,7 +77,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                             <Box display="flex" flexDirection="column">
                                                 {Array.from(Array(30).keys()).map((_, index) => (
                                                     <Box key={"skeleton-list-" + index} marginY={1}>
-                                                        <Skeleton variant="rounded" width={"100%"} height={50} />
+                                                        <Skeleton sx={{borderRadius: 50}} variant="rectangular" width={"100%"} height={"5vh"} />
                                                     </Box>
                                                 ))}
                                             </Box>
