@@ -27,7 +27,7 @@ On startup, the charge point sends a **BootNotificationRequest** to the server c
 - The charge box serial number               ;
 - The charge point's firmware version [X].
 
-After receiving this message, we search in the database a charge point with the same serial number and vendor.
+After receiving this message, we search in the database a chargepoint with the same serial number and vendor.
 Then, the server responds with a **BootNotificationResponse** to the charge point containing these information :
 - The status (it can be Accepted (We found a corresponding charge point in the database)
 Rejected (we did not find a corresponding charge point)) [X] ;
