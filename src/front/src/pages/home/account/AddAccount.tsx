@@ -1,10 +1,9 @@
-import { Box, Button, Grid, IconButton } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
 import { useEffect, useState } from "react";
 import { Role, createNewUser } from "../../../conf/userController";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import BackButton from "../../../sharedComponents/BackButton";
 
 function AddAccount() {
     const [lastName, setLastName] = useState("");
@@ -16,7 +15,6 @@ function AddAccount() {
     const [password2, setPassword2]= useState("");
     const [toast, setToast] = useState(false); // TODO Edit with the real toast later
     const [display, setDisplay] = useState(false); // TODO Edit with the real toast later
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (
@@ -31,14 +29,8 @@ function AddAccount() {
 
     return (
         <Grid>
+            <BackButton link={"/home/account"}/>
             <Grid container sx={{alignContent: "center", width: "100%"}}>
-                <Grid item xs={12}>
-                    <IconButton
-                        onClick={() => navigate("/home/account")}
-                    >
-                        <ArrowBackIosNewIcon/>
-                    </IconButton>
-                </Grid>
                 <Grid item xs={12} sx={{ml: "35%", mr: "35%"}}>
                     <FormInput name={"Nom"}
                         onChange={lastName => setLastName(lastName)}

@@ -15,6 +15,7 @@ import {
 } from "../../../conf/configurationController";
 import SelectItemsList, {KeyValueItem} from '../../../sharedComponents/SelectItemsList';
 import {SkeletonConfiguration} from "./components/SkeletonConfiguration";
+import BackButton from '../../../sharedComponents/BackButton';
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -136,6 +137,7 @@ function CreateConfig(props: { id?: number }) {
 
     return (
         <Box>
+            <BackButton link={"/home/configuration"} top={11}/>
             <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
                 {loading ? (
                     <SkeletonConfiguration />

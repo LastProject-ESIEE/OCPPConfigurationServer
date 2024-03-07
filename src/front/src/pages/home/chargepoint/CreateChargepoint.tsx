@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Container, Grid, IconButton, MenuItem, Paper, Select} from "@mui/material";
+import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -11,8 +11,7 @@ import {
     updateChargepoint
 } from "../../../conf/chargePointController";
 import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useNavigate } from "react-router";
+import BackButton from "../../../sharedComponents/BackButton";
 
 function DisplayConfiguration({configuration}: { configuration?: Configuration }) {
 
@@ -75,8 +74,6 @@ function CreateChargepoint(props: { id?: number }) {
         configuration: configuration.id,
     });
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         if (!props.id) {
             return
@@ -116,13 +113,7 @@ function CreateChargepoint(props: { id?: number }) {
 
     return (
         <Grid>
-            <Grid item xs={12}>
-                <IconButton
-                    onClick={() => navigate("/home/chargepoint")}
-                >
-                    <ArrowBackIosNewIcon/>
-                </IconButton>
-            </Grid>
+            <BackButton link={"/home/chargepoint"} top={15}/>
             <Container maxWidth="xl" sx={{mb: 4}}>
                 <Grid container spacing={15}>
                     <Grid item xs={12} md={6}>

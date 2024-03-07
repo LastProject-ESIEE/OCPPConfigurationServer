@@ -1,11 +1,10 @@
-import { Box, Button, Container, Grid, IconButton } from "@mui/material";
+import { Box, Button, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import { TypeAllowed, getFirmware, getTypeAllowed, postCreateFirmware, updateFirmware } from "../../../conf/FirmwareController";
 import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 import LoadingPage from "../../../sharedComponents/LoadingPage";
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { useNavigate } from "react-router";
+import BackButton from "../../../sharedComponents/BackButton";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -24,7 +23,6 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
     const [typeAllowedList, setTypeAllowedList] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [selectedItems, setSelectedItems] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [loaded, setLoaded] = useState(false);
-    const navigate = useNavigate();
 
     // Fetch the firmware
     useEffect(() => {
@@ -85,13 +83,7 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
         <Box>
             {loaded && (
                 <Grid>
-                    <Grid item xs={12}>
-                        <IconButton
-                            onClick={() => navigate("/home/firmware")}
-                        >
-                            <ArrowBackIosNewIcon/>
-                        </IconButton>
-                    </Grid>
+                    <BackButton link={"/home/firmware"} top={15}/>
                     <Container maxWidth="xl" sx={{mb: 4}}>
                         <Grid container spacing={15}>
                             <Grid item xs={12} md={6}>
