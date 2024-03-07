@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Box, Button, Container, Grid, Skeleton} from '@mui/material';
+import {Box, Button, Container, Grid} from '@mui/material';
 import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
@@ -14,6 +14,7 @@ import {
     Transcriptor
 } from "../../../conf/configurationController";
 import SelectItemsList, {KeyValueItem} from '../../../sharedComponents/SelectItemsList';
+import {SkeletonConfiguration} from "./components/SkeletonConfiguration";
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -137,24 +138,7 @@ function CreateConfig(props: { id?: number }) {
         <Box>
             <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
                 {loading ? (
-                    <>
-                        <Grid container spacing={15}>
-                            <Grid item xs={12} md={6}>
-                                <Box>
-                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                    <Skeleton sx={{height: "20vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Skeleton sx={{height: "10vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                            </Grid>
-                        </Grid>
-                    </>
+                    <SkeletonConfiguration />
                 ) : (
                     <>
                         <Grid container spacing={15}>
