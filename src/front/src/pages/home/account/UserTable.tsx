@@ -89,17 +89,11 @@ function UserTable() {
         fetchCurrentUser();
     }, []);
 
-    function onChangeEvent(event: SelectChangeEvent<ApiRole>, user: User) {
-        let role = event.target.value as ApiRole
-        fetch("/api/user/updateRole", {
-            method: "POST",
-            body: JSON.stringify({
-                id: user.id,
-                role: role
-            }),
-            headers: {
-                "Content-Type": "application/json"
-            }
+
+    function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
+        let role = event.target.value as Role
+        fetch(`/api/user/${user.id}/role/${role}`, {
+            method: "PATCH",
         }).then(response => {
             if (response.ok) {
                 // TODO : refactor to use the DTO in the response

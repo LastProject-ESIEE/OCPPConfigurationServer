@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -126,27 +127,26 @@ public class UserController {
   }
 
   /**
-   * Updadate the role of the user.
+   * Update the role of the user.
    *
-   * @param changeRoleUserDto a ChangeRoleUserDto.
+   * @param id the id of the user to change.
+   * @param role the new role to be applied.
    * @return a ResponseEntity of UserDto.
    */
   @Operation(summary = "Update role")
   @ApiResponse(responseCode = "200",
-        description = "Update the role of the current user",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
+      description = "Update the role of the current user",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class)
+      )
   )
-  @PostMapping("/updateRole")
+  @PatchMapping("/{id}/role/{role}")
   public ResponseEntity<UserDto> updateRole(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "JSON with id and new role of the user.",
-              required = true
-        )
-        @RequestBody ChangeRoleUserDto changeRoleUserDto) {
-    var user = userService.updateRole(changeRoleUserDto).toDto();
+      @PathVariable int id,
+      @PathVariable User.Role role
+  ) {
+    var user = userService.updateRole(id, role).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
