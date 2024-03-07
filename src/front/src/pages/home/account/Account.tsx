@@ -81,9 +81,26 @@ function Account() {
     }
 
     return (
-        <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
-            <Grid container direction={"row"} justifyContent={"space-between"} sx={{width: "100%", textAlign: "center"}}>
-                <Grid item xs={12} md={6} sx={{p: 5}}>
+        <Container 
+            maxWidth="xl" 
+            sx={{mt: 4, mb: 4}}
+        >
+            <Grid 
+                container 
+                direction={"row"} 
+                justifyContent={"space-between"} 
+                textAlign={"center"}
+            >
+                <Grid 
+                    item 
+                    xs={12} 
+                    md={6} 
+                    sx={{
+                        p: 5, 
+                        pl: 20, 
+                        pr: 10
+                    }}
+                >
                     <Paper
                         elevation={0}
                         variant="outlined"
@@ -91,10 +108,20 @@ function Account() {
                             backgroundColor: 'rgb(249, 246, 251)',
                             borderColor: 'rgba(226,229,233,255)',
                             borderWidth: 2,
-                            height: "100%",
+                            height: "100%"
                         }}
                     >
-                        <Grid container direction={"column"} textAlign={"center"} justifyContent={"space-between"} sx={{height: "100%", paddingTop: 8, paddingBottom: 8}}>
+                        <Grid 
+                            container 
+                            direction={"column"} 
+                            textAlign={"center"} 
+                            justifyContent={"space-between"}
+                            sx={{
+                                height: "100%", 
+                                paddingTop: 8, 
+                                paddingBottom: 8
+                            }}
+                        >
                             <Grid item>
                                 <Typography variant="h6">
                                     <b>Nom :</b> {(user && user.lastName) || "Inconnu"}
@@ -118,8 +145,17 @@ function Account() {
                         </Grid>
                     </Paper>
                 </Grid>
-                <Grid item xs={12} md={6} sx={{p: 5, alignItems: "center"}}>
-                    <Grid container>
+                <Grid 
+                    item 
+                    xs={12} 
+                    md={6} 
+                    sx={{
+                        p: 5, 
+                        pl: 20, 
+                        pr: 10
+                    }}
+                >
+                    <Grid container justifyContent={"center"}>
                         <Grid item>
                             <Typography variant="h6">
                                 <b>Changer de mot de passe :</b>
@@ -153,7 +189,6 @@ function Account() {
                                 sx={{marginTop: 2}}
                             >
                             </TextField>
-
                         </Grid>
                         <Grid item>
                             <Button
