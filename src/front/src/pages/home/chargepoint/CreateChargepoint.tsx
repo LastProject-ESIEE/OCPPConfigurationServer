@@ -118,7 +118,7 @@ function CreateChargepoint(props: { id?: number }) {
         <Grid>
             <Grid item xs={12}>
                 <IconButton
-                    onClick={() => navigate("/home/account")}
+                    onClick={() => navigate("/home/chargepoint")}
                 >
                     <ArrowBackIosNewIcon/>
                 </IconButton>

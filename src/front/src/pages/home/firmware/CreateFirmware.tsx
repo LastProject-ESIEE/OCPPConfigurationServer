@@ -87,7 +87,7 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                 <Grid>
                     <Grid item xs={12}>
                         <IconButton
-                            onClick={() => navigate("/home/account")}
+                            onClick={() => navigate("/home/firmware")}
                         >
                             <ArrowBackIosNewIcon/>
                         </IconButton>
