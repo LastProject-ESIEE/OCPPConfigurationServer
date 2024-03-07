@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Role } from "../../../../conf/userController";
+import { ApiRole } from "../../../../conf/userController";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
 import { englishRoleToFrench } from "../../../../sharedComponents/NavBar";
 
 
 function RoleComponent(props: {
-    role: Role,
-    setRole: React.Dispatch<React.SetStateAction<Role>>
+    role: ApiRole,
+    setRole: React.Dispatch<React.SetStateAction<ApiRole>>
 }) {
-    const [userRoleList, setUserRoleList] = useState<Role[]>([]);
+    const [userRoleList, setUserRoleList] = useState<ApiRole[]>([]);
     const backgroundColor = 'rgb(249, 246, 251)'; // Replace with your desired colors
 
     useEffect(() => {
@@ -30,7 +30,7 @@ function RoleComponent(props: {
                     <Select
                         value={props.role}
                         onChange={event => {
-                            let value = event.target.value as Role;
+                            let value = event.target.value as ApiRole;
                             props.setRole(value)
                         }}
                         fullWidth={true}>
@@ -41,7 +41,7 @@ function RoleComponent(props: {
                                 value={role}
                                 disabled={role === props.role}
                             >
-                                {englishRoleToFrench(role.toString())}
+                                {englishRoleToFrench(role)}
                             </MenuItem>
                         )})}
                         

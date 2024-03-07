@@ -1,10 +1,11 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 
+export type SearchFilter = {filterField: string, filterValue: string }
 
 export type SearchElementsParameters = {
     size: number,
     page: number,
-    filters?: {filterField: string, filterValue: string }[],
+    filters?: SearchFilter[],
     sort?: { sortField: string, sortOrder: 'asc' | 'desc' }
 }
 
@@ -14,9 +15,9 @@ export async function searchElements<T>(path: string, params?: SearchElementsPar
         formattedRequest += `?size=${params.size}`
         formattedRequest += `&page=${params.page}`
         if(params.filters){
-            formattedRequest += "&request=" + params.filters.map(filter => {
+            formattedRequest += "&request=" + encodeURI(params.filters.map(filter => {
                 return `${filter.filterField}:\`${filter.filterValue}\``
-            }).join(",")
+            }).join(","))
         }
     }
     let request = await fetch(formattedRequest)

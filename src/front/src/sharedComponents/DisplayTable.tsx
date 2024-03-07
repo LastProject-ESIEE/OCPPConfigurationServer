@@ -1,9 +1,15 @@
-import { Box, Grid, TextField, Typography } from "@mui/material";
+import { Box, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { SearchFilter } from "../conf/backendController";
+import { useState } from "react";
+
+export const DEFAULT_FILTER_SELECT_VALUE = "Aucun"
 
 export type TableColumnFilterDefinition = {
     apiField: string,
-    //onChange: (newValue: string) => void,
+    filterType: "input" | "select",
+    restrictedValues?: string[], // must be set for select input
+    apiValueFormatter?: (value: string) => string, // must be set for select input to transform input value to api value
 }
 
 export type TableColumnDefinition = {
@@ -28,11 +34,41 @@ export type InfinityScrollItemsTableProps<T> = {
     error: string | undefined,
     onSelection: (item: T) => void, // function call when an element is selected in the list
     formatter: (item: T, index: number) => JSX.Element // function that transform an item to a JSX element
-    fetchData: () => void, // function that fetch next items
+    fetchData: (filters: SearchFilter[]) => void, // function that fetch next items
+    onFiltering?: (filters: SearchFilter[]) => void, // function call when filters changed
 }
 
 
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
+    const [filters, setFilters] = useState<SearchFilter[]>([]);
+
+    const updateFilter = (filterField: string, filterValue: string) => {
+        console.log(filterField,filterValue)
+        if(props.onFiltering){
+            // If filter not present add it
+            if(!filters.find(v => v.filterField === filterField)){
+                setFilters([...filters, {filterField: filterField ?? "", filterValue: filterValue}])
+                props.onFiltering([...filters, {filterField: filterField ?? "", filterValue: filterValue}])
+                return
+            }
+            // Otherwise update filter
+            setFilters(prevFilters => {
+                const newValues = prevFilters.map(filter => {
+                    if(filter.filterField === filterField){
+                        return {...filter, filterValue: filterValue}
+                    }
+                    return filter
+                })
+                
+                // As function is async props.onFiltering should be call here
+                if(props.onFiltering){
+                    props.onFiltering(newValues)
+                }
+                return newValues
+            })
+        }
+    }
+
     return (
         <Box maxWidth={"true"} paddingTop={2} marginLeft={2}>
             <Box marginRight={2}>
@@ -42,12 +78,18 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                         return (
                             <Grid xs={column?.size ?? 12/props.columns.length} item key={"table-header-column-" + column.title} justifyContent={"center"}>
                                 <Typography variant="h6" textAlign={"center"}>{column.title}</Typography>
-                                {column.filter && (
-                                    <Grid container maxWidth={"true"} justifyContent={"center"}>
-                                        <TextField placeholder={column.title} size="small">
-                                        </TextField>
-                                    </Grid>
-                                )}
+                                <Box>
+                                    {column.filter && (
+                                        <TableColumnFilter 
+                                            column={column} 
+                                            onFilterValidate={filterValue => {
+                                                if(column.filter){
+                                                    updateFilter(column.filter.apiField, filterValue)
+                                                }
+                                            } }
+                                        />
+                                    )}
+                                </Box>
                             </Grid>
                         )
                     })}
@@ -65,7 +107,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                             key="scrollable-items-list"
                             style={{overflow:"hidden", border: 1, borderColor: "black", maxWidth: "true"}}
                             dataLength={props.data.length}
-                            next={() => props.fetchData()}
+                            next={() => props.fetchData(filters)}
                             hasMore={props.hasMore}
                             loader={
                                 <>
@@ -81,8 +123,62 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                         >
                         {props.data.map((item: T, index) => props.formatter(item, index))}
                     </InfiniteScroll>
+                    {(props.data.length === 0) && !props.hasMore && (
+                        <Typography variant="h6" color={"black"} textAlign={"center"}>Aucun élément...</Typography>
+                    )}
                 </div>
             </Box>
         </Box>
     );
+}
+
+
+function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (value: string) => void}){
+    const [filterValue, setFilterValue] = useState(DEFAULT_FILTER_SELECT_VALUE);
+    return (
+        <Grid container maxWidth={"true"} justifyContent={"center"}>
+            {(props.column.filter?.filterType === "input") && (
+                <TextField 
+                placeholder={props.column.title} 
+                size="small" 
+                onKeyDown={event => {
+                    if(event.key === 'Enter'){
+                        props.onFilterValidate(filterValue)
+                    }
+                }}
+                onBlur={() => {
+                    props.onFilterValidate(filterValue)
+                }}
+                onChange={event => {
+                    setFilterValue(event.target.value)
+                }}
+            />
+            )}
+            {(props.column.filter?.filterType === "select" && (props.column.filter?.restrictedValues?.length ?? 0) > 0) && (
+                <Select
+                    size="small"
+                    variant="outlined"
+                    fullWidth
+                    value={filterValue}
+                    onChange={event => {
+                        let value = event.target.value
+                        setFilterValue(value)
+                        if(props.column.filter?.apiValueFormatter){
+                            props.onFilterValidate(props.column.filter.apiValueFormatter(value))
+                            return
+                        }
+                        props.onFilterValidate(value)
+                    }}>
+
+                    {props.column.filter.restrictedValues && props.column.filter.restrictedValues.map((item) => {
+                        let selected = filterValue === item;
+                        return (
+                            <MenuItem key={"columnfilterOption-"+ item} value={item} selected={selected}>{item}</MenuItem>
+                        )}
+                    )}
+            </Select>
+            )}
+
+        </Grid>
+    )
 }
