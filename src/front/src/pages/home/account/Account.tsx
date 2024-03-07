@@ -39,11 +39,12 @@ function Account() {
         }
     }, [password1, password2]);
 
-    const validatePassword = (password : string) => {
-        // Regex to check prerequisites of password.
-        const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
-        return regex.test(password);
-    };
+    // TODO : Use it later for the toast
+    // const validatePassword = (password : string) => {
+    //     // Regex to check prerequisites of password.
+    //     const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
+    //     return regex.test(password);
+    // };
 
     const handleButtonClick = () => {
         if (oldPassword !== "" && password1 === password2) {
