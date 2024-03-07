@@ -1,10 +1,19 @@
-import { Box, Button, Container, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import {Box, Button, Container, Grid} from "@mui/material";
+import {useEffect, useState} from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import { TypeAllowed, getFirmware, getTypeAllowed, postCreateFirmware, updateFirmware } from "../../../conf/FirmwareController";
 import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 import LoadingPage from "../../../sharedComponents/LoadingPage";
 import BackButton from "../../../sharedComponents/BackButton";
+import {
+    getFirmware,
+    getTypeAllowed,
+    postCreateFirmware,
+    TypeAllowed,
+    updateFirmware
+} from "../../../conf/FirmwareController";
+import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectItemsList";
+import {SkeletonFirmware} from "./components/SkeletonFirmware";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -13,7 +22,7 @@ export type CreateFirmwareFormData = {
     typesAllowed: Set<TypeAllowed>
 }
 
-export default function CreateFirmware(props: {id?: number, data?: CreateFirmwareFormData}) {
+export default function CreateFirmware(props: { id?: number, data?: CreateFirmwareFormData }) {
     const [formData, setFormData] = useState<CreateFirmwareFormData>(props.data ?? {
         version: "",
         url: "",
@@ -22,16 +31,16 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
     });
     const [typeAllowedList, setTypeAllowedList] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [selectedItems, setSelectedItems] = useState<KeyValueItem<TypeAllowed>[]>([]);
-    const [loaded, setLoaded] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     // Fetch the firmware
     useEffect(() => {
-        if(!props.id){
-            setLoaded(true)
+        if (!props.id) {
+            setLoading(false)
             return
         }
         getFirmware(props.id).then(result => {
-            if(!result){
+            if (!result) {
                 console.log("Erreur lors de la récupération du firmware.")
                 return
             }
@@ -55,16 +64,15 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                     return [...prevSelectedItems, keyValueItem]
                 })
             })
-            setLoaded(true)
+            setLoading(false)
         });
     }, [props.id])
-
 
 
     // Fetch first charge point page on component load
     useEffect(() => {
         getTypeAllowed().then((result: TypeAllowed[] | undefined) => {
-            if(!result){
+            if (!result) {
                 return
             }
             setTypeAllowedList(result.map(v => {
@@ -77,7 +85,7 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                 }
             }))
         });
-        }, [])
+    }, [])
 
     return (
         <Box>
@@ -109,6 +117,13 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                                             checkIsWrong={value => value === "abc"}
                                             value={formData.constructor}
                                     />
+                                    <FormInput name={"Constructeur"}
+                                               onChange={val => setFormData(prevState => {
+                                                   return {...prevState, constructor: val}
+                                               })}
+                                               checkIsWrong={value => value === "abc"}
+                                               value={formData.constructor}
+                                    />
                                 </Box>
                                 <Box
                                     sx={{
@@ -131,7 +146,7 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                                                     version: formData.version,
                                                 }
                                                 // If id is defined then it's a firmware update
-                                                if(props.id){
+                                                if (props.id) {
                                                     updateFirmware(props.id, firmware)
                                                     return
                                                 }
@@ -140,7 +155,6 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
                                             }
                                             }>Valider</Button>
                                 </Box>
-                                        
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <SelectItemsList 
@@ -158,8 +172,5 @@ export default function CreateFirmware(props: {id?: number, data?: CreateFirmwar
             )}
             {!loaded && (<LoadingPage/>)}
         </Box>
-
     );
 }
-
-

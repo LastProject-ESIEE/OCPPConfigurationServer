@@ -177,7 +177,8 @@ public class ConfigurationController {
   @GetMapping(value = "/transcriptor")
   public List<ConfigurationTranscriptorDto> getAllConfigurationTranscriptor() {
     return Arrays.stream(ConfigurationTranscriptor.values())
-            .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY)
+            .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
+                                    && transcriptor != ConfigurationTranscriptor.NETWORK_PROFILE)
             .map(ConfigurationTranscriptor::toDto)
             .toList();
   }

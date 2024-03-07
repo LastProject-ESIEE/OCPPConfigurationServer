@@ -73,14 +73,14 @@ public class UserService {
   /**
    * Update the role of the user.
    *
-   * @param changeRoleUserDto a ChangeRoleUserDto.
-   * @return a User updated.
+   * @param id the id of the user to change.
+   * @param role the new role to be applied.
+   * @return a {@link User} updated.
    */
-  public User updateRole(ChangeRoleUserDto changeRoleUserDto) {
-    var user = getUserById(changeRoleUserDto.id());
-    var role = changeRoleUserDto.role();
-    var test = Arrays.asList(User.Role.values()).contains(role);
-    if (!test) {
+  public User updateRole(int id, User.Role role) {
+    var user = userRepository.findById(id);
+    var validRole = Arrays.asList(User.Role.values()).contains(role);
+    if (!validRole) {
       throw new IllegalArgumentException("This role doesn't exist. Verify your parameter.");
     }
     if (user.getId() == getAuthenticatedUser().getId()) {

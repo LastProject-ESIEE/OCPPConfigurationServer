@@ -1,38 +1,62 @@
 import { Box, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
+    DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { Role, searchUser, User } from "../../../conf/userController";
-import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
+import { apiRoleToFrench, ApiRole, searchUser, User, frenchToEnglishRole, FrenchRole } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
+import { searchElements } from "../../../conf/backendController";
+
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
 
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
+        filter: {
+            apiField: "lastName",
+            filterType: "input"
+        }
     },
     {
         title: "Prénom",
+        filter: {
+            apiField: "firstName",
+            filterType: "input"
+        }
     },
     {
         title: "Rôle",
+        filter: {
+            apiField: "role",
+            filterType: "select",
+            restrictedValues: [
+                DEFAULT_FILTER_SELECT_VALUE,
+                apiRoleToFrench("ADMINISTRATOR"),
+                apiRoleToFrench("EDITOR"),
+                apiRoleToFrench("VISUALIZER"),
+            ],
+            apiValueFormatter: value => {
+                return value === DEFAULT_FILTER_SELECT_VALUE ? "" : frenchToEnglishRole(value as FrenchRole)
+            }
+        }
     },
     {
         title: "", // extra column for delete button later
     }
 ]
 
+
 function UserTable() {
     const [tableData, setTableData] = useState<User[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState<string | undefined>(undefined);
-    const [userRoleList, setUserRoleList] = useState<Role[]>([]);
+    const [userRoleList, setUserRoleList] = useState<ApiRole[]>([]);
     const [me, setMe] = useState<User | undefined>(undefined);
 
 
@@ -65,17 +89,11 @@ function UserTable() {
         fetchCurrentUser();
     }, []);
 
-    function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
-        let role = event.target.value as Role
-        fetch("/api/user/updateRole", {
-            method: "POST",
-            body: JSON.stringify({
-                id: user.id,
-                role: role
-            }),
-            headers: {
-                "Content-Type": "application/json"
-            }
+
+    function onChangeEvent(event: SelectChangeEvent<ApiRole>, user: User) {
+        let role = event.target.value as ApiRole
+        fetch(`/api/user/${user.id}/role/${role}`, {
+            method: "PATCH",
         }).then(response => {
             if (response.ok) {
                 // TODO : refactor to use the DTO in the response
@@ -137,7 +155,7 @@ function UserTable() {
                                                         border: 0
                                                     }}
                                                 >
-                                                    {englishRoleToFrench(role.toString())}
+                                                    {apiRoleToFrench(role)}
                                                 </MenuItem>
                                             )
                                         }
@@ -158,9 +176,9 @@ function UserTable() {
                 </Box>
             )
         },
-        fetchData: () => {
+        fetchData: filters => {
             const nextPage = currentPage + 1;
-            searchUser(PAGE_SIZE,nextPage).then((result: PageRequest<User> | undefined) => {
+            searchElements<User>("/api/user/search", {page: nextPage, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
                 if(!result){
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
@@ -170,6 +188,19 @@ function UserTable() {
             });
             setCurrentPage(nextPage)
         },
+        onFiltering: filters => {
+            // Reset page and search
+            setCurrentPage(0)
+            console.log(filters)
+            searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
+                if(!result){
+                    setError("Erreur lors de la récupération des utilisateurs.")
+                    return
+                }
+                setTableData(result.data)
+                setHasMore(result.total > PAGE_SIZE)
+            });
+        }
     }
 
     return InfinityScrollItemsTable(props)

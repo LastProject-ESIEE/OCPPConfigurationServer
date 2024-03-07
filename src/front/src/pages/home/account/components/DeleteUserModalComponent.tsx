@@ -51,7 +51,7 @@ function DeleteUserModalComponent(props: {
                         <Typography variant="h6" sx={{paddingBottom: 2}}>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</Typography>
                         <Typography>{"Nom : " + props.user.lastName}</Typography>
                         <Typography>{"Prénom : " + props.user.firstName}</Typography>
-                        <Typography>{"Rôle : " + englishRoleToFrench(props.user.role.toString())}</Typography>
+                        <Typography>{"Rôle : " + englishRoleToFrench(props.user.role)}</Typography>
                         <Grid container>
                             <Grid item xs={12} md={6}>
                                 <Button

@@ -4,12 +4,13 @@ import RoleComponent from "./components/RoleComponent";
 import { useEffect, useState } from "react";
 import { Role, createNewUser } from "../../../conf/userController";
 import BackButton from "../../../sharedComponents/BackButton";
+import { ApiRole, createNewUser } from "../../../conf/userController";
 
 function AddAccount() {
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
     const [mail, setMail] = useState("");
-    const [role, setRole] = useState<Role>("VISUALIZER");
+    const [role, setRole] = useState<ApiRole>("VISUALIZER");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
