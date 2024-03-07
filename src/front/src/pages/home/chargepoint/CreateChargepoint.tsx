@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Container, Grid, MenuItem, Paper, Select, Skeleton} from "@mui/material";
+import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -10,6 +10,7 @@ import {
     postNewChargepoint,
     updateChargepoint
 } from "../../../conf/chargePointController";
+import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
 
 function DisplayConfiguration({configuration}: { configuration?: Configuration }) {
 
@@ -115,18 +116,7 @@ function CreateChargepoint(props: { id?: number }) {
                 <Grid item xs={12} md={6}>
                     <Box>
                         {loading ? (
-                            <>
-                                <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                                <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                                <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                                <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                                <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                            </>
+                            <SkeletonChargepoint />
                         ) : (
                             <>
                                 <FormInput name={"N° Série"}
