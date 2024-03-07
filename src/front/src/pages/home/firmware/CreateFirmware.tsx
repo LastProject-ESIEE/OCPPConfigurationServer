@@ -1,4 +1,4 @@
-import {Box, Button, Container, Grid, Skeleton} from "@mui/material";
+import {Box, Button, Container, Grid} from "@mui/material";
 import {useEffect, useState} from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import {
@@ -9,6 +9,7 @@ import {
     updateFirmware
 } from "../../../conf/FirmwareController";
 import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectItemsList";
+import {SkeletonFirmware} from "./components/SkeletonFirmware";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -88,22 +89,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
             <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
                 <Grid container spacing={15}>
                     {loading ? (
-                        <>
-                            <Grid item xs={12} md={6}>
-                                <Box>
-                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                              variant="rounded"/>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <Skeleton sx={{height: "20vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
-                                          variant="rounded"/>
-                            </Grid>
-                        </>
+                        <SkeletonFirmware />
                     ) : (
                         <>
                             <Grid item xs={12} md={6}>
