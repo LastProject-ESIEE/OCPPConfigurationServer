@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.DtoEntity;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Component;
+import fr.uge.chargepointconfiguration.firmware.FirmwareKey;
 import java.util.Objects;
 
 /**
@@ -12,49 +13,49 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
 
   LIGHT_INTENSITY(1,
           "Intensité de la LED",
-          "LightIntensity",
+          FirmwareKey.LIGHT_INTENSITY,
           "UNKNOWN",
           new Component("UNKNOWN"),
           "^(100|\\d{1,2})$"),
 
   NETWORK_PROFILE(2,
           "Adresse du prochain serveur",
-          "BackOffice-URL-wired",
+          FirmwareKey.NETWORK_PROFILE,
           "",
           new Component(""),
           ""),
 
   CHARGEPOINT_IDENTITY(3,
           "Nom de la borne",
-          "Identity",
+          FirmwareKey.CHARGEPOINT_IDENTITY,
           "Identity",
           new Component("SecurityCtrlr"),
           "^.{0,20}$"),
 
   LOCAL_AUTH_LIST(4,
           "Activer la liste des badges d'authentification ?",
-          "LocalAuthListEnabled",
+          FirmwareKey.LOCAL_AUTH_LIST,
           "LocalAuthListEnabled",
           new Component("LocalAuthListCtrlr"),
           ""),
 
   STATION_MAX_CURRENT(5,
           "Courant max de la borne",
-          "Station-MaxCurrent",
+          FirmwareKey.STATION_MAX_CURRENT,
           "",
           new Component(""),
           ""),
 
   STATION_PASSWORD(6,
           "Changer le mot de passe de la borne",
-          "PW-SetChargerPassword",
+          FirmwareKey.STATION_PASSWORD,
           "BasicAuthPassword",
           new Component("SecurityCtrlr"),
           "^(?!.*[\\\\\",]).{10,40}$");
 
   private final int id;
   private final String fullName;
-  private final String ocpp16Key;
+  private final FirmwareKey ocpp16Key;
   private final String ocpp20Key;
   private final Component component;
   private final String regexRule;
@@ -70,7 +71,7 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
    */
   ConfigurationTranscriptor(int id,
                             String fullName,
-                            String ocpp16Key,
+                            FirmwareKey ocpp16Key,
                             String ocpp20Key,
                             Component component,
                             String regexRule) {
@@ -107,7 +108,7 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
    *
    * @return The configuration's key.
    */
-  public String getOcpp16Key() {
+  public FirmwareKey getOcpp16Key() {
     return ocpp16Key;
   }
 

@@ -40,6 +40,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private final CustomLogger logger;
   private String firmwareVersion;
   private String targetFirmwareVersion;
+  private boolean lastOrderSent = false;
 
 
   /**
@@ -86,7 +87,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   @Override
   public void onDisconnection(ChargePointManager chargePointManager) {
     if (chargePointManager.getCurrentChargepoint() == null) {
-      // TODO : Reset the CSMS server address and the OCPP Version !
       var reset = new ResetRequest16(ResetType.Hard);
       sender.sendMessage(reset, chargePointManager);
     }
@@ -167,7 +167,9 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         HashMap<String, String> configMap = mapper.readValue(configuration, HashMap.class);
         configMap.forEach((key, value) -> {
           var configMessage = new ChangeConfigurationRequest16(
-                  ConfigurationTranscriptor.idToEnum(Integer.parseInt(key)).getOcpp16Key(),
+                  ConfigurationTranscriptor.idToEnum(Integer.parseInt(key))
+                          .getOcpp16Key()
+                          .getFirmwareKeyAccordingToVersion(firmwareVersion),
                   value
           );
           queue.add(configMessage);
@@ -190,7 +192,33 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       }
     }
     var config = queue.poll();
-    if (config == null) {
+    if (config == null && !lastOrderSent) {
+      logger.info(new BusinessLog(null,
+              currentChargepoint,
+              BusinessLogEntity.Category.CONFIG,
+              "configuration for the chargepoint ("
+                      + currentChargepoint.getSerialNumberChargepoint()
+                      + ") is almost done, sending last order ! "));
+      var clientId = currentChargepoint.getClientId();
+      var changeConfig = new ChangeConfigurationRequest16(
+              ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
+                      .getOcpp16Key()
+                      .getFirmwareKeyAccordingToVersion(firmwareVersion),
+              clientId);
+      queue.add(changeConfig);
+      var finalServerAddress = System.getenv("FINAL_WS_SERVER_ADDRESS");
+      if (finalServerAddress != null) {
+        changeConfig = new ChangeConfigurationRequest16(
+                ConfigurationTranscriptor.NETWORK_PROFILE
+                        .getOcpp16Key()
+                        .getFirmwareKeyAccordingToVersion(firmwareVersion),
+                finalServerAddress);
+        queue.add(changeConfig);
+        lastOrderSent = true;
+      }
+      config = queue.poll();
+      sender.sendMessage(config, chargePointManager);
+    } else if (config == null) {
       logger.info(new BusinessLog(null,
               currentChargepoint,
               BusinessLogEntity.Category.CONFIG,
@@ -221,7 +249,35 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     switch (response.status()) {
       case Accepted, RebootRequired -> {
-        if (queue.isEmpty()) {
+        if (queue.isEmpty() && !lastOrderSent) {
+          logger.info(new BusinessLog(null,
+                  currentChargepoint,
+                  BusinessLogEntity.Category.CONFIG,
+                  "configuration for the chargepoint ("
+                          + currentChargepoint.getSerialNumberChargepoint()
+                          + ") is almost done, sending last order ! "));
+          var clientId = currentChargepoint.getClientId();
+          var changeConfig = new ChangeConfigurationRequest16(
+                  ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
+                          .getOcpp16Key()
+                          .getFirmwareKeyAccordingToVersion(firmwareVersion),
+                  clientId);
+          queue.add(changeConfig);
+          var finalServerAddress = System.getenv("FINAL_WS_SERVER_ADDRESS");
+          if (finalServerAddress != null) {
+            changeConfig = new ChangeConfigurationRequest16(
+                    ConfigurationTranscriptor.NETWORK_PROFILE
+                            .getOcpp16Key()
+                            .getFirmwareKeyAccordingToVersion(firmwareVersion),
+                    ConfigurationTranscriptor.NETWORK_PROFILE
+                            .getOcpp16Key()
+                            .getValueFormatAccordingToVersion(firmwareVersion)
+                            .formatted(finalServerAddress));
+            queue.add(changeConfig);
+          }
+          lastOrderSent = true;
+          processConfigurationRequest();
+        } else if (queue.isEmpty()) {
           currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
           chargepointRepository.save(currentChargepoint);
           // Dispatch information to users
