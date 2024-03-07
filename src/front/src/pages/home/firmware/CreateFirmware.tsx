@@ -1,7 +1,6 @@
 import {Box, Button, Container, Grid} from "@mui/material";
 import {useEffect, useState} from "react";
 import FormInput from "../../../sharedComponents/FormInput";
-import LoadingPage from "../../../sharedComponents/LoadingPage";
 import BackButton from "../../../sharedComponents/BackButton";
 import {
     getFirmware,
