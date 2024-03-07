@@ -90,8 +90,8 @@ function UserTable() {
     }, []);
 
 
-    function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
-        let role = event.target.value as Role
+    function onChangeEvent(event: SelectChangeEvent<ApiRole>, user: User) {
+        let role = event.target.value as ApiRole
         fetch(`/api/user/${user.id}/role/${role}`, {
             method: "PATCH",
         }).then(response => {
