@@ -117,10 +117,7 @@ class UserControllerTest {
   @Test
   @WithUserDetails("admin@email")
   void updateRole() throws Exception {
-    mvc.perform(post("/api/user/updateRole")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToJsonString(new ChangeRoleUserDto(2, User.Role.ADMINISTRATOR)))
-          )
+    mvc.perform(patch("/api/user/"+4+"/role/ADMINISTRATOR"))
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
           .andExpect(jsonPath("$.role", is("ADMINISTRATOR")));

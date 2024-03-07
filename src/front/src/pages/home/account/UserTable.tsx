@@ -68,7 +68,7 @@ function UserTable() {
     function onChangeEvent(event: SelectChangeEvent<Role>, user: User) {
         let role = event.target.value as Role
         fetch(`/api/user/${user.id}/role/${role}`, {
-            method: "PUT",
+            method: "PATCH",
         }).then(response => {
             if (response.ok) {
                 // TODO : refactor to use the DTO in the response
