@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Box, Button, Container, Grid } from '@mui/material';
+import {useEffect, useState} from 'react';
+import {Box, Button, Container, Grid, Skeleton} from '@mui/material';
 import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
@@ -13,10 +13,9 @@ import {
     postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
-import LoadingPage from '../../../sharedComponents/LoadingPage';
-import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectItemsList';
+import SelectItemsList, {KeyValueItem} from '../../../sharedComponents/SelectItemsList';
 
-function CreateConfig(props: {id?: number}) {
+function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
         name: "",
         description: "",
@@ -27,7 +26,7 @@ function CreateConfig(props: {id?: number}) {
     const [description, setDescription] = useState("");
     const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
-    const [loaded, setLoaded] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     function check(): boolean {
         setErrorState({
@@ -78,14 +77,13 @@ function CreateConfig(props: {id?: number}) {
                 firmware: firmware,
             }
             // If props.id not undefined then it's an update
-            if(props.id){
+            if (props.id) {
                 postUpdateConfiguration(props.id, resultData)
                 return
             }
             postNewConfiguration(resultData) // manage response to display error or success
         }
     }
-
 
 
     // Fetch the configuration
@@ -96,25 +94,26 @@ function CreateConfig(props: {id?: number}) {
             }
             // Load transcriptors
             let items: KeyValueItem<Transcriptor>[] = transcriptors.map(transcriptor => {
-                return {
-                    id: transcriptor.id + "",
-                    checker: item => {
-                        return true;//RegExp(transcriptor.regex).exec(item)
-                    },
-                    item: transcriptor,
-                    label: transcriptor.fullName,
-                    value: ""
-                }}
+                    return {
+                        id: transcriptor.id + "",
+                        checker: item => {
+                            return true;//RegExp(transcriptor.regex).exec(item)
+                        },
+                        item: transcriptor,
+                        label: transcriptor.fullName,
+                        value: ""
+                    }
+                }
             )
             setKeys(items)
 
-            if(!props.id){
-                setLoaded(true)
+            if (!props.id) {
+                setLoading(false)
                 return
             }
             // If props.id is defined then it's an update
             getConfiguration(props.id).then(result => {
-                if(!result){
+                if (!result) {
                     console.log("Erreur lors de la récupération de la configuration.")
                     //setError("Erreur lors de la récupération de la configuration.")
                     return
@@ -129,45 +128,64 @@ function CreateConfig(props: {id?: number}) {
                 setTitle(result.name)
                 setFirmware(result.firmware.version)
                 setDescription(result.description)
-                setLoaded(true)
+                setLoading(false)
             });
         })
     }, [props.id])
 
     return (
         <Box>
-            {loaded && (
-                <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
-                <Grid container spacing={15}>
-                    <Grid item xs={12} md={6}>
-                        <Box>
-                            <TitleComponent errorState={errorState} value={title} setValue={setTitle}/>
-                            <FirmwareComponent errorState={errorState} value={firmware} setValue={setFirmware}/>
-                            <DescriptionComponent errorState={errorState} value={description} setValue={setDescription}/>
+            <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
+                {loading ? (
+                    <>
+                        <Grid container spacing={15}>
+                            <Grid item xs={12} md={6}>
+                                <Box>
+                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
+                                              variant="rounded"/>
+                                    <Skeleton sx={{height: "7vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
+                                              variant="rounded"/>
+                                    <Skeleton sx={{height: "20vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
+                                              variant="rounded"/>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Skeleton sx={{height: "10vh", p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}
+                                          variant="rounded"/>
+                            </Grid>
+                        </Grid>
+                    </>
+                ) : (
+                    <>
+                        <Grid container spacing={15}>
+                            <Grid item xs={12} md={6}>
+                                <Box>
+                                    <TitleComponent errorState={errorState} value={title} setValue={setTitle}/>
+                                    <FirmwareComponent errorState={errorState} value={firmware} setValue={setFirmware}/>
+                                    <DescriptionComponent errorState={errorState} value={description}
+                                                          setValue={setDescription}/>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                {/*<RightSection globalState={globalState} setGlobalState={setGlobalState} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} />*/}
+                                <SelectItemsList
+                                    title='Champs de la configuration'
+                                    keyTitle='Clés'
+                                    items={keys}
+                                    selectKind='input'
+                                    selectedItems={selectedKeys}
+                                    setSelectedItems={setSelectedKeys}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
+                            {/* TODO : fixer le bouton en bas */}
+                            <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
+                                    color="primary">Valider</Button>
                         </Box>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        {/*<RightSection globalState={globalState} setGlobalState={setGlobalState} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} />*/}
-                        <SelectItemsList
-                            title='Champs de la configuration'
-                            keyTitle='Clés'
-                            items={keys}
-                            selectKind='input'
-                            selectedItems={selectedKeys}
-                            setSelectedItems={setSelectedKeys}
-                        />
-                    </Grid>
-                </Grid>
-                <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
-                    {/* TODO : fixer le bouton en bas */}
-                    <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
-                            color="primary">Valider</Button>
-                </Box>
+                    </>
+                )}
             </Container>
-            )}
-            {!loaded && (
-                <LoadingPage/>
-            )}
         </Box>
 
     );
