@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
+import {Button, Container, Grid, IconButton, MenuItem, Paper, Select} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -11,6 +11,8 @@ import {
     updateChargepoint
 } from "../../../conf/chargePointController";
 import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { useNavigate } from "react-router";
 
 function DisplayConfiguration({configuration}: { configuration?: Configuration }) {
 
@@ -73,6 +75,8 @@ function CreateChargepoint(props: { id?: number }) {
         configuration: configuration.id,
     });
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (!props.id) {
             return
@@ -111,105 +115,114 @@ function CreateChargepoint(props: { id?: number }) {
     }, []);
 
     return (
-        <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
-            <Grid container spacing={15}>
-                <Grid item xs={12} md={6}>
-                    <Box>
-                        {loading ? (
-                            <SkeletonChargepoint />
-                        ) : (
-                            <>
-                                <FormInput name={"N° Série"}
-                                           onChange={val => {
-                                               setSerialNumber(val)
-                                               setChargepoint(prevState => {
-                                                   prevState.serialNumber = val
-                                                   return prevState
-                                               })
-                                           }}
-                                           value={serialNumber}
-                                           checkIsWrong={value => value === "abc"}
-                                />
-                                <FormInput name={"Client ID"}
-                                           onChange={val => {
-                                               setClientId(val)
-                                               setChargepoint(prevState => {
-                                                   prevState.clientId = val
-                                                   return prevState
-                                               })
-                                           }}
-                                           value={clientId}
-                                           checkIsWrong={value => value === "abc"}
-                                />
-                                <FormInput name={"Constructeur"}
-                                           onChange={val => {
-                                               setConstructor(val)
-                                               setChargepoint(prevState => {
-                                                   prevState.constructor = val
-                                                   return prevState
-                                               })
-                                           }}
-                                           value={constructor}
-                                           checkIsWrong={value => value === "abc"}
-                                />
-                                <FormInput name={"Modèle"}
-                                           onChange={val => {
-                                               setType(val)
-                                               setChargepoint(prevState => {
-                                                   prevState.type = val
-                                                   return prevState
-                                               })
-                                           }}
-                                           value={type}
-                                           checkIsWrong={value => value === "abc"}
-                                />
-                                <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}>
-                                    <Grid container alignItems="center" justifyContent="space-between">
-                                        <Grid xs={4} item>
-                                            <Typography sx={{mt: 1}} variant={"h6"}>Configuration :</Typography>
-                                        </Grid>
-                                        <Grid xs={8} item>
-                                            <Select
-                                                value={configuration?.id}
-                                                onChange={event => {
-                                                    const val = event.target.value as number;
-                                                    setConfiguration(configurationList.find(conf => conf.id === val) as Configuration);
-                                                    setChargepoint(prevState => {
-                                                        prevState.configuration = val;
-                                                        return prevState;
-                                                    });
-                                                }}
-                                                fullWidth
-                                            >
-                                                {configurationList?.map(configuration => (
-                                                    <MenuItem key={configuration.id} value={configuration.id}>
-                                                        {configuration.name}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        boxSizing: 'border-box',
-                                    }}
-                                    pt={2}
-                                >
-                                    <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                            onClick={handleSubmit}>Valider</Button>
-                                </Box>
-                            </>
-                        )}
-                    </Box>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <DisplayConfiguration configuration={configuration}/>
-                </Grid>
+        <Grid>
+            <Grid item xs={12}>
+                <IconButton
+                    onClick={() => navigate("/home/account")}
+                >
+                    <ArrowBackIosNewIcon/>
+                </IconButton>
             </Grid>
-        </Container>
+            <Container maxWidth="xl" sx={{mt: 4, mb: 4}}>
+                <Grid container spacing={15}>
+                    <Grid item xs={12} md={6}>
+                        <Box>
+                            {loading ? (
+                                <SkeletonChargepoint />
+                            ) : (
+                                <>
+                                    <FormInput name={"N° Série"}
+                                               onChange={val => {
+                                                   setSerialNumber(val)
+                                                   setChargepoint(prevState => {
+                                                       prevState.serialNumber = val
+                                                       return prevState
+                                                   })
+                                               }}
+                                               value={serialNumber}
+                                               checkIsWrong={value => value === "abc"}
+                                    />
+                                    <FormInput name={"Client ID"}
+                                               onChange={val => {
+                                                   setClientId(val)
+                                                   setChargepoint(prevState => {
+                                                       prevState.clientId = val
+                                                       return prevState
+                                                   })
+                                               }}
+                                               value={clientId}
+                                               checkIsWrong={value => value === "abc"}
+                                    />
+                                    <FormInput name={"Constructeur"}
+                                               onChange={val => {
+                                                   setConstructor(val)
+                                                   setChargepoint(prevState => {
+                                                       prevState.constructor = val
+                                                       return prevState
+                                                   })
+                                               }}
+                                               value={constructor}
+                                               checkIsWrong={value => value === "abc"}
+                                    />
+                                    <FormInput name={"Modèle"}
+                                               onChange={val => {
+                                                   setType(val)
+                                                   setChargepoint(prevState => {
+                                                       prevState.type = val
+                                                       return prevState
+                                                   })
+                                               }}
+                                               value={type}
+                                               checkIsWrong={value => value === "abc"}
+                                    />
+                                    <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor: 'rgb(249, 246, 251)'}}>
+                                        <Grid container alignItems="center" justifyContent="space-between">
+                                            <Grid xs={4} item>
+                                                <Typography sx={{mt: 1}} variant={"h6"}>Configuration :</Typography>
+                                            </Grid>
+                                            <Grid xs={8} item>
+                                                <Select
+                                                    value={configuration?.id}
+                                                    onChange={event => {
+                                                        const val = event.target.value as number;
+                                                        setConfiguration(configurationList.find(conf => conf.id === val) as Configuration);
+                                                        setChargepoint(prevState => {
+                                                            prevState.configuration = val;
+                                                            return prevState;
+                                                        });
+                                                    }}
+                                                    fullWidth
+                                                >
+                                                    {configurationList?.map(configuration => (
+                                                        <MenuItem key={configuration.id} value={configuration.id}>
+                                                            {configuration.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            boxSizing: 'border-box',
+                                        }}
+                                        pt={2}
+                                    >
+                                        <Button sx={{borderRadius: 28}} variant="contained" color="primary"
+                                                onClick={handleSubmit}>Valider</Button>
+                                    </Box>
+                                </>
+                            )}
+                        </Box>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <DisplayConfiguration configuration={configuration}/>
+                    </Grid>
+                </Grid>
+            </Container>
+        </Grid>
     );
 
     function handleSubmit() {
