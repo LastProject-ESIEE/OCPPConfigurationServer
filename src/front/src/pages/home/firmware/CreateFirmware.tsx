@@ -1,8 +1,6 @@
 import {Box, Button, Container, Grid} from "@mui/material";
 import {useEffect, useState} from "react";
 import FormInput from "../../../sharedComponents/FormInput";
-import { TypeAllowed, getFirmware, getTypeAllowed, postCreateFirmware, updateFirmware } from "../../../conf/FirmwareController";
-import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 import LoadingPage from "../../../sharedComponents/LoadingPage";
 import BackButton from "../../../sharedComponents/BackButton";
 import {
@@ -89,88 +87,91 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
 
     return (
         <Box>
-            {loaded && (
-                <Grid>
-                    <BackButton link={"/home/firmware"} top={15}/>
-                    <Container maxWidth="xl" sx={{mb: 4}}>
-                        <Grid container spacing={15}>
-                            <Grid item xs={12} md={6}>
-                                <Box>
-                                    <FormInput name={"Version"}
-                                            onChange={val => setFormData(prevState => {
-                                                return {...prevState, version: val}
-                                            })}
-                                            checkIsWrong={value => value === "abc"}
-                                            value={formData.version}
-                                    />
-                                    <FormInput name={"URL"}
-                                            onChange={val => setFormData(prevState => {
-                                                return {...prevState, url: val}
-                                            })}
-                                            checkIsWrong={value => value === "abc"}
-                                            value={formData.url}
-                                    />
-                                    <FormInput name={"Constructeur"}
-                                            onChange={val => setFormData(prevState => {
-                                                return {...prevState, constructor: val}
-                                            })}
-                                            checkIsWrong={value => value === "abc"}
-                                            value={formData.constructor}
-                                    />
-                                    <FormInput name={"Constructeur"}
-                                               onChange={val => setFormData(prevState => {
-                                                   return {...prevState, constructor: val}
-                                               })}
-                                               checkIsWrong={value => value === "abc"}
-                                               value={formData.constructor}
-                                    />
-                                </Box>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        boxSizing: 'border-box',
-                                    }}
-                                    pt={2}
-                                >
-                                    <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                            onClick={() => {
-                                                let typesAllowed = new Set<TypeAllowed>()
-                                                selectedItems.forEach(item => {
-                                                    typesAllowed.add(item.item)
-                                                })
-                                                let firmware: CreateFirmwareFormData = {
-                                                    constructor: formData.constructor,
-                                                    url: formData.url,
-                                                    typesAllowed: typesAllowed,
-                                                    version: formData.version,
+            <Grid>
+                <BackButton link={"/home/firmware"} top={15}/>
+                <Container maxWidth="xl" sx={{mb: 4}}>
+                    <Grid container spacing={15}>
+                        {loading ? (
+                            <SkeletonFirmware />
+                        ) : (
+                            <>
+                                <Grid item xs={12} md={6}>
+                                    <Box>
+                                        <FormInput name={"Version"}
+                                                onChange={val => setFormData(prevState => {
+                                                    return {...prevState, version: val}
+                                                })}
+                                                checkIsWrong={value => value === "abc"}
+                                                value={formData.version}
+                                                />
+                                        <FormInput name={"URL"}
+                                                onChange={val => setFormData(prevState => {
+                                                    return {...prevState, url: val}
+                                                })}
+                                                checkIsWrong={value => value === "abc"}
+                                                value={formData.url}
+                                                />
+                                        <FormInput name={"Constructeur"}
+                                                onChange={val => setFormData(prevState => {
+                                                    return {...prevState, constructor: val}
+                                                })}
+                                                checkIsWrong={value => value === "abc"}
+                                                value={formData.constructor}
+                                                />
+                                        <FormInput name={"Constructeur"}
+                                                   onChange={val => setFormData(prevState => {
+                                                       return {...prevState, constructor: val}
+                                                    })}
+                                                    checkIsWrong={value => value === "abc"}
+                                                    value={formData.constructor}
+                                                    />
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            boxSizing: 'border-box',
+                                        }}
+                                        pt={2}
+                                        >
+                                        <Button sx={{borderRadius: 28}} variant="contained" color="primary"
+                                                onClick={() => {
+                                                    let typesAllowed = new Set<TypeAllowed>()
+                                                    selectedItems.forEach(item => {
+                                                        typesAllowed.add(item.item)
+                                                    })
+                                                    let firmware: CreateFirmwareFormData = {
+                                                        constructor: formData.constructor,
+                                                        url: formData.url,
+                                                        typesAllowed: typesAllowed,
+                                                        version: formData.version,
+                                                    }
+                                                    // If id is defined then it's a firmware update
+                                                    if (props.id) {
+                                                        updateFirmware(props.id, firmware)
+                                                        return
+                                                    }
+                                                    // Otherwise it's a firmware creation
+                                                    postCreateFirmware(firmware)
                                                 }
-                                                // If id is defined then it's a firmware update
-                                                if (props.id) {
-                                                    updateFirmware(props.id, firmware)
-                                                    return
-                                                }
-                                                // Otherwise it's a firmware creation
-                                                postCreateFirmware(firmware)
-                                            }
                                             }>Valider</Button>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <SelectItemsList 
-                                    title={"Modèles compatibles"}
-                                    keyTitle={"Modèles"}
-                                    items={typeAllowedList} 
-                                    selectKind="values"
-                                    setSelectedItems={setSelectedItems}
-                                    selectedItems={selectedItems}
-                                />
-                            </Grid>
-                        </Grid>
-                    </Container>
-                </Grid>
-            )}
-            {!loaded && (<LoadingPage/>)}
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <SelectItemsList 
+                                        title={"Modèles compatibles"}
+                                        keyTitle={"Modèles"}
+                                        items={typeAllowedList} 
+                                        selectKind="values"
+                                        setSelectedItems={setSelectedItems}
+                                        selectedItems={selectedItems}
+                                        />
+                                </Grid>
+                            </>
+                        )}
+                    </Grid>
+                </Container>
+            </Grid>
         </Box>
     );
 }

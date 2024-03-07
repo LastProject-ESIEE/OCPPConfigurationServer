@@ -2,7 +2,6 @@ import { Box, Button, Grid } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
 import { useEffect, useState } from "react";
-import { Role, createNewUser } from "../../../conf/userController";
 import BackButton from "../../../sharedComponents/BackButton";
 import { ApiRole, createNewUser } from "../../../conf/userController";
 
