@@ -1,8 +1,33 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 
-//export enum Role { "VISUALIZER", "EDITOR", "ADMINISTRATOR" }
+export function apiRoleToFrench(role: ApiRole): string {
+    switch (role) {
+        case "ADMINISTRATOR":
+            return "Administrateur";
+        case "EDITOR":
+            return "Éditeur";
+        case "VISUALIZER":
+            return "Visualiseur";
+        default:
+            return "Inconnu";
+    }
+}
 
-export type Role = "VISUALIZER" | "EDITOR" | "ADMINISTRATOR"
+export function frenchToEnglishRole(role: FrenchRole): string {
+    switch (role) {
+        case "Administrateur":
+            return "ADMINISTRATOR";
+        case "Éditeur":
+            return "EDITOR";
+        case "Visualiseur":
+            return "VISUALIZER";
+        default:
+            return "Inconnu";
+    }
+}
+
+export type ApiRole = "VISUALIZER" | "EDITOR" | "ADMINISTRATOR"
+export type FrenchRole = "Administrateur" | "Éditeur" | "Visualiseur"
 
 export type User = {
     id: number,
@@ -10,7 +35,7 @@ export type User = {
     lastName: string,
     firstName: string,
     password: string,
-    role: Role
+    role: ApiRole
 }
 
 export type CreateUserDto = {
@@ -18,7 +43,7 @@ export type CreateUserDto = {
     lastName: string,
     firstName: string,
     password: string,
-    role: Role
+    role: ApiRole
 }
 
 export async function searchUser(
