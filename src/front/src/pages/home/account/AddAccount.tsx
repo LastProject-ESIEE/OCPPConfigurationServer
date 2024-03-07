@@ -6,7 +6,6 @@ import { Role, createNewUser } from "../../../conf/userController";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-
 function AddAccount() {
     const [lastName, setLastName] = useState("");
     const [firstName, setFirstName] = useState("");
