@@ -1,4 +1,4 @@
-import { Box, Grid, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, Grid, MenuItem,Skeleton, Select, TextField, Typography } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { SearchFilter } from "../conf/backendController";
 import { useState } from "react";
@@ -59,7 +59,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                     }
                     return filter
                 })
-                
+
                 // As function is async props.onFiltering should be call here
                 if(props.onFiltering){
                     props.onFiltering(newValues)
@@ -80,8 +80,8 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                 <Typography variant="h6" textAlign={"center"}>{column.title}</Typography>
                                 <Box>
                                     {column.filter && (
-                                        <TableColumnFilter 
-                                            column={column} 
+                                        <TableColumnFilter
+                                            column={column}
                                             onFilterValidate={filterValue => {
                                                 if(column.filter){
                                                     updateFilter(column.filter.apiField, filterValue)
@@ -115,7 +115,15 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                         <Typography variant="h6" color={"red"} textAlign={"center"}>{props.error}</Typography>
                                     )}
                                     {(props.error === undefined) && (
-                                        <Typography variant="h6" textAlign={"center"}>Chargement...</Typography>
+                                        <Box key={"box-skeleton-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
+                                            <Box display="flex" flexDirection="column">
+                                                {Array.from(Array(30).keys()).map((_, index) => (
+                                                    <Box key={"skeleton-list-" + index} marginY={1}>
+                                                        <Skeleton sx={{borderRadius: 50}} variant="rectangular" width={"100%"} height={"5vh"} />
+                                                    </Box>
+                                                ))}
+                                            </Box>
+                                        </Box>
                                     )}
                                 </>
                             }
@@ -138,9 +146,9 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
     return (
         <Grid container maxWidth={"true"} justifyContent={"center"}>
             {(props.column.filter?.filterType === "input") && (
-                <TextField 
-                placeholder={props.column.title} 
-                size="small" 
+                <TextField
+                placeholder={props.column.title}
+                size="small"
                 onKeyDown={event => {
                     if(event.key === 'Enter'){
                         props.onFilterValidate(filterValue)
