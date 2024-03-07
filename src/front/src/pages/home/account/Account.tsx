@@ -32,7 +32,6 @@ function Account() {
         if (
             password1 === password2
             && password1 !== ""
-            && validatePassword(password1)
         ) {
             setIsButtonDisabled(false);
         } else {
@@ -74,9 +73,6 @@ function Account() {
                 console.error("ERROR ", error);
                 setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
             });
-            console.log("Passwords match. Update password in database.");
-        } else {
-            console.log("Passwords don't match.");
         }
     }
 
@@ -205,7 +201,7 @@ function Account() {
                                     backgroundColor: "#C8FAC7",
                                     color: "black",
                                     borderRadius: "30px",
-                                    fontSize: "0.5em",
+                                    fontSize: "1em",
                                     marginTop: 16.5
                                 }}
                             >
@@ -214,17 +210,17 @@ function Account() {
                         </Grid>
                     </Grid>
                 </Grid>
-                {/* TODO : Change with the toast later */}
+                {/* TODO : Change with the toast later and use the validatePassword method */}
                 <Grid xs={12} md={12}>
                     <Box style={{
-                        fontSize: "0.5em",
+                        fontSize: "1em",
                         textAlign: "center",
                         marginTop: "20px"
                     }}>
                         {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
                     </Box>
                     <Box style={{
-                        fontSize: "0.5em",
+                        fontSize: "1em",
                         textAlign: "center",
                         marginTop: "20px"
                     }}>
