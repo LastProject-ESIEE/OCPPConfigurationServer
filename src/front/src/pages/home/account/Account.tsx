@@ -153,12 +153,12 @@ function Account() {
                     }}
                 >
                     <Grid container justifyContent={"center"}>
-                        <Grid item>
+                        <Grid item xs={12}>
                             <Typography variant="h6">
                                 <b>Changer de mot de passe :</b>
                             </Typography>
                         </Grid>
-                        <Grid item container direction={"column"}>
+                        <Grid item container direction={"column"} xs={12}>
                             <TextField
                                 id={"oldPassword"}
                                 label={"Ancien mot de passe"}
@@ -187,7 +187,26 @@ function Account() {
                             >
                             </TextField>
                         </Grid>
-                        <Grid item>
+                        <Grid item xs={12}>
+                            <Paper
+                                elevation={0}
+                                variant="outlined"
+                                sx={{
+                                    backgroundColor: 'rgb(249, 246, 251)',
+                                    borderColor: 'rgba(226,229,233,255)',
+                                    borderWidth: 2,
+                                    marginTop: 2,
+                                    marginBottom: 1
+                                }}
+                            >
+                                <Grid>
+                                    <Typography variant="body1">
+                                        Le mot de passe doit contenir, au minimum, 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial. Au maximum, vous pouvez inscrire 30 caractères.
+                                    </Typography>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
                             <Button
                                 type={"submit"}
                                 disabled={isButtonDisabled}
@@ -197,13 +216,13 @@ function Account() {
                                     color: "black",
                                     borderRadius: "30px",
                                     fontSize: "1em",
-                                    marginTop: 16.5
+                                    marginTop: 2
                                 } : {
                                     backgroundColor: "#C8FAC7",
                                     color: "black",
                                     borderRadius: "30px",
                                     fontSize: "1em",
-                                    marginTop: 16.5
+                                    marginTop: 2
                                 }}
                             >
                                 Changer
