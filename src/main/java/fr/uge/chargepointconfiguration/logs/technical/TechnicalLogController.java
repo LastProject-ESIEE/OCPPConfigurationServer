@@ -71,37 +71,41 @@ public class TechnicalLogController {
    */
   @Operation(summary = "Search for technical logs")
   @ApiResponse(responseCode = "200",
-        description = "Found technical logs",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = TechnicalLogDto.class))
-        })
+      description = "Found technical logs",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = TechnicalLogDto.class))
+      })
   @GetMapping(value = "/search")
   public PageDto<TechnicalLogDto> getPage(
-        @Parameter(description = "Desired size of the requested page.")
-        @RequestParam(required = false, defaultValue = "10") int size,
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-        @Parameter(description = "Requested page.")
-        @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-        @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the technical log.")
-        @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the technical log.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-        @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = technicalLogService.countTotal();
 
-    var data = technicalLogService.getPage(
-                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          )
-          .stream()
-          .map(log -> new TechnicalLogDto(log.getId(),
-                log.getDate(),
-                log.getComponent(),
-                log.getLevel(),
-                log.getCompleteLog()))
-          .toList();
+    var data = technicalLogService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+        )
+        .stream()
+        .map(log -> new TechnicalLogDto(log.getId(),
+            log.getDate(),
+            log.getComponent(),
+            log.getLevel(),
+            log.getCompleteLog()))
+        .toList();
 
     return new PageDto<>(total, page, size, data);
   }

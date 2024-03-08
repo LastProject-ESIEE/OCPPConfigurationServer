@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedRepository;
 import java.util.HashSet;
@@ -37,15 +38,18 @@ public class FirmwareService {
     return firmwareRepository.count();
   }
 
+
   /**
    * Search for {@link Firmware} with a pagination.
    *
+   * @param request the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link Firmware}
    */
-  public List<Firmware> getPage(PageRequest pageable) {
-    return firmwareRepository.findAllByOrderByIdDesc(pageable)
-            .stream().toList();
+  public List<Firmware> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, Firmware.class);
+    return firmwareRepository.findAll(condition, pageable)
+        .stream().toList();
   }
 
 

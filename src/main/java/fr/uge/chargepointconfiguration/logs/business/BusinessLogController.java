@@ -67,38 +67,42 @@ public class BusinessLogController {
    */
   @Operation(summary = "Search for business logs")
   @ApiResponse(responseCode = "200",
-        description = "Found business logs",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = BusinessLogDto.class))
-        })
+      description = "Found business logs",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = BusinessLogDto.class))
+      })
   @GetMapping(value = "/search")
   public PageDto<BusinessLogDto> getPage(
-        @Parameter(description = "Desired size of the requested page.")
-        @RequestParam(required = false, defaultValue = "10") int size,
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-        @Parameter(description = "Requested page.")
-        @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-        @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the business log.")
-        @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the business log.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-        @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = businessLogService.countTotal();
 
-    var data = businessLogService.getPage(
-                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ).stream()
-          .map(log -> new BusinessLogDto(log.getId(),
-                log.getDate(),
-                log.getUser() != null ? log.getUser().toDto() : null,
-                log.getChargepoint() != null ? log.getChargepoint().toDto() : null,
-                log.getCategory(),
-                log.getLevel(),
-                log.getCompleteLog()))
-          .toList();
+    var data = businessLogService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+        ).stream()
+        .map(log -> new BusinessLogDto(log.getId(),
+            log.getDate(),
+            log.getUser() != null ? log.getUser().toDto() : null,
+            log.getChargepoint() != null ? log.getChargepoint().toDto() : null,
+            log.getCategory(),
+            log.getLevel(),
+            log.getCompleteLog()))
+        .toList();
 
     return new PageDto<>(total, page, size, data);
   }

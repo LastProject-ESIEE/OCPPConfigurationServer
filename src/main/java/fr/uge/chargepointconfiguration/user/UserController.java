@@ -58,7 +58,6 @@ public class UserController {
         @Parameter(description = "The user you are looking for.")
         @PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
-    System.out.println("getUser " + id);
     return userService.getUserById(id).toDto();
   }
 

@@ -90,8 +90,8 @@ class ChargepointControllerTest {
     var chargepoint2 = new Chargepoint("alfen_serial_number2", "S-type", "alfen", "COSTANDINI_1", "localhost", configuration2);
     chargepointRepository.save(chargepoint2);
 
-    var result1 = chargepointController.searchChargepoints(2, 0, "", "id", "asc");
-    var result2 = chargepointController.searchChargepoints(2, 1, "", "id", "asc");
+    var result1 = chargepointController.searchWithPage(2, 0, "", "id", "asc");
+    var result2 = chargepointController.searchWithPage(2, 1, "", "id", "asc");
 
     assertEquals(0, result1.page());
     assertEquals(1, result2.page());

@@ -1,8 +1,5 @@
 package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.configuration.ConfigurationDto;
-import fr.uge.chargepointconfiguration.configuration.CreateConfigurationDto;
-import fr.uge.chargepointconfiguration.configuration.UpdateConfigurationDto;
 import fr.uge.chargepointconfiguration.shared.PageDto;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -110,38 +107,42 @@ public class FirmwareController {
    */
   @Operation(summary = "Search for configurations")
   @ApiResponse(responseCode = "200",
-          description = "Found configurations",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = FirmwareDto.class))
-          })
+      description = "Found configurations",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = FirmwareDto.class))
+      })
   @GetMapping(value = "/search")
   public PageDto<FirmwareDto> getPage(
-          @Parameter(description = "Desired size of the requested page.")
-          @RequestParam(required = false, defaultValue = "10") int size,
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-          @Parameter(description = "Requested page.")
-          @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-          @Parameter(description =
-                  "The column you want to sort by. Must be an attribute of the configuration.")
-          @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the configuration.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-          @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-          @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = firmwareService.countTotal();
 
-    var data = firmwareService.getPage(
-                    PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-            ).stream()
-            .map(entity -> new FirmwareDto(entity.getId(),
-                    entity.getUrl(),
-                    entity.getVersion(),
-                    entity.getConstructor(),
-                    entity.getTypesAllowed().stream().map(TypeAllowed::toDto)
-                            .collect(Collectors.toSet())
-            ))
-            .toList();
+    var data = firmwareService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+        ).stream()
+        .map(entity -> new FirmwareDto(entity.getId(),
+            entity.getUrl(),
+            entity.getVersion(),
+            entity.getConstructor(),
+            entity.getTypesAllowed().stream().map(TypeAllowed::toDto)
+                .collect(Collectors.toSet())
+        ))
+        .toList();
 
     return new PageDto<>(total, page, size, data);
   }
