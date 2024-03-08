@@ -136,6 +136,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
+    chargePointManager.notifyOnConnection();
     // Send BootNotification Response
     var response = new BootNotificationResponse16(
             LocalDateTime.now().toString(),
@@ -179,6 +180,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
+      chargePointManager.notifyProcess();
       processResetRequest();
     } else {
       sender.sendMessage(config, chargePointManager);
@@ -212,6 +214,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         chargepointRepository.save(currentChargepoint);
         // Dispatch information to users
         chargePointManager.notifyStatusUpdate();
+        chargePointManager.notifyProcess();
         queue.clear();
       }
     }
@@ -287,6 +290,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
+      chargePointManager.notifyProcess();
       processConfigurationRequest();
       return;
     }
@@ -338,13 +342,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           return firmware.getUrl();
         }
       }
-    } else {
-      logger.info(new BusinessLog(null,
-              currentChargepoint,
-              BusinessLogEntity.Category.FIRM,
-              "chargepoint ("
-                      + currentChargepoint.getSerialNumberChargepoint()
-                      + ") is already updated"));
     }
     return "";
   }
@@ -406,29 +403,19 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                   "firmware for the chargepoint ("
                           + currentChargepoint.getSerialNumberChargepoint()
                           + ") couldn't be downloaded, "
-                          + "check the internet connection of the chargepoint, SKIPPING"));
+                          + "check the internet connection of the chargepoint"));
         } else {
           logger.warn(new BusinessLog(null,
                   currentChargepoint,
                   BusinessLogEntity.Category.FIRM,
                   "firmware for the chargepoint ("
                           + currentChargepoint.getSerialNumberChargepoint()
-                          + ") couldn't be installed, check the given URL to the chargepoint, "
-                          + "SKIPPING"));
+                          + ") couldn't be installed, check the given URL to the chargepoint"));
         }
-        //status.setStatus(Status.StatusProcess.FAILED);
-        //status.setError(f.status());
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException e) {
-          // ignore
-        }
-        currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-        currentChargepoint.setStep(Chargepoint.Step.CONFIGURATION);
-        chargePointManager.notifyStatusUpdate();
+        currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
         chargepointRepository.save(currentChargepoint);
-        var reset = new ResetRequest16(ResetType.Hard);
-        sender.sendMessage(reset, chargePointManager);
+        chargePointManager.notifyStatusUpdate();
+        chargePointManager.notifyProcess();
       }
       default -> {
         // Ignore, the chargepoint is downloading/installing.
