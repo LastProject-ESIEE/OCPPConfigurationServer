@@ -50,11 +50,11 @@ class WebSocketListener extends events.EventEmitter {
         const message = JSON.parse(ev.data) as WebSocketMessage
         switch(message.name){
           case "ChargePointWebsocketNotification":
-            let wsChargePointNotification = JSON.parse(message.value) as WebSocketChargePointNotification
+            let wsChargePointNotification = message.value as unknown as WebSocketChargePointNotification
             this.emit('charge-point-update', wsChargePointNotification)
             break;
           case "CriticalityWebsocketNotification":
-            let wsNotification = JSON.parse(message.value) as NotificationMessage
+            let wsNotification = message.value as unknown as NotificationMessage
             this.emitNotification(wsNotification)
             break;
           default:
