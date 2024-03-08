@@ -323,6 +323,13 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           return firmware.getUrl();
         }
       }
+      logger.info(new BusinessLog(null,
+              currentChargepoint,
+              BusinessLogEntity.Category.FIRM,
+              "didn't find any compatible firmware for chargepoint ("
+                      + currentChargepoint.getSerialNumberChargepoint()
+                      + ") : skipping to CONFIGURATION"));
+      return "";
     } else if (comparison < 0) {
       var firmwares = firmwareRepository
               .findAllByTypeAllowedDesc(typeAllowed);
@@ -331,11 +338,10 @@ public class OcppConfigurationObserver16 implements OcppObserver {
           logger.info(new BusinessLog(null,
                   currentChargepoint,
                   BusinessLogEntity.Category.FIRM,
-                  "downgrading chargepoint ("
+                  "tried to rollback chargepoint ("
                           + currentChargepoint.getSerialNumberChargepoint()
-                          + ") with firmware "
-                          + firmware.getVersion()));
-          return firmware.getUrl();
+                          + ") with firmware : FORBIDDEN, skipping to CONFIGURATION"));
+          return "";
         }
       }
     } else {
