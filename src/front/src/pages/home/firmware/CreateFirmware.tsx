@@ -117,13 +117,6 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                 checkIsWrong={value => value === "abc"}
                                                 value={formData.constructor}
                                                 />
-                                        <FormInput name={"Constructeur"}
-                                                   onChange={val => setFormData(prevState => {
-                                                       return {...prevState, constructor: val}
-                                                    })}
-                                                    checkIsWrong={value => value === "abc"}
-                                                    value={formData.constructor}
-                                                    />
                                     </Box>
                                     <Box
                                         sx={{
