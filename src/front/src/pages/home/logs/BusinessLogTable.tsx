@@ -15,7 +15,7 @@ const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 const businessLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
-        size:11.5/5,
+        size: 2,
         /*
         filter: {
           apiField: "containsTitle",
@@ -24,20 +24,24 @@ const businessLogTableColumns: TableColumnDefinition[] = [
         */
     },
     {
-        title: "User",
-        size:11.5/5,
+        title: "Utilisateur",
+        size: 1,
     },
     {
-        title: "Chargepoint",
-        size:11.5/5
+        title: "Borne",
+        size: 2
     },
     {
-        title: "Category",
-        size:11.5/5,
+        title: "Catégorie",
+        size: 1,
+    },
+    {
+        title: "Criticité",
+        size: 1
     },
     {
         title: "Log",
-        size:11.5/5,
+        size: 4.5,
     },
     {
         title: "",
@@ -68,7 +72,7 @@ function BusinessLogTable() {
         key: "business-log-table",
         data: tableData,
         hasMore: hasMore,
-        error: error,
+        error: error, 
         onSelection: businessLog => {
             console.log("Selected item : " + businessLog.id)
         },
@@ -142,7 +146,15 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
                     <Typography variant="body1" align="center"
                                 noWrap={true}>{props.businessLog.category}</Typography>
                 </Grid>
-                <Grid item xs={businessLogTableColumns[4].size} maxWidth={"true"}
+                <Grid item xs={businessLogTableColumns[4].size}
+                      maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Typography variant="body1"
+                                align="center"
+                                noWrap={true}>
+                        {props.businessLog.level}</Typography>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[5].size} maxWidth={"true"}
                       justifyContent={"center"}>
                     {!open
                         ? <Tooltip title={props.businessLog.completeLog}>
@@ -159,7 +171,7 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
                             {props.businessLog.completeLog}
                         </Typography>}
                 </Grid>
-                <Grid item xs={businessLogTableColumns[5].size}>
+                <Grid item xs={businessLogTableColumns[6].size}>
                     <Typography align={"center"}>
                         {!open
                             ? <ArrowDropDownIcon/>
