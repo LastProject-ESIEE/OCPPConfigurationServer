@@ -6,6 +6,7 @@ import {
     Button,
     Collapse,
     Container,
+    Fab,
     Grid,
     IconButton,
     List,
@@ -235,26 +236,25 @@ export function NavBar() {
                   <List component="div" style={{padding: 0, maxWidth: "true"}} >
                       {buttons.filter((item) => item.label === props.title)
                           .map((item) => {
-                                  return item.subButtons.map((subButton) => {
-                                      return (
-                                              <Link
-                                              key={"link-menu-page-redirect-" + item.label + "-" + subButton.label}
-                                              to={{ pathname: `/home${item.href}${subButton.href}`}}
-                                              style={{ textDecoration: 'none', color: 'black', maxWidth: "true"}}>
-                                                      <ListItemButton
-                                                      key={"link-button-menu-page-redirect-" + item.label + "-" + subButton.label}
-                                                      style={{maxWidth: "true", height:"5vh", padding: 0, marginLeft: 5}}
-                                                      onClick={ev => props.onSelection()}>
-                                                          <Typography variant="body1">{subButton.label}</Typography>
-                                                      </ListItemButton>
-                                              </Link>
-
-                                      )
-                                  })
-                              }
+                            return item.subButtons.map((subButton) => {
+                                return (
+                                    <Link
+                                    key={"link-menu-page-redirect-" + item.label + "-" + subButton.label}
+                                    to={{ pathname: `/home${item.href}${subButton.href}`}}
+                                    style={{ textDecoration: 'none', color: 'black', maxWidth: "true"}}>
+                                            <ListItemButton
+                                            key={"link-button-menu-page-redirect-" + item.label + "-" + subButton.label}
+                                            style={{maxWidth: "true", height:"5vh", padding: 0, marginLeft: 5}}
+                                            onClick={ev => props.onSelection()}>
+                                                <Typography variant="body1">{subButton.label}</Typography>
+                                            </ListItemButton>
+                                    </Link>
+                                )
+                            })
+                        }
                       )}
                   </List>
-              </Collapse>
-          </List>
+            </Collapse>
+        </List>
       )
   }
