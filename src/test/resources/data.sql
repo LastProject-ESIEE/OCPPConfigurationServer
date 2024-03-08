@@ -35,16 +35,16 @@ INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id
 ('ACE0000005', 'Eve Double S-line', 'Alfen BV', 'nom de la borne', 'https://server_address', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PENDING'),
 ('ACE0000005', 'Eve Single S-line', 'Alfen BV', 'born to kill', 'https://server_address', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PROCESSING'),
 ('ACE0000006', 'Eve Double S-line', 'Alfen BV', 'stéphane borne (l''historien)', 'https://server_address', 4, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FINISHED'),
-('ACE0000007', 'Eve Double S-line', 'Alfen BV', 'les bornés', 'https://server_address', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
+('ACE0000007', 'Eve Single S-line', 'Alfen BV', 'les bornés', 'https://server_address', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
 
 INSERT INTO business_logs (date, complete_log, chargepoint_id, user_id, category, level) VALUES
-('2024-03-08 10:34:09', 'Un utilisateur s''est connecté', null, 1, 'LOGIN', 'INFO'),
-('2024-03-08 12:34:09', 'log qui indique un message très important', 2, 1, 'CONFIG', 'ERROR'),
-('2024-03-08 10:34:09', 'log qui indique un message fatal', 1, 2, 'FIRM', 'FATAL'),
-('2024-03-08 10:34:09', 'log qui indique un message d''info', 4, 2, 'FIRM', 'INFO');
+('2024-03-08 13:00:00', 'Un utilisateur s''est connecté', null, 1, 'LOGIN', 'INFO'),
+('2024-03-08 11:00:00', 'log qui indique un message très important', 2, 1, 'CONFIG', 'ERROR'),
+('2024-03-08 12:00:00', 'log qui indique un message fatal', 1, 2, 'FIRM', 'FATAL'),
+('2024-03-08 10:00:00', 'log qui indique un message d''info', 4, 2, 'FIRM', 'INFO');
 
 INSERT INTO technical_logs (date, component, level, complete_log) VALUES
-('2024-03-08 10:34:09', 'BACKEND', 'INFO', 'log technique de backend'),
-('2024-03-08 10:35:09', 'WEBSOCKET', 'ERROR', 'log erreur technique de websocket'),
-('2024-03-08 10:34:09', 'FRONTEND', 'INFO', 'log technique de frontend'),
-('2024-03-08 10:34:09', 'DATABASE', 'INFO', 'log technique de database');
+('2024-03-08 13:00:00', 'BACKEND', 'INFO', 'log technique de backend'),
+('2024-03-08 11:00:00', 'WEBSOCKET', 'ERROR', 'log erreur technique de websocket'),
+('2024-03-08 12:00:00', 'FRONTEND', 'INFO', 'log technique de frontend'),
+('2024-03-08 10:00:00', 'DATABASE', 'INFO', 'log technique de database');
