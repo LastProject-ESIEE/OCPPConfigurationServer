@@ -62,8 +62,8 @@ public class WebSecurityConfig {
   static RoleHierarchy roleHierarchy() {
     var hierarchy = new RoleHierarchyImpl();
     hierarchy.setHierarchy("""
-          ROLE_Administrator > ROLE_Editor
-          ROLE_Editor > ROLE_Visualizer
+          ROLE_ADMINISTRATOR > ROLE_EDITOR
+          ROLE_EDITOR > ROLE_VISUALIZER
           """);
     return hierarchy;
   }
