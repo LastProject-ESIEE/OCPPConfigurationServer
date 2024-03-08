@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +37,7 @@ class ChargepointControllerTest {
    * /chargepoint/all
    */
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getAllChargepoints() {
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);
@@ -55,6 +57,7 @@ class ChargepointControllerTest {
    * /chargepoint/all
    */
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getEmptyAllChargepoints() {
     assertEquals(List.of(), chargepointController.getAllChargepoints());
   }
@@ -64,6 +67,7 @@ class ChargepointControllerTest {
    * /chargepoint/{id}
    */
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getChargepointById(){
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);
@@ -74,6 +78,7 @@ class ChargepointControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   public void searchChargepoints() {
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     var configuration = new Configuration("MyConfig", "{}", firmware);

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +54,7 @@ public class TechnicalLogController {
                   schema = @Schema(implementation = TechnicalLogEntity.class))
           })
   @GetMapping(value = "/{component}/{level}")
+  @PreAuthorize("hasRole('EDITOR')")
   public List<TechnicalLogEntity> getTechnicalLogByComponentAndLevel(
           @Parameter @PathVariable TechnicalLogEntity.Component component,
           @Parameter @PathVariable Level level) {
@@ -76,6 +78,7 @@ public class TechnicalLogController {
               schema = @Schema(implementation = TechnicalLogDto.class))
         })
   @GetMapping(value = "/search")
+  @PreAuthorize("hasRole('EDITOR')")
   public PageDto<TechnicalLogDto> getPage(
         @Parameter(description = "Desired size of the requested page.")
         @RequestParam(required = false, defaultValue = "10") int size,

@@ -23,17 +23,17 @@ class FakeController {
     return "authenticated api";
   }
 
-  @PreAuthorize("hasRole('Administrator')")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   String admin() {
     return "Administrator api";
   }
 
-  @PreAuthorize("hasRole('Editor')")
+  @PreAuthorize("hasRole('EDITOR')")
   String editor() {
     return "Editor api";
   }
 
-  @PreAuthorize("hasRole('Visualizer')")
+  @PreAuthorize("hasRole('VISUALIZER')")
   String visualizer() {
     return "Visualizer api";
   }
@@ -59,7 +59,7 @@ public class PermissionTest {
   }
 
   @Test
-  @WithMockUser(roles = "Administrator")
+  @WithMockUser(roles = "ADMINISTRATOR")
   void authenticatedWithAdminRole() {
     assertDoesNotThrow(() -> fakeController.authenticated());
   }
@@ -71,13 +71,13 @@ public class PermissionTest {
   }
 
   @Test
-  @WithMockUser(roles = "Visualizer")
+  @WithMockUser(roles = "VISUALIZER")
   void adminWithUserRole() {
     assertThrows(AccessDeniedException.class, () -> fakeController.admin());
   }
 
   @Test
-  @WithMockUser(roles = "Administrator")
+  @WithMockUser(roles = "ADMINISTRATOR")
   void adminWithAdministratorRole() {
     assertDoesNotThrow(() -> fakeController.admin());
   }
@@ -89,13 +89,13 @@ public class PermissionTest {
   }
 
   @Test
-  @WithMockUser(roles = "Editor")
+  @WithMockUser(roles = "EDITOR")
   void editorWithEditorRole() {
     assertDoesNotThrow(() -> fakeController.editor());
   }
 
   @Test
-  @WithMockUser(roles = "Administrator")
+  @WithMockUser(roles = "ADMINISTRATOR")
   void editorWithAdministratorRole() {
     assertDoesNotThrow(() -> fakeController.editor());
   }
@@ -107,19 +107,19 @@ public class PermissionTest {
   }
 
   @Test
-  @WithMockUser(roles = "Editor")
+  @WithMockUser(roles = "EDITOR")
   void visualizerWithEditorRole() {
     assertDoesNotThrow(() -> fakeController.visualizer());
   }
 
   @Test
-  @WithMockUser(roles = "Visualizer")
+  @WithMockUser(roles = "VISUALIZER")
   void visualizerWithVisualizerRole() {
     assertDoesNotThrow(() -> fakeController.visualizer());
   }
 
   @Test
-  @WithMockUser(roles = "Administrator")
+  @WithMockUser(roles = "ADMINISTRATOR")
   void visualizerWithAdministratorRole() {
     assertDoesNotThrow(() -> fakeController.visualizer());
   }
