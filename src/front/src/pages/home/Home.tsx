@@ -92,9 +92,7 @@ export function Home() {
           )}
           <NavBar/>
           <Outlet />
-          {openNotification && (
-              <DisplayNotification open={openNotification} onClose={() => setOpenNotification(false)}/>
-          )}
+          <DisplayNotification open={openNotification} onClose={() => setOpenNotification(false)}/>
         </div>
     );
 }

@@ -133,12 +133,13 @@ function NotificationItems(props: {onNotificationReceived: (message: Notificatio
     useEffect(() => {
         let callBack =  (message: NotificationMessage) => {  
             enqueueSnackbar(message.title + "\n" + message.content, {variant: message.type === "ERROR" ? "error" : "info"})
+            props.onNotificationReceived(message)
         }
         wsManager.addListener('notify', callBack)
         return () => {
           wsManager.removeListener('notify', callBack)
         };
-      }, [])
+      }, [props])
   
   
     return (
