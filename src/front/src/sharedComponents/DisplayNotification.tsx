@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Drawer, Grid, IconButton, List, ListItem, ListItemText, Snackbar, Tooltip, Typography } from "@mui/material";
+import { Box, Drawer, Grid, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { wsManager } from "../pages/home/Home";
 import { SnackbarProvider, useSnackbar } from "notistack";
@@ -151,7 +151,7 @@ function NotificationItems(props: {onNotificationReceived: (message: Notificatio
         return () => {
           wsManager.removeListener('notify', callBack)
         };
-      }, [props])
+      }, [props, enqueueSnackbar])
   
   
     return (

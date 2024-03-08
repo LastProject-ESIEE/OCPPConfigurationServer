@@ -3,7 +3,7 @@ import { NavBar } from "../../sharedComponents/NavBar";
 import events from "events";
 import { WebSocketChargePointNotification } from "../../conf/chargePointController";
 import { IconButton } from "@mui/material";
-import DisplayNotification, { NotificationType, NotificationMessage } from "../../sharedComponents/DisplayNotification";
+import DisplayNotification, { NotificationMessage } from "../../sharedComponents/DisplayNotification";
 import { useState } from "react";
 import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
 
