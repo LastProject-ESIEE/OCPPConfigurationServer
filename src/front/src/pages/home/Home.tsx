@@ -2,17 +2,22 @@ import { Outlet } from "react-router-dom";
 import { NavBar } from "../../sharedComponents/NavBar";
 import events from "events";
 import { WebSocketChargePointNotification } from "../../conf/chargePointController";
-import { Fab, IconButton } from "@mui/material";
-import EmailIcon from '@mui/icons-material/Email';
+import { IconButton } from "@mui/material";
 import DisplayNotification, { NotificationType, NotificationMessage } from "../../sharedComponents/DisplayNotification";
 import { useState } from "react";
-import { Box } from "@mui/system";
+import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
+
 // Define backend server port
 const BACKEND_PORT = 8080
 
 declare interface WebSocketListener {
     on(event: 'charge-point-update', listener: (message: WebSocketChargePointNotification) => void): this;
     on(event: 'notify', listener: (message: NotificationMessage) => void): this;
+}
+
+type WebSocketMessage = {
+  name: "ChargePointWebsocketNotification" | "CriticalityWebsocketNotification",
+  value: string,
 }
 
 class WebSocketListener extends events.EventEmitter {
@@ -24,7 +29,6 @@ class WebSocketListener extends events.EventEmitter {
       this.connected = false;
     }
 
-    // Start 
     startWebSocket(): void {
       if(this.connected){
         console.error("WebSocket connection is already established.")
@@ -43,17 +47,19 @@ class WebSocketListener extends events.EventEmitter {
 
       this.websocket.onmessage = (ev: MessageEvent<any>) => {
         // Try parse as WebSocketChargePointNotification
-        const chargePointNotification = JSON.parse(ev.data) as WebSocketChargePointNotification
-        if(chargePointNotification){
-          this.emit('charge-point-update', chargePointNotification)
-          return
+        const message = JSON.parse(ev.data) as WebSocketMessage
+        switch(message.name){
+          case "ChargePointWebsocketNotification":
+            let wsChargePointNotification = JSON.parse(message.value) as WebSocketChargePointNotification
+            this.emit('charge-point-update', wsChargePointNotification)
+            break;
+          case "CriticalityWebsocketNotification":
+            let wsNotification = JSON.parse(message.value) as NotificationMessage
+            this.emitNotification(wsNotification)
+            break;
+          default:
+            console.warn("Unknown received message from websocket : " + ev.data)
         }
-        const notifMessage = JSON.parse(ev.data) as NotificationMessage
-        if(notifMessage){
-          this.emitNotification(notifMessage)
-          return
-        }
-        console.log("Unknown received message from websocket : " + ev.data)
       }
 
       this.websocket.onclose = (ev: CloseEvent) => {
@@ -78,17 +84,16 @@ export function Home() {
         <div className="App" style={{maxWidth: "true", height: "100vh", overflow: "hidden"}}>
           {!openNotification && (
             <IconButton                     
-              style={{position: "fixed", top: "92%", right: "3%"}}
+              style={{position: "fixed", top: "92%", right: "3%", zIndex: 999}}
               onClick={() => {
                 setOpenNotification(true)
               }}>
-              <EmailIcon 
+              <NotificationImportantIcon 
                     color="primary"
                     fontSize={"large"}
                 >
-              </EmailIcon>
+              </NotificationImportantIcon>
             </IconButton>
-
           )}
           <NavBar/>
           <Outlet />
