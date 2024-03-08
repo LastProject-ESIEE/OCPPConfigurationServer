@@ -221,7 +221,7 @@ public class ConfigurationController {
 
     var data = configurationService.search(
             request,
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         ).stream()
         .map(entity -> new ConfigurationDto(
             entity.getId(),

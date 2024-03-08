@@ -97,7 +97,7 @@ public class TechnicalLogController {
 
     var data = technicalLogService.search(
             request,
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         )
         .stream()
         .map(log -> new TechnicalLogDto(log.getId(),

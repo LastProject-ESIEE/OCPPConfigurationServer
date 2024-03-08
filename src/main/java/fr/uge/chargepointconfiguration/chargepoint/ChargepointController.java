@@ -117,7 +117,7 @@ public class ChargepointController {
 
     var data = chargepointService.search(
             request,
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         )
         .stream()
         .map(Chargepoint::toDto)

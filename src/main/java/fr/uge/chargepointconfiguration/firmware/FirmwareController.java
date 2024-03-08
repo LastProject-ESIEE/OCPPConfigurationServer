@@ -133,7 +133,7 @@ public class FirmwareController {
 
     var data = firmwareService.search(
             request,
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         ).stream()
         .map(entity -> new FirmwareDto(entity.getId(),
             entity.getUrl(),
