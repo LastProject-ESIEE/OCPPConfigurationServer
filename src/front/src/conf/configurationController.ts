@@ -57,17 +57,12 @@ export type Transcriptor = {
 export async function getTranscriptors(): Promise<Transcriptor[] | undefined> {
 
     let request = await fetch("/api/configuration/transcriptor")
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let transcriptors = (content as Transcriptor[])
-        if(transcriptors != null){
-            console.log(transcriptors)
+        if (transcriptors != null) {
             return transcriptors
-        }else{
-            console.log("Fetch transcriptors failed " + content)
         }
-    }else{
-        console.log("Fetch transcriptors failed, error code:" +  request.status)
     }
     return undefined
 }
@@ -76,17 +71,12 @@ export async function getTranscriptors(): Promise<Transcriptor[] | undefined> {
 export async function getAllConfigurations(): Promise<Configuration[] | undefined> {
 
     let request = await fetch(`/api/configuration/all`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let configuration = (content as Configuration[])
-        if(configuration != null){
-            console.log(configuration)
+        if (configuration != null) {
             return configuration
-        }else{
-            console.log("Fetch configuration list failed " + content)
         }
-    }else{
-        console.log("Fetch configuration list failed, error code:" +  request.status)
     }
     return undefined
 }
@@ -99,17 +89,12 @@ export async function searchConfiguration(
     sort?: { sortField: string, sortOrder: 'asc' | 'desc' }): Promise<PageRequest<Configuration> | undefined> {
 
     let request = await fetch(window.location.origin + `/api/configuration/search?size=${size}&page=${page}`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let configuration = (content as PageRequest<Configuration>)
-        if(configuration != null){
-            console.log(configuration)
+        if (configuration != null) {
             return configuration
-        }else{
-            console.log("Fetch charge point page failed " + content)
         }
-    }else{
-        console.log("Fetch configuration list failed, error code:" +  request.status)
     }
     return undefined
 }
@@ -133,7 +118,6 @@ export async function postNewConfiguration(configurationData: CreateConfiguratio
     if (request.ok) {
         return true
     } else {
-        console.log("Fetch configuration list failed, error code:" + request.status)
         return false
     }
 }
@@ -141,25 +125,18 @@ export async function postNewConfiguration(configurationData: CreateConfiguratio
 export async function getConfiguration(id: number): Promise<Configuration | undefined> {
 
     let request = await fetch(window.location.origin + `/api/configuration/${id}`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let configuration = content as Configuration
-        if(configuration != null){
-            console.log(configuration)
+        if (configuration != null) {
             return configuration
-        }else{
-            console.log("Failed to fetch configuration with id :" + id, content)
         }
-    }else{
-        console.log("Fetch configuration list failed, error code:" +  request.status)
     }
     return undefined
 }
 
 export async function postUpdateConfiguration(id: number, configurationData: CreateConfigurationData): Promise<boolean> {
     let myConfig = globalStateResponseFormatter(configurationData)
-
-    console.log(JSON.parse(myConfig))
 
     let request = await fetch(window.location.origin + "/api/configuration/update",
         {
@@ -178,7 +155,6 @@ export async function postUpdateConfiguration(id: number, configurationData: Cre
     if (request.ok) {
         return true
     } else {
-        console.log("Update configuration failed, error code:" + request.status)
         return false
     }
 }
