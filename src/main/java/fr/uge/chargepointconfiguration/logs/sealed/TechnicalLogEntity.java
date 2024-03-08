@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.hibernate.annotations.CreationTimestamp;
@@ -43,7 +44,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp date;
+  private LocalDateTime date;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "component", nullable = false)
@@ -68,7 +69,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
     this.component = Objects.requireNonNull(component);
     this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
-    date = new Timestamp(System.currentTimeMillis());
+    date = LocalDateTime.now();
   }
 
   /**
@@ -101,7 +102,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
    *
    * @return date, Timestamp.
    */
-  public Timestamp getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
@@ -110,7 +111,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
    *
    * @param date a Timestamp.
    */
-  public void setDate(Timestamp date) {
+  public void setDate(LocalDateTime date) {
     this.date = date;
   }
 
@@ -216,7 +217,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
   public TechnicalLogDto toDto() {
     return new TechnicalLogDto(
         id,
-        date,
+        Timestamp.valueOf(date),
         component,
         level,
         completeLog
