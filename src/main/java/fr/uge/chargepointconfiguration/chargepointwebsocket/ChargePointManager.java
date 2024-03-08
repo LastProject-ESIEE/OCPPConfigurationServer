@@ -147,7 +147,6 @@ public class ChargePointManager {
     var currentStep = currentChargepoint.getStep();
     if (currentChargepoint.getStatusProcess() == Chargepoint.StatusProcess.FAILED) {
       var message = new CriticalityWebsocketNotification(
-              currentChargepoint.getId(),
               new CriticalityWebsocketContent(
                       currentChargepoint.getClientId(),
                       CriticalityWebsocketContent.Type.ERROR,
@@ -159,7 +158,6 @@ public class ChargePointManager {
       WebSocketHandler.sendMessageToUsers(message);
     } else if (currentChargepoint.getStatusProcess() == Chargepoint.StatusProcess.FINISHED) {
       var message = new CriticalityWebsocketNotification(
-              currentChargepoint.getId(),
               new CriticalityWebsocketContent(
                       currentChargepoint.getClientId(),
                       CriticalityWebsocketContent.Type.INFO,
@@ -172,7 +170,6 @@ public class ChargePointManager {
     } else {
       if (currentStep == Chargepoint.Step.CONFIGURATION) {
         var message = new CriticalityWebsocketNotification(
-                currentChargepoint.getId(),
                 new CriticalityWebsocketContent(
                         currentChargepoint.getClientId(),
                         CriticalityWebsocketContent.Type.INFO,
