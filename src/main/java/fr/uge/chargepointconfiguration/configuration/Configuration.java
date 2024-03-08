@@ -47,7 +47,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   private String configuration;
 
   @ManyToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
+  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware")
   private Firmware firmware;
 
   /**
