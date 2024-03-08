@@ -95,13 +95,7 @@ public class BusinessLogController {
             request,
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         ).stream()
-        .map(log -> new BusinessLogDto(log.getId(),
-            log.getDate(),
-            log.getUser() != null ? log.getUser().toDto() : null,
-            log.getChargepoint() != null ? log.getChargepoint().toDto() : null,
-            log.getCategory(),
-            log.getLevel(),
-            log.getCompleteLog()))
+        .map(BusinessLogEntity::toDto)
         .toList();
 
     return new PageDto<>(total, page, size, data);

@@ -102,11 +102,7 @@ public class TechnicalLogController {
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         )
         .stream()
-        .map(log -> new TechnicalLogDto(log.getId(),
-            log.getDate(),
-            log.getComponent(),
-            log.getLevel(),
-            log.getCompleteLog()))
+        .map(TechnicalLogEntity::toDto)
         .toList();
 
     return new PageDto<>(total, page, size, data);
