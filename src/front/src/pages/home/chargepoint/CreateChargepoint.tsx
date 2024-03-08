@@ -133,7 +133,7 @@ function CreateChargepoint(props: { id?: number }) {
                                                value={serialNumber}
                                                checkIsWrong={value => value === "abc"}
                                     />
-                                    <FormInput name={"Client ID"}
+                                    <FormInput name={"Identifiant client"}
                                                onChange={val => {
                                                    setClientId(val)
                                                    setChargepoint(prevState => {
