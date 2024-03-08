@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration;
 
+import fr.uge.chargepointconfiguration.chargepoint.notification.Notification;
 import fr.uge.chargepointconfiguration.chargepoint.notification.WebSocketNotification;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
    *
    * @param notificationMessage Websocket notification message
    */
-  public static void sendMessageToUsers(WebSocketNotification notificationMessage) {
+  public static void sendMessageToUsers(Notification notificationMessage) {
     var textMessage = new TextMessage(JsonParser.objectToJsonString(notificationMessage));
     synchronized (lock) {
       usersSession.forEach(webSocketSession -> {

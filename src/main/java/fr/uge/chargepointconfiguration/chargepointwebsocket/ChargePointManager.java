@@ -3,9 +3,7 @@ package fr.uge.chargepointconfiguration.chargepointwebsocket;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
-import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
-import fr.uge.chargepointconfiguration.chargepoint.notification.CriticalityWebsocketContent;
-import fr.uge.chargepointconfiguration.chargepoint.notification.CriticalityWebsocketNotification;
+import fr.uge.chargepointconfiguration.chargepoint.notification.Notification;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageParser;
@@ -134,9 +132,13 @@ public class ChargePointManager {
    * Notifies via the websocket the current status of the current {@link Chargepoint}.
    */
   public void notifyStatusUpdate() {
-    WebSocketHandler.sendMessageToUsers(
-            ChargePointWebsocketNotification.from(currentChargepoint)
-    );
+    var notification = Notification.from(currentChargepoint,
+            "ChargePointWebsocketNotification");
+    if (notification.isPresent()) {
+      WebSocketHandler.sendMessageToUsers(
+              notification.orElseThrow()
+      );
+    }
   }
 
   /**
@@ -144,40 +146,12 @@ public class ChargePointManager {
    * for the toast in the front.
    */
   public void notifyUpdateForToast() {
-    var currentStep = currentChargepoint.getStep();
-    if (currentChargepoint.getStatusProcess() == Chargepoint.StatusProcess.FAILED) {
-      var message = new CriticalityWebsocketNotification(
-              new CriticalityWebsocketContent(
-                      currentChargepoint.getClientId(),
-                      CriticalityWebsocketContent.Type.ERROR,
-                      "Échec "
-                              + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
-                              + currentStep
-              )
+    var notification = Notification.from(currentChargepoint,
+            "CriticalityWebsocketNotification");
+    if (notification.isPresent()) {
+      WebSocketHandler.sendMessageToUsers(
+              notification.orElseThrow()
       );
-      WebSocketHandler.sendMessageToUsers(message);
-    } else if (currentChargepoint.getStatusProcess() == Chargepoint.StatusProcess.FINISHED) {
-      var message = new CriticalityWebsocketNotification(
-              new CriticalityWebsocketContent(
-                      currentChargepoint.getClientId(),
-                      CriticalityWebsocketContent.Type.INFO,
-                      "Réussite "
-                              + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
-                              + currentStep
-              )
-      );
-      WebSocketHandler.sendMessageToUsers(message);
-    } else {
-      if (currentStep == Chargepoint.Step.CONFIGURATION) {
-        var message = new CriticalityWebsocketNotification(
-                new CriticalityWebsocketContent(
-                        currentChargepoint.getClientId(),
-                        CriticalityWebsocketContent.Type.INFO,
-                        "Réussite du " + currentStep
-                )
-        );
-        WebSocketHandler.sendMessageToUsers(message);
-      }
     }
   }
 }
