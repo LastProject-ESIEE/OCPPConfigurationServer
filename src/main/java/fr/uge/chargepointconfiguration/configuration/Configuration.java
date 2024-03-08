@@ -181,7 +181,8 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
           description,
         lastEdit,
         configuration,
-        firmware.toDto());
+        firmware == null ? null : firmware.toDto()
+    );
   }
 
   @Override
