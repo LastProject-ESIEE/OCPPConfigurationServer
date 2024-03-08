@@ -54,7 +54,6 @@ export type NotificationMessage = {
 }
 
 export default function DisplayNotification(props: {open: boolean, onClose: () => void}) {
-    const a = ["Hello", "Le", "Message", "Plus", "d","f","f","f","z","f","f","f","z","f","f","f","z","f","f","f","z","f","f","f","z","f","f","f","z","f","f","f","z"]
     const [notificationList, setNotificationlist] = useState<NotificationMessage[]>([]);
     
     useEffect(() => {
@@ -68,7 +67,7 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
         }
     }, [])
     
-
+    // Save notification in cache
     const saveNotification = (message: NotificationMessage) => {
         let newList = [message, ...notificationList]
         if(notificationList.length > LOCAL_STORAGE_MAX_NOTIFICATION_COUNT){
@@ -91,20 +90,23 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
         >
             <Box padding={1}>
                 <Box>
+                    <Grid >
+
+                    </Grid>
                     <Typography variant="h5">Historique :</Typography>
                 </Box>
                 <Box height={"90vh"} overflow={"auto"} marginTop={2}>
                     <List style={{overflow: "auto"}}>
-                        {a.map(v => {
+                        {notificationList.map(notif => {
                             return (
-                                <ListItem key={"notif-list-item-" + v}>
-                                    <ListItemText title={v} content={v} style={{width: 400}}>
+                                <ListItem key={"notif-list-item-" + notif.title}>
+                                    <ListItemText title={notif.title} content={notif.content} style={{width: 400}}>
                                         <Grid container flexDirection={"column"}>
                                             <Grid item xs={12}>
-                                                <Typography variant="h6">{"title"}</Typography>
+                                                <Typography variant="h6">{notif.title}</Typography>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Typography variant="body1">{v}</Typography>
+                                                <Typography variant="body1">{notif.content}</Typography>
                                             </Grid>
                                         </Grid>
                                     </ListItemText>
@@ -116,19 +118,21 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
             </Box>
         </Drawer>
         <SnackbarProvider maxSnack={3}>
-            <NotificationItems />
+            <NotificationItems onNotificationReceived={message => {
+                saveNotification(message)
+            }}/>
         </SnackbarProvider>
     </Box>
     );
 }
 
-function NotificationItems() {
+function NotificationItems(props: {onNotificationReceived: (message: NotificationMessage) => void}) {
     const { enqueueSnackbar } = useSnackbar();
   
     // Add event listener on the websocket connection
     useEffect(() => {
-        let callBack =  (title: string, type: NotificationType, content: string) => {  
-            enqueueSnackbar(title + "\n" + content, {variant: type === "ERROR" ? "error" : "info"})
+        let callBack =  (message: NotificationMessage) => {  
+            enqueueSnackbar(message.title + "\n" + message.content, {variant: message.type === "ERROR" ? "error" : "info"})
         }
         wsManager.addListener('notify', callBack)
         return () => {
