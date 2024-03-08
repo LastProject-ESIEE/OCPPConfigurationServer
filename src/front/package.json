@@ -31,7 +31,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start-unsafe": "set DANGEROUSLY_DISABLE_HOST_CHECK=true &&  react-scripts start"
   },
   "eslintConfig": {
     "extends": [

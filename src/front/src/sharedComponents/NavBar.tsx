@@ -20,19 +20,7 @@ import Typography from "@mui/material/Typography";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-
-export function englishRoleToFrench(role: string): string {
-    switch (role) {
-        case "ADMINISTRATOR":
-            return "Administrateur";
-        case "EDITOR":
-            return "Éditeur";
-        case "VISUALIZER":
-            return "Visualiseur";
-        default:
-            return "Inconnu";
-    }
-}
+import { apiRoleToFrench } from "../conf/userController";
 
 export function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -200,7 +188,7 @@ export function NavBar() {
                                                   variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
                                           </Grid>
                                           <Grid item>
-                                              <Typography variant="body2">{englishRoleToFrench(userRole)}</Typography>
+                                              <Typography variant="body2">{apiRoleToFrench(userRole)}</Typography>
                                           </Grid>
                                       </Grid>
                                   </Link>
@@ -258,3 +246,5 @@ export function NavBar() {
         </List>
       )
   }
+
+export { apiRoleToFrench as englishRoleToFrench };
