@@ -32,7 +32,7 @@ export type InfinityScrollItemsTableProps<T> = {
     data: T[], // items displayed in the table
     hasMore: boolean, // boolean that check if there is no more element
     error: string | undefined,
-    onSelection: (item: T) => void, // function call when an element is selected in the list
+    onSelection?: (item: T) => void, // function call when an element is selected in the list
     formatter: (item: T, index: number) => JSX.Element // function that transform an item to a JSX element
     fetchData: (filters: SearchFilter[]) => void, // function that fetch next items
     onFiltering?: (filters: SearchFilter[]) => void, // function call when filters changed

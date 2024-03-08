@@ -71,12 +71,8 @@ function Account() {
                     setSuccessMessage("");
                 }
             }).catch(error => {
-                console.error("ERROR ", error);
                 setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
             });
-            console.log("Passwords match. Update password in database.");
-        } else {
-            console.log("Passwords don't match.");
         }
     }
 

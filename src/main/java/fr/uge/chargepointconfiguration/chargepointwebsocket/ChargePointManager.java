@@ -3,7 +3,7 @@ package fr.uge.chargepointconfiguration.chargepointwebsocket;
 import fr.uge.chargepointconfiguration.WebSocketHandler;
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
-import fr.uge.chargepointconfiguration.chargepoint.notification.ChargePointWebsocketNotification;
+import fr.uge.chargepointconfiguration.chargepoint.notification.Notification;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageParser;
@@ -11,7 +11,6 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppObserver;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppVersion;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
-import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -114,6 +113,8 @@ public class ChargePointManager {
       currentChargepoint.setState(false);
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
+      var notification = Notification.notificationOnDisconnect(currentChargepoint);
+      WebSocketHandler.sendMessageToUsers(notification);
     }
   }
 
@@ -126,6 +127,8 @@ public class ChargePointManager {
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
+      var notification = Notification.notificationOnError(currentChargepoint);
+      WebSocketHandler.sendMessageToUsers(notification);
     }
   }
 
@@ -133,8 +136,31 @@ public class ChargePointManager {
    * Notifies via the websocket the current status of the current {@link Chargepoint}.
    */
   public void notifyStatusUpdate() {
+    var notification = Notification.notificationOnStatusChange(currentChargepoint);
     WebSocketHandler.sendMessageToUsers(
-            ChargePointWebsocketNotification.from(currentChargepoint)
+            notification
     );
+  }
+
+  /**
+   * Notifies via the websocket the current status of the current {@link Chargepoint}
+   * for the toast in the front.
+   */
+  public void notifyProcess() {
+    var notification = Notification.notificationOnFinishedProcess(currentChargepoint);
+    if (notification.isPresent()) {
+      WebSocketHandler.sendMessageToUsers(
+              notification.orElseThrow()
+      );
+    }
+  }
+
+  /**
+   * Notifies via the websocket the connection of a {@link Chargepoint}
+   * for the toast in the front.
+   */
+  public void notifyOnConnection() {
+    var notification = Notification.notificationOnConnection(currentChargepoint);
+    WebSocketHandler.sendMessageToUsers(notification);
   }
 }

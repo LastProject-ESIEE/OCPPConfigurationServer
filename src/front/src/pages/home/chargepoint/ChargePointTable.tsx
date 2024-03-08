@@ -21,15 +21,27 @@ const chargePointTableColumns: TableColumnDefinition[] = [
       onChange: value => console.log("Filtering on : " + value)
     }
     */
+    size: 2
   },
   {
-    title: "Étape", 
+    title: "Constructeur",
+    size: 2
+  },
+  {
+    title: "Modèle",
+    size: 2
+  },
+  {
+    title: "Étape",
+    size: 2 
   },
   {
     title: "Status",
+    size: 2
   },
   {
     title: "Dernière activité",
+    size: 2
   }
 ]
 
@@ -44,7 +56,6 @@ function ChargePointTable() {
       let callBack =  (message: WebSocketChargePointNotification) => {
          let chargePoint = tableData.find(p => p.id === message.id)
          if(!chargePoint){
-          console.log("Charge point id for the update notification is not found.")
           return
         }
         // Update charge point status
@@ -75,7 +86,6 @@ function ChargePointTable() {
       data: tableData,
       hasMore: hasMore,
       error: error,
-      onSelection: chargePoint => { console.log("Selected item : " + chargePoint.id) },
       formatter: (chargePoint) => {
         let color = chargePoint.status.state ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
         return (
@@ -83,16 +93,22 @@ function ChargePointTable() {
               <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'edit/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
                   <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                          <Grid item xs={chargePointTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>
                               <Typography variant="body1" align="center" noWrap={true}>{chargePoint.clientId}</Typography>
                           </Grid>
-                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                          <Grid item xs={chargePointTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center" noWrap={true}>{chargePoint.constructor}</Typography>
+                          </Grid>
+                          <Grid item xs={chargePointTableColumns[2].size} maxWidth={"true"} justifyContent={"center"}>
+                              <Typography variant="body1" align="center" noWrap={true}>{chargePoint.type}</Typography>
+                          </Grid>
+                          <Grid item xs={chargePointTableColumns[3].size} maxWidth={"true"} justifyContent={"center"}>
                               <Typography variant="body1" align="center" noWrap={true}>{chargePoint.status.step}</Typography>
                           </Grid>
-                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                          <Grid item xs={chargePointTableColumns[4].size} maxWidth={"true"} justifyContent={"center"}>
                               <Typography variant="body1" align="center" noWrap={true}>{chargePoint.status.status}</Typography>
                           </Grid>
-                          <Grid item xs={12/chargePointTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                          <Grid item xs={chargePointTableColumns[5].size} maxWidth={"true"} justifyContent={"center"}>
                               <Typography variant="body1" align="center" noWrap={true}>{new Date(chargePoint.status.lastUpdate).toLocaleString()}</Typography>
                           </Grid>
                       </Grid>

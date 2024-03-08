@@ -2,12 +2,22 @@ import { Outlet } from "react-router-dom";
 import { NavBar } from "../../sharedComponents/NavBar";
 import events from "events";
 import { WebSocketChargePointNotification } from "../../conf/chargePointController";
+import { IconButton } from "@mui/material";
+import DisplayNotification, { NotificationMessage } from "../../sharedComponents/DisplayNotification";
+import { useState } from "react";
+import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
 
 // Define backend server port
 const BACKEND_PORT = 8080
 
 declare interface WebSocketListener {
     on(event: 'charge-point-update', listener: (message: WebSocketChargePointNotification) => void): this;
+    on(event: 'notify', listener: (message: NotificationMessage) => void): this;
+}
+
+type WebSocketMessage = {
+  name: "ChargePointWebsocketNotification" | "CriticalityWebsocketNotification",
+  value: any,
 }
 
 class WebSocketListener extends events.EventEmitter {
@@ -19,7 +29,6 @@ class WebSocketListener extends events.EventEmitter {
       this.connected = false;
     }
 
-    // Start 
     startWebSocket(): void {
       if(this.connected){
         console.error("WebSocket connection is already established.")
@@ -38,14 +47,27 @@ class WebSocketListener extends events.EventEmitter {
 
       this.websocket.onmessage = (ev: MessageEvent<any>) => {
         // Try parse as WebSocketChargePointNotification
-        const chargePointNotification = JSON.parse(ev.data) as WebSocketChargePointNotification
-        if(chargePointNotification){
-          // Emit received message
-          this.emit('charge-point-update', chargePointNotification)
-          return
+        const message = JSON.parse(ev.data) as WebSocketMessage
+        switch(message.name){
+          case "ChargePointWebsocketNotification":
+            let wsChargePointNotification = message.value as WebSocketChargePointNotification
+            if(!wsChargePointNotification){
+              console.error("Wrongly formatted message received : " + ev.data)
+              return
+            }
+            this.emit('charge-point-update', wsChargePointNotification)
+            break;
+          case "CriticalityWebsocketNotification":
+            let wsNotification = message.value as NotificationMessage
+            if(!wsNotification){
+              console.error("Wrongly formatted message received : " + ev.data)
+              return
+            }
+            this.emitNotification(wsNotification)
+            break;
+          default:
+            console.warn("Unknown received message from websocket : " + ev.data)
         }
-        // TODO: Parsing other message
-        console.log("Unknown received message from websocket : " + ev.data)
       }
 
       this.websocket.onclose = (ev: CloseEvent) => {
@@ -55,16 +77,35 @@ class WebSocketListener extends events.EventEmitter {
           setTimeout(() => this.startWebSocket(), 5000)
       }
     }
+
+    emitNotification(message: NotificationMessage){
+      this.emit("notify", message)
+    }
 }
 
 export const wsManager = new WebSocketListener();
 wsManager.startWebSocket()
 
 export function Home() {
+    const [openNotification, setOpenNotification] = useState(false);
     return (
         <div className="App" style={{maxWidth: "true", height: "100vh", overflow: "hidden"}}>
+          {!openNotification && (
+            <IconButton                     
+              style={{position: "fixed", top: "92%", right: "3%", zIndex: 999}}
+              onClick={() => {
+                setOpenNotification(true)
+              }}>
+              <NotificationImportantIcon 
+                    color="primary"
+                    fontSize={"large"}
+                >
+              </NotificationImportantIcon>
+            </IconButton>
+          )}
           <NavBar/>
           <Outlet />
+          <DisplayNotification open={openNotification} onClose={() => setOpenNotification(false)}/>
         </div>
     );
 }

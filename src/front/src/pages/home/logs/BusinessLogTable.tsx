@@ -72,10 +72,7 @@ function BusinessLogTable() {
         key: "business-log-table",
         data: tableData,
         hasMore: hasMore,
-        error: error, 
-        onSelection: businessLog => {
-            console.log("Selected item : " + businessLog.id)
-        },
+        error: error,
         formatter: (businessLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + businessLog.id} paddingTop={1} maxWidth={"true"}>
