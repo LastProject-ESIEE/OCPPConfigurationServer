@@ -15,12 +15,19 @@ const PAGE_SIZE = 30; // Max items displayed in the firmware table
 const firmwareTableColumns: TableColumnDefinition[] = [
     {
         title: "Version",
+        size: 2
     },
     {
         title: "Constructeur",
+        size: 2
+    },
+    {
+        title: "Modèles compatibles",
+        size: 4
     },
     {
         title: "URL",
+        size: 4
     },
 ]
 
@@ -42,17 +49,20 @@ function FirmwareTable() {
         });
     }, [])
 
-
     let props: InfinityScrollItemsTableProps<Firmware> = {
         columns: firmwareTableColumns,
         key: "firmware-table",
         data: tableData,
         hasMore: hasMore,
         error: error,
-        onSelection: firmware => {
-            console.log("Selected item : " + firmware.id)
-        },
         formatter: (firmware) => {
+            let arr: string[] = []
+            let separator = ""
+            firmware.typesAllowed.forEach(type => {
+                arr.push(separator + type.type)
+                separator = ", "
+            })
+
             return (
                 <Box key={"box-configuration-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
                     <Link key={"firmware-edit-path-" + firmware.id} to={{pathname: 'edit/' + firmware.id}}
@@ -67,15 +77,20 @@ function FirmwareTable() {
                             backgroundColor: '#E1E1E1'
                         }}>
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                                <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={firmwareTableColumns[0].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Typography variant="body1" align="center" noWrap={true}>{firmware.version}</Typography>
                                 </Grid>
-                                <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={firmwareTableColumns[1].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Typography variant="body1" align="center" noWrap={true}>{firmware.constructor}</Typography>
                                 </Grid>
-                                <Grid item xs={12 / firmwareTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={firmwareTableColumns[2].size} maxWidth={"true"} justifyContent={"center"}>
+                                    <Tooltip title={arr}>
+                                        <Typography variant="body1" align="center" noWrap={true}>{arr}</Typography>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item xs={firmwareTableColumns[3].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Tooltip title={firmware.url}>
                                         <Typography variant="body1" align="center" noWrap={true}>{firmware.url}</Typography>

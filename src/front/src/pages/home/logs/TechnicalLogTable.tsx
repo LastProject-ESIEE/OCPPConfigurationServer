@@ -66,9 +66,6 @@ function TechnicalLogTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        onSelection: technicalLog => {
-            console.log("Selected item : " + technicalLog.id)
-        },
         formatter: (technicalLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + technicalLog.id} paddingTop={1} maxWidth={"true"}>
