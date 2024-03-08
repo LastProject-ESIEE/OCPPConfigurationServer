@@ -113,6 +113,8 @@ public class ChargePointManager {
       currentChargepoint.setState(false);
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
+      var notification = Notification.notificationOnDisconnect(currentChargepoint);
+      WebSocketHandler.sendMessageToUsers(notification);
     }
   }
 
@@ -125,6 +127,8 @@ public class ChargePointManager {
       currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
+      var notification = Notification.notificationOnError(currentChargepoint);
+      WebSocketHandler.sendMessageToUsers(notification);
     }
   }
 
@@ -132,8 +136,18 @@ public class ChargePointManager {
    * Notifies via the websocket the current status of the current {@link Chargepoint}.
    */
   public void notifyStatusUpdate() {
-    var notification = Notification.from(currentChargepoint,
-            "ChargePointWebsocketNotification");
+    var notification = Notification.notificationOnStatusChange(currentChargepoint);
+    WebSocketHandler.sendMessageToUsers(
+            notification
+    );
+  }
+
+  /**
+   * Notifies via the websocket the current status of the current {@link Chargepoint}
+   * for the toast in the front.
+   */
+  public void notifyProcess() {
+    var notification = Notification.notificationOnFinishedProcess(currentChargepoint);
     if (notification.isPresent()) {
       WebSocketHandler.sendMessageToUsers(
               notification.orElseThrow()
@@ -142,16 +156,11 @@ public class ChargePointManager {
   }
 
   /**
-   * Notifies via the websocket the current status of the current {@link Chargepoint}
+   * Notifies via the websocket the connection of a {@link Chargepoint}
    * for the toast in the front.
    */
-  public void notifyUpdateForToast() {
-    var notification = Notification.from(currentChargepoint,
-            "CriticalityWebsocketNotification");
-    if (notification.isPresent()) {
-      WebSocketHandler.sendMessageToUsers(
-              notification.orElseThrow()
-      );
-    }
+  public void notifyOnConnection() {
+    var notification = Notification.notificationOnConnection(currentChargepoint);
+    WebSocketHandler.sendMessageToUsers(notification);
   }
 }

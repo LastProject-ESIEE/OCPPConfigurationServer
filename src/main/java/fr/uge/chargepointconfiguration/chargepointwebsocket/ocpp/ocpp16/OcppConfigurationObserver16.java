@@ -136,6 +136,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
+    chargePointManager.notifyOnConnection();
     // Send BootNotification Response
     var response = new BootNotificationResponse16(
             LocalDateTime.now().toString(),
@@ -179,7 +180,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
-      chargePointManager.notifyUpdateForToast();
+      chargePointManager.notifyProcess();
       processResetRequest();
     } else {
       sender.sendMessage(config, chargePointManager);
@@ -213,7 +214,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         chargepointRepository.save(currentChargepoint);
         // Dispatch information to users
         chargePointManager.notifyStatusUpdate();
-        chargePointManager.notifyUpdateForToast();
+        chargePointManager.notifyProcess();
         queue.clear();
       }
     }
@@ -289,7 +290,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
-      chargePointManager.notifyUpdateForToast();
+      chargePointManager.notifyProcess();
       processConfigurationRequest();
       return;
     }
@@ -414,7 +415,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
         currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
         chargepointRepository.save(currentChargepoint);
         chargePointManager.notifyStatusUpdate();
-        chargePointManager.notifyUpdateForToast();
+        chargePointManager.notifyProcess();
       }
       default -> {
         // Ignore, the chargepoint is downloading/installing.

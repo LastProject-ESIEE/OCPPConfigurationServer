@@ -25,65 +25,113 @@ public record Notification(String name, WebSocketNotification value) {
   }
 
   /**
-   * Parses a notification for the toast.
+   * Prepares a notification for a connection.
    *
-   * @param chargepoint The current chargepoint.
-   * @param className The class name.
-   * @return An optional of Notification.
+   * @param chargepoint {@link Chargepoint}.
+   * @return {@link Notification}.
    */
-  public static Optional<Notification> from(Chargepoint chargepoint,
-                                            String className) {
-    return switch (className) {
-      case "CriticalityWebsocketNotification" -> {
-        var currentStep = chargepoint.getStep();
-        if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FAILED) {
-          var message = new CriticalityWebsocketNotification(
-                  chargepoint.getClientId(),
-                  CriticalityWebsocketNotification.Type.ERROR,
-                  "Échec "
-                          + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
-                          + currentStep
-          );
-          yield Optional.of(new Notification("CriticalityWebsocketNotification",
-                  message));
-        } else if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FINISHED) {
-          var message = new CriticalityWebsocketNotification(
-                  chargepoint.getClientId(),
-                  CriticalityWebsocketNotification.Type.INFO,
-                  "Réussite "
-                          + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
-                          + currentStep
-          );
-          yield Optional.of(new Notification("CriticalityWebsocketNotification",
-                  message));
-        } else {
-          if (currentStep == Chargepoint.Step.CONFIGURATION) {
-            var message = new CriticalityWebsocketNotification(
-                    chargepoint.getClientId(),
-                    CriticalityWebsocketNotification.Type.INFO,
-                    "Réussite du " + currentStep
-            );
-            yield Optional.of(new Notification("CriticalityWebsocketNotification",
-                    message));
-          }
-        }
-        yield Optional.empty();
-      }
-      case "ChargePointWebsocketNotification" -> {
-        var statusDto = new StatusDto(
-                chargepoint.getLastUpdate(),
-                chargepoint.getError(),
-                chargepoint.isState(),
-                chargepoint.getStep(),
-                chargepoint.getStatusProcess()
+  public static Notification notificationOnConnection(Chargepoint chargepoint) {
+    var message = new CriticalityWebsocketNotification(
+            chargepoint.getClientId(),
+            CriticalityWebsocketNotification.Type.INFO,
+            chargepoint.getClientId() + " connectée"
+    );
+    return new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+            message);
+  }
+
+  /**
+   * Prepares a notification for a disconnection.
+   *
+   * @param chargepoint {@link Chargepoint}.
+   * @return {@link Notification}.
+   */
+  public static Notification notificationOnDisconnect(Chargepoint chargepoint) {
+    var message = new CriticalityWebsocketNotification(
+            chargepoint.getClientId(),
+            CriticalityWebsocketNotification.Type.INFO,
+            chargepoint.getClientId() + " déconnectée"
+    );
+    return new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+            message);
+  }
+
+  /**
+   * Prepares a notification for an error.
+   *
+   * @param chargepoint {@link Chargepoint}.
+   * @return {@link Notification}.
+   */
+  public static Notification notificationOnError(Chargepoint chargepoint) {
+    var message = new CriticalityWebsocketNotification(
+            chargepoint.getClientId(),
+            CriticalityWebsocketNotification.Type.ERROR,
+            chargepoint.getClientId() + " a eu une erreur"
+    );
+    return new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+            message);
+  }
+
+  /**
+   * Prepares a notification for a finished process.<br>
+   * The process can be in either state : FINISHED or FAILED.
+   *
+   * @param chargepoint {@link Chargepoint}.
+   * @return {@link Notification}.
+   */
+  public static Optional<Notification> notificationOnFinishedProcess(Chargepoint chargepoint) {
+    var currentStep = chargepoint.getStep();
+    if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FAILED) {
+      var message = new CriticalityWebsocketNotification(
+              chargepoint.getClientId(),
+              CriticalityWebsocketNotification.Type.ERROR,
+              "Échec "
+                      + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
+                      + currentStep
+      );
+      return Optional.of(new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+              message));
+    } else if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FINISHED) {
+      var message = new CriticalityWebsocketNotification(
+              chargepoint.getClientId(),
+              CriticalityWebsocketNotification.Type.SUCCESS,
+              "Réussite "
+                      + (currentStep == Chargepoint.Step.FIRMWARE ? "du " : "de ")
+                      + currentStep
+      );
+      return Optional.of(new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+              message));
+    } else {
+      if (currentStep == Chargepoint.Step.CONFIGURATION) {
+        var message = new CriticalityWebsocketNotification(
+                chargepoint.getClientId(),
+                CriticalityWebsocketNotification.Type.SUCCESS,
+                "Réussite du " + currentStep
         );
-        var chargepointNotification = new ChargePointWebsocketNotification(chargepoint.getId(),
-                statusDto);
-        yield Optional.of(new Notification("ChargePointWebsocketNotification",
-                chargepointNotification));
+        return Optional.of(new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
+                message));
       }
-      default ->
-        Optional.empty();
-    };
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Prepares a notification for a changed status.
+   *
+   * @param chargepoint {@link Chargepoint}.
+   * @return {@link Notification}.
+   */
+  public static Notification notificationOnStatusChange(Chargepoint chargepoint) {
+    var statusDto = new StatusDto(
+            chargepoint.getLastUpdate(),
+            chargepoint.getError(),
+            chargepoint.isState(),
+            chargepoint.getStep(),
+            chargepoint.getStatusProcess()
+    );
+    var chargepointNotification = new ChargePointWebsocketNotification(chargepoint.getId(),
+            statusDto);
+    return new Notification(ChargePointWebsocketNotification.class.getSimpleName(),
+            chargepointNotification);
   }
 }
