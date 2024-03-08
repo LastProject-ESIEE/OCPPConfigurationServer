@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.sealed;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
+import fr.uge.chargepointconfiguration.logs.technical.TechnicalLogDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +21,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "technical_logs")
-public final class TechnicalLogEntity implements LogEntity {
+public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalLogDto> {
 
   /**
    * Component enum represents different components where a log can be created.<br>
@@ -208,5 +210,16 @@ public final class TechnicalLogEntity implements LogEntity {
            + ", level=" + level
            + ", completeLog='" + completeLog + '\''
            + '}';
+  }
+
+  @Override
+  public TechnicalLogDto toDto() {
+    return new TechnicalLogDto(
+        id,
+        date,
+        component,
+        level,
+        completeLog
+    );
   }
 }

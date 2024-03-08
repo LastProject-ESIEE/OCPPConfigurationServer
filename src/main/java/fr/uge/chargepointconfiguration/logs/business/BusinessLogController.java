@@ -49,7 +49,7 @@ public class BusinessLogController {
         description = "Found the list of business logs",
         content = @Content(
               mediaType = "application/json",
-              schema = @Schema(implementation = BusinessLogEntity.class)
+              schema = @Schema(implementation = BusinessLogDto.class)
         )
   )
   @GetMapping(value = "/{id}")

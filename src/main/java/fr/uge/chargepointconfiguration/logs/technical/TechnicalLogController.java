@@ -50,13 +50,15 @@ public class TechnicalLogController {
   @ApiResponse(responseCode = "200",
           description = "Found the list of technical logs",
           content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TechnicalLogEntity.class))
+                  schema = @Schema(implementation = TechnicalLogDto.class))
           })
   @GetMapping(value = "/{component}/{level}")
-  public List<TechnicalLogEntity> getTechnicalLogByComponentAndLevel(
+  public List<TechnicalLogDto> getTechnicalLogByComponentAndLevel(
           @Parameter @PathVariable TechnicalLogEntity.Component component,
           @Parameter @PathVariable Level level) {
-    return technicalLogService.getTechnicalLogByComponentAndLevel(component, level);
+    return technicalLogService.getTechnicalLogByComponentAndLevel(component, level)
+        .stream().map(TechnicalLogEntity::toDto)
+        .toList();
   }
 
   /**
