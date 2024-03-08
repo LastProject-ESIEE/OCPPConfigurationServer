@@ -17,7 +17,7 @@ declare interface WebSocketListener {
 
 type WebSocketMessage = {
   name: "ChargePointWebsocketNotification" | "CriticalityWebsocketNotification",
-  value: string,
+  value: any,
 }
 
 class WebSocketListener extends events.EventEmitter {
@@ -50,11 +50,19 @@ class WebSocketListener extends events.EventEmitter {
         const message = JSON.parse(ev.data) as WebSocketMessage
         switch(message.name){
           case "ChargePointWebsocketNotification":
-            let wsChargePointNotification = message.value as unknown as WebSocketChargePointNotification
+            let wsChargePointNotification = message.value as WebSocketChargePointNotification
+            if(!wsChargePointNotification){
+              console.error("Wrongly formatted message received : " + ev.data)
+              return
+            }
             this.emit('charge-point-update', wsChargePointNotification)
             break;
           case "CriticalityWebsocketNotification":
-            let wsNotification = message.value as unknown as NotificationMessage
+            let wsNotification = message.value as NotificationMessage
+            if(!wsNotification){
+              console.error("Wrongly formatted message received : " + ev.data)
+              return
+            }
             this.emitNotification(wsNotification)
             break;
           default:

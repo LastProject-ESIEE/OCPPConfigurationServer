@@ -86,7 +86,7 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
                                     backgroundColor = "rgba(255,0,0,0.3)"
                                     break
                                 case "INFO": 
-                                    backgroundColor = "rgba(0,0,255,0.3)"
+                                    backgroundColor = "rgba(24,119,210,0.4)"
                                     break
                                 case "SUCCESS": 
                                     backgroundColor = "rgba(0,255,0,0.3)"
@@ -113,7 +113,7 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
                 </Box>
 
                 <Box height={"3vh"} marginTop={1}>
-                    <Typography>{"L'historique contient " + notificationList.length + " éléments."}</Typography>
+                    <Typography variant="body1">{"L'historique contient " + notificationList.length + " éléments."}</Typography>
                 </Box>
             </Box>
         </Drawer>
