@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
 import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -49,11 +50,13 @@ public class BusinessLogService {
   /**
    * Search for {@link BusinessLogEntity} with a pagination.
    *
+   * @param request the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link BusinessLogEntity}
    */
-  public List<BusinessLogEntity> getPage(PageRequest pageable) {
-    return businessLogRepository.findAllByOrderByIdDesc(pageable)
+  public List<BusinessLogEntity> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
+    return businessLogRepository.findAll(condition, pageable)
           .stream().toList();
   }
 }

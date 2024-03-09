@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,7 +49,7 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp date;
+  private LocalDateTime date;
 
   /*
    * The quote for user ("user") are here to specify the database H2 that
@@ -93,7 +94,7 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
     this.category = Objects.requireNonNull(category);
     this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
-    date = new Timestamp(System.currentTimeMillis());
+    date = LocalDateTime.now();
   }
 
   /**
@@ -107,7 +108,7 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
     this.category = Objects.requireNonNull(category);
     this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
-    date = new Timestamp(System.currentTimeMillis());
+    date = LocalDateTime.now();
   }
 
   /**
@@ -125,11 +126,11 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
     this.id = id;
   }
 
-  public Timestamp getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
-  public void setDate(Timestamp date) {
+  public void setDate(LocalDateTime date) {
     this.date = date;
   }
 
@@ -204,7 +205,7 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   @Override
   public BusinessLogDto toDto() {
     return new BusinessLogDto(this.id,
-        this.date,
+        Timestamp.valueOf(date),
         user != null ? this.user.toDto() : null,
         chargepoint != null ? this.chargepoint.toDto() : null,
         this.category,

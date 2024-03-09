@@ -140,9 +140,8 @@ class UserControllerTest {
           .andExpect(jsonPath("$.page", is(0)))
           .andExpect(jsonPath("$.size", is(2)))
           .andExpect(jsonPath("$.data", hasSize(2)))
-          // TODO tri marche pas
-          /*.andExpect(jsonPath("$.data[0].email", is("visualizer@email")))
-          .andExpect(jsonPath("$.data[1].email", is("editor@email")))*/;
+          .andExpect(jsonPath("$.data[0].email", is("visualizer@email")))
+          .andExpect(jsonPath("$.data[1].email", is("random@notEmail")));
 
     mvc.perform(get("/api/user/search")
                 .queryParam("size", "2")
@@ -156,8 +155,8 @@ class UserControllerTest {
           .andExpect(jsonPath("$.page", is(1)))
           .andExpect(jsonPath("$.size", is(2)))
           .andExpect(jsonPath("$.data", hasSize(2)))
-          // TODO tri marche pas
-          /*.andExpect(jsonPath("$.data[0].email", is("admin@email")))*/;
+          .andExpect(jsonPath("$.data[0].email", is("editor@email")))
+          .andExpect(jsonPath("$.data[1].email", is("admin@email")));
   }
 
   @Test
@@ -248,7 +247,7 @@ class UserControllerTest {
           )
           .andExpect(status().isCreated())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.id", is(5)))
+          .andExpect(jsonPath("$.id", is(6)))
           .andExpect(jsonPath("$.email", is("newEmail")))
           .andExpect(jsonPath("$.lastName", is("newLastName")))
           .andExpect(jsonPath("$.firstName", is("newFirstName")))
