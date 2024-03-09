@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -96,16 +95,22 @@ public class UserController {
               schema = @Schema(implementation = UserDto.class)
         )
   )
-  @PostMapping("/updatePassword")
+  @PatchMapping("/updatePassword/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")
   public ResponseEntity<UserDto> updatePassword(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "Old and new password.",
               required = true
         )
-        @RequestBody ChangePasswordUserDto changePasswordUserDto) {
-    var user = userService.updatePassword(changePasswordUserDto).toDto();
-    return new ResponseEntity<>(user, HttpStatus.OK);
+        @RequestBody ChangePasswordUserDto changePasswordUserDto,
+        @PathVariable int id) {
+    User user;
+    try {
+      user = userService.updatePassword(id, changePasswordUserDto);
+    } catch (BadPasswordException e) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
 
   /**

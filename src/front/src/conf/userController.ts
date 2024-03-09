@@ -1,4 +1,4 @@
-import { PageRequest } from "../sharedComponents/DisplayTable"
+import {PageRequest} from "../sharedComponents/DisplayTable"
 
 export function apiRoleToFrench(role: ApiRole): string {
     switch (role) {
@@ -79,5 +79,4 @@ export async function createNewUser(user: CreateUserDto) {
         console.error("Couldn't save the user, error code: " + request.status)
         return false
     }
-    
 }
