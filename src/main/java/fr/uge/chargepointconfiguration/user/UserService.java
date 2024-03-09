@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.user;
 
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -85,14 +86,14 @@ public class UserService {
   /**
    * Update the role of the user.
    *
-   * @param changeRoleUserDto a ChangeRoleUserDto.
-   * @return a User updated.
+   * @param id the id of the user to change.
+   * @param role the new role to be applied.
+   * @return a {@link User} updated.
    */
-  public User updateRole(ChangeRoleUserDto changeRoleUserDto) {
-    var user = getUserById(changeRoleUserDto.id());
-    var role = changeRoleUserDto.role();
-    var test = Arrays.asList(User.Role.values()).contains(role);
-    if (!test) {
+  public User updateRole(int id, User.Role role) {
+    var user = userRepository.findById(id);
+    var validRole = Arrays.asList(User.Role.values()).contains(role);
+    if (!validRole) {
       throw new IllegalArgumentException("This role doesn't exist. Verify your parameter.");
     }
     if (user.getId() == getAuthenticatedUser().getId()) {
@@ -109,11 +110,13 @@ public class UserService {
   /**
    * Search for {@link User} with a pagination.
    *
+   * @param request the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link User}
    */
-  public List<User> getPage(PageRequest pageable) {
-    return userRepository.findAll(pageable)
+  public List<User> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, User.class);
+    return userRepository.findAll(condition, pageable)
           .stream().toList();
   }
 

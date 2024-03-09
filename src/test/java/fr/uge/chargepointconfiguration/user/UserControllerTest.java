@@ -19,24 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
   @Autowired
   private MockMvc mvc;
-
-  @Test
-  void getUserById() throws Exception {
-    mvc.perform(get("/api/user/1"))
-          .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.id", is(1)))
-          .andExpect(jsonPath("$.email", is("admin@email")))
-          .andExpect(jsonPath("$.lastName", is("adminLastName")))
-          .andExpect(jsonPath("$.firstName", is("adminFirstName")))
-          .andExpect(jsonPath("$.role", is("ADMINISTRATOR")))
-          .andExpect(jsonPath("$.password").doesNotExist());
-  }
 
   @Test
   @Disabled
@@ -55,11 +41,12 @@ class UserControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getAllUsers() throws Exception {
     mvc.perform(get("/api/user/all"))
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(3)));
+          .andExpect(jsonPath("$", hasSize(4)));
   }
 
   @Test
@@ -117,17 +104,14 @@ class UserControllerTest {
   @Test
   @WithUserDetails("admin@email")
   void updateRole() throws Exception {
-    mvc.perform(post("/api/user/updateRole")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToJsonString(new ChangeRoleUserDto(2, User.Role.ADMINISTRATOR)))
-          )
+    mvc.perform(patch("/api/user/"+4+"/role/ADMINISTRATOR"))
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
           .andExpect(jsonPath("$.role", is("ADMINISTRATOR")));
   }
 
   @Test
-  @Disabled // TODO tri marche pas
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getPage() throws Exception {
     mvc.perform(get("/api/user/search")
                 .queryParam("size", "2")
@@ -137,12 +121,13 @@ class UserControllerTest {
           )
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.total", is(3)))
+          .andExpect(jsonPath("$.total", is(4)))
           .andExpect(jsonPath("$.page", is(0)))
           .andExpect(jsonPath("$.size", is(2)))
           .andExpect(jsonPath("$.data", hasSize(2)))
-          .andExpect(jsonPath("$.data[0].email", is("visualizer@email")))
-          .andExpect(jsonPath("$.data[1].email", is("editor@email")));
+          // TODO tri marche pas
+          /*.andExpect(jsonPath("$.data[0].email", is("visualizer@email")))
+          .andExpect(jsonPath("$.data[1].email", is("editor@email")))*/;
 
     mvc.perform(get("/api/user/search")
                 .queryParam("size", "2")
@@ -152,14 +137,50 @@ class UserControllerTest {
           )
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.total", is(3)))
+          .andExpect(jsonPath("$.total", is(4)))
           .andExpect(jsonPath("$.page", is(1)))
           .andExpect(jsonPath("$.size", is(2)))
-          .andExpect(jsonPath("$.data", hasSize(1)))
-          .andExpect(jsonPath("$.data[0].email", is("admin@email")));
+          .andExpect(jsonPath("$.data", hasSize(2)))
+          // TODO tri marche pas
+          /*.andExpect(jsonPath("$.data[0].email", is("admin@email")))*/;
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
+  void getPageWithFilter() throws Exception {
+    mvc.perform(get("/api/user/search")
+            .queryParam("size", "2")
+            .queryParam("page", "0")
+            .queryParam("sortBy", "email")
+            .queryParam("order", "desc")
+            .queryParam("request", "email:`notEmail`")
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.total", is(4)))
+        .andExpect(jsonPath("$.page", is(0)))
+        .andExpect(jsonPath("$.size", is(2)))
+        .andExpect(jsonPath("$.data", hasSize(1)))
+        .andExpect(jsonPath("$.data[0].email", is("random@notEmail")));
+
+    mvc.perform(get("/api/user/search")
+            .queryParam("size", "2")
+            .queryParam("page", "1")
+            .queryParam("sortBy", "email")
+            .queryParam("order", "desc")
+            .queryParam("request", "email:`notEmail`")
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.total", is(4)))
+        .andExpect(jsonPath("$.page", is(1)))
+        .andExpect(jsonPath("$.size", is(2)))
+        .andExpect(jsonPath("$.data", hasSize(0)));
+  }
+
+
+  @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getAllRoles() throws Exception {
     mvc.perform(get("/api/user/allRoles"))
           .andExpect(status().isOk())
@@ -194,10 +215,11 @@ class UserControllerTest {
     mvc.perform(get("/api/user/all"))
           .andExpect(status().isOk())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(2)));
+          .andExpect(jsonPath("$", hasSize(3)));
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void addUser() throws Exception {
     mvc.perform(post("/api/user/new")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -211,7 +233,7 @@ class UserControllerTest {
           )
           .andExpect(status().isCreated())
           .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.id", is(4)))
+          .andExpect(jsonPath("$.id", is(5)))
           .andExpect(jsonPath("$.email", is("newEmail")))
           .andExpect(jsonPath("$.lastName", is("newLastName")))
           .andExpect(jsonPath("$.firstName", is("newFirstName")))

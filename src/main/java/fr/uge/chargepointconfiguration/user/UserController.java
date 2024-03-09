@@ -10,12 +10,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,29 +42,6 @@ public class UserController {
   }
 
   /**
-   * retrieve info in database for a given user.
-   *
-   * @param id The id of the user.
-   * @return Details about the user.
-   */
-  @Operation(summary = "Get a user by its id.")
-  @ApiResponse(responseCode = "200",
-        description = "Found the corresponding users",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
-  )
-  @GetMapping("/{id}")
-  public UserDto getUserById(
-        @Parameter(description = "The user you are looking for.")
-        @PathVariable int id) {
-    // TODO : exception BAD REQUEST si id est pas un nombre
-    System.out.println("getUser " + id);
-    return userService.getUserById(id).toDto();
-  }
-
-  /**
    * retrieve info in database for all users.
    *
    * @return Details about all the users.
@@ -75,6 +55,7 @@ public class UserController {
         )
   )
   @GetMapping("/all")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<UserDto> getAllUsers() {
     return userService.getAllUsers()
           .stream()
@@ -96,6 +77,7 @@ public class UserController {
         )
   )
   @GetMapping("/me")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public UserDto getAuthenticatedUser() {
     return userService.getAuthenticatedUser().toDto();
   }
@@ -115,6 +97,7 @@ public class UserController {
         )
   )
   @PostMapping("/updatePassword")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public ResponseEntity<UserDto> updatePassword(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "Old and new password.",
@@ -131,27 +114,27 @@ public class UserController {
   }
 
   /**
-   * Updadate the role of the user.
+   * Update the role of the user.
    *
-   * @param changeRoleUserDto a ChangeRoleUserDto.
+   * @param id the id of the user to change.
+   * @param role the new role to be applied.
    * @return a ResponseEntity of UserDto.
    */
   @Operation(summary = "Update role")
   @ApiResponse(responseCode = "200",
-        description = "Update the role of the current user",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
+      description = "Update the role of the current user",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class)
+      )
   )
-  @PostMapping("/updateRole")
+  @PatchMapping("/{id}/role/{role}")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> updateRole(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "JSON with id and new role of the user.",
-              required = true
-        )
-        @RequestBody ChangeRoleUserDto changeRoleUserDto) {
-    var user = userService.updateRole(changeRoleUserDto).toDto();
+      @PathVariable int id,
+      @PathVariable User.Role role
+  ) {
+    var user = userService.updateRole(id, role).toDto();
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
@@ -159,40 +142,47 @@ public class UserController {
   /**
    * Search for {@link UserDto} with a pagination.
    *
-   * @param size Desired size of the requested page.
-   * @param page Requested page.
-   * @param sortBy The column you want to sort by. Must be an attribute of
-   *               the {@link UserDto}.
-   * @param order The order of the sort. Must be "asc" or "desc".
+   * @param size    Desired size of the requested page.
+   * @param page    Requested page.
+   * @param sortBy  The column you want to sort by. Must be an attribute of
+   *                the {@link UserDto}.
+   * @param request the request used to search
+   * @param order   The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link UserDto}
    */
   @Operation(summary = "Search for users")
   @ApiResponse(responseCode = "200",
-        description = "Found users",
-        content = { @Content(mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class))
-        })
+      description = "Found users",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class))
+      })
   @GetMapping(value = "/search")
-  public PageDto<UserDto> getPage(
-        @Parameter(description = "Desired size of the requested page.")
-        @RequestParam(required = false, defaultValue = "10") int size,
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
+  public PageDto<UserDto> searchWithPage(
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-        @Parameter(description = "Requested page.")
-        @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-        @Parameter(description =
-              "The column you want to sort by. Must be an attribute of the users.")
-        @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the users.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-        @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-        @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = userService.countTotal();
-    var data = userService.getPage(
-                PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-          ).stream()
-          .map(User::toDto)
-          .toList();
+    var data = userService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
+        )
+        .stream()
+        .map(User::toDto)
+        .toList();
     return new PageDto<>(total, page, size, data);
   }
 
@@ -208,6 +198,7 @@ public class UserController {
                   schema = @Schema(implementation = User.Role.class))
           })
   @GetMapping(value = "/allRoles")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<User.Role> getAllRoles() {
     return Arrays.stream(User.Role.values())
             .toList();
@@ -226,6 +217,7 @@ public class UserController {
                   schema = @Schema(implementation = UserDto.class))
           })
   @PostMapping(value = "/new")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> addUser(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
                   description = "JSON with all parameters of the new user.",
@@ -244,6 +236,7 @@ public class UserController {
   }
   
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     userService.delete(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Grid, Input, Paper } from "@mui/material";
-import { ErrorState, GlobalState } from "../../../../conf/configurationController";
+import { ErrorState } from "../../../../conf/configurationController";
 
-function TitleComponent(props: {
-    globalState: GlobalState;
-    setGlobalState: Dispatch<SetStateAction<GlobalState>>,
+export default function TitleComponent(props: {
+    value: string;
+    setValue: Dispatch<SetStateAction<string>>,
     errorState: ErrorState
 }) {
     const backgroundColor = props.errorState.name === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
@@ -18,16 +18,9 @@ function TitleComponent(props: {
                 <Grid xs={7} item>
                     <Input
                         onChange={event => {
-                            props.setGlobalState(prevState => {
-                                return {
-                                    configuration: prevState.configuration,
-                                    firmware: prevState.firmware,
-                                    description: prevState.description,
-                                    name: event.target.value
-                                }
-                            })
+                            props.setValue(event.target.value)
                         }}
-                        value={props.globalState.name}
+                        value={props.value}
                         fullWidth={true}
                         placeholder="Titre"/>
                 </Grid>
@@ -38,5 +31,3 @@ function TitleComponent(props: {
         </Paper>
     )
 }
-
-export default TitleComponent;

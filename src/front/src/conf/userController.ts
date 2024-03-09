@@ -1,14 +1,41 @@
 import {PageRequest} from "../sharedComponents/DisplayTable"
 
-export enum Role { "VISUALIZER", "EDITOR", "ADMINISTRATOR" }
+export function apiRoleToFrench(role: ApiRole): string {
+    switch (role) {
+        case "ADMINISTRATOR":
+            return "Administrateur";
+        case "EDITOR":
+            return "Éditeur";
+        case "VISUALIZER":
+            return "Visualiseur";
+        default:
+            return "Inconnu";
+    }
+}
+
+export function frenchToEnglishRole(role: FrenchRole): string {
+    switch (role) {
+        case "Administrateur":
+            return "ADMINISTRATOR";
+        case "Éditeur":
+            return "EDITOR";
+        case "Visualiseur":
+            return "VISUALIZER";
+        default:
+            return "Inconnu";
+    }
+}
+
+export type ApiRole = "VISUALIZER" | "EDITOR" | "ADMINISTRATOR"
+export type FrenchRole = "Administrateur" | "Éditeur" | "Visualiseur"
 
 export type User = {
     id: number,
-    mail: string,
+    email: string,
     lastName: string,
     firstName: string,
     password: string,
-    role: Role
+    role: ApiRole
 }
 
 export type CreateUserDto = {
@@ -16,7 +43,7 @@ export type CreateUserDto = {
     lastName: string,
     firstName: string,
     password: string,
-    role: Role
+    role: ApiRole
 }
 
 export async function searchUser(
@@ -31,11 +58,7 @@ export async function searchUser(
         let user = (content as PageRequest<User>)
         if (user != null) {
             return user
-        } else {
-            console.log("Fetch user page failed " + content)
         }
-    } else {
-        console.log("Fetch user list failed, error code:" +  request.status)
     }
     return undefined
 }
