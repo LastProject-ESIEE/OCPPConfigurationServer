@@ -23,8 +23,8 @@ INSERT INTO compatibility (id_firmware, id_type_allowed) VALUES
 INSERT INTO configuration (name, description, configuration, last_edit, id_firmware) VALUES
 ('configuration intensité de la LED', 'Description config intensité de la LED', '{"1":"100"}', '2024-02-25 15:12:09', 1),
 ('configuration bonne année 2024', 'Description config 2024', '{"1":"100","3":"Borne-Test","4":"true","5":"20"}', '2024-01-01 00:00:00', 3),
-('configuration vide', '', '{}', '2024-02-25 15:12:09', 2),
-('configuration copropriété #2', 'Description config copro #2', '{"1":"0","5":"500"}', '2024-02-25 15:12:09', null),
+('configuration vide', '', '{}', '2024-02-20 15:12:09', 2),
+('configuration copropriété #2', 'Description config copro #2', '{"1":"0","5":"500"}', '2024-02-21 15:12:09', null),
 ('configuration voisins', 'Description config voisins', '{"1":"100"}', '2023-12-25 22:31:34', 1);
 
 INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id, server_address, id_configuration, last_update, error, state, step, step_status) VALUES

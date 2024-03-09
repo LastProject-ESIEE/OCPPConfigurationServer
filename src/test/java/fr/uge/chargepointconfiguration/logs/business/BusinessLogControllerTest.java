@@ -1,5 +1,12 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,15 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.*;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class BusinessLogControllerTest {
   @Autowired
@@ -29,6 +31,7 @@ class BusinessLogControllerTest {
 
 
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getPage() throws Exception {
     mvc.perform(get("/api/log/business/search")
             .queryParam("size", "2")
@@ -62,6 +65,7 @@ class BusinessLogControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getPageWithFilterMultiple() throws Exception {
     mvc.perform(get("/api/log/business/search")
             .queryParam("size", "10")
@@ -80,6 +84,7 @@ class BusinessLogControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "VISUALIZER")
   void getPageWithFilter() throws Exception {
     mvc.perform(get("/api/log/business/search")
             .queryParam("size", "10")

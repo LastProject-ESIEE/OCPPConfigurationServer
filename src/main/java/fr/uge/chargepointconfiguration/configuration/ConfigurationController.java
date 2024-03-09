@@ -236,7 +236,7 @@ public class ConfigurationController {
             entity.getDescription(),
             entity.getLastEdit(),
             entity.getConfiguration(),
-            entity.getFirmware().toDto()
+            entity.getFirmware() == null ? null : entity.getFirmware().toDto()
         ))
         .toList();
 
