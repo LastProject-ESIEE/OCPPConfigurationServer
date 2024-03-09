@@ -13,7 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -88,7 +88,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Enumerated(EnumType.STRING)
   private StatusProcess statusProcess = StatusProcess.PENDING;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(
           name = "id_configuration",
           referencedColumnName = "id_configuration"

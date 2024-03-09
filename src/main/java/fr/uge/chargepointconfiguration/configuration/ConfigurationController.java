@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,7 @@ public class ConfigurationController {
           )
   )
   @GetMapping(value = "/all")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationGeneralDto> getAllConfiguration() {
     return configurationService.getAllConfigurations();
   }
@@ -76,6 +78,7 @@ public class ConfigurationController {
           description = "This configuration does not exist",
           content = @Content) })
   @GetMapping(value = "/{id}")
+  @PreAuthorize("hasRole('VISUALIZER')")   // For showing detailed infos
   public Optional<ConfigurationDto> getConfigurationById(
           @Parameter(description = "Id of the configuration your are looking for.")
           @PathVariable int id) {
@@ -98,6 +101,7 @@ public class ConfigurationController {
         )
   })
   @PostMapping("/create")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "The configuration to be sent to the controller.",
@@ -136,6 +140,7 @@ public class ConfigurationController {
       )
   })
   @PostMapping("/update")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> updateConfiguration(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
                   description = "The configuration to be sent to the controller.",
@@ -175,6 +180,7 @@ public class ConfigurationController {
           )
   )
   @GetMapping(value = "/transcriptor")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationTranscriptorDto> getAllConfigurationTranscriptor() {
     return Arrays.stream(ConfigurationTranscriptor.values())
             .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
@@ -195,38 +201,44 @@ public class ConfigurationController {
    */
   @Operation(summary = "Search for configurations")
   @ApiResponse(responseCode = "200",
-          description = "Found configurations",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationDto.class))
-          })
+      description = "Found configurations",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationDto.class))
+      })
   @GetMapping(value = "/search")
-  public PageDto<ConfigurationDto> getPage(
-          @Parameter(description = "Desired size of the requested page.")
-          @RequestParam(required = false, defaultValue = "10") int size,
+  @PreAuthorize("hasRole('VISUALIZER')")
+  public PageDto<ConfigurationDto> searchWithPage(
+      @Parameter(description = "Desired size of the requested page.")
+      @RequestParam(required = false, defaultValue = "10") int size,
 
-          @Parameter(description = "Requested page.")
-          @RequestParam(required = false, defaultValue = "0") int page,
+      @Parameter(description = "Requested page.")
+      @RequestParam(required = false, defaultValue = "0") int page,
 
-          @Parameter(description =
-                  "The column you want to sort by. Must be an attribute of the configuration.")
-          @RequestParam(required = false, defaultValue = "id") String sortBy,
+      @Parameter(description =
+          "The column you want to sort by. Must be an attribute of the configuration.")
+      @RequestParam(required = false, defaultValue = "id") String sortBy,
 
-          @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-          @RequestParam(required = false, defaultValue = "asc") String order
+      @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = configurationService.countTotal();
 
-    var data = configurationService.getPage(
-                    PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
-            ).stream()
-            .map(entity -> new ConfigurationDto(entity.getId(),
-                    entity.getName(),
-                    entity.getDescription(),
-                    entity.getLastEdit(),
-                    entity.getConfiguration(),
-                    entity.getFirmware().toDto()
-            ))
-            .toList();
+    var data = configurationService.search(
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
+        ).stream()
+        .map(entity -> new ConfigurationDto(
+            entity.getId(),
+            entity.getName(),
+            entity.getDescription(),
+            entity.getLastEdit(),
+            entity.getConfiguration(),
+            entity.getFirmware() == null ? null : entity.getFirmware().toDto()
+        ))
+        .toList();
 
     return new PageDto<>(total, page, size, data);
   }

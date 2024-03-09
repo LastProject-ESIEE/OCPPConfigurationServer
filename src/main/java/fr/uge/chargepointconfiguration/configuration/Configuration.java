@@ -47,7 +47,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   private String configuration;
 
   @ManyToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware", nullable = false)
+  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware")
   private Firmware firmware;
 
   /**
@@ -181,7 +181,8 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
           description,
         lastEdit,
         configuration,
-        firmware.toDto());
+        firmware == null ? null : firmware.toDto()
+    );
   }
 
   @Override

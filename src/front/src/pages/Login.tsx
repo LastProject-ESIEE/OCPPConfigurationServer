@@ -20,7 +20,7 @@ function Login() {
             }}>
                 <Grid xs={12}>
                     <Box textAlign={"center"}>
-                        <img src="/assets/logo-brs.png" alt="logo de BRS"/>
+                        <img src="/assets/logo-brs.png" alt="logo de BRS" style={{maxWidth: "40%"}}/>
                     </Box>
                 </Grid>
                 <Grid xs={12}>

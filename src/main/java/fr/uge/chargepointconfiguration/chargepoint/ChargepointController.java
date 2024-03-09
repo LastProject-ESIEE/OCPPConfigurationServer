@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +59,7 @@ public class ChargepointController {
           schema = @Schema(implementation = ChargepointDto.class))
       })
   @GetMapping(value = "/all")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<ChargepointDto> getAllChargepoints() {
     return chargepointService.getAllChargepoints();
   }
@@ -78,6 +80,7 @@ public class ChargepointController {
           description = "This chargepoint does not exist",
           content = @Content) })
   @GetMapping(value = "/{id}")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public Optional<ChargepointDto> getChargepointById(
       @Parameter(description = "Id of the chargepoint your are looking for.")
       @PathVariable int id) {
@@ -96,28 +99,29 @@ public class ChargepointController {
           schema = @Schema(implementation = ChargepointDto.class))
       })
   @GetMapping(value = "/search")
-  public PageDto<ChargepointDto> searchChargepoints(
+  @PreAuthorize("hasRole('VISUALIZER')")
+  public PageDto<ChargepointDto> searchWithPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,
 
       @Parameter(description = "Requested page.")
       @RequestParam(required = false, defaultValue = "0") int page,
 
-      @Parameter(description = "Pattern to filter the client id with.")
-      @RequestParam(required = false, defaultValue = "") String clientIdContains,
-
       @Parameter(description =
           "The column you want to sort by. Must be an attribute of the chargepoint.")
       @RequestParam(required = false, defaultValue = "id") String sortBy,
 
       @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-      @RequestParam(required = false, defaultValue = "asc") String order
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = chargepointService.countTotal();
 
     var data = chargepointService.search(
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
-            clientIdContains
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         )
         .stream()
         .map(Chargepoint::toDto)
@@ -143,6 +147,7 @@ public class ChargepointController {
       )
   })
   @PostMapping("/create")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ChargepointDto> registerChargepoint(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "The chargepoint to be sent to the controller.",
@@ -192,6 +197,7 @@ public class ChargepointController {
       )
   })
   @PatchMapping("/{id}")
+  @PreAuthorize("hasRole('EDITOR')")
   public ChargepointDto updateChargepoint(
         @Parameter(description = "Id of the chargepoint your are looking for.")
         @PathVariable int id,

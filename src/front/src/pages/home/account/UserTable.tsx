@@ -17,6 +17,7 @@ const PAGE_SIZE = 30; // Max items displayed in the user table
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
+        size: 2.5,
         filter: {
             apiField: "lastName",
             filterType: "input"
@@ -27,6 +28,7 @@ const userTableColumns: TableColumnDefinition[] = [
     },
     {
         title: "Prénom",
+        size: 2.5,
         filter: {
             apiField: "firstName",
             filterType: "input"
@@ -34,6 +36,14 @@ const userTableColumns: TableColumnDefinition[] = [
         sort: {
             apiField: "firstName",
         }
+    },
+    {
+        title: "Mail",
+        filter: {
+            apiField: "email",
+            filterType: "input"
+        },
+        size: 3.5
     },
     {
         title: "Rôle",
@@ -50,12 +60,14 @@ const userTableColumns: TableColumnDefinition[] = [
                 return value === DEFAULT_FILTER_SELECT_VALUE ? "" : frenchToEnglishRole(value as FrenchRole)
             }
         },
+        size: 3,
         sort: {
             apiField: "role",
         }
     },
     {
-        title: "", // extra column for delete button later
+        title: "",
+        size: 0.5
     }
 ]
 
@@ -112,7 +124,6 @@ function UserTable() {
                 }
                 let updatedUser = tableData.find(u => u.id === user.id)
                 if (!updatedUser) {
-                    console.log("User id for the update notification is not found.")
                     return
                 }
                 // Update role of user
@@ -128,19 +139,21 @@ function UserTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        onSelection: user => { console.log("Selected item : " + user.id) },
         formatter: (user) => {
             return (
                 <Box key={"box-configuration-edit-path-" + user.id} margin={1} maxWidth={"true"}>
                     <Box style={{maxWidth: "true", margin: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                            <Grid item xs={userTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.lastName}</Typography>
                             </Grid>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                            <Grid item xs={userTableColumns[1].size} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.firstName}</Typography>
                             </Grid>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"}>
+                            <Grid item xs={userTableColumns[2].size} maxWidth={"true"} justifyContent={"center"}>
+                                <Typography variant="body1" align="center">{user.email}</Typography>
+                            </Grid>
+                            <Grid item xs={userTableColumns[3].size} maxWidth={"true"} justifyContent={"center"}>
                                 <Select
                                     disabled={user.id === me?.id}
                                     value={user.role}
@@ -171,7 +184,7 @@ function UserTable() {
                                     )}
                                 </Select>
                             </Grid>
-                            <Grid item xs={12/userTableColumns.length} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
+                            <Grid item xs={userTableColumns[4].size} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
                                 <DeleteUserModalComponent
                                     user={user} 
                                     enabled={user.id === me?.id} 
@@ -200,7 +213,6 @@ function UserTable() {
         onFiltering: (filters, sort) => {
             // Reset page and search
             setCurrentPage(0)
-            console.log(filters)
             searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<User> | undefined) => {
                 if(!result){
                     setError("Erreur lors de la récupération des utilisateurs.")

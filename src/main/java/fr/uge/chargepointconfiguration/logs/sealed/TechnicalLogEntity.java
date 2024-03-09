@@ -1,5 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.sealed;
 
+import fr.uge.chargepointconfiguration.DtoEntity;
+import fr.uge.chargepointconfiguration.logs.technical.TechnicalLogDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.apache.logging.log4j.Level;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,7 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
  */
 @Entity
 @Table(name = "technical_logs")
-public final class TechnicalLogEntity implements LogEntity {
+public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalLogDto> {
 
   /**
    * Component enum represents different components where a log can be created.<br>
@@ -41,7 +44,7 @@ public final class TechnicalLogEntity implements LogEntity {
   @Column(name = "date", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp date;
+  private LocalDateTime date;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "component", nullable = false)
@@ -66,7 +69,7 @@ public final class TechnicalLogEntity implements LogEntity {
     this.component = Objects.requireNonNull(component);
     this.level = Objects.requireNonNull(level);
     this.completeLog = Objects.requireNonNull(completeLog);
-    date = new Timestamp(System.currentTimeMillis());
+    date = LocalDateTime.now();
   }
 
   /**
@@ -99,7 +102,7 @@ public final class TechnicalLogEntity implements LogEntity {
    *
    * @return date, Timestamp.
    */
-  public Timestamp getDate() {
+  public LocalDateTime getDate() {
     return date;
   }
 
@@ -108,7 +111,7 @@ public final class TechnicalLogEntity implements LogEntity {
    *
    * @param date a Timestamp.
    */
-  public void setDate(Timestamp date) {
+  public void setDate(LocalDateTime date) {
     this.date = date;
   }
 
@@ -208,5 +211,16 @@ public final class TechnicalLogEntity implements LogEntity {
            + ", level=" + level
            + ", completeLog='" + completeLog + '\''
            + '}';
+  }
+
+  @Override
+  public TechnicalLogDto toDto() {
+    return new TechnicalLogDto(
+        id,
+        Timestamp.valueOf(date),
+        component,
+        level,
+        completeLog
+    );
   }
 }

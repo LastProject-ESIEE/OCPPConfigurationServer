@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
 import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,13 @@ public class TechnicalLogService {
   /**
    * Search for {@link TechnicalLogEntity} with a pagination.
    *
-   * @param pageable         The page requested
+   * @param request the request used to search
+   * @param pageable The page requested
    * @return the list of corresponding {@link TechnicalLogEntity}
    */
-  public List<TechnicalLogEntity> getPage(PageRequest pageable) {
-    return technicalLogRepository.findAllByOrderByIdDesc(pageable)
+  public List<TechnicalLogEntity> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
+    return technicalLogRepository.findAll(condition, pageable)
           .stream().toList();
   }
 }
