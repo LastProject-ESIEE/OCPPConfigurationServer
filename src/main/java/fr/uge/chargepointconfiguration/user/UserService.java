@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.user;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,14 +30,26 @@ public class UserService {
    * @param changePasswordUserDto of the user.
    * @return a User.
    */
-  public User updatePassword(ChangePasswordUserDto changePasswordUserDto) {
+  public User updatePassword(
+      ChangePasswordUserDto changePasswordUserDto
+  ) throws BadPasswordException {
     var user = getAuthenticatedUser();
     if (!passwordEncoder.matches(changePasswordUserDto.oldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("Bad password");
     }
+    if (!validatePassword(changePasswordUserDto.newPassword())) {
+      throw new BadPasswordException();
+    }
     var encodedPassword = passwordEncoder.encode(changePasswordUserDto.newPassword());
     user.setPassword(encodedPassword);
     return userRepository.save(user);
+  }
+
+  private boolean validatePassword(String s) {
+    var regex =
+        "^(?=.*\\d)(?=.*[!@#$%^&*~\"'{(-|`_\\\\)\\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$";
+    var pattern = Pattern.compile(regex);
+    return pattern.matcher(s).matches();
   }
 
   /**

@@ -1,8 +1,8 @@
-import { Box, Button, Grid } from "@mui/material";
+import {Box, Button, Grid} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
-import { useEffect, useState } from "react";
-import { Role, createNewUser } from "../../../conf/userController";
+import {useEffect, useState} from "react";
+import {createNewUser, Role} from "../../../conf/userController";
 
 
 function AddAccount() {
@@ -80,7 +80,6 @@ function AddAccount() {
                         }
                         let returnValue = createNewUser(user)
                         returnValue.then(value => {
-                            console.log("value : " + value)
                             setToast(value)
                             setDisplay(true)
                         })

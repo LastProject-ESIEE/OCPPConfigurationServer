@@ -121,8 +121,13 @@ public class UserController {
               required = true
         )
         @RequestBody ChangePasswordUserDto changePasswordUserDto) {
-    var user = userService.updatePassword(changePasswordUserDto).toDto();
-    return new ResponseEntity<>(user, HttpStatus.OK);
+    User user;
+    try {
+      user = userService.updatePassword(changePasswordUserDto);
+    } catch (BadPasswordException e) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
 
   /**

@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import { Button, Container, Grid, Paper, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
+import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
 
 function Account() {
     const [user, setUser] = useState<any>(null);
@@ -39,13 +39,6 @@ function Account() {
         }
     }, [password1, password2]);
 
-    // TODO : Use it later for the toast
-    // const validatePassword = (password : string) => {
-    //     // Regex to check prerequisites of password.
-    //     const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
-    //     return regex.test(password);
-    // };
-
     const handleButtonClick = () => {
         if (oldPassword !== "" && password1 === password2) {
             fetch("/api/user/updatePassword", {
@@ -67,7 +60,7 @@ function Account() {
                     setSuccessMessage("Mot de passe mis à jour avec succès.");
                     setErrorMessage("");
                 } else {
-                    setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
+                    setErrorMessage("Les conditions du mot de passe ne sont pas respectées.");
                     setSuccessMessage("");
                 }
             }).catch(error => {

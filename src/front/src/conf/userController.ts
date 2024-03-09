@@ -1,4 +1,4 @@
-import { PageRequest } from "../sharedComponents/DisplayTable"
+import {PageRequest} from "../sharedComponents/DisplayTable"
 
 export enum Role { "VISUALIZER", "EDITOR", "ADMINISTRATOR" }
 
@@ -56,5 +56,4 @@ export async function createNewUser(user: CreateUserDto) {
         console.error("Couldn't save the user, error code: " + request.status)
         return false
     }
-    
 }
