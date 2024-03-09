@@ -32,9 +32,13 @@ public class UserService {
    * @return a User.
    */
   public User updatePassword(
+      int id,
       ChangePasswordUserDto changePasswordUserDto
   ) throws BadPasswordException {
-    var user = getAuthenticatedUser();
+    var user = userRepository.findById(id);
+    if (user.getId() != getAuthenticatedUser().getId()) {
+      throw new IllegalArgumentException("Bad Id");
+    }
     if (!passwordEncoder.matches(changePasswordUserDto.oldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("Bad password");
     }

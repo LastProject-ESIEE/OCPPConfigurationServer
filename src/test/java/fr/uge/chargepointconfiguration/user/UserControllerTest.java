@@ -1,5 +1,15 @@
 package fr.uge.chargepointconfiguration.user;
 
+import static fr.uge.chargepointconfiguration.tools.JsonParser.objectToJsonString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.*;
-import org.springframework.test.web.servlet.request.*;
-import static fr.uge.chargepointconfiguration.tools.JsonParser.objectToJsonString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -66,9 +71,9 @@ class UserControllerTest {
   @Test
   @WithUserDetails("admin@email")
   void updatePassword() throws Exception {
-    mvc.perform(post("/api/user/updatePassword")
+    mvc.perform(patch("/api/user/updatePassword/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectToJsonString(new ChangePasswordUserDto("password", "azerty")))
+            .content(objectToJsonString(new ChangePasswordUserDto("password", "_Azerty123_")))
           )
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.id", is(1)))
@@ -81,9 +86,19 @@ class UserControllerTest {
 
   @Test
   @WithUserDetails("admin@email")
+  void updatePasswordBadFormatPassword() throws Exception {
+    mvc.perform(patch("/api/user/updatePassword/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectToJsonString(new ChangePasswordUserDto("password", "azerty")))
+        )
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  @WithUserDetails("admin@email")
   @Disabled // TODO gestion erreur
   void updatePasswordBadPassword() throws Exception {
-    mvc.perform(post("/api/user/updatePassword")
+    mvc.perform(post("/api/user/updatePassword/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectToJsonString(new ChangePasswordUserDto("WRONG_PASSWORD_HERE", "azerty")))
           )
