@@ -54,11 +54,11 @@ public class ConfigurationController {
   @ApiResponse(responseCode = "200",
           description = "Found all the configuration.",
           content = @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationGeneralDto.class)
+              schema = @Schema(implementation = ConfigurationDto.class)
           )
   )
   @GetMapping(value = "/all")
-  public List<ConfigurationGeneralDto> getAllConfiguration() {
+  public List<ConfigurationDto> getAllConfiguration() {
     return configurationService.getAllConfigurations();
   }
 
@@ -219,13 +219,7 @@ public class ConfigurationController {
     var data = configurationService.getPage(
                     PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy))
             ).stream()
-            .map(entity -> new ConfigurationDto(entity.getId(),
-                    entity.getName(),
-                    entity.getDescription(),
-                    entity.getLastEdit(),
-                    entity.getConfiguration(),
-                    entity.getFirmware().toDto()
-            ))
+        .map(Configuration::toDto)
             .toList();
 
     return new PageDto<>(total, page, size, data);

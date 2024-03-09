@@ -3,6 +3,9 @@ package fr.uge.chargepointconfiguration.configuration;
 import fr.uge.chargepointconfiguration.firmware.Firmware;
 import fr.uge.chargepointconfiguration.firmware.FirmwareDto;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * DTO to read configuration in database.
@@ -20,4 +23,47 @@ public record ConfigurationDto(
     Timestamp lastEdit,
     String configuration,
     FirmwareDto firmware) {
+
+  /**
+   * Replace id by fullname of keys.
+   *
+   * @param configuration the String JSON of the configuration.
+   * @return the new String JSON of the configuration.
+   */
+  public static String replaceIntToKey(String configuration) {
+    if ("{}".equals(configuration)) {
+      return configuration;
+    }
+    //System.out.println("Conf : " + configuration);
+    var map = Arrays.stream(ConfigurationTranscriptor.values())
+        .collect(Collectors.toMap(ConfigurationTranscriptor::getId,
+            ConfigurationTranscriptor::getFullName));
+    var pattern = Pattern.compile("\"(\\d+)\"\\s*:\\s*\"(.*?)\"");
+    var matcher = pattern.matcher(
+        configuration.substring(1, configuration.length() - 1)
+    );
+    var sb = new StringBuilder();
+    sb.append("{");
+
+    var start = 0;
+    while (matcher.find()) {
+      sb.append(configuration.substring(start, matcher.start()));
+
+      var numericKey = Integer.parseInt(matcher.group(1));
+      var value = matcher.group(2);
+
+      var replacement = map.getOrDefault(numericKey, matcher.group(1));
+
+      sb.append("\"")
+          .append(replacement)
+          .append("\":")
+          .append("\"")
+          .append(value);
+
+      start = matcher.end();
+    }
+    sb.append(configuration.substring(start));
+    System.out.println("Sb : " + sb);
+    return sb.toString();
+  }
 }

@@ -3,7 +3,7 @@ import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Configuration, Transcriptor, getAllConfigurations, getTranscriptors, noConfig} from "../../../conf/configurationController";
+import {Configuration, getAllConfigurations, noConfig} from "../../../conf/configurationController";
 import {
     CreateChargepointDto,
     getChargepointById,
@@ -12,35 +12,8 @@ import {
 } from "../../../conf/chargePointController";
 import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
-import { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
-// TODO   
-    let jsonObject = JSON.parse(configuration.configuration)
-
-    const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
-
-    useEffect(() => {
-        getTranscriptors().then(transcriptors => {
-            if (!transcriptors) {
-                return
-            }
-            // Load transcriptors
-            let items: KeyValueItem<Transcriptor>[] = transcriptors.map(transcriptor => {
-                    return {
-                        id: transcriptor.id + "",
-                        checker: item => {
-                            return true;//RegExp(transcriptor.regex).exec(item)
-                        },
-                        item: transcriptor,
-                        label: transcriptor.fullName,
-                        value: ""
-                    }
-                }
-            )
-            setKeys(items)
-            })
-    })
 
     return (
         <Box sx={{height: "100%"}}>
@@ -68,7 +41,7 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>
                                 <pre>
-                                    {JSON.stringify(jsonObject || "{}", null, 2)}
+                                    {JSON.stringify(JSON.parse(configuration.configuration) || "{}", null, 2)}
                                 </pre>
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>

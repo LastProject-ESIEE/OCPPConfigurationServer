@@ -177,10 +177,10 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   public ConfigurationDto toDto() {
     return new ConfigurationDto(
         id,
-          name,
-          description,
+        name,
+        description,
         lastEdit,
-        configuration,
+        ConfigurationDto.replaceIntToKey(configuration),
         firmware.toDto());
   }
 

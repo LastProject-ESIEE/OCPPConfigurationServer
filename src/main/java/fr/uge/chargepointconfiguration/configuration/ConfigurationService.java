@@ -73,10 +73,10 @@ public class ConfigurationService {
    *
    * @return A list of configurations.
    */
-  public List<ConfigurationGeneralDto> getAllConfigurations() {
+  public List<ConfigurationDto> getAllConfigurations() {
     return configurationRepository.findAllByOrderByIdDesc()
           .stream()
-          .map(ConfigurationGeneralDto::from)
+        .map(Configuration::toDto)
           .toList();
   }
 
