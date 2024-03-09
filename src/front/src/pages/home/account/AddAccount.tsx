@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material";
+import {Box, Button, Grid} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
 import { useEffect, useState } from "react";

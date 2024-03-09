@@ -3,6 +3,7 @@ package fr.uge.chargepointconfiguration.user;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,14 +31,30 @@ public class UserService {
    * @param changePasswordUserDto of the user.
    * @return a User.
    */
-  public User updatePassword(ChangePasswordUserDto changePasswordUserDto) {
-    var user = getAuthenticatedUser();
+  public User updatePassword(
+      int id,
+      ChangePasswordUserDto changePasswordUserDto
+  ) throws BadPasswordException {
+    var user = userRepository.findById(id);
+    if (user.getId() != getAuthenticatedUser().getId()) {
+      throw new IllegalArgumentException("Bad Id");
+    }
     if (!passwordEncoder.matches(changePasswordUserDto.oldPassword(), user.getPassword())) {
       throw new IllegalArgumentException("Bad password");
+    }
+    if (!validatePassword(changePasswordUserDto.newPassword())) {
+      throw new BadPasswordException();
     }
     var encodedPassword = passwordEncoder.encode(changePasswordUserDto.newPassword());
     user.setPassword(encodedPassword);
     return userRepository.save(user);
+  }
+
+  private boolean validatePassword(String s) {
+    var regex =
+        "^(?=.*\\d)(?=.*[!@#$%^&*~\"'{(-|`_\\\\)\\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$";
+    var pattern = Pattern.compile(regex);
+    return pattern.matcher(s).matches();
   }
 
   /**

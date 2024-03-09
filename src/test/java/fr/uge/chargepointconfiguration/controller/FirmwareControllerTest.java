@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +34,7 @@ class FirmwareControllerTest {
    * /firmware/all
    */
   @Test
+  @WithMockUser(roles = "EDITOR")
   void getAllFirmwares() {
     var firmware = new Firmware("www.alfen5-4-3.com", "5.4.3-4073)", "Alfen", Set.of(new TypeAllowed("Alfen", "mega-type")));
     firmwareRepository.save(firmware);
@@ -48,6 +50,7 @@ class FirmwareControllerTest {
    * /firmware/all
    */
   @Test
+  @WithMockUser(roles = "EDITOR")
   void getEmptyAllFirmwares() {
     System.out.println(firmwareController.getAllFirmwares());
     System.out.println(firmwareRepository.findAllByOrderByIdDesc());
@@ -59,6 +62,7 @@ class FirmwareControllerTest {
    * /firmware/{id}
    */
   @Test
+  @WithMockUser(roles = "EDITOR")
   void getFirmwareById(){
 //    firmwareRepository.deleteAll();
 

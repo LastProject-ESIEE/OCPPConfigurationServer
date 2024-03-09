@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import { Button, Grid, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { englishRoleToFrench } from "../../../sharedComponents/NavBar";
+import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
 
 function Account() {
     const [user, setUser] = useState<any>(null);
@@ -32,7 +32,6 @@ function Account() {
         if (
             password1 === password2
             && password1 !== ""
-            && validatePassword(password1)
         ) {
             setIsButtonDisabled(false);
         } else {
@@ -40,16 +39,10 @@ function Account() {
         }
     }, [password1, password2]);
 
-    const validatePassword = (password : string) => {
-        // Regex to check prerequisites of password.
-        const regex = /^(?=.*\d)(?=.*[!@#$%^&*~"'{([-|`_\\)\]}+°£µ§/:;.,?<>])(?=.*[a-z])(?=.*[A-Z]).{8,30}$/;
-        return regex.test(password);
-    };
-
     const handleButtonClick = () => {
         if (oldPassword !== "" && password1 === password2) {
-            fetch("/api/user/updatePassword", {
-                method: "POST",
+            fetch("/api/user/updatePassword/" + user.id, {
+                method: "PATCH",
                 body: JSON.stringify({
                     oldPassword: oldPassword,
                     newPassword: password1
@@ -67,137 +60,179 @@ function Account() {
                     setSuccessMessage("Mot de passe mis à jour avec succès.");
                     setErrorMessage("");
                 } else {
-                    setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
+                    setErrorMessage("Les conditions du mot de passe ne sont pas respectées.");
                     setSuccessMessage("");
                 }
             }).catch(error => {
-                console.error("ERROR ", error);
                 setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
             });
-            console.log("Passwords match. Update password in database.");
-        } else {
-            console.log("Passwords don't match.");
         }
     }
 
     return (
-        <Box style={{
-            fontSize: "3em"
-        }}>
-            <Grid container spacing={2} marginTop={"10%"}>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Nom :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.lastName) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Prénom :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.firstName) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Adresse mail :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && user.email) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Rôle :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <Box>
-                        {(user && englishRoleToFrench(user.role)) || "Inconnu"}
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={6}>
-                    <Box marginLeft={"60%"}>
-                        <b>Mot de passe :</b>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2} alignItems={"stretch"}>
-                    <TextField
-                        id={"oldPassword"}
-                        label={"Ancien mot de passe"}
-                        type={"password"}
-                        value={oldPassword}
-                        onChange={(e) => setOldPassword(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid item xs={5} md={1}>
-                    <Button
-                        type={"submit"}
-                        disabled={isButtonDisabled}
-                        onClick={handleButtonClick}
-                        style={isButtonDisabled ? {
-                                backgroundColor: "#DBDBDB",
-                                color: "black",
-                                borderRadius: "30px",
-                                fontSize: "0.5em"
-                            } : {
-                                backgroundColor: "#C8FAC7",
-                                color: "black",
-                                borderRadius: "30px",
-                                fontSize: "0.5em"
+        <Container 
+            maxWidth="xl" 
+            sx={{mt: 4, mb: 4}}
+        >
+            <Grid 
+                container 
+                direction={"row"} 
+                justifyContent={"space-between"} 
+                textAlign={"center"}
+            >
+                <Grid 
+                    item 
+                    xs={12} 
+                    md={6} 
+                    sx={{
+                        p: 5, 
+                        pl: 20, 
+                        pr: 10
+                    }}
+                >
+                    <Paper
+                        elevation={0}
+                        variant="outlined"
+                        sx={{
+                            backgroundColor: 'rgb(249, 246, 251)',
+                            borderColor: 'rgba(226,229,233,255)',
+                            borderWidth: 2,
+                            height: "100%"
                         }}
                     >
-                        Changer
-                    </Button>
+                        <Grid 
+                            container 
+                            direction={"column"} 
+                            textAlign={"center"} 
+                            justifyContent={"space-between"}
+                            sx={{
+                                height: "100%", 
+                                paddingTop: 8, 
+                                paddingBottom: 8
+                            }}
+                        >
+                            <Grid item>
+                                <Typography variant="h6">
+                                    <b>Nom :</b> {(user && user.lastName) || "Inconnu"}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">
+                                    <b>Prénom :</b> {(user && user.firstName) || "Inconnu"}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">
+                                    <b>Adresse mail :</b> {(user && user.email) || "Inconnu"}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">
+                                    <b>Rôle :</b> {(user && englishRoleToFrench(user.role)) || "Inconnu"}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Paper>
                 </Grid>
-                <Grid item xs={3} md={6}>
-                    <Box marginLeft={"60%"}>
-                    </Box>
+                <Grid 
+                    item 
+                    xs={12} 
+                    md={6} 
+                    sx={{
+                        p: 5, 
+                        pl: 20, 
+                        pr: 10
+                    }}
+                >
+                    <Grid container justifyContent={"center"}>
+                        <Grid item xs={12}>
+                            <Typography variant="h6">
+                                <b>Changer de mot de passe :</b>
+                            </Typography>
+                        </Grid>
+                        <Grid item container direction={"column"} xs={12}>
+                            <TextField
+                                id={"oldPassword"}
+                                label={"Ancien mot de passe"}
+                                type={"password"}
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                                sx={{marginTop: 2}}
+                            >
+                            </TextField>
+                            <TextField
+                                id={"password1"}
+                                label={"Nouveau mot de passe"}
+                                type={"password"}
+                                value={password1}
+                                onChange={(e) => setPassword1(e.target.value)}
+                                sx={{marginTop: 2}}
+                            >
+                            </TextField>
+                            <TextField
+                                id={"password2"}
+                                label={"Nouveau mot de passe"}
+                                type={"password"}
+                                value={password2}
+                                onChange={(e) => setPassword2(e.target.value)}
+                                sx={{marginTop: 2}}
+                            >
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Paper
+                                elevation={0}
+                                variant="outlined"
+                                sx={{
+                                    backgroundColor: 'rgb(249, 246, 251)',
+                                    borderColor: 'rgba(226,229,233,255)',
+                                    borderWidth: 2,
+                                    marginTop: 2,
+                                    marginBottom: 1
+                                }}
+                            >
+                                <Grid>
+                                    <Typography variant="body1">
+                                        Le mot de passe doit contenir, au minimum, 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial. Au maximum, vous pouvez inscrire 30 caractères.
+                                    </Typography>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                type={"submit"}
+                                disabled={isButtonDisabled}
+                                onClick={handleButtonClick}
+                                style={isButtonDisabled ? {
+                                    backgroundColor: "#DBDBDB",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    fontSize: "1em",
+                                    marginTop: 2
+                                } : {
+                                    backgroundColor: "#C8FAC7",
+                                    color: "black",
+                                    borderRadius: "30px",
+                                    fontSize: "1em",
+                                    marginTop: 2
+                                }}
+                            >
+                                Changer
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6} md={2} alignItems={"stretch"}>
-                    <TextField
-                        id={"password1"}
-                        label={"Nouveau mot de passe"}
-                        type={"password"}
-                        value={password1}
-                        onChange={(e) => setPassword1(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid item xs={3} md={6}>
-                    <Box marginLeft={"60%"}>
-                    </Box>
-                </Grid>
-                <Grid item xs={6} md={2}>
-                    <TextField
-                        id={"password2"}
-                        label={"Nouveau mot de passe"}
-                        type={"password"}
-                        value={password2}
-                        onChange={(e) => setPassword2(e.target.value)}
-                    >
-                    </TextField>
-                </Grid>
-                <Grid xs={12}>
+                {/* TODO : Change with the toast later and use the validatePassword method */}
+                <Grid xs={12} md={12}>
                     <Box style={{
-                        fontSize: "0.5em",
+                        fontSize: "1em",
                         textAlign: "center",
                         marginTop: "20px"
                     }}>
                         {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
                     </Box>
                     <Box style={{
-                        fontSize: "0.5em",
+                        fontSize: "1em",
                         textAlign: "center",
                         marginTop: "20px"
                     }}>
@@ -205,7 +240,7 @@ function Account() {
                     </Box>
                 </Grid>
             </Grid>
-        </Box>
+        </Container>
     );
 }
 

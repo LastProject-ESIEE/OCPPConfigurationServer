@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,29 +41,6 @@ public class UserController {
   }
 
   /**
-   * retrieve info in database for a given user.
-   *
-   * @param id The id of the user.
-   * @return Details about the user.
-   */
-  @Operation(summary = "Get a user by its id.")
-  @ApiResponse(responseCode = "200",
-        description = "Found the corresponding users",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
-  )
-  @GetMapping("/{id}")
-  public UserDto getUserById(
-        @Parameter(description = "The user you are looking for.")
-        @PathVariable int id) {
-    // TODO : exception BAD REQUEST si id est pas un nombre
-    System.out.println("getUser " + id);
-    return userService.getUserById(id).toDto();
-  }
-
-  /**
    * retrieve info in database for all users.
    *
    * @return Details about all the users.
@@ -76,6 +54,7 @@ public class UserController {
         )
   )
   @GetMapping("/all")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<UserDto> getAllUsers() {
     return userService.getAllUsers()
           .stream()
@@ -97,6 +76,7 @@ public class UserController {
         )
   )
   @GetMapping("/me")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public UserDto getAuthenticatedUser() {
     return userService.getAuthenticatedUser().toDto();
   }
@@ -115,15 +95,22 @@ public class UserController {
               schema = @Schema(implementation = UserDto.class)
         )
   )
-  @PostMapping("/updatePassword")
+  @PatchMapping("/updatePassword/{id}")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public ResponseEntity<UserDto> updatePassword(
         @io.swagger.v3.oas.annotations.parameters.RequestBody(
               description = "Old and new password.",
               required = true
         )
-        @RequestBody ChangePasswordUserDto changePasswordUserDto) {
-    var user = userService.updatePassword(changePasswordUserDto).toDto();
-    return new ResponseEntity<>(user, HttpStatus.OK);
+        @RequestBody ChangePasswordUserDto changePasswordUserDto,
+        @PathVariable int id) {
+    User user;
+    try {
+      user = userService.updatePassword(id, changePasswordUserDto);
+    } catch (BadPasswordException e) {
+      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
 
   /**
@@ -142,6 +129,7 @@ public class UserController {
       )
   )
   @PatchMapping("/{id}/role/{role}")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> updateRole(
       @PathVariable int id,
       @PathVariable User.Role role
@@ -169,6 +157,7 @@ public class UserController {
           schema = @Schema(implementation = UserDto.class))
       })
   @GetMapping(value = "/search")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public PageDto<UserDto> searchWithPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,
@@ -209,6 +198,7 @@ public class UserController {
                   schema = @Schema(implementation = User.Role.class))
           })
   @GetMapping(value = "/allRoles")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<User.Role> getAllRoles() {
     return Arrays.stream(User.Role.values())
             .toList();
@@ -227,6 +217,7 @@ public class UserController {
                   schema = @Schema(implementation = UserDto.class))
           })
   @PostMapping(value = "/new")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> addUser(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
                   description = "JSON with all parameters of the new user.",
@@ -245,6 +236,7 @@ public class UserController {
   }
   
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     userService.delete(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);

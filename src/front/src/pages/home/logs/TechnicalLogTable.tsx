@@ -20,7 +20,7 @@ const PAGE_SIZE = 30; // Max items displayed in the technical log table
 const technicalLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
-        size:11.5/3,
+        size: 2,
         /*
         filter: {
           apiField: "containsTitle",
@@ -30,11 +30,15 @@ const technicalLogTableColumns: TableColumnDefinition[] = [
     },
     {
         title: "Composant",
-        size: 11.5/3,
+        size: 3,
+    },
+    {
+        title: "Criticité",
+        size: 2
     },
     {
         title: "Log",
-        size: 11.5/3,
+        size: 4.5,
     },
     {
         title: "",
@@ -66,9 +70,6 @@ function TechnicalLogTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        onSelection: technicalLog => {
-            console.log("Selected item : " + technicalLog.id)
-        },
         formatter: (technicalLog) => {
             return (
                 <Box key={"box-configuration-edit-path-" + technicalLog.id} paddingTop={1} maxWidth={"true"}>
@@ -123,6 +124,13 @@ function LogLineItemVMamar(props: { technicalLog: TechnicalLog }) {
                     </Grid>
                     <Grid item xs={technicalLogTableColumns[2].size}
                           justifyContent={"center"}>
+                        <Typography variant="body1"
+                                    align="center"
+                                    noWrap={true}>
+                            {props.technicalLog.level}</Typography>
+                    </Grid>
+                    <Grid item xs={technicalLogTableColumns[3].size}
+                          justifyContent={"center"}>
                         {!open
                             ? <Tooltip title={props.technicalLog.completeLog}>
                                 <Typography variant="body1"
@@ -138,7 +146,7 @@ function LogLineItemVMamar(props: { technicalLog: TechnicalLog }) {
                                 {props.technicalLog.completeLog}
                             </Typography>}
                     </Grid>
-                    <Grid item xs={technicalLogTableColumns[3].size}>
+                    <Grid item xs={technicalLogTableColumns[4].size}>
                             <Typography align={"center"}>
                                 {!open
                                     ? <ArrowDropDownIcon/>

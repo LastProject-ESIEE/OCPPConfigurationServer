@@ -35,7 +35,7 @@ class WebSecurityConfigTest {
   }
 
   @Test
-  @WithMockUser
+  @WithMockUser(roles = "ADMINISTRATOR")
   void authorizedApi() throws Exception {
     mvc.perform(get("/api/user/all"))
           .andDo(print())
