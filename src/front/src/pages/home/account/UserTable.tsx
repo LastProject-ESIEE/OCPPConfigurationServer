@@ -20,6 +20,9 @@ const userTableColumns: TableColumnDefinition[] = [
         filter: {
             apiField: "lastName",
             filterType: "input"
+        },
+        sort: {
+            apiField: "lastName",
         }
     },
     {
@@ -27,6 +30,9 @@ const userTableColumns: TableColumnDefinition[] = [
         filter: {
             apiField: "firstName",
             filterType: "input"
+        },
+        sort: {
+            apiField: "firstName",
         }
     },
     {
@@ -43,6 +49,9 @@ const userTableColumns: TableColumnDefinition[] = [
             apiValueFormatter: value => {
                 return value === DEFAULT_FILTER_SELECT_VALUE ? "" : frenchToEnglishRole(value as FrenchRole)
             }
+        },
+        sort: {
+            apiField: "role",
         }
     },
     {
@@ -176,9 +185,9 @@ function UserTable() {
                 </Box>
             )
         },
-        fetchData: filters => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchElements<User>("/api/user/search", {page: nextPage, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
+            searchElements<User>("/api/user/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<User> | undefined) => {
                 if(!result){
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
@@ -188,11 +197,11 @@ function UserTable() {
             });
             setCurrentPage(nextPage)
         },
-        onFiltering: filters => {
+        onFiltering: (filters, sort) => {
             // Reset page and search
             setCurrentPage(0)
             console.log(filters)
-            searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
+            searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<User> | undefined) => {
                 if(!result){
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
