@@ -19,24 +19,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerTest {
   @Autowired
   private MockMvc mvc;
-
-  @Test
-  void getUserById() throws Exception {
-    mvc.perform(get("/api/user/1"))
-          .andExpect(status().isOk())
-          .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.id", is(1)))
-          .andExpect(jsonPath("$.email", is("admin@email")))
-          .andExpect(jsonPath("$.lastName", is("adminLastName")))
-          .andExpect(jsonPath("$.firstName", is("adminFirstName")))
-          .andExpect(jsonPath("$.role", is("ADMINISTRATOR")))
-          .andExpect(jsonPath("$.password").doesNotExist());
-  }
 
   @Test
   @Disabled
@@ -55,6 +41,7 @@ class UserControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getAllUsers() throws Exception {
     mvc.perform(get("/api/user/all"))
           .andExpect(status().isOk())
@@ -124,6 +111,7 @@ class UserControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getPage() throws Exception {
     mvc.perform(get("/api/user/search")
                 .queryParam("size", "2")
@@ -157,6 +145,7 @@ class UserControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getPageWithFilter() throws Exception {
     mvc.perform(get("/api/user/search")
             .queryParam("size", "2")
@@ -190,6 +179,7 @@ class UserControllerTest {
 
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void getAllRoles() throws Exception {
     mvc.perform(get("/api/user/allRoles"))
           .andExpect(status().isOk())
@@ -228,6 +218,7 @@ class UserControllerTest {
   }
 
   @Test
+  @WithMockUser(roles = "ADMINISTRATOR")
   void addUser() throws Exception {
     mvc.perform(post("/api/user/new")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +54,7 @@ public class BusinessLogController {
         )
   )
   @GetMapping(value = "/{id}")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<BusinessLogDto> getBusinessLogByChargepointId(@Parameter @PathVariable int id) {
     return businessLogService.getAllByChargepointId(id)
         .stream()
@@ -72,6 +74,7 @@ public class BusinessLogController {
           schema = @Schema(implementation = BusinessLogDto.class))
       })
   @GetMapping(value = "/search")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public PageDto<BusinessLogDto> getPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,

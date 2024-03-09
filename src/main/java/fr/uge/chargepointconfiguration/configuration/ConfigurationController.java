@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,7 @@ public class ConfigurationController {
           )
   )
   @GetMapping(value = "/all")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationGeneralDto> getAllConfiguration() {
     return configurationService.getAllConfigurations();
   }
@@ -76,6 +78,7 @@ public class ConfigurationController {
           description = "This configuration does not exist",
           content = @Content) })
   @GetMapping(value = "/{id}")
+  @PreAuthorize("hasRole('VISUALIZER')")   // For showing detailed infos
   public Optional<ConfigurationDto> getConfigurationById(
           @Parameter(description = "Id of the configuration your are looking for.")
           @PathVariable int id) {
@@ -98,6 +101,7 @@ public class ConfigurationController {
         )
   })
   @PostMapping("/create")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "The configuration to be sent to the controller.",
@@ -136,6 +140,7 @@ public class ConfigurationController {
       )
   })
   @PostMapping("/update")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> updateConfiguration(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
                   description = "The configuration to be sent to the controller.",
@@ -175,6 +180,7 @@ public class ConfigurationController {
           )
   )
   @GetMapping(value = "/transcriptor")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationTranscriptorDto> getAllConfigurationTranscriptor() {
     return Arrays.stream(ConfigurationTranscriptor.values())
             .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
@@ -200,6 +206,7 @@ public class ConfigurationController {
           schema = @Schema(implementation = ConfigurationDto.class))
       })
   @GetMapping(value = "/search")
+  @PreAuthorize("hasRole('VISUALIZER')")
   public PageDto<ConfigurationDto> searchWithPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,

@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,7 @@ public class FirmwareController {
           )
   )
   @GetMapping(value = "/all")
+  @PreAuthorize("hasRole('EDITOR')")
   public List<FirmwareDto> getAllFirmwares() {
     return firmwareService.getAllFirmwares().stream().map(Firmware::toDto).toList();
   }
@@ -88,6 +90,7 @@ public class FirmwareController {
       )
   })
   @GetMapping(value = "/{id}")
+  @PreAuthorize("hasRole('EDITOR')")
   public Optional<FirmwareDto> getFirmwareById(
           @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
     // TODO : exception BAD REQUEST si id est pas un nombre
@@ -112,6 +115,7 @@ public class FirmwareController {
           schema = @Schema(implementation = FirmwareDto.class))
       })
   @GetMapping(value = "/search")
+  @PreAuthorize("hasRole('EDITOR')")
   public PageDto<FirmwareDto> getPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,
@@ -164,6 +168,7 @@ public class FirmwareController {
       )
   })
   @PostMapping("/create")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<FirmwareDto> registerConfiguration(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
                   description = "The firmware to be sent to the controller.",
@@ -209,6 +214,7 @@ public class FirmwareController {
       )
   })
   @PatchMapping("/update/{id}")
+  @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<FirmwareDto> updateConfiguration(
           @Parameter(description = "Id of the firmware your are looking for.")
           @PathVariable int id,

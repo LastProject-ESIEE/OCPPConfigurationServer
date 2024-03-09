@@ -31,7 +31,7 @@ export type FrenchRole = "Administrateur" | "Éditeur" | "Visualiseur"
 
 export type User = {
     id: number,
-    mail: string,
+    email: string,
     lastName: string,
     firstName: string,
     password: string,
@@ -58,11 +58,7 @@ export async function searchUser(
         let user = (content as PageRequest<User>)
         if (user != null) {
             return user
-        } else {
-            console.log("Fetch user page failed " + content)
         }
-    } else {
-        console.log("Fetch user list failed, error code:" +  request.status)
     }
     return undefined
 }

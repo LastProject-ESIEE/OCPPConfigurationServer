@@ -15,12 +15,19 @@ const PAGE_SIZE = 30; // Max items displayed in the configuration table
 const configurationTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
+        size: 3
     },
     {
         title: "Description",
+        size: 4
+    },
+    {
+        title: "Configuration",
+        size: 3
     },
     {
         title: "Dernière modification",
+        size: 2
     },
 ]
 
@@ -48,9 +55,6 @@ function ConfigurationTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        onSelection: configuration => {
-            console.log("Selected item : " + configuration.id)
-        },
         formatter: (configuration) => {
             return (
                 <Box key={"box-configuration-edit-path-" + configuration.id} paddingTop={1} maxWidth={"true"}>
@@ -66,17 +70,23 @@ function ConfigurationTable() {
                             backgroundColor: '#E1E1E1'
                         }}>
                             <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
-                                <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={configurationTableColumns[0].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Typography variant="body1" align="center" noWrap={true}>{configuration.name}</Typography>
                                 </Grid>
-                                <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={configurationTableColumns[1].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Tooltip title={configuration.description}>
                                         <Typography variant="body1" align="center" noWrap={true}>{configuration.description}</Typography>
                                     </Tooltip>
                                 </Grid>
-                                <Grid item xs={12 / configurationTableColumns.length} maxWidth={"true"}
+                                <Grid item xs={configurationTableColumns[2].size} maxWidth={"true"}
+                                      justifyContent={"center"}>
+                                    <Tooltip title={configuration.configuration}>
+                                        <Typography variant="body1" align="center" noWrap={true}>{configuration.configuration}</Typography>
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item xs={configurationTableColumns[3].size} maxWidth={"true"}
                                       justifyContent={"center"}>
                                     <Typography variant="body1" align="center" noWrap={true}>{new Date(configuration.lastEdit).toLocaleString()}</Typography>
                                 </Grid>
