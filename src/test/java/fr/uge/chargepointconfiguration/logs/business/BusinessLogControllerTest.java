@@ -42,8 +42,8 @@ class BusinessLogControllerTest {
         .andExpect(jsonPath("$.page", is(0)))
         .andExpect(jsonPath("$.size", is(2)))
         .andExpect(jsonPath("$.data", hasSize(2)))
-        .andExpect(jsonPath("$.data[0].date", is("2024-03-08T12:00:00.000+00:00")))
-        .andExpect(jsonPath("$.data[1].date", is("2024-03-08T11:00:00.000+00:00")));
+        .andExpect(jsonPath("$.data[0].id", is(1)))
+        .andExpect(jsonPath("$.data[1].id", is(3)));
 
     mvc.perform(get("/api/log/business/search")
             .queryParam("size", "2")
@@ -57,47 +57,45 @@ class BusinessLogControllerTest {
         .andExpect(jsonPath("$.page", is(1)))
         .andExpect(jsonPath("$.size", is(2)))
         .andExpect(jsonPath("$.data", hasSize(2)))
-        .andExpect(jsonPath("$.data[0].date", is("2024-03-08T10:00:00.000+00:00")))
-        .andExpect(jsonPath("$.data[1].date", is("2024-03-08T09:00:00.000+00:00")));
+        .andExpect(jsonPath("$.data[0].id", is(2)))
+        .andExpect(jsonPath("$.data[1].id", is(4)));
   }
 
-  @Disabled
   @Test
   void getPageWithFilterMultiple() throws Exception {
     mvc.perform(get("/api/log/business/search")
-            .queryParam("size", "2")
+            .queryParam("size", "10")
             .queryParam("page", "0")
-            .queryParam("sortBy", "clientId")
+            .queryParam("sortBy", "date")
             .queryParam("order", "desc")
-            .queryParam("request", "clientId:`les`,type:`Single`")
+            .queryParam("request", "date>`2024-03-08T10:01:00.00`,date<`2024-03-08T11:00:00.00`")
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.total", is(8)))
+        .andExpect(jsonPath("$.total", is(4)))
         .andExpect(jsonPath("$.page", is(0)))
-        .andExpect(jsonPath("$.size", is(2)))
+        .andExpect(jsonPath("$.size", is(10)))
         .andExpect(jsonPath("$.data", hasSize(1)))
-        .andExpect(jsonPath("$.data[0].clientId", is("les bornés")))
-        .andExpect(jsonPath("$.data[0].type", is("Eve Single S-line")));
+        .andExpect(jsonPath("$.data[0].id", is(2)));
   }
 
-  @Disabled
   @Test
   void getPageWithFilter() throws Exception {
     mvc.perform(get("/api/log/business/search")
-            .queryParam("size", "2")
+            .queryParam("size", "10")
             .queryParam("page", "0")
-            .queryParam("sortBy", "clientId")
+            .queryParam("sortBy", "date")
             .queryParam("order", "desc")
-            .queryParam("request", "clientId:`borne`")
+            .queryParam("request", "date>`2024-03-08T10:01:00.00`")
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.total", is(8)))
+        .andExpect(jsonPath("$.total", is(4)))
         .andExpect(jsonPath("$.page", is(0)))
-        .andExpect(jsonPath("$.size", is(2)))
-        .andExpect(jsonPath("$.data", hasSize(2)))
-        .andExpect(jsonPath("$.data[0].clientId", is("stéphane borne (l'historien)")))
-        .andExpect(jsonPath("$.data[1].clientId", is("nom de la borne")));
+        .andExpect(jsonPath("$.size", is(10)))
+        .andExpect(jsonPath("$.data", hasSize(3)))
+        .andExpect(jsonPath("$.data[0].id", is(1)))
+        .andExpect(jsonPath("$.data[1].id", is(3)))
+        .andExpect(jsonPath("$.data[2].id", is(2)));
   }
 }
