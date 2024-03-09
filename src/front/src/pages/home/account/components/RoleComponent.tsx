@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { ApiRole } from "../../../../conf/userController";
-import { Grid, MenuItem, Paper, Select } from "@mui/material";
-import { englishRoleToFrench } from "../../../../sharedComponents/NavBar";
+import {useEffect, useState} from "react";
+import {ApiRole} from "../../../../conf/userController";
+import {Grid, MenuItem, Paper, Select, Typography} from "@mui/material";
+import {englishRoleToFrench} from "../../../../sharedComponents/NavBar";
 
 
 function RoleComponent(props: {
@@ -24,7 +24,7 @@ function RoleComponent(props: {
         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid xs={3} item>
-                    <h4>Rôle : </h4>
+                    <Typography variant={"h6"}>Rôle : </Typography>
                 </Grid>
                 <Grid xs={9} item>
                     <Select
@@ -44,7 +44,6 @@ function RoleComponent(props: {
                                 {englishRoleToFrench(role)}
                             </MenuItem>
                         )})}
-                        
                     </Select>
                 </Grid>
             </Grid>

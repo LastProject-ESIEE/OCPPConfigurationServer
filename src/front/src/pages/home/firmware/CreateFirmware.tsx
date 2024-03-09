@@ -11,6 +11,8 @@ import {
 } from "../../../conf/FirmwareController";
 import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectItemsList";
 import {SkeletonFirmware} from "./components/SkeletonFirmware";
+import {useNavigate} from "react-router";
+import {wsManager} from "../Home";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -29,6 +31,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
     const [typeAllowedList, setTypeAllowedList] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [selectedItems, setSelectedItems] = useState<KeyValueItem<TypeAllowed>[]>([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Fetch the firmware
     useEffect(() => {
@@ -140,11 +143,41 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                     }
                                                     // If id is defined then it's a firmware update
                                                     if (props.id) {
-                                                        updateFirmware(props.id, firmware)
+                                                        updateFirmware(props.id, firmware).then(value => {
+                                                            if (value) {
+                                                                wsManager.emitNotification({
+                                                                    type: "SUCCESS",
+                                                                    title: "Succès ",
+                                                                    content: "Le firmware a été créé."
+                                                                });
+                                                                navigate("/home/firmware");
+                                                            } else {
+                                                                wsManager.emitNotification({
+                                                                    type: "ERROR",
+                                                                    title: "Erreur ",
+                                                                    content: "Le firmware n'a pas pu être créé."
+                                                                })
+                                                            }
+                                                        })
                                                         return
                                                     }
                                                     // Otherwise it's a firmware creation
-                                                    postCreateFirmware(firmware)
+                                                    postCreateFirmware(firmware).then(value => {
+                                                        if (value) {
+                                                            wsManager.emitNotification({
+                                                                type: "SUCCESS",
+                                                                title: "Succès ",
+                                                                content: "Le firmware a été créé."
+                                                            });
+                                                            navigate("/home/firmware");
+                                                        } else {
+                                                            wsManager.emitNotification({
+                                                                type: "ERROR",
+                                                                title: "Erreur ",
+                                                                content: "Le firmware n'a pas pu être créé."
+                                                            })
+                                                        }
+                                                    })
                                                 }
                                             }>Valider</Button>
                                     </Box>
