@@ -16,6 +16,8 @@ import {
 import SelectItemsList, {KeyValueItem} from '../../../sharedComponents/SelectItemsList';
 import {SkeletonConfiguration} from "./components/SkeletonConfiguration";
 import BackButton from '../../../sharedComponents/BackButton';
+import {useNavigate} from "react-router";
+import {wsManager} from "../Home";
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -29,6 +31,7 @@ function CreateConfig(props: { id?: number }) {
     const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     function check(): boolean {
         setErrorState({
@@ -116,8 +119,6 @@ function CreateConfig(props: { id?: number }) {
             // If props.id is defined then it's an update
             getConfiguration(props.id).then(result => {
                 if (!result) {
-                    console.log("Erreur lors de la récupération de la configuration.")
-                    //setError("Erreur lors de la récupération de la configuration.")
                     return
                 }
                 let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => ({
@@ -166,8 +167,28 @@ function CreateConfig(props: { id?: number }) {
                         </Grid>
                         <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
                             {/* TODO : fixer le bouton en bas */}
-                            <Button sx={{borderRadius: 28}} onClick={handleSubmit} variant="contained"
-                                    color="primary">Valider</Button>
+                            <Button
+                                sx={{borderRadius: 28}}
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                    if (!check()) {
+                                        wsManager.emitNotification({
+                                            type: "SUCCESS",
+                                            title: "Succès ",
+                                            content: "La configuration a été créée."
+                                        });
+                                        navigate("/home/configuration");
+                                    } else {
+                                        wsManager.emitNotification({
+                                            type: "ERROR",
+                                            title: "Erreur ",
+                                            content: "La configuration n'a pas pu être créée."
+                                        })
+                                    }
+                                    handleSubmit();
+                                }}
+                            >Valider</Button>
                         </Box>
                     </>
                 )}

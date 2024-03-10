@@ -1,7 +1,7 @@
-import Box from "@mui/material/Box";
 import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
+import {wsManager} from "../Home";
 
 function Account() {
     const [user, setUser] = useState<any>(null);
@@ -9,8 +9,6 @@ function Account() {
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         fetch("/api/user/me")
@@ -57,14 +55,20 @@ function Account() {
                     setOldPassword("");
                     setPassword1("");
                     setPassword2("");
-                    setSuccessMessage("Mot de passe mis à jour avec succès.");
-                    setErrorMessage("");
+                    wsManager.emitNotification({
+                        type: "SUCCESS",
+                        title: "Succès ",
+                        content: "Le mot de passe a été mis à jour."
+                    });
                 } else {
-                    setErrorMessage("Les conditions du mot de passe ne sont pas respectées.");
-                    setSuccessMessage("");
+                    wsManager.emitNotification({
+                        type: "ERROR",
+                        title: "Erreur ",
+                        content: "Le mot de passe n'a pas pu être modifié. Nouveau mot de passe non conforme ou mauvais ancien mot de passe de l'utilisateur."
+                    })
                 }
             }).catch(error => {
-                setErrorMessage("Erreur lors de la réinitialisation du mot de passe.");
+                console.error("Error : " + error);
             });
         }
     }
@@ -221,23 +225,6 @@ function Account() {
                             </Button>
                         </Grid>
                     </Grid>
-                </Grid>
-                {/* TODO : Change with the toast later and use the validatePassword method */}
-                <Grid xs={12} md={12}>
-                    <Box style={{
-                        fontSize: "1em",
-                        textAlign: "center",
-                        marginTop: "20px"
-                    }}>
-                        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-                    </Box>
-                    <Box style={{
-                        fontSize: "1em",
-                        textAlign: "center",
-                        marginTop: "20px"
-                    }}>
-                        {successMessage && <div style={{ color: 'green' }}>{successMessage}</div>}
-                    </Box>
                 </Grid>
             </Grid>
         </Container>
