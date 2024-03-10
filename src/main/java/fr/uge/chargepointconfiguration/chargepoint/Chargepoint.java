@@ -86,7 +86,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Column(name = "step_status", nullable = false,
           columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
-  private StatusProcess statusProcess = StatusProcess.PENDING;
+  private StatusProcess status = StatusProcess.PENDING;
 
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(
@@ -108,7 +108,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
    * @param error                   The error message in case of a failure.
    * @param state                   If the chargepoint is disconnected (false) or connected (true).
    * @param step                    {@link Step}.
-   * @param statusProcess           {@link StatusProcess}.
+   * @param status           {@link StatusProcess}.
    */
   public Chargepoint(String serialNumberChargepoint,
                      String type,
@@ -120,7 +120,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
                      String error,
                      boolean state,
                      Step step,
-                     StatusProcess statusProcess) {
+                     StatusProcess status) {
     this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
     this.type = Objects.requireNonNull(type);
     this.constructor = Objects.requireNonNull(constructor);
@@ -130,7 +130,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     this.error = Objects.requireNonNull(error);
     this.state = state;
     this.step = Objects.requireNonNull(step);
-    this.statusProcess = Objects.requireNonNull(statusProcess);
+    this.status = Objects.requireNonNull(status);
     this.configuration = Objects.requireNonNull(configuration);
   }
 
@@ -157,7 +157,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     this.clientId = Objects.requireNonNull(clientId);
     this.serverAddress = Objects.requireNonNull(serverAddress);
     this.error = Objects.requireNonNull(error);
-    this.configuration = Objects.requireNonNull(configuration);
+    this.configuration = configuration;
   }
 
   /**
@@ -253,13 +253,13 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     this.step = step;
   }
 
-  public StatusProcess getStatusProcess() {
-    return statusProcess;
+  public StatusProcess getStatus() {
+    return status;
   }
 
-  public void setStatusProcess(StatusProcess statusProcess) {
+  public void setStatus(StatusProcess statusProcess) {
     updateLastUpdate();
-    this.statusProcess = statusProcess;
+    this.status = statusProcess;
   }
 
   private void updateLastUpdate() {
@@ -276,16 +276,16 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     }
     Chargepoint that = (Chargepoint) o;
     return id == that.id
-            && state == that.state
-            && Objects.equals(serialNumberChargepoint, that.serialNumberChargepoint)
-            && Objects.equals(type, that.type) && Objects.equals(constructor, that.constructor)
-            && Objects.equals(clientId, that.clientId)
-            && Objects.equals(serverAddress, that.serverAddress)
-            && Objects.equals(lastUpdate, that.lastUpdate)
-            && Objects.equals(error, that.error)
-            && step == that.step
-            && statusProcess == that.statusProcess
-            && Objects.equals(configuration, that.configuration);
+           && state == that.state
+           && Objects.equals(serialNumberChargepoint, that.serialNumberChargepoint)
+           && Objects.equals(type, that.type) && Objects.equals(constructor, that.constructor)
+           && Objects.equals(clientId, that.clientId)
+           && Objects.equals(serverAddress, that.serverAddress)
+           && Objects.equals(lastUpdate, that.lastUpdate)
+           && Objects.equals(error, that.error)
+           && step == that.step
+           && status == that.status
+           && Objects.equals(configuration, that.configuration);
   }
 
   @Override
@@ -300,26 +300,26 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
             error,
             state,
             step,
-            statusProcess,
+            status,
             configuration);
   }
 
   @Override
   public String toString() {
     return "Chargepoint{"
-            + "id=" + id
-            + ", serialNumberChargepoint='" + serialNumberChargepoint + '\''
-            + ", type='" + type + '\''
-            + ", constructor='" + constructor + '\''
-            + ", clientId='" + clientId + '\''
-            + ", serverAddress='" + serverAddress + '\''
-            + ", lastUpdate=" + lastUpdate
-            + ", error='" + error + '\''
-            + ", state=" + state
-            + ", step=" + step
-            + ", status=" + statusProcess
-            + ", configuration=" + configuration
-            + '}';
+           + "id=" + id
+           + ", serialNumberChargepoint='" + serialNumberChargepoint + '\''
+           + ", type='" + type + '\''
+           + ", constructor='" + constructor + '\''
+           + ", clientId='" + clientId + '\''
+           + ", serverAddress='" + serverAddress + '\''
+           + ", lastUpdate=" + lastUpdate
+           + ", error='" + error + '\''
+           + ", state=" + state
+           + ", step=" + step
+           + ", status=" + status
+           + ", configuration=" + configuration
+           + '}';
   }
 
   @Override
@@ -329,7 +329,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
             error,
             state,
             step,
-            statusProcess
+            status
     );
     return new ChargepointDto(
             id,
