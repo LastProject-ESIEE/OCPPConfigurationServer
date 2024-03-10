@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.chargepoint;
 
 import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +64,13 @@ public class ChargepointService {
   /**
    * Search for chargepoints with a pagination.
    *
+   * @param request the request used to search
    * @param pageable         The page requested
-   * @param clientIdContains the pattern for ClientId
    * @return the list of corresponding chargepoint
    */
-  public List<Chargepoint> search(PageRequest pageable, String clientIdContains) {
-    return chargepointRepository
-        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageable, clientIdContains)
+  public List<Chargepoint> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+    return chargepointRepository.findAll(condition, pageable)
         .stream().toList();
   }
 

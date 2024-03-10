@@ -1,9 +1,11 @@
-import {Box, Button, Grid} from "@mui/material";
+import {Button, Grid} from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import BackButton from "../../../sharedComponents/BackButton";
-import { ApiRole, createNewUser } from "../../../conf/userController";
+import {ApiRole, createNewUser} from "../../../conf/userController";
+import {wsManager} from "../Home";
+import {useNavigate} from "react-router";
 
 function AddAccount() {
     const [lastName, setLastName] = useState("");
@@ -13,8 +15,7 @@ function AddAccount() {
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
-    const [toast, setToast] = useState(false); // TODO Edit with the real toast later
-    const [display, setDisplay] = useState(false); // TODO Edit with the real toast later
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (
@@ -82,28 +83,26 @@ function AddAccount() {
                             }
                             let returnValue = createNewUser(user)
                             returnValue.then(value => {
-                                setToast(value)
-                                setDisplay(true)
+                                if (value) {
+                                    wsManager.emitNotification({
+                                        type: "SUCCESS",
+                                        title: "Succès ",
+                                        content: "L'utilisateur a été créé."
+                                    });
+                                    navigate("/home/account");
+                                } else {
+                                    wsManager.emitNotification({
+                                        type: "ERROR",
+                                        title: "Erreur ",
+                                        content: "L'utilisateur n'a pas pu être créé."
+                                    })
+                                }
                             })
                         }
                     }
                 >
                     Créer
                 </Button>
-                </Grid>
-                <Grid item xs={12} sx={{ml: "35%", mr: "35%", mt: "1%", textAlign: "center"}}>
-                    <Box>
-                        {toast && display && (
-                            // TODO : Mettre le toast ici
-                            <div style={{color: "green"}}>L'utilisateur a été créé.</div>
-                            ) 
-                        }
-                        {!toast &&  display && (
-                            // TODO : Mettre le toast ici 
-                            <div style={{color: "red"}}>L'utilisateur existe déjà.</div>
-                            )                         
-                        }
-                    </Box>
                 </Grid>
             </Grid>
         </Grid>

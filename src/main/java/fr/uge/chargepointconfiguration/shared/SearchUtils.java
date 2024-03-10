@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.shared;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -16,7 +17,7 @@ public class SearchUtils {
    * Here are some examples :
    * <pre>
    *   - key:`value`
-   *   - name:`John`,age:`18`
+   *   - name:`John`,age<`18`
    * </pre><br>
    * Each given parameter must match the name of an attribute of the given entity.<br>
    *
@@ -49,14 +50,36 @@ public class SearchUtils {
 
   private static <T> Specification<T> getSpecification(SearchCriteria criteria) {
     return (root, query, builder) -> switch (criteria.operation()) {
-      case MORE_THAN -> builder.greaterThanOrEqualTo(
-          root.get(criteria.key()), criteria.value().toString());
-      case LESS_THAN -> builder.lessThanOrEqualTo(
-          root.get(criteria.key()), criteria.value().toString());
+      case MORE_THAN -> {
+        if (root.get(criteria.key()).getJavaType() == LocalDateTime.class) {
+          yield builder.greaterThanOrEqualTo(
+              root.get(criteria.key()).as(LocalDateTime.class),
+              LocalDateTime.parse(criteria.value().toString())
+          );
+        } else {
+          yield builder.greaterThanOrEqualTo(
+              root.get(criteria.key()), criteria.value().toString());
+        }
+      }
+      case LESS_THAN -> {
+        if (root.get(criteria.key()).getJavaType() == LocalDateTime.class) {
+          yield builder.lessThanOrEqualTo(
+              root.get(criteria.key()).as(LocalDateTime.class),
+              LocalDateTime.parse(criteria.value().toString())
+          );
+        } else {
+          yield builder.lessThanOrEqualTo(
+              root.get(criteria.key()), criteria.value().toString());
+        }
+      }
       case CONTAINS -> {
         if (root.get(criteria.key()).getJavaType() == String.class) {
-          yield builder.like(
-              root.get(criteria.key()), "%" + criteria.value() + "%");
+          yield builder.like(root.get(criteria.key()), "%" + criteria.value() + "%");
+        } else if (root.get(criteria.key()).getJavaType() == LocalDateTime.class) {
+          yield builder.equal(
+              root.get(criteria.key()).as(LocalDateTime.class),
+              LocalDateTime.parse(criteria.value().toString())
+          );
         } else {
           yield builder.equal(root.get(criteria.key()), criteria.value());
         }

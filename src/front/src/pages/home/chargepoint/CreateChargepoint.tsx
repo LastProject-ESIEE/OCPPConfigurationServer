@@ -12,6 +12,8 @@ import {
 } from "../../../conf/chargePointController";
 import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
+import {useNavigate} from "react-router";
+import {wsManager} from "../Home";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
 
@@ -65,6 +67,7 @@ function CreateChargepoint(props: { id?: number }) {
     const [clientId, setClientId] = useState<string>("")
     const [configuration, setConfiguration] = useState<Configuration>(noConfig);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const [chargepoint, setChargepoint] = useState<CreateChargepointDto>({
         serialNumber: serialNumber,
@@ -201,8 +204,29 @@ function CreateChargepoint(props: { id?: number }) {
                                         }}
                                         pt={2}
                                     >
-                                        <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                                onClick={handleSubmit}>Valider</Button>
+                                        <Button
+                                            sx={{borderRadius: 28}}
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => {
+                                                let returnValue = handleSubmit();
+                                                returnValue.then(value => {
+                                                    if (value) {
+                                                        wsManager.emitNotification({
+                                                            type: "SUCCESS",
+                                                            title: "Succès ",
+                                                            content: "La borne a été créée."
+                                                        });
+                                                        navigate("/home/chargepoint");
+                                                    } else {
+                                                        wsManager.emitNotification({
+                                                            type: "ERROR",
+                                                            title: "Erreur ",
+                                                            content: "La borne n'a pas pu être créée."
+                                                        });
+                                                    }
+                                                })
+                                            }}>Valider</Button>
                                     </Box>
                                 </>
                             )}

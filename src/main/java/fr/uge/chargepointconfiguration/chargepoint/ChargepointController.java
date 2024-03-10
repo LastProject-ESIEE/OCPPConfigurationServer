@@ -100,28 +100,28 @@ public class ChargepointController {
       })
   @GetMapping(value = "/search")
   @PreAuthorize("hasRole('VISUALIZER')")
-  public PageDto<ChargepointDto> searchChargepoints(
+  public PageDto<ChargepointDto> searchWithPage(
       @Parameter(description = "Desired size of the requested page.")
       @RequestParam(required = false, defaultValue = "10") int size,
 
       @Parameter(description = "Requested page.")
       @RequestParam(required = false, defaultValue = "0") int page,
 
-      @Parameter(description = "Pattern to filter the client id with.")
-      @RequestParam(required = false, defaultValue = "") String clientIdContains,
-
       @Parameter(description =
           "The column you want to sort by. Must be an attribute of the chargepoint.")
       @RequestParam(required = false, defaultValue = "id") String sortBy,
 
       @Parameter(description = "The order of the sort. must be \"asc\" or \"desc\"")
-      @RequestParam(required = false, defaultValue = "asc") String order
+      @RequestParam(required = false, defaultValue = "asc") String order,
+
+      @Parameter(description = "The request used to search.")
+      @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = chargepointService.countTotal();
 
     var data = chargepointService.search(
-            PageRequest.of(page, size, Sort.by(Sort.Order.by(order).getDirection(), sortBy)),
-            clientIdContains
+            request,
+            PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         )
         .stream()
         .map(Chargepoint::toDto)

@@ -1,6 +1,7 @@
 package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -96,10 +97,12 @@ public class ConfigurationService {
   /**
    * Search for {@link Configuration} with a pagination.
    *
+   * @param request the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link Configuration}
    */
-  public List<Configuration> getPage(PageRequest pageable) {
-    return configurationRepository.findAllByOrderByIdDesc(pageable).stream().toList();
+  public List<Configuration> search(String request, PageRequest pageable) {
+    var condition = SearchUtils.computeSpecification(request, Configuration.class);
+    return configurationRepository.findAll(condition, pageable).stream().toList();
   }
 }
