@@ -1,7 +1,7 @@
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import {
-  DEFAULT_FILTER_SELECT_VALUE,
+    DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
     PageRequest,
@@ -126,7 +126,12 @@ function ChargePointTable() {
 
     // Fetch first charge point page on component load
     useEffect(() => {
-      searchElements<ChargePoint>("/api/chargepoint/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<ChargePoint> | undefined) => {
+      searchElements<ChargePoint>("/api/chargepoint/search",
+          {
+              page: 0,
+              size: PAGE_SIZE,
+              sort: { field: "lastUpdate", order: "desc" }
+          }).then((result: PageRequest<ChargePoint> | undefined) => {
         if(!result){
           setError("Erreur lors de la récupération des bornes.")
           return
@@ -145,7 +150,7 @@ function ChargePointTable() {
       formatter: (chargePoint) => {
         let color = chargePoint.status.state ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
         return (
-          <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
+          <Box key={"box-chargepoint-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
               <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'edit/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
                   <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>

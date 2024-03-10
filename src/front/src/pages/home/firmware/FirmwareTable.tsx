@@ -66,7 +66,12 @@ function FirmwareTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchElements<Firmware>("/api/firmware/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<Firmware> | undefined) => {
+        searchElements<Firmware>("/api/firmware/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: { field: "version", order: "desc" }
+            }).then((result: PageRequest<Firmware> | undefined) => {
             if(!result){
                 setError("Erreur lors de la récupération des firmwares.")
                 return
@@ -91,7 +96,7 @@ function FirmwareTable() {
             })
 
             return (
-                <Box key={"box-configuration-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
+                <Box key={"box-firmware-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
                     <Link key={"firmware-edit-path-" + firmware.id} to={{pathname: 'edit/' + firmware.id}}
                           style={{textDecoration: 'none', paddingTop: 10}}>
                         <ListItemButton style={{

@@ -65,7 +65,12 @@ function ConfigurationTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchElements<Configuration>("/api/configuration/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<Configuration> | undefined) => {
+        searchElements<Configuration>("/api/configuration/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: { field: "lastEdit", order: "desc" }
+            }).then((result: PageRequest<Configuration> | undefined) => {
             if(!result){
                 setError("Erreur lors de la récupération des configurations.")
                 return
@@ -85,7 +90,7 @@ function ConfigurationTable() {
         formatter: (configuration) => {
             return (
                 <Box key={"box-configuration-edit-path-" + configuration.id} paddingTop={1} maxWidth={"true"}>
-                    <Link key={"chargepoint-edit-path-" + configuration.id} to={{pathname: 'edit/' + configuration.id}}
+                    <Link key={"configuration-edit-path-" + configuration.id} to={{pathname: 'edit/' + configuration.id}}
                           style={{textDecoration: 'none', paddingTop: 10}}>
                         <ListItemButton style={{
                             maxWidth: "true",

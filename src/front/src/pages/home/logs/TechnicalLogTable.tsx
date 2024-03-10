@@ -1,9 +1,4 @@
-import {
-    Box,
-    Grid,
-    Tooltip,
-    Typography
-} from "@mui/material";
+import { Box, Grid, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
     InfinityScrollItemsTable,
@@ -76,7 +71,12 @@ function TechnicalLogTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchElements<TechnicalLog>("/api/log/technical/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<TechnicalLog> | undefined) => {
+        searchElements<TechnicalLog>("/api/log/technical/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: { field: 'date', order: "desc" }
+            }).then((result: PageRequest<TechnicalLog> | undefined) => {
             if(!result){
                 setError("Erreur lors de la récupération des logs techniques.")
                 return

@@ -7,7 +7,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { apiRoleToFrench, ApiRole, User, frenchToEnglishRole, FrenchRole } from "../../../conf/userController";
+import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
 import { searchElements } from "../../../conf/backendController";
 
@@ -85,8 +85,12 @@ function UserTable() {
 
 
     useEffect(() => {
-        searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<User> | undefined) => {
-            if(!result){
+        searchElements<User>("/api/user/search", {
+            page: 0,
+            size: PAGE_SIZE,
+            sort: {field: 'lastName', order: "asc"}
+        }).then((result: PageRequest<User> | undefined) => {
+            if (!result) {
                 setError("Erreur lors de la récupération des utilisateurs.")
                 return
             }
@@ -145,7 +149,13 @@ function UserTable() {
         formatter: (user, index) => {
             return (
                 <Box key={"box-user-table-entry-" + index} margin={1} maxWidth={"true"}>
-                    <Box style={{maxWidth: "true", margin: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                    <Box style={{
+                        maxWidth: "true",
+                        margin: 3,
+                        borderRadius: 50,
+                        color: 'black',
+                        backgroundColor: '#E1E1E1'
+                    }}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                             <Grid item xs={userTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.lastName}</Typography>
@@ -166,31 +176,34 @@ function UserTable() {
                                         marginTop: 10,
                                         marginBottom: 10
                                     }}
-                                    onChange={event => {onChangeEvent(event, user)}}
+                                    onChange={event => {
+                                        onChangeEvent(event, user)
+                                    }}
                                     fullWidth={true} size="small" variant="standard">
 
                                     {userRoleList && userRoleList
                                         .map(role => {
-                                            return (
-                                                <MenuItem
-                                                    key={"menuItem" + role.toString()}
-                                                    value={role}
-                                                    disabled={role === user.role}
-                                                    style={{
-                                                        border: 0
-                                                    }}
-                                                >
-                                                    {apiRoleToFrench(role)}
-                                                </MenuItem>
-                                            )
-                                        }
-                                    )}
+                                                return (
+                                                    <MenuItem
+                                                        key={"menuItem" + role.toString()}
+                                                        value={role}
+                                                        disabled={role === user.role}
+                                                        style={{
+                                                            border: 0
+                                                        }}
+                                                    >
+                                                        {apiRoleToFrench(role)}
+                                                    </MenuItem>
+                                                )
+                                            }
+                                        )}
                                 </Select>
                             </Grid>
-                            <Grid item xs={userTableColumns[4].size} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
+                            <Grid item xs={userTableColumns[4].size} maxWidth={"true"} justifyContent={"center"}
+                                  textAlign={"center"}>
                                 <DeleteUserModalComponent
-                                    user={user} 
-                                    enabled={user.id === me?.id} 
+                                    user={user}
+                                    enabled={user.id === me?.id}
                                     setTableData={setTableData}
                                     setError={setError}
                                     setHasMore={setHasMore}
@@ -203,8 +216,13 @@ function UserTable() {
         },
         fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchElements<User>("/api/user/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<User> | undefined) => {
-                if(!result){
+            searchElements<User>("/api/user/search", {
+                page: nextPage,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<User> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
                 }
@@ -216,8 +234,13 @@ function UserTable() {
         onFiltering: (filters, sort) => {
             // Reset page and search
             setCurrentPage(0)
-            searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<User> | undefined) => {
-                if(!result){
+            searchElements<User>("/api/user/search", {
+                page: 0,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<User> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
                 }

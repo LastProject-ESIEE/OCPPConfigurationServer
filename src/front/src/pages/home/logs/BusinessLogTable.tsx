@@ -89,7 +89,12 @@ function BusinessLogTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchElements<BusinessLog>("/api/log/business/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<BusinessLog> | undefined) => {
+        searchElements<BusinessLog>("/api/log/business/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: { field: 'date', order: "desc" }
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
             if(!result){
                 setError("Erreur lors de la récupération des logs métier.")
                 return
