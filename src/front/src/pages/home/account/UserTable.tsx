@@ -39,11 +39,14 @@ const userTableColumns: TableColumnDefinition[] = [
     },
     {
         title: "Mail",
+        size: 3.5,
         filter: {
             apiField: "email",
             filterType: "input"
         },
-        size: 3.5
+        sort: {
+            apiField: "email",
+        }
     },
     {
         title: "Rôle",
@@ -139,9 +142,9 @@ function UserTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        formatter: (user) => {
+        formatter: (user, index) => {
             return (
-                <Box key={"box-configuration-edit-path-" + user.id} margin={1} maxWidth={"true"}>
+                <Box key={"box-user-table-entry-" + index} margin={1} maxWidth={"true"}>
                     <Box style={{maxWidth: "true", margin: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                             <Grid item xs={userTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>

@@ -1,4 +1,4 @@
-import { Box, Grid, MenuItem,Skeleton, Select, TextField, Typography, Button, IconButton } from "@mui/material";
+import { Box, Grid, MenuItem,Skeleton, Select, TextField, Typography, Button } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { FilterOrder, SearchFilter, SearchSort, TableSortType } from "../conf/backendController";
 import { useState } from "react";
@@ -82,16 +82,17 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
         <Box maxWidth={"true"} paddingTop={1} marginLeft={2} marginBottom={2}>
             <Box marginRight={2} marginBottom={1}>
                 {/*Display table columns*/}
-                <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"} >
+                <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"}>
                     {props.columns.map(column => {
                         return (
-                            <Grid xs={column?.size ?? 12/props.columns.length} item key={"table-header-column-" + column.title}>
+                            <Grid xs={column?.size ?? 12/props.columns.length} item key={"table-header-column-" + column.title} overflow={"hidden"}>
                                 <Grid container flexDirection={"column"} justifyContent={"center"}>
                                     <Grid item>
                                         <Grid container justifyContent={"center"}>
                                             <Grid item>
                                                 {column.title !== "" && (
                                                 <Button
+                                                    style={{height: 30}}
                                                     variant="text" 
                                                     onClick={() => {
                                                         if(column.sort){
@@ -102,23 +103,22 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                                                 props.onFiltering(filters, {field: column.sort.apiField, order: order})
                                                             }
                                                         }
-                                                    }}>
+                                                    }}
+                                                    >
                                                     <Grid container wrap="nowrap" flexDirection={"row"} justifyContent={"center"}>
                                                         <Grid item>
-                                                            <Typography variant="h6">{column.title}</Typography>
+                                                            <Typography noWrap variant="body1">{column.title}</Typography>
                                                         </Grid>
-                                                        <Grid item>
-                                                                {column.sort && sortField === column.sort.apiField && (
-                                                                    <Box>
-                                                                        {sortOrder === "asc" && (
-                                                                            <ArrowDropDownIcon/>
-                                                                        )}
-                                                                        {sortOrder === "desc" && (
-                                                                            <ArrowDropUpIcon/>
-                                                                        )}
-                                                                    </Box>
+                                                        {column.sort && sortField === column.sort.apiField && (
+                                                            <Grid item >
+                                                                {sortOrder === "asc" && (
+                                                                    <ArrowDropDownIcon fontSize="small"/>
                                                                 )}
-                                                        </Grid>
+                                                                {sortOrder === "desc" && (
+                                                                    <ArrowDropUpIcon fontSize="small"/>
+                                                                )}
+                                                            </Grid>
+                                                        )}
                                                     </Grid>
                                                 </Button>
                                                 )}
@@ -193,6 +193,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
 
 function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (value: string, order?: FilterOrder) => void}){
     const [filterValue, setFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
+    const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
     const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
     return (
         <Grid container maxWidth={"true"} justifyContent={"center"}>
@@ -203,11 +204,17 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                 size="small"
                 onKeyDown={event => {
                     if(event.key === 'Enter'){
-                        props.onFilterValidate(filterValue)
+                        if(previousValue !== filterValue){
+                            props.onFilterValidate(filterValue)
+                            setPreviousValue(filterValue)
+                        }
                     }
                 }}
                 onBlur={() => {
-                    props.onFilterValidate(filterValue)
+                    if(previousValue !== filterValue){
+                        props.onFilterValidate(filterValue)
+                        setPreviousValue(filterValue)
+                    }
                 }}
                 onChange={event => {
                     setFilterValue(event.target.value)

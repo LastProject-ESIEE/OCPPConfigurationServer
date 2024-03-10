@@ -14,6 +14,7 @@ import {
 import { searchTechnicalLog, TechnicalLog } from "../../../conf/technicalLogController";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { searchElements } from "../../../conf/backendController";
 
 const PAGE_SIZE = 30; // Max items displayed in the technical log table
 
@@ -21,24 +22,46 @@ const technicalLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
         size: 2,
-        /*
         filter: {
-          apiField: "containsTitle",
-          onChange: value => console.log("Filtering on : " + value)
+            apiField: "date",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "date",
         }
-        */
     },
     {
         title: "Composant",
         size: 3,
+        filter: {
+            apiField: "component",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "component",
+        }
     },
     {
         title: "Criticité",
-        size: 2
+        size: 2,
+        filter: {
+            apiField: "level",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "level",
+        }
     },
     {
         title: "Log",
         size: 4.5,
+        filter: {
+            apiField: "completeLog",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "completeLog",
+        }
     },
     {
         title: "",
@@ -70,17 +93,17 @@ function TechnicalLogTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        formatter: (technicalLog) => {
+        formatter: (technicalLog, index) => {
             return (
-                <Box key={"box-configuration-edit-path-" + technicalLog.id} paddingTop={1} maxWidth={"true"}>
+                <Box key={"box-technical-log-" + index} paddingTop={1} maxWidth={"true"}>
                     <LogLineItemVMamar technicalLog={technicalLog}/>
                 </Box>
             )
         },
-        fetchData: () => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchTechnicalLog(PAGE_SIZE, nextPage).then((result: PageRequest<TechnicalLog> | undefined) => {
-                if (!result) {
+            searchElements<TechnicalLog>("/api/log/technical/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<TechnicalLog> | undefined) => {
+                if(!result){
                     setError("Erreur lors de la récupération des logs techniques.")
                     return
                 }
@@ -89,6 +112,18 @@ function TechnicalLogTable() {
             });
             setCurrentPage(nextPage)
         },
+        onFiltering: (filters, sort) => {
+            // Reset page and search
+            setCurrentPage(0)
+            searchElements<TechnicalLog>("/api/log/technical/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<TechnicalLog> | undefined) => {
+                if(!result){
+                    setError("Erreur lors de la récupération des logs techniques.")
+                    return
+                }
+                setTableData(result.data)
+                setHasMore(result.total > PAGE_SIZE)
+            });
+        }
     }
 
     return InfinityScrollItemsTable(props)

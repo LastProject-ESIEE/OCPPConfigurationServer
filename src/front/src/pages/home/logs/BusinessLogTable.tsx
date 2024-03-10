@@ -9,6 +9,7 @@ import {
 import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import { searchElements } from "../../../conf/backendController";
 
 const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 
@@ -16,32 +17,64 @@ const businessLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
         size: 2,
-        /*
         filter: {
-          apiField: "containsTitle",
-          onChange: value => console.log("Filtering on : " + value)
+            apiField: "date",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "date",
         }
-        */
     },
     {
         title: "Utilisateur",
         size: 1,
+        filter: {
+            apiField: "",
+            filterType: "input",
+            disable: true,
+        }
     },
     {
         title: "Borne",
-        size: 2
+        size: 2,
+        filter: {
+            apiField: "",
+            filterType: "input",
+            disable: true,
+        }
     },
     {
         title: "Catégorie",
         size: 1,
+        filter: {
+            apiField: "category",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "category",
+        }
     },
     {
         title: "Criticité",
-        size: 1
+        size: 1,
+        filter: {
+            apiField: "level",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "level",
+        }
     },
     {
         title: "Log",
         size: 4.5,
+        filter: {
+            apiField: "completeLog",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "completeLog",
+        }
     },
     {
         title: "",
@@ -73,17 +106,17 @@ function BusinessLogTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        formatter: (businessLog) => {
+        formatter: (businessLog, index) => {
             return (
-                <Box key={"box-configuration-edit-path-" + businessLog.id} paddingTop={1} maxWidth={"true"}>
+                <Box key={"box-businesslog-" + index} paddingTop={1} maxWidth={"true"}>
                     <LogLineItemVMamar businessLog={businessLog}/>
                 </Box>
             )
         },
-        fetchData: () => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchBusinessLog(PAGE_SIZE, nextPage).then((result: PageRequest<BusinessLog> | undefined) => {
-                if (!result) {
+            searchElements<BusinessLog>("/api/log/business/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<BusinessLog> | undefined) => {
+                if(!result){
                     setError("Erreur lors de la récupération des logs métier.")
                     return
                 }
@@ -92,6 +125,18 @@ function BusinessLogTable() {
             });
             setCurrentPage(nextPage)
         },
+        onFiltering: (filters, sort) => {
+            // Reset page and search
+            setCurrentPage(0)
+            searchElements<BusinessLog>("/api/log/business/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<BusinessLog> | undefined) => {
+                if(!result){
+                    setError("Erreur lors de la récupération des logs métier.")
+                    return
+                }
+                setTableData(result.data)
+                setHasMore(result.total > PAGE_SIZE)
+            });
+        }
     }
 
     return InfinityScrollItemsTable(props)
