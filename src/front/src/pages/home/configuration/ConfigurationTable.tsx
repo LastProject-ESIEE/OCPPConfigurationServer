@@ -7,7 +7,7 @@ import {
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Configuration, searchConfiguration } from "../../../conf/configurationController";
+import { Configuration } from "../../../conf/configurationController";
 import { searchElements } from "../../../conf/backendController";
 
 
@@ -65,8 +65,8 @@ function ConfigurationTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchConfiguration(PAGE_SIZE).then((result: PageRequest<Configuration> | undefined) => {
-            if (!result) {
+        searchElements<Configuration>("/api/configuration/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<Configuration> | undefined) => {
+            if(!result){
                 setError("Erreur lors de la récupération des configurations.")
                 return
             }

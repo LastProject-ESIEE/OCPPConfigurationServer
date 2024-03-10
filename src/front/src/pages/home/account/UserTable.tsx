@@ -7,7 +7,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { apiRoleToFrench, ApiRole, searchUser, User, frenchToEnglishRole, FrenchRole } from "../../../conf/userController";
+import { apiRoleToFrench, ApiRole, User, frenchToEnglishRole, FrenchRole } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
 import { searchElements } from "../../../conf/backendController";
 
@@ -85,7 +85,7 @@ function UserTable() {
 
 
     useEffect(() => {
-        searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
+        searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<User> | undefined) => {
             if(!result){
                 setError("Erreur lors de la récupération des utilisateurs.")
                 return

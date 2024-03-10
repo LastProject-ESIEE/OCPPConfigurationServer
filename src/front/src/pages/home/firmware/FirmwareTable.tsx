@@ -7,7 +7,7 @@ import {
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Firmware, searchFirmware } from "../../../conf/FirmwareController";
+import { Firmware } from "../../../conf/FirmwareController";
 import { searchElements } from "../../../conf/backendController";
 
 
@@ -66,8 +66,8 @@ function FirmwareTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchFirmware(PAGE_SIZE).then((result: PageRequest<Firmware> | undefined) => {
-            if (!result) {
+        searchElements<Firmware>("/api/firmware/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<Firmware> | undefined) => {
+            if(!result){
                 setError("Erreur lors de la récupération des firmwares.")
                 return
             }

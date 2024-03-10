@@ -11,7 +11,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { searchTechnicalLog, TechnicalLog } from "../../../conf/technicalLogController";
+import { TechnicalLog } from "../../../conf/technicalLogController";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import { searchElements } from "../../../conf/backendController";
@@ -76,8 +76,8 @@ function TechnicalLogTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchTechnicalLog(PAGE_SIZE).then((result: PageRequest<TechnicalLog> | undefined) => {
-            if (!result) {
+        searchElements<TechnicalLog>("/api/log/technical/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<TechnicalLog> | undefined) => {
+            if(!result){
                 setError("Erreur lors de la récupération des logs techniques.")
                 return
             }

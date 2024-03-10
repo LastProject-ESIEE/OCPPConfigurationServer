@@ -7,7 +7,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { ChargePoint, searchChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
+import { ChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
 import { Link } from "react-router-dom";
 import { wsManager } from "../Home";
 import { searchElements } from "../../../conf/backendController";

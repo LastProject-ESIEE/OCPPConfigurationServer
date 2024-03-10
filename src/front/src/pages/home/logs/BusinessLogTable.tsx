@@ -6,7 +6,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
+import { BusinessLog } from "../../../conf/businessLogController";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { searchElements } from "../../../conf/backendController";
@@ -89,8 +89,8 @@ function BusinessLogTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchBusinessLog(PAGE_SIZE).then((result: PageRequest<BusinessLog> | undefined) => {
-            if (!result) {
+        searchElements<BusinessLog>("/api/log/business/search", {page: 0, size: PAGE_SIZE}).then((result: PageRequest<BusinessLog> | undefined) => {
+            if(!result){
                 setError("Erreur lors de la récupération des logs métier.")
                 return
             }

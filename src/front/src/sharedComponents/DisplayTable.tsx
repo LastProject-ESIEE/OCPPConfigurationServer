@@ -9,7 +9,7 @@ export const DEFAULT_FILTER_SELECT_VALUE = "Aucun"
 
 export type TableColumnFilterDefinition = {
     apiField: string,
-    filterType: "input" | "select" | "ordered",
+    filterType: "input" | "select" | "date",
     disable?: boolean, // set if the input is disabled or not, allow to display input without filtering functionality 
     restrictedValues?: string[], // must be set for select input
     apiValueFormatter?: (value: string) => string, // must be set for select input to transform input value to api value
@@ -194,7 +194,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
 function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (value: string, order?: FilterOrder) => void}){
     const [filterValue, setFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
-    const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
+    //const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
     return (
         <Grid container maxWidth={"true"} justifyContent={"center"}>
             {(props.column.filter?.filterType === "input") && (
@@ -246,44 +246,9 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                     )}
             </Select>
             )}
-            {(props.column.filter?.filterType === "ordered") && (
+            {(props.column.filter?.filterType === "date") && (
                 <Box>
-                    <Select
-                        size="small"
-                        variant="outlined"
-                        disabled={props.column.filter.disable}
-                        fullWidth
-                        value={filterOrder}
-                        onChange={event => {
-                            let value: FilterOrder = event.target.value as FilterOrder
-                            if(!value){
-                                console.error("Unrecognized filter order.")
-                                return
-                            }
-                            setFilterOrder(value)
-                            props.onFilterValidate(filterValue, value)
-                        }}
-                    >
-                        <MenuItem value={"="}>{"="}</MenuItem>
-                        <MenuItem value={">"}>{">"}</MenuItem> 
-                        <MenuItem value={"<"}>{"<"}</MenuItem> 
-                    </Select>
-                    <TextField
-                        placeholder={props.column.title}
-                        disabled={props.column.filter.disable}
-                        size="small"
-                        onKeyDown={event => {
-                            if(event.key === 'Enter'){
-                                props.onFilterValidate(filterValue)
-                            }
-                        }}
-                        onBlur={() => {
-                            props.onFilterValidate(filterValue)
-                        }}
-                        onChange={event => {
-                            setFilterValue(event.target.value)
-                        }}
-                    />
+                    
                 </Box>
             )}
         </Grid>
