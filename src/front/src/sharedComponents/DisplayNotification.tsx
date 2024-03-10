@@ -59,22 +59,23 @@ export default function DisplayNotification(props: {open: boolean, onClose: () =
             <Box padding={1}>
                 <Box height={"5vh"}>
                     <Grid container flexDirection={"row"}>
-                    <Grid container xs={10} alignItems={"center"} >
-                        <Grid item overflow={"hidden"}>
-                            <Typography noWrap variant="h5">Historique d'activités :</Typography>
+                        <Grid item xs={10}>
+                            <Grid container alignItems={"center"} >
+                                <Grid item overflow={"hidden"}>
+                                    <Typography noWrap variant="h5">Historique d'activités :</Typography>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid item xs={2} >
-                        <Grid container justifyContent={"right"}>
-                            <Grid item>
-                                <IconButton onClick={() => {props.onClose()}}>
-                                    <CloseIcon/>
-                                </IconButton>
+                        <Grid item xs={2} >
+                            <Grid container justifyContent={"right"}>
+                                <Grid item>
+                                    <IconButton onClick={() => {props.onClose()}}>
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
-                </Grid>
-                
                 </Box>
 
                 <Box height={"88vh"} overflow={"auto"} marginTop={0}>

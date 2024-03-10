@@ -33,7 +33,7 @@ export const buttons: ButtonData[] = [
     },
     {
         roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-        label: "Consulter les bornes",
+        label: "Bornes",
         href: "/chargepoint",
         subButtons: [
             {

@@ -1,24 +1,16 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {useState} from "react";
 import { Grid, MenuItem, Paper, Select } from "@mui/material";
 import { ErrorState } from "../../../../conf/configurationController";
+import { Firmware } from "../../../../conf/FirmwareController";
 
 export default function FirmwareComponent(props: {
-    value: string;
-    setValue: Dispatch<SetStateAction<string>>,
-    errorState: ErrorState
+    current?: Firmware,
+    firmwareList: Firmware[],
+    onSelectionChange: (firmware: Firmware) => void,
+    errorState: ErrorState,
 }) {
-    const [firmwareList, setFirmwareList] = useState<{ id: number, version: string }[]>([]);
+    const [selectedItem, setSelectedItem] = useState<number | undefined>(props.current?.id);
     const backgroundColor = props.errorState.firmware === "" ? 'rgb(249, 246, 251)' : 'rgba(255, 0, 0, 0.2)'; // Replace with your desired colors
-
-    useEffect(() => {
-        const fetchFirmwareList = async () => {
-            const response = await fetch('/api/firmware/all');
-            const data = await response.json();
-            setFirmwareList(data);
-        };
-
-        fetchFirmwareList();
-    }, []);
 
     return (
         <Paper elevation={2} sx={{p: 2, mt: 3, backgroundColor}}>
@@ -28,18 +20,26 @@ export default function FirmwareComponent(props: {
                 </Grid>
                 <Grid xs={7} item>
                     <Select
-                        value={props.value}
+                        value={selectedItem ?? ""}
                         onChange={event => {
-                            props.setValue(event.target.value)
+                            let selection = event.target.value as number
+                            console.log(selection)
+                            if(selection){
+                                let selectedFirmware = props.firmwareList.find(element => element.id === selection)
+                                if(selectedFirmware){
+                                    props.onSelectionChange(selectedFirmware)
+                                    setSelectedItem(selection)
+                                }
+                            }
                         }}
                         fullWidth={true}>
-                        {firmwareList && firmwareList.map((item) => {
+                        {props.firmwareList.map((item, index) => {
                             let selected = false;
-                            if(props.value === item.version){
+                            if(selectedItem === item.id){
                                 selected=true
                             }
                             return (
-                            <MenuItem key={"firmware-"+ item.id} value={item.id} selected={selected}>{item.version}</MenuItem>
+                            <MenuItem key={"firmware-"+ index} value={item.id} selected={selected}>{item.version}</MenuItem>
                         )})}
                     </Select>
                 </Grid>
