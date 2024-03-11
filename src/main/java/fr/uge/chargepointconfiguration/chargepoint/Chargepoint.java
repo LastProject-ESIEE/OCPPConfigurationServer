@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -68,7 +69,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Column(name = "last_update", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp lastUpdate = new Timestamp(System.currentTimeMillis());
+  private LocalDateTime lastUpdate = LocalDateTime.now();
 
   @Column(name = "error", nullable = false, length = 65_535)
   private String error = "";
@@ -111,7 +112,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
                      String constructor,
                      String clientId,
                      Configuration configuration,
-                     Timestamp lastUpdate,
+                     LocalDateTime lastUpdate,
                      String error,
                      boolean state,
                      Step step,
@@ -210,11 +211,11 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     this.error = error;
   }
 
-  public Timestamp getLastUpdate() {
+  public LocalDateTime getLastUpdate() {
     return lastUpdate;
   }
 
-  public void setLastUpdate(Timestamp lastUpdate) {
+  public void setLastUpdate(LocalDateTime lastUpdate) {
     this.lastUpdate = lastUpdate;
   }
 
@@ -246,7 +247,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   }
 
   private void updateLastUpdate() {
-    lastUpdate = new Timestamp(System.currentTimeMillis());
+    lastUpdate = LocalDateTime.now();
   }
 
   @Override
@@ -305,7 +306,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Override
   public ChargepointDto toDto() {
     var statusDto = new StatusDto(
-            lastUpdate,
+            Timestamp.valueOf(lastUpdate),
             error,
             state,
             step,
