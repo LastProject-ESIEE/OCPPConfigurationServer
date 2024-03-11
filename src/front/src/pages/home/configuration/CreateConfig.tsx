@@ -19,7 +19,8 @@ import BackButton from '../../../sharedComponents/BackButton';
 import { useNavigate } from "react-router";
 import { wsManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
-import { getAllElements } from '../../../conf/backendController';
+import { getAllElements, getUserInformation } from '../../../conf/backendController';
+import { ApiRole } from '../../../conf/userController';
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -34,6 +35,7 @@ function CreateConfig(props: { id?: number }) {
     const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState<ApiRole>("VISUALIZER");
     const navigate = useNavigate();
 
     function check(): boolean {
@@ -125,6 +127,13 @@ function CreateConfig(props: { id?: number }) {
 
     // Fetch the configuration
     useEffect(() => {
+        getUserInformation().then(userInfo => {
+            if(!userInfo){
+                console.error("Failed to retrieve user role.")
+                return
+            }
+            setUserRole(userInfo.role)
+        })
         // Fetch firmware list
         getAllElements<Firmware>("/api/firmware/all").then(result => {
             if(!result){
@@ -225,14 +234,16 @@ function CreateConfig(props: { id?: number }) {
                         </Grid>
                         <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
                             {/* TODO : fixer le bouton en bas */}
-                            <Button
-                                sx={{borderRadius: 28}}
-                                variant="contained"
-                                color="primary"
-                                onClick={handleSubmit}
-                            >
+                            {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
+                                <Button
+                                    sx={{borderRadius: 28}}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleSubmit}
+                                >
                                 Valider
-                            </Button>
+                                </Button>
+                            )}
                         </Box>
                     </>
                 )}

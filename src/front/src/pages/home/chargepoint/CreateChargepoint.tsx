@@ -14,6 +14,8 @@ import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
 import {useNavigate} from "react-router";
 import {wsManager} from "../Home";
+import { getUserInformation } from "../../../conf/backendController";
+import { ApiRole } from "../../../conf/userController";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
@@ -64,6 +66,7 @@ function CreateChargepoint(props: { id?: number }) {
     const [clientId, setClientId] = useState<string>("")
     const [configuration, setConfiguration] = useState<Configuration>(noConfig);
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState<ApiRole>("VISUALIZER");
     const navigate = useNavigate();
     const [chargepoint, setChargepoint] = useState<CreateChargepointDto>({
         serialNumber: serialNumber,
@@ -98,6 +101,13 @@ function CreateChargepoint(props: { id?: number }) {
     }, [props.id]);
 
     useEffect(() => {
+        getUserInformation().then(userInfo => {
+            if(!userInfo){
+                console.error("Failed to retrieve user role.")
+                return
+            }
+            setUserRole(userInfo.role)
+        })
         getAllConfigurations().then((result) => {
             setLoading(false)
             if (result === undefined) {
@@ -198,45 +208,50 @@ function CreateChargepoint(props: { id?: number }) {
                                         }}
                                         pt={2}
                                     >
+                                    {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
                                         <Button
-                                            sx={{borderRadius: 28}}
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={() => {
-                                                let returnValue = handleSubmit();
-                                                returnValue.then(value => {
-                                                    if (value) {
-                                                        if (props.id) {
-                                                            wsManager.emitNotification({
-                                                                type: "INFO",
-                                                                title: clientId + " ",
-                                                                content: "La borne a été modifiée."
-                                                            });
-                                                        } else {
-                                                            wsManager.emitNotification({
-                                                                type: "SUCCESS",
-                                                                title: clientId + " ",
-                                                                content: "La borne a été créée."
-                                                            });
-                                                        }
-                                                        navigate("/home/chargepoint");
+                                        sx={{borderRadius: 28}}
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => {
+                                            let returnValue = handleSubmit();
+                                            returnValue.then(value => {
+                                                if (value) {
+                                                    if (props.id) {
+                                                        wsManager.emitNotification({
+                                                            type: "INFO",
+                                                            title: clientId + " ",
+                                                            content: "La borne a été modifiée."
+                                                        });
                                                     } else {
-                                                        if (props.id) {
-                                                            wsManager.emitNotification({
-                                                                type: "ERROR",
-                                                                title: "Erreur ",
-                                                                content: "La borne n'a pas pu être modifiée."
-                                                            });
-                                                        } else {
-                                                            wsManager.emitNotification({
-                                                                type: "ERROR",
-                                                                title: "Erreur ",
-                                                                content: "La borne n'a pas pu être créée."
-                                                            });
-                                                        }  
+                                                        wsManager.emitNotification({
+                                                            type: "SUCCESS",
+                                                            title: clientId + " ",
+                                                            content: "La borne a été créée."
+                                                        });
                                                     }
-                                                })
-                                            }}>Valider</Button>
+                                                    navigate("/home/chargepoint");
+                                                } else {
+                                                    if (props.id) {
+                                                        wsManager.emitNotification({
+                                                            type: "ERROR",
+                                                            title: "Erreur ",
+                                                            content: "La borne n'a pas pu être modifiée."
+                                                        });
+                                                    } else {
+                                                        wsManager.emitNotification({
+                                                            type: "ERROR",
+                                                            title: "Erreur ",
+                                                            content: "La borne n'a pas pu être créée."
+                                                        });
+                                                    }  
+                                                }
+                                            })
+                                        }}>
+                                            Valider
+                                        </Button>
+                                    )}
+
                                     </Box>
                                 </>
                             )}
