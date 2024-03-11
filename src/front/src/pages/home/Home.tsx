@@ -45,7 +45,7 @@ class WebSocketListener extends events.EventEmitter {
       this.websocket.onmessage = (ev: MessageEvent<any>) => {
         // Try parse as WebSocketChargePointNotification
         const message = JSON.parse(ev.data) as WebSocketMessage
-        switch(message.name) {
+        switch (message.name) {
           case "ChargePointWebsocketNotification":
             let wsChargePointNotification = message.value as WebSocketChargePointNotification
             if (!wsChargePointNotification) {
