@@ -23,10 +23,9 @@ export default function FirmwareComponent(props: {
                         value={selectedItem ?? ""}
                         onChange={event => {
                             let selection = event.target.value as number
-                            console.log(selection)
-                            if(selection){
+                            if (selection) {
                                 let selectedFirmware = props.firmwareList.find(element => element.id === selection)
-                                if(selectedFirmware){
+                                if (selectedFirmware) {
                                     props.onSelectionChange(selectedFirmware)
                                     setSelectedItem(selection)
                                 }
@@ -39,7 +38,7 @@ export default function FirmwareComponent(props: {
                                 selected=true
                             }
                             return (
-                            <MenuItem key={"firmware-"+ index} value={item.id} selected={selected}>{item.version}</MenuItem>
+                            <MenuItem key={"firmware-"+ index} value={item.id} selected={selected}>{item.version + " | " + item.constructor}</MenuItem>
                         )})}
                     </Select>
                 </Grid>
