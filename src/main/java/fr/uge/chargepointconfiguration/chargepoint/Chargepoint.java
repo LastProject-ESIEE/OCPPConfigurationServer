@@ -65,9 +65,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Column(name = "client_id", nullable = false, length = 45)
   private String clientId;
 
-  @Column(name = "server_address", nullable = false, length = 65_535)
-  private String serverAddress;
-
   @Column(name = "last_update", nullable = false,
           columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
@@ -102,7 +99,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
    * @param type                    The chargepoint's model (commercial name).
    * @param constructor             The chargepoint's constructor.
    * @param clientId                The client's name.
-   * @param serverAddress           The server to which the chargepoint should speak to.
    * @param configuration           {@link Configuration}.
    * @param lastUpdate              The last time when the chargepoint has been updated.
    * @param error                   The error message in case of a failure.
@@ -114,7 +110,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
                      String type,
                      String constructor,
                      String clientId,
-                     String serverAddress,
                      Configuration configuration,
                      Timestamp lastUpdate,
                      String error,
@@ -125,7 +120,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
     this.type = Objects.requireNonNull(type);
     this.constructor = Objects.requireNonNull(constructor);
     this.clientId = Objects.requireNonNull(clientId);
-    this.serverAddress = Objects.requireNonNull(serverAddress);
     this.lastUpdate = Objects.requireNonNull(lastUpdate);
     this.error = Objects.requireNonNull(error);
     this.state = state;
@@ -142,20 +136,17 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
    * @param type                    The chargepoint's model (commercial name).
    * @param constructor             The chargepoint's constructor.
    * @param clientId                The client's name.
-   * @param serverAddress           The server to which the chargepoint should speak to.
    * @param configuration           {@link Configuration}.
    */
   public Chargepoint(String serialNumberChargepoint,
                      String type,
                      String constructor,
                      String clientId,
-                     String serverAddress,
                      Configuration configuration) {
     this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
     this.type = Objects.requireNonNull(type);
     this.constructor = Objects.requireNonNull(constructor);
     this.clientId = Objects.requireNonNull(clientId);
-    this.serverAddress = Objects.requireNonNull(serverAddress);
     this.error = Objects.requireNonNull(error);
     this.configuration = configuration;
   }
@@ -200,14 +191,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
 
   public void setClientId(String clientId) {
     this.clientId = clientId;
-  }
-
-  public String getServerAddress() {
-    return serverAddress;
-  }
-
-  public void setServerAddress(String serverAddress) {
-    this.serverAddress = serverAddress;
   }
 
   public Configuration getConfiguration() {
@@ -280,7 +263,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
            && Objects.equals(serialNumberChargepoint, that.serialNumberChargepoint)
            && Objects.equals(type, that.type) && Objects.equals(constructor, that.constructor)
            && Objects.equals(clientId, that.clientId)
-           && Objects.equals(serverAddress, that.serverAddress)
            && Objects.equals(lastUpdate, that.lastUpdate)
            && Objects.equals(error, that.error)
            && step == that.step
@@ -295,7 +277,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
             type,
             constructor,
             clientId,
-            serverAddress,
             lastUpdate,
             error,
             state,
@@ -312,7 +293,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
            + ", type='" + type + '\''
            + ", constructor='" + constructor + '\''
            + ", clientId='" + clientId + '\''
-           + ", serverAddress='" + serverAddress + '\''
            + ", lastUpdate=" + lastUpdate
            + ", error='" + error + '\''
            + ", state=" + state
@@ -337,7 +317,6 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
             type,
             constructor,
             clientId,
-            serverAddress,
             configuration != null ? configuration.toDto() : null,
             statusDto
     );

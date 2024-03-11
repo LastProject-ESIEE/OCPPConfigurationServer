@@ -46,7 +46,6 @@ public class ChargepointService {
         createChargepointDto.type(),
         createChargepointDto.constructor(),
         createChargepointDto.clientId(),
-        "192.168.0.5",  // TODO variable environnement
         configuration
     ));
     return chargepoint.toDto();
