@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * JUnit test class for the {@link ChargePointManager}.
  */
 @SpringBootTest
-@AutoConfigureMockMvc
 public class ChargepointManagerTest {
 
   @Autowired
@@ -99,7 +98,14 @@ public class ChargepointManagerTest {
     var error = new Exception("An error for the test :)");
     chargepointManager.onError(error);
     var actualChargepoint = chargepointRepository.findAllByOrderByIdDesc().getFirst();
-    assertEquals(currentChargepoint, actualChargepoint);
+    assertEquals(currentChargepoint.getError(), actualChargepoint.getError());
+    assertEquals(currentChargepoint.getStep(), actualChargepoint.getStep());
+    assertEquals(currentChargepoint.isState(), actualChargepoint.isState());
+    assertEquals(currentChargepoint.getSerialNumberChargepoint(), actualChargepoint.getSerialNumberChargepoint());
+    assertEquals(currentChargepoint.getType(), actualChargepoint.getType());
+    assertEquals(currentChargepoint.getClientId(), actualChargepoint.getClientId());
+    assertEquals(currentChargepoint.getStatus(), actualChargepoint.getStatus());
+
   }
 
   /**
@@ -112,7 +118,13 @@ public class ChargepointManagerTest {
     chargepointManager.setCurrentChargepoint(currentChargepoint);
     chargepointManager.onDisconnection();
     var actualChargepoint = chargepointRepository.findAllByOrderByIdDesc().getFirst();
-    assertEquals(currentChargepoint, actualChargepoint);
+    assertEquals(currentChargepoint.getError(), actualChargepoint.getError());
+    assertEquals(currentChargepoint.getStep(), actualChargepoint.getStep());
+    assertEquals(currentChargepoint.isState(), actualChargepoint.isState());
+    assertEquals(currentChargepoint.getSerialNumberChargepoint(), actualChargepoint.getSerialNumberChargepoint());
+    assertEquals(currentChargepoint.getType(), actualChargepoint.getType());
+    assertEquals(currentChargepoint.getClientId(), actualChargepoint.getClientId());
+    assertEquals(currentChargepoint.getStatus(), actualChargepoint.getStatus());
   }
 
   /**
