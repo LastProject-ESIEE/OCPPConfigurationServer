@@ -133,7 +133,7 @@ public class FirmwareController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = firmwareService.countTotal();
+    var total = firmwareService.countTotal(request);
 
     var data = firmwareService.search(
             request,

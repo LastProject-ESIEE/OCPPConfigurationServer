@@ -6,9 +6,10 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { BusinessLog, searchBusinessLog } from "../../../conf/businessLogController";
+import { BusinessLog } from "../../../conf/businessLogController";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import { searchElements } from "../../../conf/backendController";
 
 const PAGE_SIZE = 30; // Max items displayed in the businessLog table
 
@@ -16,32 +17,64 @@ const businessLogTableColumns: TableColumnDefinition[] = [
     {
         title: "Date",
         size: 2,
-        /*
         filter: {
-          apiField: "containsTitle",
-          onChange: value => console.log("Filtering on : " + value)
+            apiField: "date",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "date",
         }
-        */
     },
     {
         title: "Utilisateur",
         size: 1,
+        filter: {
+            apiField: "",
+            filterType: "input",
+            disable: true,
+        }
     },
     {
         title: "Borne",
-        size: 2
+        size: 2,
+        filter: {
+            apiField: "",
+            filterType: "input",
+            disable: true,
+        }
     },
     {
         title: "Catégorie",
         size: 1,
+        filter: {
+            apiField: "category",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "category",
+        }
     },
     {
         title: "Criticité",
-        size: 1
+        size: 1,
+        filter: {
+            apiField: "level",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "level",
+        }
     },
     {
         title: "Log",
         size: 4.5,
+        filter: {
+            apiField: "completeLog",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "completeLog",
+        }
     },
     {
         title: "",
@@ -56,7 +89,12 @@ function BusinessLogTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchBusinessLog(PAGE_SIZE).then((result: PageRequest<BusinessLog> | undefined) => {
+        searchElements<BusinessLog>("/api/log/business/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: {field: 'date', order: "desc"}
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
             if (!result) {
                 setError("Erreur lors de la récupération des logs métier.")
                 return
@@ -73,16 +111,21 @@ function BusinessLogTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        formatter: (businessLog) => {
+        formatter: (businessLog, index) => {
             return (
-                <Box key={"box-configuration-edit-path-" + businessLog.id} paddingTop={1} maxWidth={"true"}>
+                <Box key={"box-businesslog-" + index} paddingTop={1} maxWidth={"true"}>
                     <LogLineItemVMamar businessLog={businessLog}/>
                 </Box>
             )
         },
-        fetchData: () => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchBusinessLog(PAGE_SIZE, nextPage).then((result: PageRequest<BusinessLog> | undefined) => {
+            searchElements<BusinessLog>("/api/log/business/search", {
+                page: nextPage,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
                 if (!result) {
                     setError("Erreur lors de la récupération des logs métier.")
                     return
@@ -92,6 +135,23 @@ function BusinessLogTable() {
             });
             setCurrentPage(nextPage)
         },
+        onFiltering: (filters, sort) => {
+            // Reset page and search
+            setCurrentPage(0)
+            searchElements<BusinessLog>("/api/log/business/search", {
+                page: 0,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
+                if (!result) {
+                    setError("Erreur lors de la récupération des logs métier.")
+                    return
+                }
+                setTableData(result.data)
+                setHasMore(result.total > PAGE_SIZE)
+            });
+        }
     }
 
     return InfinityScrollItemsTable(props)
@@ -101,16 +161,16 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
     const [open, setOpen] = useState(false);
 
     return (
-        <Box onClick={() => setOpen(!open)}
-             style={{
-                 paddingTop: 3,
-                 paddingBottom: 3,
-                 borderRadius: open ? 25 : 50,
-                 backgroundColor: '#E1E1E1'
-             }}>
+        <Box style={{
+            paddingTop: 3,
+            paddingBottom: 3,
+            borderRadius: open ? 25 : 50,
+            backgroundColor: '#E1E1E1'
+        }}>
             <Grid container maxWidth={"true"}
                   flexDirection={"row"}
-                  alignItems={"center"}>
+                  alignItems={"center"}
+                  onClick={() => setOpen(!open)}>
                 <Grid item xs={businessLogTableColumns[0].size}
                       maxWidth={"true"}
                       justifyContent={"center"}>
@@ -178,6 +238,7 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
             </Grid>
             {open && (
                 <Typography align={"center"}
+                            onClick={undefined}
                             marginLeft={"10vh"}
                             marginRight={"10vh"}
                             paddingTop={1}

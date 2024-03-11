@@ -81,7 +81,7 @@ public record Notification(String name, WebSocketNotification value) {
    */
   public static Optional<Notification> notificationOnFinishedProcess(Chargepoint chargepoint) {
     var currentStep = chargepoint.getStep();
-    if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FAILED) {
+    if (chargepoint.getStatus() == Chargepoint.StatusProcess.FAILED) {
       var message = new CriticalityWebsocketNotification(
               chargepoint.getClientId(),
               CriticalityWebsocketNotification.Type.ERROR,
@@ -91,7 +91,7 @@ public record Notification(String name, WebSocketNotification value) {
       );
       return Optional.of(new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
               message));
-    } else if (chargepoint.getStatusProcess() == Chargepoint.StatusProcess.FINISHED) {
+    } else if (chargepoint.getStatus() == Chargepoint.StatusProcess.FINISHED) {
       var message = new CriticalityWebsocketNotification(
               chargepoint.getClientId(),
               CriticalityWebsocketNotification.Type.SUCCESS,
@@ -127,7 +127,7 @@ public record Notification(String name, WebSocketNotification value) {
             chargepoint.getError(),
             chargepoint.isState(),
             chargepoint.getStep(),
-            chargepoint.getStatusProcess()
+            chargepoint.getStatus()
     );
     var chargepointNotification = new ChargePointWebsocketNotification(chargepoint.getId(),
             statusDto);

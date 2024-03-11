@@ -55,12 +55,12 @@ public class ConfigurationController {
   @ApiResponse(responseCode = "200",
           description = "Found all the configuration.",
           content = @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationGeneralDto.class)
+              schema = @Schema(implementation = ConfigurationDto.class)
           )
   )
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
-  public List<ConfigurationGeneralDto> getAllConfiguration() {
+  public List<ConfigurationDto> getAllConfiguration() {
     return configurationService.getAllConfigurations();
   }
 
@@ -224,20 +224,13 @@ public class ConfigurationController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = configurationService.countTotal();
+    var total = configurationService.countTotal(request);
 
     var data = configurationService.search(
             request,
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
         ).stream()
-        .map(entity -> new ConfigurationDto(
-            entity.getId(),
-            entity.getName(),
-            entity.getDescription(),
-            entity.getLastEdit(),
-            entity.getConfiguration(),
-            entity.getFirmware() == null ? null : entity.getFirmware().toDto()
-        ))
+        .map(Configuration::toDto)
         .toList();
 
     return new PageDto<>(total, page, size, data);

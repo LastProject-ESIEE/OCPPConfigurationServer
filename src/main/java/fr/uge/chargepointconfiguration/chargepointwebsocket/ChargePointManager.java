@@ -92,7 +92,7 @@ public class ChargePointManager {
       pendingRequest = null;
     }
     if (message.isEmpty()) {
-      ocppObserver.onDisconnection(this);
+      ocppObserver.onMessage(null);
       return;
     }
     var ocppMessage = message.orElseThrow();
@@ -124,7 +124,7 @@ public class ChargePointManager {
   public void onError(Exception ex) {
     if (currentChargepoint != null) {
       currentChargepoint.setError(ex.toString());
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.FAILED);
       chargepointRepository.save(currentChargepoint);
       notifyStatusUpdate();
       var notification = Notification.notificationOnError(currentChargepoint);

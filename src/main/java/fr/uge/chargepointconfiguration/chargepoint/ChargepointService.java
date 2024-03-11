@@ -40,7 +40,7 @@ public class ChargepointService {
    */
   public ChargepointDto save(CreateChargepointDto createChargepointDto) {
     var configuration = configurationRepository.findById(createChargepointDto.configuration())
-        .orElseThrow();
+        .orElse(null);
     var chargepoint = chargepointRepository.save(new Chargepoint(
         createChargepointDto.serialNumberChargepoint(),
         createChargepointDto.type(),
@@ -74,8 +74,9 @@ public class ChargepointService {
         .stream().toList();
   }
 
-  public long countTotal() {
-    return chargepointRepository.count();
+  public long countTotalWithFilters(String request) {
+    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+    return chargepointRepository.count(condition);
   }
 
   /**

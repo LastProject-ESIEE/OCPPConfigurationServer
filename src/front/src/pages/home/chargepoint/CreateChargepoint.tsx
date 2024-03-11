@@ -15,7 +15,7 @@ import BackButton from "../../../sharedComponents/BackButton";
 import {useNavigate} from "react-router";
 import {wsManager} from "../Home";
 
-function DisplayConfiguration({configuration}: { configuration?: Configuration }) {
+function DisplayConfiguration({configuration}: { configuration: Configuration }) {
 
     return (
         <Box sx={{height: "100%"}}>
@@ -32,7 +32,7 @@ function DisplayConfiguration({configuration}: { configuration?: Configuration }
                    }}
             >
                 <Box sx={{color: 'rgb(130,130,130)'}}>
-                    {configuration !== undefined && configuration.id !== -1 &&
+                    {configuration.id !== -1 &&
                         <>
                             <Typography sx={{p: 0, pl: 2, mt: 0, fontStyle: 'italic'}}>
                                 Dernière modification : {new Date(configuration.lastEdit).toLocaleString()}
@@ -43,7 +43,7 @@ function DisplayConfiguration({configuration}: { configuration?: Configuration }
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>
                                 <pre>
-                                    {JSON.stringify(JSON.parse(configuration.configuration || "{}"), null, 2)}
+                                    {JSON.stringify(JSON.parse(configuration.configuration), null, 2)}
                                 </pre>
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>
@@ -212,18 +212,34 @@ function CreateChargepoint(props: { id?: number }) {
                                                 let returnValue = handleSubmit();
                                                 returnValue.then(value => {
                                                     if (value) {
-                                                        wsManager.emitNotification({
-                                                            type: "SUCCESS",
-                                                            title: "Succès ",
-                                                            content: "La borne a été créée."
-                                                        });
+                                                        if (props.id) {
+                                                            wsManager.emitNotification({
+                                                                type: "INFO",
+                                                                title: clientId + " ",
+                                                                content: "La borne a été modifiée."
+                                                            });
+                                                        } else {
+                                                            wsManager.emitNotification({
+                                                                type: "SUCCESS",
+                                                                title: clientId + " ",
+                                                                content: "La borne a été créée."
+                                                            });
+                                                        }
                                                         navigate("/home/chargepoint");
                                                     } else {
-                                                        wsManager.emitNotification({
-                                                            type: "ERROR",
-                                                            title: "Erreur ",
-                                                            content: "La borne n'a pas pu être créée."
-                                                        });
+                                                        if (props.id) {
+                                                            wsManager.emitNotification({
+                                                                type: "ERROR",
+                                                                title: "Erreur ",
+                                                                content: "La borne n'a pas pu être modifiée."
+                                                            });
+                                                        } else {
+                                                            wsManager.emitNotification({
+                                                                type: "ERROR",
+                                                                title: "Erreur ",
+                                                                content: "La borne n'a pas pu être créée."
+                                                            });
+                                                        }  
                                                     }
                                                 })
                                             }}>Valider</Button>

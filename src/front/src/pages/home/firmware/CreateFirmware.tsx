@@ -146,16 +146,16 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                         updateFirmware(props.id, firmware).then(value => {
                                                             if (value) {
                                                                 wsManager.emitNotification({
-                                                                    type: "SUCCESS",
-                                                                    title: "Succès ",
-                                                                    content: "Le firmware a été créé."
+                                                                    type: "INFO",
+                                                                    title: formData.version + " ",
+                                                                    content: "Le firmware a été modifié."
                                                                 });
                                                                 navigate("/home/firmware");
                                                             } else {
                                                                 wsManager.emitNotification({
                                                                     type: "ERROR",
                                                                     title: "Erreur ",
-                                                                    content: "Le firmware n'a pas pu être créé."
+                                                                    content: "Le firmware n'a pas pu être modifié."
                                                                 })
                                                             }
                                                         })
@@ -166,7 +166,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                         if (value) {
                                                             wsManager.emitNotification({
                                                                 type: "SUCCESS",
-                                                                title: "Succès ",
+                                                                title: formData.version + " ",
                                                                 content: "Le firmware a été créé."
                                                             });
                                                             navigate("/home/firmware");
