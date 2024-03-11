@@ -15,6 +15,7 @@ INSERT INTO type_allowed  (constructor, type) VALUES
 ('Alfen BV', 'Eve Double S-line');
 
 INSERT INTO compatibility (id_firmware, id_type_allowed) VALUES
+(1, 2),
 (2, 1),
 (2, 2),
 (3, 1),
@@ -33,9 +34,9 @@ INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id
 ('ACE0000003', 'Eve Single S-line', 'Alfen BV', 'borne de test', 1, '2024-03-08 10:34:09', 'erreur de test', 1, 'CONFIGURATION', 'FINISHED'),
 ('ACE0000004', 'Eve Double S-line', 'Alfen BV', 'elisabeth borne', 3, '2024-03-08 10:34:09', '', 1, 'CONFIGURATION', 'FAILED'),
 ('ACE0000005', 'Eve Double S-line', 'Alfen BV', 'nom de la borne', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PENDING'),
-('ACE0000005', 'Eve Single S-line', 'Alfen BV', 'born to kill', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PROCESSING'),
-('ACE0000006', 'Eve Double S-line', 'Alfen BV', 'stéphane borne (l''historien)', 4, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FINISHED'),
-('ACE0000007', 'Eve Single S-line', 'Alfen BV', 'les bornés', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
+('ACE0000006', 'Eve Single S-line', 'Alfen BV', 'born to kill', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PROCESSING'),
+('ACE0000007', 'Eve Double S-line', 'Alfen BV', 'stéphane borne (l''historien)', 4, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FINISHED'),
+('ACE0000008', 'Eve Single S-line', 'Alfen BV', 'les bornés', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
 
 INSERT INTO business_logs (date, complete_log, chargepoint_id, user_id, category, level) VALUES
 ('2024-03-08 13:00:00', 'Un utilisateur s''est connecté', null, 1, 'LOGIN', 'INFO'),
