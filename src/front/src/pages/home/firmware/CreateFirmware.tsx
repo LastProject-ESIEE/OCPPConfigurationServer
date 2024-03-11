@@ -147,7 +147,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                             if (value) {
                                                                 wsManager.emitNotification({
                                                                     type: "INFO",
-                                                                    title: "Info ",
+                                                                    title: formData.version + " ",
                                                                     content: "Le firmware a été modifié."
                                                                 });
                                                                 navigate("/home/firmware");
@@ -166,7 +166,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                         if (value) {
                                                             wsManager.emitNotification({
                                                                 type: "SUCCESS",
-                                                                title: "Succès ",
+                                                                title: formData.version + " ",
                                                                 content: "Le firmware a été créé."
                                                             });
                                                             navigate("/home/firmware");

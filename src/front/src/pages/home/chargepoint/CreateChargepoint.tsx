@@ -215,13 +215,13 @@ function CreateChargepoint(props: { id?: number }) {
                                                         if (props.id) {
                                                             wsManager.emitNotification({
                                                                 type: "INFO",
-                                                                title: "Info ",
+                                                                title: clientId + " ",
                                                                 content: "La borne a été modifiée."
                                                             });
                                                         } else {
                                                             wsManager.emitNotification({
                                                                 type: "SUCCESS",
-                                                                title: "Succès ",
+                                                                title: clientId + " ",
                                                                 content: "La borne a été créée."
                                                             });
                                                         }

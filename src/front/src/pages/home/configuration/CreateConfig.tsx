@@ -87,7 +87,7 @@ function CreateConfig(props: { id?: number }) {
                     if (value) {
                         wsManager.emitNotification({
                             type: "INFO",
-                            title: "Info ",
+                            title: title + " ",
                             content: "La configuration a été modifiée."
                         });
                         navigate("/home/configuration");
@@ -105,7 +105,7 @@ function CreateConfig(props: { id?: number }) {
                 if (value) {
                     wsManager.emitNotification({
                         type: "SUCCESS",
-                        title: "Succès ",
+                        title: title + " ",
                         content: "La configuration a été créée."
                     });
                     navigate("/home/configuration");
