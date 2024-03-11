@@ -160,6 +160,7 @@ export function NavBar() {
                               <Grid item>
                                   <IconButton
                                       onClick={() => {
+                                          sessionStorage.clear();
                                           fetch("/logout", {
                                               method: "POST"
                                           })
