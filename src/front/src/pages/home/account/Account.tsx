@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
 import {wsManager} from "../Home";
 import { getUserInformation } from "../../../conf/backendController";
-import { User, UserInformation } from "../../../conf/userController";
+import { User } from "../../../conf/userController";
 
 function Account() {
     const [user, setUser] = useState<User | undefined>(undefined);
