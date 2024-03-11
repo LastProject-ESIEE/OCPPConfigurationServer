@@ -104,12 +104,7 @@ public class UserController {
         )
         @RequestBody ChangePasswordUserDto changePasswordUserDto,
         @PathVariable int id) {
-    User user;
-    try {
-      user = userService.updatePassword(id, changePasswordUserDto);
-    } catch (BadPasswordException e) {
-      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-    }
+    var user = userService.updatePassword(id, changePasswordUserDto);
     return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
 
@@ -175,7 +170,7 @@ public class UserController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = userService.countTotal(request);
+    var total = userService.countWithFilters(request);
     var data = userService.search(
             request,
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
@@ -224,14 +219,7 @@ public class UserController {
                   required = true
           )
           @RequestBody CreateUserDto createUserDto) {
-    User user;
-    try {
-      user = userService.createUser(createUserDto);
-    } catch (AlreadyCreatedException e) {
-      // TODO Gestion d'erreur
-      return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
-    }
+    var user = userService.createUser(createUserDto);
     return new ResponseEntity<>(user.toDto(), HttpStatus.CREATED);
   }
   

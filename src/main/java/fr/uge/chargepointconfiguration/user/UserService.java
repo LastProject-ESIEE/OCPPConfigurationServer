@@ -1,5 +1,9 @@
 package fr.uge.chargepointconfiguration.user;
 
+import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
+import fr.uge.chargepointconfiguration.errors.exceptions.IllegalOperationException;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.Arrays;
 import java.util.List;
@@ -31,22 +35,24 @@ public class UserService {
    * @param changePasswordUserDto of the user.
    * @return a User.
    */
-  public User updatePassword(
-      int id,
-      ChangePasswordUserDto changePasswordUserDto
-  ) throws BadPasswordException {
-    var user = userRepository.findById(id);
+  public User updatePassword(int id, ChangePasswordUserDto changePasswordUserDto) {
+    var user = getById(id);
+
     if (user.getId() != getAuthenticatedUser().getId()) {
-      throw new IllegalArgumentException("Bad Id");
+      throw new IllegalOperationException("Impossible de changer le mot de passe d'un autre "
+                                          + "utilisateur.");
     }
+
     if (!passwordEncoder.matches(changePasswordUserDto.oldPassword(), user.getPassword())) {
-      throw new IllegalArgumentException("Bad password");
+      throw new BadRequestException("Impossible de changer le mot de passe.");
     }
+
     if (!validatePassword(changePasswordUserDto.newPassword())) {
-      throw new BadPasswordException();
+      throw new BadRequestException("Le nouveau mot de passe ne respecte pas les contraintes");
     }
-    var encodedPassword = passwordEncoder.encode(changePasswordUserDto.newPassword());
-    user.setPassword(encodedPassword);
+
+    user.setPassword(passwordEncoder.encode(changePasswordUserDto.newPassword()));
+
     return userRepository.save(user);
   }
 
@@ -64,7 +70,7 @@ public class UserService {
    * @return information about the user.
    */
   public User getUserById(int id) {
-    return userRepository.findById(id);
+    return getById(id);
   }
 
   /**
@@ -90,39 +96,55 @@ public class UserService {
   /**
    * Update the role of the user.
    *
-   * @param id the id of the user to change.
+   * @param id   the id of the user to change.
    * @param role the new role to be applied.
    * @return a {@link User} updated.
    */
   public User updateRole(int id, User.Role role) {
-    var user = userRepository.findById(id);
+    var user = getById(id);
+
     var validRole = Arrays.asList(User.Role.values()).contains(role);
     if (!validRole) {
-      throw new IllegalArgumentException("This role doesn't exist. Verify your parameter.");
+      throw new BadRequestException("Rôle inexistant : " + role);
     }
+
     if (user.getId() == getAuthenticatedUser().getId()) {
-      throw new IllegalArgumentException("You can't change your role.");
+      throw new IllegalOperationException("Vous ne pouvez pas changer votre propre rôle.");
     }
     user.setRole(role);
     return userRepository.save(user);
   }
 
-  public long countTotal(String request) {
-    var condition = SearchUtils.computeSpecification(request, User.class);
-    return userRepository.count(condition);
+  /**
+   * Count with filters.
+   *
+   * @param request  the request used to search
+   * @return the count of entities with the request
+   */
+  public long countWithFilters(String request) {
+    try {
+      var condition = SearchUtils.computeSpecification(request, User.class);
+      return userRepository.count(condition);
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
   /**
    * Search for {@link User} with a pagination.
    *
-   * @param request the request used to search
+   * @param request  the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link User}
    */
   public List<User> search(String request, PageRequest pageable) {
-    var condition = SearchUtils.computeSpecification(request, User.class);
-    return userRepository.findAll(condition, pageable)
+    try {
+      var condition = SearchUtils.computeSpecification(request, User.class);
+      return userRepository.findAll(condition, pageable)
           .stream().toList();
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
   /**
@@ -130,25 +152,25 @@ public class UserService {
    *
    * @param createUserDto contains parameters of the new user.
    * @return the new User.
-   * @throws AlreadyCreatedException when the user is already created.
+   * @throws EntityAlreadyExistingException when the user is already created.
    */
-  public User createUser(
-          CreateUserDto createUserDto
-  ) throws AlreadyCreatedException {
-    var password = passwordEncoder.encode(createUserDto.password());
-    var user = new User(
-            createUserDto.firstName(),
-            createUserDto.lastName(),
-            createUserDto.email(),
-            password,
-            createUserDto.role()
-    );
-    if (userRepository.findByEmail(user.getEmail()) != null) {
-      throw new AlreadyCreatedException();
+  public User createUser(CreateUserDto createUserDto) {
+    if (userRepository.findByEmail(createUserDto.email()) != null) {
+      throw new EntityAlreadyExistingException("L'utilisateur existe déjà : "
+                                               + createUserDto.email());
     }
+
+    var user = new User(
+        createUserDto.firstName(),
+        createUserDto.lastName(),
+        createUserDto.email(),
+        passwordEncoder.encode(createUserDto.password()),
+        createUserDto.role()
+    );
+
     return userRepository.save(user);
   }
-  
+
   /**
    * Deletes a user from its id.
    *
@@ -156,8 +178,17 @@ public class UserService {
    */
   public void delete(int id) {
     if (getAuthenticatedUser().getId() == id) {
-      throw new IllegalArgumentException("Cannot delete yourself");
+      throw new IllegalOperationException("Impossible de se supprimer soi-même");
     }
-    userRepository.delete(userRepository.findById(id));
+    var user = getUserById(id);
+    userRepository.delete(user);
+  }
+
+  private User getById(int id) {
+    var user = userRepository.findById(id);
+    if (user == null) {
+      throw new EntityNotFoundException("Pas d'utilisateur avec l'id : " + id);
+    }
+    return user;
   }
 }
