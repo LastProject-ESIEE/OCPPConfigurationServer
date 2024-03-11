@@ -93,9 +93,9 @@ function BusinessLogTable() {
             {
                 page: 0,
                 size: PAGE_SIZE,
-                sort: { field: 'date', order: "desc" }
+                sort: {field: 'date', order: "desc"}
             }).then((result: PageRequest<BusinessLog> | undefined) => {
-            if(!result){
+            if (!result) {
                 setError("Erreur lors de la récupération des logs métier.")
                 return
             }
@@ -120,8 +120,13 @@ function BusinessLogTable() {
         },
         fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchElements<BusinessLog>("/api/log/business/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<BusinessLog> | undefined) => {
-                if(!result){
+            searchElements<BusinessLog>("/api/log/business/search", {
+                page: nextPage,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des logs métier.")
                     return
                 }
@@ -133,8 +138,13 @@ function BusinessLogTable() {
         onFiltering: (filters, sort) => {
             // Reset page and search
             setCurrentPage(0)
-            searchElements<BusinessLog>("/api/log/business/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<BusinessLog> | undefined) => {
-                if(!result){
+            searchElements<BusinessLog>("/api/log/business/search", {
+                page: 0,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<BusinessLog> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des logs métier.")
                     return
                 }
@@ -151,16 +161,16 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
     const [open, setOpen] = useState(false);
 
     return (
-        <Box onClick={() => setOpen(!open)}
-             style={{
-                 paddingTop: 3,
-                 paddingBottom: 3,
-                 borderRadius: open ? 25 : 50,
-                 backgroundColor: '#E1E1E1'
-             }}>
+        <Box style={{
+            paddingTop: 3,
+            paddingBottom: 3,
+            borderRadius: open ? 25 : 50,
+            backgroundColor: '#E1E1E1'
+        }}>
             <Grid container maxWidth={"true"}
                   flexDirection={"row"}
-                  alignItems={"center"}>
+                  alignItems={"center"}
+                  onClick={() => setOpen(!open)}>
                 <Grid item xs={businessLogTableColumns[0].size}
                       maxWidth={"true"}
                       justifyContent={"center"}>
@@ -228,6 +238,7 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
             </Grid>
             {open && (
                 <Typography align={"center"}
+                            onClick={undefined}
                             marginLeft={"10vh"}
                             marginRight={"10vh"}
                             paddingTop={1}
