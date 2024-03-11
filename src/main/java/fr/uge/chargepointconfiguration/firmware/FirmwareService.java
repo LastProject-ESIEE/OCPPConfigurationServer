@@ -34,8 +34,9 @@ public class FirmwareService {
     return firmwareRepository.findById(id);
   }
 
-  public long countTotal() {
-    return firmwareRepository.count();
+  public long countTotal(String request) {
+    var condition = SearchUtils.computeSpecification(request, Firmware.class);
+    return firmwareRepository.count(condition);
   }
 
 

@@ -74,8 +74,9 @@ public class ChargepointService {
         .stream().toList();
   }
 
-  public long countTotal() {
-    return chargepointRepository.count();
+  public long countTotalWithFilters(String request) {
+    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+    return chargepointRepository.count(condition);
   }
 
   /**

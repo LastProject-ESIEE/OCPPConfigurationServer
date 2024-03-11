@@ -117,7 +117,7 @@ public class ChargepointController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = chargepointService.countTotal();
+    var total = chargepointService.countTotalWithFilters(request);
 
     var data = chargepointService.search(
             request,

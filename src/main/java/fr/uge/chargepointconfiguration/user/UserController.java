@@ -175,7 +175,7 @@ public class UserController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = userService.countTotal();
+    var total = userService.countTotal(request);
     var data = userService.search(
             request,
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))

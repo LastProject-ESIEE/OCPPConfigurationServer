@@ -1,12 +1,5 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -98,7 +95,7 @@ class ChargepointControllerTest {
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.total", is(8)))
+        .andExpect(jsonPath("$.total", is(1)))
         .andExpect(jsonPath("$.page", is(0)))
         .andExpect(jsonPath("$.size", is(2)))
         .andExpect(jsonPath("$.data", hasSize(1)))
@@ -118,7 +115,7 @@ class ChargepointControllerTest {
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.total", is(8)))
+        .andExpect(jsonPath("$.total", is(6)))
         .andExpect(jsonPath("$.page", is(0)))
         .andExpect(jsonPath("$.size", is(2)))
         .andExpect(jsonPath("$.data", hasSize(2)))
