@@ -1,7 +1,7 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 
 function filterOrderToAPI(order: FilterOrder) {
-    switch(order) {
+    switch (order) {
         case "<":
             return "<";
         case ">":
