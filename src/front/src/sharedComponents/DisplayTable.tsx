@@ -162,7 +162,10 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                             loader={
                                 <>
                                     {(props.error !== undefined) && (
-                                        <Typography variant="h6" color={"red"} textAlign={"center"}>{props.error}</Typography>
+                                        <Box textAlign={"center"} marginTop={5}>
+                                            <img alt="Icône d'erreur" src="/assets/icone-erreur.png" style={{maxWidth: "15%"}}/>
+                                            <Typography variant="h6" color={"red"}>{props.error}</Typography>
+                                        </Box>
                                     )}
                                     {(props.error === undefined) && (
                                         <Box key={"box-skeleton-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
@@ -182,7 +185,10 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                         {props.data.map((item: T, index) => props.formatter(item, index))}
                     </InfiniteScroll>
                     {(props.data.length === 0) && !props.hasMore && (
-                        <Typography variant="h6" color={"black"} textAlign={"center"}>Aucun élément...</Typography>
+                        <Box textAlign={"center"}>
+                            <img alt="Icône pour pas d'éléments dans la recherche" src="/assets/icone-noelement.png" style={{maxWidth: "40%"}}/>
+                            <Typography variant="h6" color={"black"}>Aucun élément ne correspond à votre demande</Typography>
+                        </Box>
                     )}
                 </div>
             </Box>
