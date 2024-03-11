@@ -24,6 +24,7 @@ public class TechnicalLogService {
   public List<TechnicalLogEntity>  getTechnicalLogByComponentAndLevel(
       TechnicalLogEntity.Component component,
       Level level) {
+
     return technicalLogRepository.findAllByComponentAndLevelOrderByIdDesc(component, level.name());
   }
 

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -62,7 +61,10 @@ public class ConfigurationController {
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationDto> getAllConfiguration() {
-    return configurationService.getAllConfigurations();
+    return configurationService.getAllConfigurations()
+        .stream()
+        .map(Configuration::toDto)
+        .toList();
   }
 
   /**
@@ -80,10 +82,10 @@ public class ConfigurationController {
           content = @Content) })
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")   // For showing detailed infos
-  public Optional<ConfigurationDto> getConfigurationById(
+  public ConfigurationDto getConfigurationById(
           @Parameter(description = "Id of the configuration your are looking for.")
           @PathVariable int id) {
-    return configurationService.getConfiguration(id);
+    return configurationService.getConfiguration(id).toDto();
   }
 
   /**
@@ -128,7 +130,7 @@ public class ConfigurationController {
   /**
    * Update a configuration.
    *
-   * @param updateConfigurationDto All the necessary information for a configuration update.
+   * @param createConfigurationDto All the necessary information for a configuration update.
    * @return A configuration created with its information and its http result status.
    */
   @Operation(summary = "Update a configuration")
@@ -160,12 +162,10 @@ public class ConfigurationController {
               )
           )
       )
-      @RequestBody UpdateConfigurationDto updateConfigurationDto,
+      @RequestBody CreateConfigurationDto createConfigurationDto,
       @PathVariable int id) {
-    var configuration = configurationService.update(id, updateConfigurationDto);
-    return configuration
-        .map(configurationDto -> new ResponseEntity<>(configurationDto, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+    var configuration = configurationService.update(id, createConfigurationDto);
+    return new ResponseEntity<>(configuration.toDto(), HttpStatus.OK);
   }
 
 
