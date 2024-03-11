@@ -93,6 +93,7 @@ public class BusinessLogController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = businessLogService.countTotal(request);
+    var totalElement = businessLogService.count();
 
     var data = businessLogService.search(
             request,
@@ -101,6 +102,6 @@ public class BusinessLogController {
         .map(BusinessLogEntity::toDto)
         .toList();
 
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 }

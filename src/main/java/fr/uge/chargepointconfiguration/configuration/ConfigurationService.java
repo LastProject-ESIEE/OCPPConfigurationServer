@@ -95,6 +95,10 @@ public class ConfigurationService {
     return configurationRepository.count(condition);
   }
 
+  public long count() {
+    return configurationRepository.count();
+  }
+
   /**
    * Search for {@link Configuration} with a pagination.
    *

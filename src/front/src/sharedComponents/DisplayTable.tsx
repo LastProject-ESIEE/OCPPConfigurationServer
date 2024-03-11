@@ -28,6 +28,7 @@ export type TableColumnDefinition = {
 
 export type PageRequest<T> = {
     total: number,
+    totalElement: number,
     page: number,
     size: number,
     data: T[],

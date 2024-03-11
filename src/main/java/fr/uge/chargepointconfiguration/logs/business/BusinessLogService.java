@@ -48,6 +48,10 @@ public class BusinessLogService {
     return businessLogRepository.count(condition);
   }
 
+  public long count() {
+    return businessLogRepository.count();
+  }
+
   /**
    * Search for {@link BusinessLogEntity} with a pagination.
    *
