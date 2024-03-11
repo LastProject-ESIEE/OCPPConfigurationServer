@@ -54,7 +54,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
             result.typesAllowed.forEach(item => {
                 let keyValueItem: KeyValueItem<TypeAllowed> = {
                     item: item,
-                    label: item.constructor + "-" + item.type,
+                    label: item.constructor + " | " + item.type,
                     value: "",
                     id: item.id + "",
                     checker: inputValue => inputValue !== ""
@@ -77,7 +77,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
             setTypeAllowedList(result.map(v => {
                 return {
                     item: v,
-                    label: v.constructor + "-" + v.type,
+                    label: v.constructor + " | " + v.type,
                     value: "",
                     id: v.id + "",
                     checker: inputValue => inputValue !== ""
@@ -192,7 +192,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                         selectKind="values"
                                         setSelectedItems={setSelectedItems}
                                         selectedItems={selectedItems}
-                                        />
+                                    />
                                 </Grid>
                             </>
                         )}
