@@ -122,6 +122,24 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       return;
     }
     var config = currentChargepoint.getConfiguration();
+    if (currentChargepoint.getConfiguration() == null) {
+      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+      chargepointRepository.save(currentChargepoint);
+      chargePointManager.notifyStatusUpdate();
+      logger.info(new BusinessLog(null,
+              currentChargepoint,
+              BusinessLogEntity.Category.LOGIN,
+              "chargepoint ("
+                      + currentChargepoint.getSerialNumberChargepoint()
+                      + ") is authenticated"));
+      var response = new BootNotificationResponse16(
+              LocalDateTime.now().toString(),
+              5,
+              RegistrationStatus.Accepted
+      );
+      sender.sendMessage(response, chargePointManager);
+      return;
+    }
     targetFirmwareVersion = config.getFirmware().getVersion();
     currentChargepoint.setState(true);
     currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
@@ -158,12 +176,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
    */
   private void processConfigurationRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
-    if (currentChargepoint.getConfiguration() == null) {
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
-      chargepointRepository.save(currentChargepoint);
-      chargePointManager.notifyStatusUpdate();
-      return;
-    }
     if (queue.isEmpty() && !loaded) {
       loadKeyValue();
       loaded = true;
@@ -264,6 +276,12 @@ public class OcppConfigurationObserver16 implements OcppObserver {
    */
   private void processFirmwareRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
+    if (currentChargepoint.getConfiguration() == null) {
+      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+      chargepointRepository.save(currentChargepoint);
+      chargePointManager.notifyStatusUpdate();
+      return;
+    }
     var firmware = currentChargepoint.getConfiguration().getFirmware();
     logger.info(new BusinessLog(null,
             currentChargepoint,
@@ -473,6 +491,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     var status = currentChargepoint.getStatusProcess();
     if (step == Chargepoint.Step.CONFIGURATION && status == Chargepoint.StatusProcess.PENDING) {
       processConfigurationRequest();
+    } else if (step == Chargepoint.Step.FIRMWARE && status == Chargepoint.StatusProcess.PENDING) {
+      processFirmwareRequest();
     }
   }
 }
