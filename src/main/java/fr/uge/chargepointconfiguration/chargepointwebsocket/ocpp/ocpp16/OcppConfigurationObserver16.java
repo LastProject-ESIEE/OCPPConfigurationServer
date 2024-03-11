@@ -126,7 +126,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     }
     var config = currentChargepoint.getConfiguration();
     if (currentChargepoint.getConfiguration() == null) {
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.PENDING);
       chargepointRepository.save(currentChargepoint);
       chargePointManager.notifyStatusUpdate();
       logger.info(new BusinessLog(null,
@@ -489,7 +489,6 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   }
 
   private void processDefaultMessage() {
-    System.out.println("TEST");
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     chargePointManager.setCurrentChargepoint(
             chargepointRepository.findBySerialNumberChargepointAndConstructor(
@@ -502,7 +501,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       return;
     }
     var step = currentChargepoint.getStep();
-    var status = currentChargepoint.getStatusProcess();
+    var status = currentChargepoint.getStatus();
     if (step == Chargepoint.Step.CONFIGURATION && status == Chargepoint.StatusProcess.PENDING) {
       processConfigurationRequest();
     } else if (step == Chargepoint.Step.FIRMWARE && status == Chargepoint.StatusProcess.PENDING) {
