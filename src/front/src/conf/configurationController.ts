@@ -1,4 +1,3 @@
-import { PageRequest } from "../sharedComponents/DisplayTable"
 import { Firmware, TypeAllowed } from "./FirmwareController";
 
 // Configuration type definition
@@ -80,7 +79,6 @@ export async function getAllConfigurations(): Promise<Configuration[] | undefine
     }
     return undefined
 }
-
 
 export async function searchConfiguration(
     size: number = 10,

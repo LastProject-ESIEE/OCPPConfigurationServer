@@ -1,47 +1,103 @@
 import { Box, Grid, ListItemButton, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import {
+    DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { ChargePoint, searchChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
+import { ChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
 import { Link } from "react-router-dom";
 import { wsManager } from "../Home";
+import { searchElements } from "../../../conf/backendController";
 
 const PAGE_SIZE = 30; // Max items displayed in the chargepoint table
 
 const chargePointTableColumns: TableColumnDefinition[] = [
   {
     title: "Identifiant client",
-    /*
+    size: 2,
     filter: {
-      apiField: "containsTitle",
-      onChange: value => console.log("Filtering on : " + value)
+      apiField: "clientId",
+      filterType: "input"
+    },
+    sort: {
+        apiField: "clientId",
     }
-    */
-    size: 2
   },
   {
     title: "Constructeur",
-    size: 2
+    size: 2,
+    filter: {
+      apiField: "constructor",
+      filterType: "input"
+    },
+    sort: {
+        apiField: "constructor",
+    }
   },
   {
     title: "Modèle",
-    size: 2
+    size: 2,
+    filter: {
+      apiField: "type",
+      filterType: "input"
+    },
+    sort: {
+        apiField: "type",
+    }
   },
   {
     title: "Étape",
-    size: 2 
+    size: 2,
+    filter: {
+      apiField: "step",
+      filterType: "select",
+      restrictedValues: [
+        DEFAULT_FILTER_SELECT_VALUE,
+        "FIRMWARE",
+        "CONFIGURATION",
+      ],
+      apiValueFormatter: value => {
+          return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+      },
+    },
+    sort: {
+        apiField: "step",
+    }
   },
   {
     title: "Status",
-    size: 2
+    size: 2,
+    filter: {
+      apiField: "status",
+      filterType: "select",
+      restrictedValues: [
+        DEFAULT_FILTER_SELECT_VALUE,
+        "PENDING",
+        "PROCESSING",
+        "FINISHED",
+        "FAILED",
+      ],
+      apiValueFormatter: value => {
+          return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+      },
+    },
+    sort: {
+        apiField: "status",
+    }
   },
   {
     title: "Dernière activité",
-    size: 2
+    size: 2,
+    filter: {
+      apiField: "lastUpdate",
+      filterType: "input"
+    },
+    sort: {
+        apiField: "lastUpdate",
+    }
   }
 ]
 
@@ -70,7 +126,12 @@ function ChargePointTable() {
 
     // Fetch first charge point page on component load
     useEffect(() => {
-      searchChargePoint(PAGE_SIZE).then((result: PageRequest<ChargePoint> | undefined) => {
+      searchElements<ChargePoint>("/api/chargepoint/search",
+          {
+              page: 0,
+              size: PAGE_SIZE,
+              sort: { field: "lastUpdate", order: "desc" }
+          }).then((result: PageRequest<ChargePoint> | undefined) => {
         if(!result){
           setError("Erreur lors de la récupération des bornes.")
           return
@@ -89,7 +150,7 @@ function ChargePointTable() {
       formatter: (chargePoint) => {
         let color = chargePoint.status.state ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 0, 0, 0.5)'
         return (
-          <Box key={"box-configuration-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
+          <Box key={"box-chargepoint-edit-path-" + chargePoint.id}  paddingTop={1} maxWidth={"true"}>
               <Link key={"chargepoint-edit-path-" + chargePoint.id}  to={{ pathname: 'edit/' + chargePoint.id}} style={{ textDecoration: 'none', paddingTop: 10 }}>
                   <ListItemButton style={{maxWidth: "true", height:"5vh", padding: 0, paddingTop: 3, borderRadius: 50, color: 'black', backgroundColor: color}}>
                       <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
@@ -117,9 +178,9 @@ function ChargePointTable() {
           </Box>
         )
        },
-      fetchData: () => {
+      fetchData: (filters, sort) => {
         const nextPage = currentPage + 1;
-        searchChargePoint(PAGE_SIZE,nextPage).then((result: PageRequest<ChargePoint> | undefined) => {
+        searchElements<ChargePoint>("/api/chargepoint/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<ChargePoint> | undefined) => {
           if(!result){
             setError("Erreur lors de la récupération des bornes.")
             return
@@ -128,6 +189,18 @@ function ChargePointTable() {
           setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
         });
         setCurrentPage(nextPage)
+      },
+      onFiltering: (filters, sort) => {
+        // Reset page and search
+        setCurrentPage(0)
+        searchElements<ChargePoint>("/api/chargepoint/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<ChargePoint> | undefined) => {
+            if(!result){
+              setError("Erreur lors de la récupération des bornes.")
+              return
+            }
+            setTableData(result.data)
+            setHasMore(result.total > PAGE_SIZE)
+        });
       },
     }
 
