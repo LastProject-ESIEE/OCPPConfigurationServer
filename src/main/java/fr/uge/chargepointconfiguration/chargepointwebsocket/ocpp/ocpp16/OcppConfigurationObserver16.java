@@ -126,7 +126,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     var config = currentChargepoint.getConfiguration();
     targetFirmwareVersion = config.getFirmware().getVersion();
     currentChargepoint.setState(true);
-    currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+    currentChargepoint.setStatus(Chargepoint.StatusProcess.PENDING);
     logger.info(new BusinessLog(null,
             currentChargepoint,
             BusinessLogEntity.Category.LOGIN,
@@ -176,7 +176,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
               "configuration for the chargepoint ("
                       + currentChargepoint.getSerialNumberChargepoint()
                       + ") is done ! "));
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.FINISHED);
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
@@ -184,7 +184,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       processResetRequest();
     } else {
       sender.sendMessage(config, chargePointManager);
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.PROCESSING);
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
       chargePointManager.notifyStatusUpdate();
@@ -209,7 +209,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                 "configuration for the chargepoint ("
                         + currentChargepoint.getSerialNumberChargepoint()
                         + ") has failed, see its status ! "));
-        currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
+        currentChargepoint.setStatus(Chargepoint.StatusProcess.FAILED);
         currentChargepoint.setError(response.status().name());
         chargepointRepository.save(currentChargepoint);
         // Dispatch information to users
@@ -285,7 +285,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
               "firmware update for the chargepoint ("
                       + currentChargepoint.getSerialNumberChargepoint()
                       + ") is done ! "));
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.PENDING);
       currentChargepoint.setStep(Chargepoint.Step.CONFIGURATION);
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
@@ -294,7 +294,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       processConfigurationRequest();
       return;
     }
-    currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
+    currentChargepoint.setStatus(Chargepoint.StatusProcess.PROCESSING);
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
@@ -358,7 +358,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private void processResetResponse() {
     if (chargePointManager.getCurrentChargepoint() != null) {
       var currentChargepoint = chargePointManager.getCurrentChargepoint();
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FINISHED);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.FINISHED);
       currentChargepoint.setState(false);
       chargepointRepository.save(currentChargepoint);
       // Dispatch information to users
@@ -389,7 +389,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                 "chargepoint ("
                         + currentChargepoint.getSerialNumberChargepoint()
                         + ") has successfully installed the firmware"));
-        currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+        currentChargepoint.setStatus(Chargepoint.StatusProcess.PENDING);
         chargepointRepository.save(currentChargepoint);
         var reset = new ResetRequest16(ResetType.Hard);
         sender.sendMessage(reset, chargePointManager);
@@ -418,7 +418,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                           + currentChargepoint.getSerialNumberChargepoint()
                           + ") couldn't be installed, check the given URL to the chargepoint"));
         }
-        currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.FAILED);
+        currentChargepoint.setStatus(Chargepoint.StatusProcess.FAILED);
         chargepointRepository.save(currentChargepoint);
         chargePointManager.notifyStatusUpdate();
         chargePointManager.notifyProcess();
