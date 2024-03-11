@@ -66,7 +66,10 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   @Override
   public void onMessage(OcppMessage ocppMessage) {
-    Objects.requireNonNull(ocppMessage);
+    if (ocppMessage == null) {
+      processDefaultMessage();
+      return;
+    }
     switch (ocppMessage) {
       case BootNotificationRequest16 b -> processBootNotification(b);
       case ChangeConfigurationResponse16 c -> processConfigurationResponse(c);
@@ -486,7 +489,18 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   }
 
   private void processDefaultMessage() {
+    System.out.println("TEST");
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
+    chargePointManager.setCurrentChargepoint(
+            chargepointRepository.findBySerialNumberChargepointAndConstructor(
+                    currentChargepoint.getSerialNumberChargepoint(),
+                    currentChargepoint.getConstructor()
+            ));
+    currentChargepoint = chargePointManager.getCurrentChargepoint();
+    if (currentChargepoint == null) {
+      processResetRequest();
+      return;
+    }
     var step = currentChargepoint.getStep();
     var status = currentChargepoint.getStatusProcess();
     if (step == Chargepoint.Step.CONFIGURATION && status == Chargepoint.StatusProcess.PENDING) {
