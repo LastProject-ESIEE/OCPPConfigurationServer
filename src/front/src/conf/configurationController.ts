@@ -132,14 +132,14 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
 
 export async function postUpdateConfiguration(id: number, configurationData: CreateConfigurationData): Promise<boolean> {
     let myConfig = globalStateResponseFormatter(configurationData)
-    let request = await fetch(window.location.origin + "/api/configuration/update",
+
+    let request = await fetch(`/api/configuration/${id}`,
         {
-            method: "POST",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                id: id,
                 name: configurationData.name,
                 description: configurationData.description,
                 configuration: myConfig,

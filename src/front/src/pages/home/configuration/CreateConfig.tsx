@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {Box, Button, Container, Grid} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, Button, Container, Grid } from '@mui/material';
 import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
@@ -13,11 +13,11 @@ import {
     postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
-import SelectItemsList, {KeyValueItem} from '../../../sharedComponents/SelectItemsList';
-import {SkeletonConfiguration} from "./components/SkeletonConfiguration";
+import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectItemsList';
+import { SkeletonConfiguration } from "./components/SkeletonConfiguration";
 import BackButton from '../../../sharedComponents/BackButton';
-import {useNavigate} from "react-router";
-import {wsManager} from "../Home";
+import { useNavigate } from "react-router";
+import { wsManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
 import { getAllElements } from '../../../conf/backendController';
 
@@ -139,7 +139,7 @@ function CreateConfig(props: { id?: number }) {
                 return
             }
             // Load transcriptors
-            let items: KeyValueItem<Transcriptor>[] = transcriptors.map(transcriptor => {
+            let keyValueItems: KeyValueItem<Transcriptor>[] = transcriptors.map(transcriptor => {
                     return {
                         id: transcriptor.id + "",
                         checker: item => {
@@ -154,7 +154,7 @@ function CreateConfig(props: { id?: number }) {
             
             // If not not an update skip the next step
             if (!props.id) {
-                setKeys(items)
+                setKeys(keyValueItems)
                 setLoading(false)
                 return
             }
@@ -164,25 +164,27 @@ function CreateConfig(props: { id?: number }) {
                     return
                 }
                 // Transform data and retrieve the transcriptor for each configuration fields
-                let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => {
-                    let configurationItem = items.find(item => item.id === key)
-                    if (configurationItem) {
-                        configurationItem.value = (value as string)
-                    } else {
-                        console.warn("A configuration field in the configuration is not set in the configuration field list.")
-                    }
-                    return {
-                        key: transcriptors.find(t => t.id === Number(key)),
-                        value: value,
-                    } as KeyValueConfiguration
-                })
-                var configurationKeys: number[] = config.map(conf => conf.key.id)
-                setSelectedKeys(items.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
+                let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration))
+                    .map(([key, value]) => {
+                        let configurationItem = keyValueItems.find(item => item.item.fullName === key)
+                        if (configurationItem) {
+                            configurationItem.value = (value as string)
+                        } else {
+                            console.warn("A configuration field in the configuration is not set in the configuration field list.")
+                        }
+                        return {
+                            key: transcriptors.find(t => t.fullName === key),
+                            value: value,
+                        } as KeyValueConfiguration
+                    })
+
+                const configurationKeys: number[] = config.map(conf => conf.key.id)
+                setSelectedKeys(keyValueItems.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
                 setTitle(result.name)
                 setFirmware(result.firmware)
                 setDescription(result.description)
                 setLoading(false)
-                setKeys(items)
+                setKeys(keyValueItems)
             });
         })
     }, [props.id])

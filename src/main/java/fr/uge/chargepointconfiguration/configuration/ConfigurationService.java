@@ -51,11 +51,12 @@ public class ConfigurationService {
   /**
    * Update a configuration.
    *
+   * @param id the id of the configuration to be updated
    * @param updateConfigurationDto All the necessary information for a configuration update.
    * @return A configuration created with its information.
    */
-  public Optional<ConfigurationDto> update(UpdateConfigurationDto updateConfigurationDto) {
-    var currentConfiguration = configurationRepository.findById(updateConfigurationDto.id());
+  public Optional<ConfigurationDto> update(int id, UpdateConfigurationDto updateConfigurationDto) {
+    var currentConfiguration = configurationRepository.findById(id);
     return currentConfiguration.map(configuration -> {
       configuration.setName(updateConfigurationDto.name());
       configuration.setDescription(updateConfigurationDto.description());

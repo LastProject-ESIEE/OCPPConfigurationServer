@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -139,31 +140,32 @@ public class ConfigurationController {
           )
       )
   })
-  @PostMapping("/update")
+  @PatchMapping("/{id}")
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> updateConfiguration(
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "The configuration to be sent to the controller.",
-                  required = true,
-                  content = @Content(
-                          examples = @ExampleObject(
-                                  """
-                                  {
-                                    "id": "id of the configuration to be updated"
-                                    "name": "the name of the configuration",
-                                    "description": "A short description about the configuration",
-                                    "configuration": "{key1: value1, key2: value2}",
-                                    "firmware": 0
-                                  }
-                                  """
-                          )
-                  )
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "The configuration to be sent to the controller.",
+          required = true,
+          content = @Content(
+              examples = @ExampleObject(
+                  """
+                      {
+                        "id": "id of the configuration to be updated"
+                        "name": "the name of the configuration",
+                        "description": "A short description about the configuration",
+                        "configuration": "{key1: value1, key2: value2}",
+                        "firmware": 0
+                      }
+                      """
+              )
           )
-          @RequestBody UpdateConfigurationDto updateConfigurationDto) {
-    var configuration = configurationService.update(updateConfigurationDto);
+      )
+      @RequestBody UpdateConfigurationDto updateConfigurationDto,
+      @PathVariable int id) {
+    var configuration = configurationService.update(id, updateConfigurationDto);
     return configuration
-            .map(configurationDto -> new ResponseEntity<>(configurationDto, HttpStatus.OK))
-            .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        .map(configurationDto -> new ResponseEntity<>(configurationDto, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
   }
 
 
