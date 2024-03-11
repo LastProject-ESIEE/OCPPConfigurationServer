@@ -230,7 +230,7 @@ class UserControllerTest {
   @Test
   @WithMockUser(roles = "ADMINISTRATOR")
   void addUser() throws Exception {
-    mvc.perform(post("/api/user/new")
+    mvc.perform(post("/api/user/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectToJsonString(new CreateUserDto(
                       "newFirstName",

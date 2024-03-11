@@ -1,4 +1,4 @@
-import {PageRequest} from "../sharedComponents/DisplayTable"
+import { PageRequest } from "../sharedComponents/DisplayTable"
 
 export function apiRoleToFrench(role: ApiRole): string {
     switch (role) {
@@ -64,7 +64,7 @@ export async function searchUser(
 
 export async function createNewUser(user: CreateUserDto) {
 
-    let request = await fetch("/api/user/new",
+    let request = await fetch("/api/user/create",
         {
             method: "POST",
             headers: {

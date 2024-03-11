@@ -216,7 +216,7 @@ public class UserController {
           content = { @Content(mediaType = "application/json",
                   schema = @Schema(implementation = UserDto.class))
           })
-  @PostMapping(value = "/new")
+  @PostMapping(value = "/create")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> addUser(
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
