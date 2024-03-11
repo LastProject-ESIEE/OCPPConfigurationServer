@@ -1,5 +1,5 @@
 import { Box, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
     DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
