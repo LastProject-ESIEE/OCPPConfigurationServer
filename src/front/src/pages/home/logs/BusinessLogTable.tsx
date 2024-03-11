@@ -19,7 +19,7 @@ const businessLogTableColumns: TableColumnDefinition[] = [
         size: 2,
         filter: {
             apiField: "date",
-            filterType: "input"
+            filterType: "date"
         },
         sort: {
             apiField: "date",

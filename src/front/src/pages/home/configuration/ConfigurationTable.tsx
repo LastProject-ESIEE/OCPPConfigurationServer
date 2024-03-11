@@ -50,7 +50,7 @@ const configurationTableColumns: TableColumnDefinition[] = [
         size: 2,
         filter: {
             apiField: "lastEdit",
-            filterType: "input"
+            filterType: "date"
         },
         sort: {
             apiField: "lastEdit",

@@ -4,6 +4,9 @@ import { FilterOrder, SearchFilter, SearchSort, TableSortType } from "../conf/ba
 import { useState } from "react";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 export const DEFAULT_FILTER_SELECT_VALUE = "Aucun"
 
@@ -51,20 +54,28 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
     const [filters, setFilters] = useState<SearchFilter[]>([]);
     const [sortField, setSortField] = useState("");
     const [sortOrder, setSortOrder] = useState<TableSortType>("asc");
-    const updateFilter = (filterField: string, filterValue: string) => {
+    const updateFilter = (newFilters: SearchFilter[]) => {
         if(props.onFiltering){
+            // Retrieve all filters without filtered fields
+            var currentFilters = filters.filter(v => !newFilters.find(o => o.filterField === v.filterField))
+            const updatedFilters = [...currentFilters, ...newFilters]
+            setFilters(updatedFilters)
+            props.onFiltering(newFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
+
+            /*
             // If filter not present add it
-            if(!filters.find(v => v.filterField === filterField)){
-                let newFilters = [...filters, {filterField: filterField ?? "", filterValue: filterValue}]
+            if(!filters.find(v => v.filterField === newFilter.filterField)){
+                let newFilters = [...filters, {filterField: newFilter.filterField ?? "", filterValue: newFilter.filterValue, filterOrder: newFilter.filterOrder}]
                 setFilters(newFilters)
                 props.onFiltering(newFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
                 return
             }
+
             // Otherwise update filter
             setFilters(prevFilters => {
                 const newValues = prevFilters.map(filter => {
-                    if(filter.filterField === filterField){
-                        return {...filter, filterValue: filterValue}
+                    if(filter.filterField === newFilter.filterField){
+                        return {...filter, filterValue: newFilter.filterValue, filterOrder: newFilter.filterOrder}
                     }
                     return filter
                 })
@@ -75,6 +86,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                 }
                 return newValues
             })
+            */
         }
     }
 
@@ -128,14 +140,16 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                     <Grid item>
                                         <Box>
                                             {column.filter && (
-                                                <TableColumnFilter
-                                                    column={column}
-                                                    onFilterValidate={filterValue => {
-                                                        if(column.filter){
-                                                            updateFilter(column.filter.apiField, filterValue)
-                                                        }
-                                                    }}
-                                                />
+                                                <Box>
+                                                    <TableColumnFilter
+                                                        column={column}
+                                                        onFilterValidate={newfilters => {
+                                                            if(column.filter){
+                                                                updateFilter(newfilters)
+                                                            }
+                                                        }}
+                                                    />
+                                                </Box>
                                             )}
                                         </Box>
                                     </Grid>
@@ -191,12 +205,27 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
 }
 
 
-function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (value: string, order?: FilterOrder) => void}){
-    const [filterValue, setFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
+function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (filters: SearchFilter[]) => void}){
+    const [firstFilterValue, setFirstFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
+    const [secondFilterValue, setSecondFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
-    //const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
+    const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
+
+    // Format data to backend expected format
+    const dateFormatter = (value: string, begindate: boolean) => {
+        let selectedDate = new Date(value)
+        if(!begindate){
+            selectedDate.setHours(23)
+            selectedDate.setMinutes(59)
+            selectedDate.setSeconds(59)
+            selectedDate.setMilliseconds(999)
+        }
+        return selectedDate.toISOString().replace("Z", "")
+    }
+
     return (
         <Grid container maxWidth={"true"} justifyContent={"center"}>
+            {/*Display input filter*/}
             {(props.column.filter?.filterType === "input") && (
                 <TextField
                 placeholder={props.column.title}
@@ -204,51 +233,147 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                 size="small"
                 onKeyDown={event => {
                     if(event.key === 'Enter'){
-                        if(previousValue !== filterValue){
-                            props.onFilterValidate(filterValue)
-                            setPreviousValue(filterValue)
+                        if(previousValue !== firstFilterValue){
+                            
+                            props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: firstFilterValue, filterOrder: filterOrder}])
+                            setPreviousValue(firstFilterValue)
                         }
                     }
                 }}
                 onBlur={() => {
-                    if(previousValue !== filterValue){
-                        props.onFilterValidate(filterValue)
-                        setPreviousValue(filterValue)
+                    if(previousValue !== firstFilterValue){
+                        props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: firstFilterValue, filterOrder: filterOrder}])
+                        setPreviousValue(firstFilterValue)
                     }
                 }}
                 onChange={event => {
-                    setFilterValue(event.target.value)
+                    setFirstFilterValue(event.target.value)
                 }}
             />
             )}
+            {/*Display select input*/}
             {(props.column.filter?.filterType === "select" && (props.column.filter?.restrictedValues?.length ?? 0) > 0) && (
                 <Select
                     size="small"
                     variant="outlined"
                     disabled={props.column.filter.disable}
                     fullWidth
-                    value={filterValue}
+                    value={firstFilterValue}
                     onChange={event => {
                         let value = event.target.value
-                        setFilterValue(value)
+                        setFirstFilterValue(value)
                         if(props.column.filter?.apiValueFormatter){
-                            props.onFilterValidate(props.column.filter.apiValueFormatter(value))
+                            props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: props.column.filter.apiValueFormatter(value), filterOrder: filterOrder}])
                             return
                         }
-                        props.onFilterValidate(value)
+                        props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: value, filterOrder: filterOrder}])
                     }}>
-
                     {props.column.filter.restrictedValues && props.column.filter.restrictedValues.map((item) => {
-                        let selected = filterValue === item;
+                        let selected = firstFilterValue === item;
                         return (
                             <MenuItem key={"columnfilterOption-"+ item} value={item} selected={selected}>{item}</MenuItem>
                         )}
                     )}
             </Select>
             )}
+            {/*Display date input*/}
             {(props.column.filter?.filterType === "date") && (
                 <Box>
-                    
+                    <Grid container wrap="nowrap" flexDirection={"row"} alignContent={"center"} >
+                        <Grid item >
+                            <Select
+                                autoWidth
+                                size="small"
+                                variant="outlined"
+                                disabled={props.column.filter.disable}
+                                value={filterOrder}
+                                onChange={event => {
+                                    let value: FilterOrder = event.target.value as FilterOrder
+                                    if(!value){
+                                        console.error("Unrecognized filter order.")
+                                        return
+                                    }
+                                    setFilterOrder(value)
+                                    if(firstFilterValue === ""){
+                                        return
+                                    }
+
+                                    if(secondFilterValue === ""){
+                                        props.onFilterValidate([
+                                            {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: filterOrder},
+                                        ])
+                                        return
+                                    }
+                                    props.onFilterValidate([
+                                        {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: filterOrder},
+                                        {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: filterOrder},
+                                    ])
+                                    //props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue), filterOrder: value}])
+                                }}
+                            >
+                            <MenuItem value={"="}>{"="}</MenuItem>
+                            <MenuItem value={">"}>{">"}</MenuItem> 
+                            <MenuItem value={"<"}>{"<"}</MenuItem> 
+                        </Select>
+                        </Grid>
+                        <Grid item>
+                            <LocalizationProvider
+                                dateAdapter={AdapterDayjs}
+                            >
+                                <DatePicker
+                                    value={firstFilterValue}
+                                    onChange={(newValue) => {
+                                        setFirstFilterValue(newValue ?? "")
+                                        if(newValue){
+                                            if(secondFilterValue === ""){
+                                                props.onFilterValidate([
+                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,true), filterOrder: filterOrder},
+                                                ])
+                                            }
+                                            props.onFilterValidate([
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,true), filterOrder: filterOrder},
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,false), filterOrder: filterOrder},
+                                            ])
+                                            return
+                                        }
+                                        props.onFilterValidate([
+                                            {filterField: props.column.filter?.apiField ?? "", filterValue: "", filterOrder: filterOrder},
+                                        ])
+                                    }}
+                                    format="DD/MM/YYYY"
+                                    sx={{padding: 0, margin: 0}}
+                                    slotProps={{textField: { size: 'small'}}}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item>
+                            {filterOrder === "=" && (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                >
+                                    <DatePicker
+                                        value={secondFilterValue}
+                                        onChange={(newValue) => {
+                                            setSecondFilterValue(newValue ?? "")
+                                            if(firstFilterValue !== ""){
+                                                if(newValue){
+                                                    props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue, true), filterOrder: filterOrder}])
+                                                    return
+                                                }
+                                            }
+                                            props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: "", filterOrder: filterOrder}])
+                                        }}
+                                        format="DD/MM/YYYY"
+                                        sx={{padding: 0, margin: 0}}
+                                        slotProps={{textField: { size: 'small'}}}
+                                    />
+                                </LocalizationProvider>
+                            )}
+                            
+                        </Grid>
+                    </Grid>
+                   
+
                 </Box>
             )}
         </Grid>
