@@ -7,7 +7,8 @@ import {
 import React, { useEffect } from "react";
 import { Box, Grid, ListItemButton, Tooltip, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Firmware, searchFirmware } from "../../../conf/FirmwareController";
+import { Firmware } from "../../../conf/FirmwareController";
+import { searchElements } from "../../../conf/backendController";
 
 
 const PAGE_SIZE = 30; // Max items displayed in the firmware table
@@ -15,19 +16,45 @@ const PAGE_SIZE = 30; // Max items displayed in the firmware table
 const firmwareTableColumns: TableColumnDefinition[] = [
     {
         title: "Version",
-        size: 2
+        size: 2,
+        filter: {
+            apiField: "version",
+            filterType: "input"
+        },
+        sort: {
+            apiField: "version",
+        }
     },
     {
         title: "Constructeur",
-        size: 2
+        size: 2,
+        filter: {
+            apiField: "constructor",
+            filterType: "input"
+          },
+        sort: {
+            apiField: "constructor",
+        }
     },
     {
         title: "Modèles compatibles",
-        size: 4
+        size: 4,
+        filter: {
+            apiField: "",
+            filterType: "input",
+            disable: true,
+          }
     },
     {
         title: "URL",
-        size: 4
+        size: 4,
+        filter: {
+            apiField: "url",
+            filterType: "input"
+          },
+        sort: {
+            apiField: "url",
+        }
     },
 ]
 
@@ -39,8 +66,13 @@ function FirmwareTable() {
     const [error, setError] = React.useState<string | undefined>(undefined);
 
     useEffect(() => {
-        searchFirmware(PAGE_SIZE).then((result: PageRequest<Firmware> | undefined) => {
-            if (!result) {
+        searchElements<Firmware>("/api/firmware/search",
+            {
+                page: 0,
+                size: PAGE_SIZE,
+                sort: { field: "version", order: "desc" }
+            }).then((result: PageRequest<Firmware> | undefined) => {
+            if(!result){
                 setError("Erreur lors de la récupération des firmwares.")
                 return
             }
@@ -64,7 +96,7 @@ function FirmwareTable() {
             })
 
             return (
-                <Box key={"box-configuration-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
+                <Box key={"box-firmware-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
                     <Link key={"firmware-edit-path-" + firmware.id} to={{pathname: 'edit/' + firmware.id}}
                           style={{textDecoration: 'none', paddingTop: 10}}>
                         <ListItemButton style={{
@@ -102,10 +134,10 @@ function FirmwareTable() {
                 </Box>
             )
         },
-        fetchData: () => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchFirmware(PAGE_SIZE, nextPage).then((result: PageRequest<Firmware> | undefined) => {
-                if (!result) {
+            searchElements<Firmware>("/api/firmware/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<Firmware> | undefined) => {
+                if(!result){
                     setError("Erreur lors de la récupération des firmwares.")
                     return
                 }
@@ -113,6 +145,18 @@ function FirmwareTable() {
                 setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
             });
             setCurrentPage(nextPage)
+        },
+        onFiltering: (filters, sort) => {
+            // Reset page and search
+            setCurrentPage(0)
+            searchElements<Firmware>("/api/firmware/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<Firmware> | undefined) => {
+                if(!result){
+                    setError("Erreur lors de la récupération des firmwares.")
+                    return
+                }
+                setTableData(result.data)
+                setHasMore(result.total > PAGE_SIZE)
+            });
         },
     }
 

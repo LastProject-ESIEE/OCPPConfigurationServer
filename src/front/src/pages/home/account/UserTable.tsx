@@ -7,7 +7,7 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { apiRoleToFrench, ApiRole, searchUser, User, frenchToEnglishRole, FrenchRole } from "../../../conf/userController";
+import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
 import { searchElements } from "../../../conf/backendController";
 
@@ -17,27 +17,36 @@ const PAGE_SIZE = 30; // Max items displayed in the user table
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
+        size: 2.5,
         filter: {
             apiField: "lastName",
             filterType: "input"
         },
-        size: 2.5
+        sort: {
+            apiField: "lastName",
+        }
     },
     {
         title: "Prénom",
+        size: 2.5,
         filter: {
             apiField: "firstName",
             filterType: "input"
         },
-        size: 2.5
+        sort: {
+            apiField: "firstName",
+        }
     },
     {
         title: "Mail",
+        size: 3.5,
         filter: {
             apiField: "email",
             filterType: "input"
         },
-        size: 3.5
+        sort: {
+            apiField: "email",
+        }
     },
     {
         title: "Rôle",
@@ -54,7 +63,10 @@ const userTableColumns: TableColumnDefinition[] = [
                 return value === DEFAULT_FILTER_SELECT_VALUE ? "" : frenchToEnglishRole(value as FrenchRole)
             }
         },
-        size: 3
+        size: 3,
+        sort: {
+            apiField: "role",
+        }
     },
     {
         title: "",
@@ -73,8 +85,12 @@ function UserTable() {
 
 
     useEffect(() => {
-        searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
-            if(!result){
+        searchElements<User>("/api/user/search", {
+            page: 0,
+            size: PAGE_SIZE,
+            sort: {field: 'lastName', order: "asc"}
+        }).then((result: PageRequest<User> | undefined) => {
+            if (!result) {
                 setError("Erreur lors de la récupération des utilisateurs.")
                 return
             }
@@ -130,10 +146,16 @@ function UserTable() {
         data: tableData,
         hasMore: hasMore,
         error: error,
-        formatter: (user) => {
+        formatter: (user, index) => {
             return (
-                <Box key={"box-configuration-edit-path-" + user.id} margin={1} maxWidth={"true"}>
-                    <Box style={{maxWidth: "true", margin: 3, borderRadius: 50, color: 'black', backgroundColor: '#E1E1E1'}}>
+                <Box key={"box-user-table-entry-" + index} margin={1} maxWidth={"true"}>
+                    <Box style={{
+                        maxWidth: "true",
+                        margin: 3,
+                        borderRadius: 50,
+                        color: 'black',
+                        backgroundColor: '#E1E1E1'
+                    }}>
                         <Grid container maxWidth={"true"} flexDirection={"row"} alignItems={"center"}>
                             <Grid item xs={userTableColumns[0].size} maxWidth={"true"} justifyContent={"center"}>
                                 <Typography variant="body1" align="center">{user.lastName}</Typography>
@@ -154,31 +176,34 @@ function UserTable() {
                                         marginTop: 10,
                                         marginBottom: 10
                                     }}
-                                    onChange={event => {onChangeEvent(event, user)}}
+                                    onChange={event => {
+                                        onChangeEvent(event, user)
+                                    }}
                                     fullWidth={true} size="small" variant="standard">
 
                                     {userRoleList && userRoleList
                                         .map(role => {
-                                            return (
-                                                <MenuItem
-                                                    key={"menuItem" + role.toString()}
-                                                    value={role}
-                                                    disabled={role === user.role}
-                                                    style={{
-                                                        border: 0
-                                                    }}
-                                                >
-                                                    {apiRoleToFrench(role)}
-                                                </MenuItem>
-                                            )
-                                        }
-                                    )}
+                                                return (
+                                                    <MenuItem
+                                                        key={"menuItem" + role.toString()}
+                                                        value={role}
+                                                        disabled={role === user.role}
+                                                        style={{
+                                                            border: 0
+                                                        }}
+                                                    >
+                                                        {apiRoleToFrench(role)}
+                                                    </MenuItem>
+                                                )
+                                            }
+                                        )}
                                 </Select>
                             </Grid>
-                            <Grid item xs={userTableColumns[4].size} maxWidth={"true"} justifyContent={"center"} textAlign={"center"}>
+                            <Grid item xs={userTableColumns[4].size} maxWidth={"true"} justifyContent={"center"}
+                                  textAlign={"center"}>
                                 <DeleteUserModalComponent
-                                    user={user} 
-                                    enabled={user.id === me?.id} 
+                                    user={user}
+                                    enabled={user.id === me?.id}
                                     setTableData={setTableData}
                                     setError={setError}
                                     setHasMore={setHasMore}
@@ -189,10 +214,15 @@ function UserTable() {
                 </Box>
             )
         },
-        fetchData: filters => {
+        fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
-            searchElements<User>("/api/user/search", {page: nextPage, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
-                if(!result){
+            searchElements<User>("/api/user/search", {
+                page: nextPage,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<User> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
                 }
@@ -201,11 +231,16 @@ function UserTable() {
             });
             setCurrentPage(nextPage)
         },
-        onFiltering: filters => {
+        onFiltering: (filters, sort) => {
             // Reset page and search
             setCurrentPage(0)
-            searchElements<User>("/api/user/search", {page: 0, size: PAGE_SIZE, filters: filters}).then((result: PageRequest<User> | undefined) => {
-                if(!result){
+            searchElements<User>("/api/user/search", {
+                page: 0,
+                size: PAGE_SIZE,
+                filters: filters,
+                sort: sort
+            }).then((result: PageRequest<User> | undefined) => {
+                if (!result) {
                     setError("Erreur lors de la récupération des utilisateurs.")
                     return
                 }
