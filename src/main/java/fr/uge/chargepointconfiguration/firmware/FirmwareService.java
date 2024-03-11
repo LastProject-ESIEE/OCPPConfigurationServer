@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedRepository;
@@ -31,14 +32,14 @@ public class FirmwareService {
   }
 
   public Optional<Firmware> getFirmwareById(int id) {
-    return firmwareRepository.findById(id);
+    return Optional.of(firmwareRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException("Pas de firmware avec l'id : " + id)));
   }
 
   public long countTotal(String request) {
     var condition = SearchUtils.computeSpecification(request, Firmware.class);
     return firmwareRepository.count(condition);
   }
-
 
   /**
    * Search for {@link Firmware} with a pagination.
@@ -93,13 +94,15 @@ public class FirmwareService {
               .ifPresent(typesAllowed::add);
     });
     var currentConfiguration = firmwareRepository.findById(id);
-    return currentConfiguration.map(firmware -> {
+    return Optional.of(currentConfiguration.map(firmware -> {
       firmware.setConstructor(createFirmwareDto.constructor());
       firmware.setVersion(createFirmwareDto.version());
       firmware.setUrl(createFirmwareDto.url());
       firmware.setTypesAllowed(typesAllowed);
       firmwareRepository.save(firmware);
       return firmware.toDto();
-    });
+    }).orElseThrow(
+            () -> new EntityNotFoundException("Pas de firmware avec l'id : " + id))
+    );
   }
 }

@@ -93,7 +93,6 @@ public class FirmwareController {
   @PreAuthorize("hasRole('EDITOR')")
   public Optional<FirmwareDto> getFirmwareById(
           @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
-    // TODO : exception BAD REQUEST si id est pas un nombre
     return Optional.of(firmwareService.getFirmwareById(id).orElseThrow().toDto());
   }
 
