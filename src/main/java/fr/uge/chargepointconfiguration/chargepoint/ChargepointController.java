@@ -118,6 +118,7 @@ public class ChargepointController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = chargepointService.countTotalWithFilters(request);
+    var totalElement = chargepointService.count();
 
     var data = chargepointService.search(
             request,
@@ -127,7 +128,7 @@ public class ChargepointController {
         .map(Chargepoint::toDto)
         .toList();
 
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 
   /**

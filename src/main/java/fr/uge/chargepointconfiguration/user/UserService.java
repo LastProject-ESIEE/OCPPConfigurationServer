@@ -112,6 +112,10 @@ public class UserService {
     return userRepository.count(condition);
   }
 
+  public long count() {
+    return userRepository.count();
+  }
+
   /**
    * Search for {@link User} with a pagination.
    *

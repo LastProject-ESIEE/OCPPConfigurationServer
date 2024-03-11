@@ -1,5 +1,5 @@
 import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
 import {wsManager} from "../Home";
 import { getUserInformation } from "../../../conf/backendController";

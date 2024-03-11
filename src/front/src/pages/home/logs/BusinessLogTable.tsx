@@ -87,6 +87,9 @@ function BusinessLogTable() {
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
     const [error, setError] = React.useState<string | undefined>(undefined);
+    const [total, setTotal] = React.useState<number>();
+    const [totalElement, setTotalElement] = React.useState<number>();
+    const [loaded, setLoaded] = React.useState(false);
 
     useEffect(() => {
         searchElements<BusinessLog>("/api/log/business/search",
@@ -101,6 +104,9 @@ function BusinessLogTable() {
             }
             setTableData(result.data)
             setHasMore(result.total > PAGE_SIZE)
+            setTotal(result.total)
+            setTotalElement(result.totalElement)
+            setLoaded(true)
         });
     }, [])
 
@@ -132,6 +138,8 @@ function BusinessLogTable() {
                 }
                 setTableData([...tableData, ...result.data])
                 setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
             setCurrentPage(nextPage)
         },
@@ -150,11 +158,32 @@ function BusinessLogTable() {
                 }
                 setTableData(result.data)
                 setHasMore(result.total > PAGE_SIZE)
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
         }
     }
 
-    return InfinityScrollItemsTable(props)
+    return (
+        <Box>
+            {
+                InfinityScrollItemsTable(props)
+            }
+            {
+                loaded && (
+                    <Typography 
+                        color={"primary"} 
+                        variant="body1" 
+                        marginLeft={5}
+                        >
+                        {
+                            (total === totalElement) ? totalElement?.toLocaleString() + " élément(s)" : total?.toLocaleString() + " élément(s) sur " + totalElement?.toLocaleString()
+                        }
+                    </Typography>
+                )
+            }
+        </Box>
+    )
 }
 
 function LogLineItemVMamar(props: { businessLog: BusinessLog }) {

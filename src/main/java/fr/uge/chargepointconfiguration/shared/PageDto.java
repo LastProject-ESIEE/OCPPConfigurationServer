@@ -16,6 +16,7 @@ import java.util.Objects;
  */
 public record PageDto<T>(
       long total,
+      long totalElement,
       int page,
       int size,
       List<T> data

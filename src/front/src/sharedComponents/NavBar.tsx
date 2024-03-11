@@ -177,7 +177,7 @@ export function NavBar() {
                                       aria-label={"logout"}
                                       style={{fontSize: 'inherit'}}
                                   >
-                                        <LogoutIcon style={{width: '1em',height: 'auto', color: 'black'}}/>
+                                        <LogoutIcon style={{width: '1em',height: 'auto', color: 'white'}}/>
                                   </IconButton>
                               </Grid>
                               <Grid item>

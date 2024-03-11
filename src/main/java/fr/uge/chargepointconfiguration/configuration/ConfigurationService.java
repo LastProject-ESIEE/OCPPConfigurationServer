@@ -2,7 +2,7 @@ package fr.uge.chargepointconfiguration.configuration;
 
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +61,7 @@ public class ConfigurationService {
       configuration.setName(updateConfigurationDto.name());
       configuration.setDescription(updateConfigurationDto.description());
       configuration.setConfiguration(updateConfigurationDto.configuration());
-      configuration.setLastEdit(new Timestamp(System.currentTimeMillis()));
+      configuration.setLastEdit(LocalDateTime.now());
       configuration.setFirmware(
               firmwareRepository.findById(updateConfigurationDto.firmware()).orElseThrow()
       );
@@ -94,6 +94,10 @@ public class ConfigurationService {
   public long countTotal(String request) {
     var condition = SearchUtils.computeSpecification(request, Configuration.class);
     return configurationRepository.count(condition);
+  }
+
+  public long count() {
+    return configurationRepository.count();
   }
 
   /**

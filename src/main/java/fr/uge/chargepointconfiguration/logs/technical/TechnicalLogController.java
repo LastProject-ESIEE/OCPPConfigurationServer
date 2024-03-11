@@ -99,6 +99,7 @@ public class TechnicalLogController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = technicalLogService.countTotal(request);
+    var totalElement = technicalLogService.count();
 
     var data = technicalLogService.search(
             request,
@@ -108,7 +109,7 @@ public class TechnicalLogController {
         .map(TechnicalLogEntity::toDto)
         .toList();
 
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 
 }

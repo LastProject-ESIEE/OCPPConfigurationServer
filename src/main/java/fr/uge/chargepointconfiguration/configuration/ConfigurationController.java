@@ -227,6 +227,7 @@ public class ConfigurationController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = configurationService.countTotal(request);
+    var totalElement = configurationService.count();
 
     var data = configurationService.search(
             request,
@@ -235,6 +236,6 @@ public class ConfigurationController {
         .map(Configuration::toDto)
         .toList();
 
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 }

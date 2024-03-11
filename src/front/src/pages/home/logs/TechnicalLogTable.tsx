@@ -69,6 +69,9 @@ function TechnicalLogTable() {
     const [currentPage, setCurrentPage] = React.useState(0);
     const [hasMore, setHasMore] = React.useState(true);
     const [error, setError] = React.useState<string | undefined>(undefined);
+    const [total, setTotal] = React.useState<number>();
+    const [totalElement, setTotalElement] = React.useState<number>();
+    const [loaded, setLoaded] = React.useState(false);
 
     useEffect(() => {
         searchElements<TechnicalLog>("/api/log/technical/search",
@@ -83,6 +86,9 @@ function TechnicalLogTable() {
             }
             setTableData(result.data)
             setHasMore(result.total > PAGE_SIZE)
+            setTotal(result.total)
+            setTotalElement(result.totalElement)
+            setLoaded(true)
         });
     }, [])
 
@@ -114,6 +120,8 @@ function TechnicalLogTable() {
                 }
                 setTableData([...tableData, ...result.data])
                 setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
             setCurrentPage(nextPage)
         },
@@ -132,11 +140,32 @@ function TechnicalLogTable() {
                 }
                 setTableData(result.data)
                 setHasMore(result.total > PAGE_SIZE)
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
         }
     }
 
-    return InfinityScrollItemsTable(props)
+    return (
+        <Box>
+            {
+                InfinityScrollItemsTable(props)
+            }
+            {
+                loaded && (
+                    <Typography 
+                        color={"primary"} 
+                        variant="body1" 
+                        marginLeft={5}
+                        >
+                        {
+                            (total === totalElement) ? totalElement?.toLocaleString() + " élément(s)" : total?.toLocaleString() + " élément(s) sur " + totalElement?.toLocaleString()
+                        }
+                    </Typography>
+                )
+            }
+        </Box>
+    )
 }
 
 function LogLineItemVMamar(props: { technicalLog: TechnicalLog }) {

@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -41,7 +42,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   @Column(name = "last_edit", nullable = false,
       columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
-  private Timestamp lastEdit;
+  private LocalDateTime lastEdit;
 
   @Column(name = "configuration", nullable = false)
   private String configuration;
@@ -77,7 +78,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
                        Firmware firmware) {
     this.name = Objects.requireNonNull(name);
     this.configuration = Objects.requireNonNull(configuration);
-    lastEdit = new Timestamp(System.currentTimeMillis());
+    lastEdit = LocalDateTime.now();
     this.firmware = Objects.requireNonNull(firmware);
   }
 
@@ -96,7 +97,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
     this.id = id;
     this.name = Objects.requireNonNull(name);
     this.configuration = Objects.requireNonNull(configuration);
-    lastEdit = new Timestamp(System.currentTimeMillis());
+    lastEdit = LocalDateTime.now();
     this.firmware = Objects.requireNonNull(firmware);
   }
 
@@ -127,11 +128,11 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
     this.description = description;
   }
 
-  public Timestamp getLastEdit() {
+  public LocalDateTime getLastEdit() {
     return lastEdit;
   }
 
-  public void setLastEdit(Timestamp lastEdit) {
+  public void setLastEdit(LocalDateTime lastEdit) {
     this.lastEdit = lastEdit;
   }
 
@@ -179,7 +180,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
         id,
         name,
         description,
-        lastEdit,
+        Timestamp.valueOf(lastEdit),
         ConfigurationDto.replaceIntToKey(configuration),
         firmware == null ? null : firmware.toDto()
     );

@@ -134,6 +134,7 @@ public class FirmwareController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = firmwareService.countTotal(request);
+    var totalElement = firmwareService.count();
 
     var data = firmwareService.search(
             request,
@@ -148,7 +149,7 @@ public class FirmwareController {
         ))
         .toList();
 
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 
 

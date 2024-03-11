@@ -32,6 +32,10 @@ public class TechnicalLogService {
     return technicalLogRepository.count(condition);
   }
 
+  public long count() {
+    return technicalLogRepository.count();
+  }
+
   /**
    * Search for {@link TechnicalLogEntity} with a pagination.
    *
