@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -61,15 +60,16 @@ public class ChargepointController {
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
   public List<ChargepointDto> getAllChargepoints() {
-    return chargepointService.getAllChargepoints();
+    return chargepointService.getAllChargepoints()
+        .stream().map(Chargepoint::toDto).toList();
   }
 
   /**
-   * Returns an optional of chargepoint according to the given id.<br>
+   * Returns a chargepoint according to the given id.<br>
    * It is empty if the repository could not find a chargepoint.
    *
    * @param id An int.
-   * @return An optional of chargepoint.
+   * @return A chargepoint.
    */
   @Operation(summary = "Get a chargepoint by its id")
   @ApiResponses(value = { @ApiResponse(responseCode = "200",
@@ -81,10 +81,10 @@ public class ChargepointController {
           content = @Content) })
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")
-  public Optional<ChargepointDto> getChargepointById(
+  public ChargepointDto getChargepointById(
       @Parameter(description = "Id of the chargepoint your are looking for.")
       @PathVariable int id) {
-    return chargepointService.getChargepointById(id);
+    return chargepointService.getChargepointById(id).toDto();
   }
 
   /**
@@ -117,7 +117,7 @@ public class ChargepointController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = chargepointService.countTotalWithFilters(request);
+    var total = chargepointService.countTotalWithFilter(request);
 
     var data = chargepointService.search(
             request,
@@ -156,28 +156,28 @@ public class ChargepointController {
               examples = @ExampleObject(
                   """
                   {
-                         "serialNumber": "string",
-                         "type": "string",
-                         "constructor": "string",
-                         "clientId": "string",
-                         "configuration": -1
+                    "serialNumber": "string",
+                    "type": "string",
+                    "constructor": "string",
+                    "clientId": "string",
+                    "configuration": -1
                   }
                   """
               )
           )
       )
       @RequestBody CreateChargepointDto createChargepointDto) {
-    return new ResponseEntity<>(chargepointService.save(createChargepointDto),
-        HttpStatus.CREATED);
+    var chargepointDto = chargepointService.save(createChargepointDto).toDto();
+    return new ResponseEntity<>(chargepointDto, HttpStatus.CREATED);
   }
 
 
   /**
-   * Returns an optional of chargepoint according to the given id.<br>
+   * Returns a chargepoint according to the given id.<br>
    * It is empty if the repository could not find a chargepoint.
    *
    * @param id An int.
-   * @return An optional of chargepoint.
+   * @return A chargepoint.
    */
   @Operation(summary = "Update a chargepoint by its id")
   @ApiResponses({

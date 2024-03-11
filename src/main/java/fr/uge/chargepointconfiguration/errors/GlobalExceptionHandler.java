@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 /**
  * Controller to handle errors with exceptions.
@@ -34,6 +35,13 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ErrorMessage> handleBadRequestException(RuntimeException ex) {
     return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorMessage> handleBadArguments(RuntimeException ex) {
+    return new ResponseEntity<>(new ErrorMessage("Les arguments passés ne sont pas valides"),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(IllegalOperationException.class)

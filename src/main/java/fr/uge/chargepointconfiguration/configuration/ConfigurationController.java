@@ -115,8 +115,8 @@ public class ConfigurationController {
                         {
                           "name": "the name of the configuration",
                           "description": "A short description about the configuration",
-                          "configuration": "{key1: value1, key2: value2}",
-                          "firmware": 0
+                          "configuration": "{"1":"100"}",
+                          "firmware": 1
                         }
                         """
                   )
@@ -152,11 +152,10 @@ public class ConfigurationController {
               examples = @ExampleObject(
                   """
                       {
-                        "id": "id of the configuration to be updated"
                         "name": "the name of the configuration",
                         "description": "A short description about the configuration",
-                        "configuration": "{key1: value1, key2: value2}",
-                        "firmware": 0
+                        "configuration": "{"1":"100"}",
+                        "firmware": 1
                       }
                       """
               )
@@ -226,7 +225,7 @@ public class ConfigurationController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = configurationService.countTotal(request);
+    var total = configurationService.countTotalWithFilter(request);
 
     var data = configurationService.search(
             request,

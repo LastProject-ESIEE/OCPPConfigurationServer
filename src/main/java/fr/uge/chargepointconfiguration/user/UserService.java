@@ -5,7 +5,6 @@ import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingEx
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.errors.exceptions.IllegalOperationException;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,11 +102,6 @@ public class UserService {
   public User updateRole(int id, User.Role role) {
     var user = getById(id);
 
-    var validRole = Arrays.asList(User.Role.values()).contains(role);
-    if (!validRole) {
-      throw new BadRequestException("Rôle inexistant : " + role);
-    }
-
     if (user.getId() == getAuthenticatedUser().getId()) {
       throw new IllegalOperationException("Vous ne pouvez pas changer votre propre rôle.");
     }
@@ -180,7 +174,7 @@ public class UserService {
     if (getAuthenticatedUser().getId() == id) {
       throw new IllegalOperationException("Impossible de se supprimer soi-même");
     }
-    var user = getUserById(id);
+    var user = getById(id);
     userRepository.delete(user);
   }
 

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -58,7 +57,7 @@ public class FirmwareController {
           description = "Found all the firmwares",
           content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = Firmware.class)
+                  schema = @Schema(implementation = FirmwareDto.class)
           )
   )
   @GetMapping(value = "/all")
@@ -81,7 +80,7 @@ public class FirmwareController {
               description = "Found the firmware",
               content = @Content(
                       mediaType = "application/json",
-                      schema = @Schema(implementation = Firmware.class)
+                      schema = @Schema(implementation = FirmwareDto.class)
               )
       ),
       @ApiResponse(
@@ -91,9 +90,9 @@ public class FirmwareController {
   })
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('EDITOR')")
-  public Optional<FirmwareDto> getFirmwareById(
+  public FirmwareDto getFirmwareById(
           @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
-    return Optional.of(firmwareService.getFirmwareById(id).orElseThrow().toDto());
+    return firmwareService.getFirmwareById(id).toDto();
   }
 
 
@@ -132,7 +131,7 @@ public class FirmwareController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = firmwareService.countTotal(request);
+    var total = firmwareService.countTotalWithFilter(request);
 
     var data = firmwareService.search(
             request,
@@ -243,9 +242,7 @@ public class FirmwareController {
           )
           @RequestBody CreateFirmwareDto createFirmwareDto) {
     var firmware = firmwareService.update(id, createFirmwareDto);
-    return firmware
-            .map(firmwareDto -> new ResponseEntity<>(firmwareDto, HttpStatus.OK))
-            .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+    return new ResponseEntity<>(firmware.toDto(), HttpStatus.OK);
   }
 
 }

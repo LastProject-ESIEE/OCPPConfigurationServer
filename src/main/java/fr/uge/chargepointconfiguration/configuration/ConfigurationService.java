@@ -1,11 +1,15 @@
 package fr.uge.chargepointconfiguration.configuration;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
+import fr.uge.chargepointconfiguration.tools.JsonParser;
 import jakarta.persistence.EntityNotFoundException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,13 @@ public class ConfigurationService {
   private final ConfigurationRepository configurationRepository;
 
   private final FirmwareRepository firmwareRepository;
+
+  record ConfigurationJson(
+      @JsonProperty("1") String lightIntensity,
+      @JsonProperty("4") String localAuthList,
+      @JsonProperty("5") String stationMaxCurrent,
+      @JsonProperty("6") String stationPassword) {
+  }
 
   /**
    * ConfigurationService's constructor.
@@ -40,17 +51,66 @@ public class ConfigurationService {
    * @return A configuration created with its information.
    */
   public ConfigurationDto save(CreateConfigurationDto createConfigurationDto) {
-    var configuration = configurationRepository.save(new Configuration(
-        createConfigurationDto.name(),
-        createConfigurationDto.description(),
-        createConfigurationDto.configuration(),
-        firmwareRepository.findById(
+    if (createConfigurationDto.name().isBlank()) {
+      throw new BadRequestException("Le nom est requis");
+    }
+
+    var firmware = firmwareRepository.findById(
             createConfigurationDto.firmware())
-            .orElseThrow(() -> new EntityNotFoundException("Aucun firmware avec l'id "
-                                                           + createConfigurationDto.firmware()))
-    ));
+        .orElseThrow(
+            () -> new EntityNotFoundException(
+                "Aucun firmware avec l'id " + createConfigurationDto.firmware()
+            )
+        );
+
+    checkerConfig(createConfigurationDto);
+
+    var configuration = configurationRepository.save(new Configuration(
+            createConfigurationDto.name(),
+            createConfigurationDto.description(),
+            createConfigurationDto.configuration(),
+            firmware
+        )
+    );
 
     return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
+  }
+
+  private static void checkerConfig(CreateConfigurationDto createConfigurationDto) {
+    var confJson = JsonParser.stringToObject(ConfigurationJson.class,
+        createConfigurationDto.configuration());
+
+    var transcriptorsById =
+        Arrays.stream(ConfigurationTranscriptor.values()).collect(Collectors.toMap(
+            ConfigurationTranscriptor::getId,
+            e -> e)
+        );
+
+    Arrays.stream(confJson.getClass().getDeclaredFields())
+        .forEach(field -> {
+          try {
+            if (field.get(confJson) == null) {
+              return;
+            }
+          } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
+          }
+          String key = field.getAnnotation(JsonProperty.class).value();
+          try {
+            var idTranscriptor = Integer.parseInt(key);
+            var valid = field.get(confJson).toString()
+                .matches(transcriptorsById.get(idTranscriptor).getRegexRule());
+            if (!valid) {
+              throw new BadRequestException(
+                  "Le champs \"" + transcriptorsById.get(idTranscriptor).getFullName()
+                  + "\" ne respecte pas ses contraintes.");
+            }
+          } catch (NumberFormatException e) {
+            throw new BadRequestException("La clé " + key + " n'existe pas");
+          } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
+          }
+        });
   }
 
   /**
@@ -63,6 +123,8 @@ public class ConfigurationService {
   public Configuration update(int id, CreateConfigurationDto configurationDto) {
     var configuration = configurationRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Aucune configuration avec l'id " + id));
+
+    checkerConfig(configurationDto);
 
     configuration.setName(configurationDto.name());
     configuration.setDescription(configurationDto.description());
@@ -97,7 +159,13 @@ public class ConfigurationService {
         .orElseThrow(() -> new EntityNotFoundException("Aucune configuration avec l'id " + id));
   }
 
-  public long countTotal(String request) {
+  /**
+   * Count the number of entities with the constraint of the given request.
+   *
+   * @param request the request used to search
+   * @return the amount of entities with the constraint of the given request
+   */
+  public long countTotalWithFilter(String request) {
     try {
       var condition = SearchUtils.computeSpecification(request, Configuration.class);
       return configurationRepository.count(condition);
