@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.chargepoint.notification;
 
 import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
 import fr.uge.chargepointconfiguration.status.StatusDto;
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -123,7 +124,7 @@ public record Notification(String name, WebSocketNotification value) {
    */
   public static Notification notificationOnStatusChange(Chargepoint chargepoint) {
     var statusDto = new StatusDto(
-            chargepoint.getLastUpdate(),
+            Timestamp.valueOf(chargepoint.getLastUpdate()),
             chargepoint.getError(),
             chargepoint.isState(),
             chargepoint.getStep(),
