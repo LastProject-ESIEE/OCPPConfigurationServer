@@ -34,7 +34,6 @@ public record ConfigurationDto(
     if ("{}".equals(configuration)) {
       return configuration;
     }
-    //System.out.println("Conf : " + configuration);
     var map = Arrays.stream(ConfigurationTranscriptor.values())
         .collect(Collectors.toMap(ConfigurationTranscriptor::getId,
             ConfigurationTranscriptor::getFullName));
@@ -63,7 +62,6 @@ public record ConfigurationDto(
       start = matcher.end();
     }
     sb.append(configuration.substring(start));
-    System.out.println("Sb : " + sb);
     return sb.toString();
   }
 }
