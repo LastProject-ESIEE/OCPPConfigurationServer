@@ -8,6 +8,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+const scrollListElement = "scrollableDiv"
+
 export const DEFAULT_FILTER_SELECT_VALUE = "Aucun"
 
 export type TableColumnFilterDefinition = {
@@ -50,44 +52,24 @@ export type InfinityScrollItemsTableProps<T> = {
 }
 
 
+
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
     const [filters, setFilters] = useState<SearchFilter[]>([]);
     const [sortField, setSortField] = useState("");
     const [sortOrder, setSortOrder] = useState<TableSortType>("asc");
+
     const updateFilter = (newFilters: SearchFilter[]) => {
         if(props.onFiltering){
             // Retrieve all filters without filtered fields
-            var currentFilters = filters.filter(v => !newFilters.find(o => o.filterField === v.filterField))
+            var currentFilters = filters.filter(prevFilter => !newFilters.find(o => o.filterField === prevFilter.filterField))
             const updatedFilters = [...currentFilters, ...newFilters]
             setFilters(updatedFilters)
-            props.onFiltering(newFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
-
-            /*
-            // If filter not present add it
-            if(!filters.find(v => v.filterField === newFilter.filterField)){
-                let newFilters = [...filters, {filterField: newFilter.filterField ?? "", filterValue: newFilter.filterValue, filterOrder: newFilter.filterOrder}]
-                setFilters(newFilters)
-                props.onFiltering(newFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
-                return
-            }
-
-            // Otherwise update filter
-            setFilters(prevFilters => {
-                const newValues = prevFilters.map(filter => {
-                    if(filter.filterField === newFilter.filterField){
-                        return {...filter, filterValue: newFilter.filterValue, filterOrder: newFilter.filterOrder}
-                    }
-                    return filter
-                })
-
-                // As function is async props.onFiltering should be call here
-                if(props.onFiltering){
-                    props.onFiltering(newValues, sortField === "" ? undefined : {field: sortField, order: sortOrder})
-                }
-                return newValues
-            })
-            */
+            props.onFiltering(updatedFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
         }
+    }
+
+    const resetScroll = () => {
+        document.getElementById(scrollListElement)?.scrollTo(0,0)
     }
 
     return (
@@ -111,6 +93,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                                             let order: TableSortType = sortOrder === "asc" ? "desc": "asc"
                                                             setSortField(column.sort.apiField)
                                                             setSortOrder(order)
+                                                            resetScroll()
                                                             if(props.onFiltering){
                                                                 props.onFiltering(filters, {field: column.sort.apiField, order: order})
                                                             }
@@ -145,6 +128,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                                         column={column}
                                                         onFilterValidate={newfilters => {
                                                             if(column.filter){
+                                                                resetScroll()
                                                                 updateFilter(newfilters)
                                                             }
                                                         }}
@@ -161,12 +145,13 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
             </Box>
              {/*Display table content*/}
             <Box key={"box-items-scrollable-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
-                <div id={"scrollableDiv"}
-                key={props.key + "-scrollableDiv-list"}
-                style={{
-                    height: "70vh",
-                    overflow: 'auto',
-                }}>
+                <div 
+                    id={scrollListElement}
+                    key={props.key + "-scrollableDiv-list"}
+                    style={{
+                        height: "70vh",
+                        overflow: 'auto',
+                    }}>
                     <InfiniteScroll
                             key="scrollable-items-list"
                             style={{overflow:"hidden", border: 1, borderColor: "black", maxWidth: "true"}}
@@ -191,7 +176,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                     )}
                                 </>
                             }
-                            scrollableTarget={"scrollableDiv"}
+                            scrollableTarget={scrollListElement}
                         >
                         {props.data.map((item: T, index) => props.formatter(item, index))}
                     </InfiniteScroll>
@@ -228,13 +213,12 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
             {/*Display input filter*/}
             {(props.column.filter?.filterType === "input") && (
                 <TextField
-                placeholder={props.column.title}
+                placeholder={props.column.filter.disable ? "Indisponible" : props.column.title}
                 disabled={props.column.filter.disable}
                 size="small"
                 onKeyDown={event => {
                     if(event.key === 'Enter'){
                         if(previousValue !== firstFilterValue){
-                            
                             props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: firstFilterValue, filterOrder: filterOrder}])
                             setPreviousValue(firstFilterValue)
                         }
@@ -294,21 +278,20 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                         return
                                     }
                                     setFilterOrder(value)
-                                    if(firstFilterValue === ""){
+                                    if(value === "="){
+                                        if(firstFilterValue !== "" && secondFilterValue !== ""){
+                                            props.onFilterValidate([
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: value},
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: value},
+                                            ])
+                                        }
                                         return
                                     }
-
-                                    if(secondFilterValue === ""){
+                                    if(firstFilterValue !== ""){
                                         props.onFilterValidate([
-                                            {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: filterOrder},
+                                            {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: value},
                                         ])
-                                        return
                                     }
-                                    props.onFilterValidate([
-                                        {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: filterOrder},
-                                        {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: filterOrder},
-                                    ])
-                                    //props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue), filterOrder: value}])
                                 }}
                             >
                             <MenuItem value={"="}>{"="}</MenuItem>
@@ -324,21 +307,26 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                     value={firstFilterValue}
                                     onChange={(newValue) => {
                                         setFirstFilterValue(newValue ?? "")
-                                        if(newValue){
-                                            if(secondFilterValue === ""){
+                                        if(filterOrder === "="){
+                                            if(newValue && newValue !== "" && secondFilterValue !== ""){
                                                 props.onFilterValidate([
-                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,true), filterOrder: filterOrder},
+                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,true), filterOrder: ">"},
+                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: "<"},
                                                 ])
                                             }
+                                            return
+                                        }
+                                        if(newValue && newValue !== ""){
                                             props.onFilterValidate([
                                                 {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,true), filterOrder: filterOrder},
-                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,false), filterOrder: filterOrder},
                                             ])
                                             return
                                         }
-                                        props.onFilterValidate([
-                                            {filterField: props.column.filter?.apiField ?? "", filterValue: "", filterOrder: filterOrder},
-                                        ])
+                                        if(newValue && newValue === ""){
+                                            props.onFilterValidate([
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: "", filterOrder: filterOrder},
+                                            ])
+                                        }
                                     }}
                                     format="DD/MM/YYYY"
                                     sx={{padding: 0, margin: 0}}
@@ -355,13 +343,13 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                         value={secondFilterValue}
                                         onChange={(newValue) => {
                                             setSecondFilterValue(newValue ?? "")
-                                            if(firstFilterValue !== ""){
-                                                if(newValue){
-                                                    props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue, true), filterOrder: filterOrder}])
-                                                    return
-                                                }
+                                            if(newValue && newValue !== "" && firstFilterValue !== ""){
+                                                props.onFilterValidate([
+                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: ">"},
+                                                    {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(newValue,false), filterOrder: "<"},
+                                                ])
                                             }
-                                            props.onFilterValidate([{filterField: props.column.filter?.apiField ?? "", filterValue: "", filterOrder: filterOrder}])
+                                            return
                                         }}
                                         format="DD/MM/YYYY"
                                         sx={{padding: 0, margin: 0}}
@@ -369,11 +357,8 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                     />
                                 </LocalizationProvider>
                             )}
-                            
                         </Grid>
                     </Grid>
-                   
-
                 </Box>
             )}
         </Grid>

@@ -1,6 +1,7 @@
 import { Box, Grid, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
+    DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
     PageRequest,
@@ -26,6 +27,50 @@ const businessLogTableColumns: TableColumnDefinition[] = [
         }
     },
     {
+        title: "Criticité",
+        size: 1,
+        filter: {
+            apiField: "level",
+            filterType: "select",
+            restrictedValues: [
+                DEFAULT_FILTER_SELECT_VALUE,
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+              ],
+            apiValueFormatter: value => {
+                  return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+              },
+        },
+        sort: {
+            apiField: "level",
+        }
+    },
+    {
+        title: "Catégorie",
+        size: 1,
+        filter: {
+            apiField: "category",
+            filterType: "select",
+            restrictedValues: [
+                DEFAULT_FILTER_SELECT_VALUE,
+                "LOGIN",
+                "STATUS",
+                "FIRM",
+                "CONFIG",
+              ],
+            apiValueFormatter: value => {
+                  return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+              },
+        },
+        sort: {
+            apiField: "category",
+        }
+    },
+    {
         title: "Utilisateur",
         size: 1,
         filter: {
@@ -41,28 +86,6 @@ const businessLogTableColumns: TableColumnDefinition[] = [
             apiField: "",
             filterType: "input",
             disable: true,
-        }
-    },
-    {
-        title: "Catégorie",
-        size: 1,
-        filter: {
-            apiField: "category",
-            filterType: "input"
-        },
-        sort: {
-            apiField: "category",
-        }
-    },
-    {
-        title: "Criticité",
-        size: 1,
-        filter: {
-            apiField: "level",
-            filterType: "input"
-        },
-        sort: {
-            apiField: "level",
         }
     },
     {
@@ -182,6 +205,19 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
                 <Grid item xs={businessLogTableColumns[1].size}
                       maxWidth={"true"}
                       justifyContent={"center"}>
+                    <Typography variant="body1"
+                                align="center"
+                                noWrap={true}>
+                        {props.businessLog.level}</Typography>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[2].size} maxWidth={"true"}
+                      justifyContent={"center"}>
+                    <Typography variant="body1" align="center"
+                                noWrap={true}>{props.businessLog.category}</Typography>
+                </Grid>
+                <Grid item xs={businessLogTableColumns[3].size}
+                      maxWidth={"true"}
+                      justifyContent={"center"}>
                     <Tooltip
                         title={props.businessLog.user != null && `${props.businessLog.user.firstName} ${props.businessLog.user.lastName}`}>
                         <Typography variant="body1" align="center" noWrap={true}>
@@ -190,26 +226,13 @@ function LogLineItemVMamar(props: { businessLog: BusinessLog }) {
                         </Typography>
                     </Tooltip>
                 </Grid>
-                <Grid item xs={businessLogTableColumns[2].size} maxWidth={"true"}
+                <Grid item xs={businessLogTableColumns[4].size} maxWidth={"true"}
                       justifyContent={"center"}>
                     <Tooltip title={props.businessLog.chargepoint != null && props.businessLog.chargepoint.clientId}>
                         <Typography variant="body1" align="center" noWrap={true}>
                             {props.businessLog.chargepoint != null && props.businessLog.chargepoint.clientId}
                         </Typography>
                     </Tooltip>
-                </Grid>
-                <Grid item xs={businessLogTableColumns[3].size} maxWidth={"true"}
-                      justifyContent={"center"}>
-                    <Typography variant="body1" align="center"
-                                noWrap={true}>{props.businessLog.category}</Typography>
-                </Grid>
-                <Grid item xs={businessLogTableColumns[4].size}
-                      maxWidth={"true"}
-                      justifyContent={"center"}>
-                    <Typography variant="body1"
-                                align="center"
-                                noWrap={true}>
-                        {props.businessLog.level}</Typography>
                 </Grid>
                 <Grid item xs={businessLogTableColumns[5].size} maxWidth={"true"}
                       justifyContent={"center"}>
