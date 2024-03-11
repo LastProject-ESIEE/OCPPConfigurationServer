@@ -16,7 +16,6 @@ import {useNavigate} from "react-router";
 import {wsManager} from "../Home";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
-
     return (
         <Box sx={{height: "100%"}}>
             <Typography sx={{mt: 1}} variant={"h6"}>Configuration sélectionnée :</Typography>
@@ -58,9 +57,7 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
 }
 
 function CreateChargepoint(props: { id?: number }) {
-
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
-
     const [serialNumber, setSerialNumber] = useState<string>("")
     const [type, setType] = useState<string>("")
     const [constructor, setConstructor] = useState<string>("")
@@ -68,7 +65,6 @@ function CreateChargepoint(props: { id?: number }) {
     const [configuration, setConfiguration] = useState<Configuration>(noConfig);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-
     const [chargepoint, setChargepoint] = useState<CreateChargepointDto>({
         serialNumber: serialNumber,
         type: type,
@@ -85,12 +81,10 @@ function CreateChargepoint(props: { id?: number }) {
             if (result === undefined) {
                 return
             }
-            console.log(result)
             setSerialNumber(result.serialNumberChargepoint)
             setType(result.type)
             setConstructor(result.constructor)
             setClientId(result.clientId)
-
             const config = result.configuration ? result.configuration : noConfig
             setConfiguration(config)
             setChargepoint({

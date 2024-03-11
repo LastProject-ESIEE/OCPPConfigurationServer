@@ -22,11 +22,10 @@ export default function SelectItemsList<T>(props: {
     setSelectedItems: React.Dispatch<React.SetStateAction<KeyValueItem<T>[]>>,
 }){
     const [selectedItem, setSelectedItem] = useState<KeyValueItem<T> | null>(null);
-
     const updateItemValue = (id: string, value: string) => {
         props.setSelectedItems(prevItemList => {
             return prevItemList.map(el => {
-                if(el.id === id){
+                if (el.id === id) {
                     return {...el, value: value}
                 }
                 return el
@@ -61,7 +60,7 @@ export default function SelectItemsList<T>(props: {
                         </Grid>
                         <Grid item>
                             <Button size={"large"} onClick={() => {
-                                    if(selectedItem){
+                                    if (selectedItem) {
                                         props.setSelectedItems([selectedItem, ...props.selectedItems])
                                         setSelectedItem(null)
                                     }
@@ -134,7 +133,7 @@ function ListItem<T>(props: {item: KeyValueItem<T>, selectKind: SelectItemKind, 
                             style={{backgroundColor: backgroundColor, borderRadius: 5}}
                             onChange={event => {
                                 props.onInputChange(event.target.value)
-                                if(!props.item.checker(event.target.value)){
+                                if (!props.item.checker(event.target.value)) {
                                     setBackgroundColor("rgba(255, 0, 0, 0.2)")
                                     return
                                 }

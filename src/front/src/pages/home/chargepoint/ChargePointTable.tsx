@@ -111,7 +111,7 @@ function ChargePointTable() {
     useEffect(() => {
       let callBack =  (message: WebSocketChargePointNotification) => {
          let chargePoint = tableData.find(p => p.id === message.id)
-         if(!chargePoint){
+         if (!chargePoint) {
           return
         }
         // Update charge point status
@@ -132,7 +132,7 @@ function ChargePointTable() {
               size: PAGE_SIZE,
               sort: { field: "lastUpdate", order: "desc" }
           }).then((result: PageRequest<ChargePoint> | undefined) => {
-        if(!result){
+        if (!result) {
           setError("Erreur lors de la récupération des bornes.")
           return
         }
@@ -181,7 +181,7 @@ function ChargePointTable() {
       fetchData: (filters, sort) => {
         const nextPage = currentPage + 1;
         searchElements<ChargePoint>("/api/chargepoint/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<ChargePoint> | undefined) => {
-          if(!result){
+          if (!result) {
             setError("Erreur lors de la récupération des bornes.")
             return
           }
@@ -194,7 +194,7 @@ function ChargePointTable() {
         // Reset page and search
         setCurrentPage(0)
         searchElements<ChargePoint>("/api/chargepoint/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<ChargePoint> | undefined) => {
-            if(!result){
+            if (!result) {
               setError("Erreur lors de la récupération des bornes.")
               return
             }

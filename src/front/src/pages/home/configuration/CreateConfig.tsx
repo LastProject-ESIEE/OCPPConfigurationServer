@@ -119,10 +119,9 @@ function CreateConfig(props: { id?: number }) {
                         content: "La configuration n'a pas pu être créée."
                     })
                 }
-            }) // manage response to display error or success
+            })
         }
     }
-
 
     // Fetch the configuration
     useEffect(() => {
@@ -167,9 +166,9 @@ function CreateConfig(props: { id?: number }) {
                 // Transform data and retrieve the transcriptor for each configuration fields
                 let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => {
                     let configurationItem = items.find(item => item.id === key)
-                    if(configurationItem){
+                    if (configurationItem) {
                         configurationItem.value = (value as string)
-                    }else{
+                    } else {
                         console.warn("A configuration field in the configuration is not set in the configuration field list.")
                     }
                     return {
@@ -177,7 +176,6 @@ function CreateConfig(props: { id?: number }) {
                         value: value,
                     } as KeyValueConfiguration
                 })
-
                 var configurationKeys: number[] = config.map(conf => conf.key.id)
                 setSelectedKeys(items.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
                 setTitle(result.name)
@@ -230,13 +228,14 @@ function CreateConfig(props: { id?: number }) {
                                 variant="contained"
                                 color="primary"
                                 onClick={handleSubmit}
-                            >Valider</Button>
+                            >
+                                Valider
+                            </Button>
                         </Box>
                     </>
                 )}
             </Container>
         </Box>
-
     );
 }
 

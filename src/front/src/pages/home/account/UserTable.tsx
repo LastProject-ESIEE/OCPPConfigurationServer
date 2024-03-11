@@ -125,7 +125,6 @@ function UserTable() {
         }).then(response => {
             if (response.ok) {
                 // TODO : refactor to use the DTO in the response
-
                 if (!user) {
                     return;
                 }

@@ -68,7 +68,6 @@ export async function getTranscriptors(): Promise<Transcriptor[] | undefined> {
 
 
 export async function getAllConfigurations(): Promise<Configuration[] | undefined> {
-
     let request = await fetch(`/api/configuration/all`)
     if (request.ok) {
         let content = await request.json()
@@ -84,23 +83,21 @@ export async function getAllConfigurations(): Promise<Configuration[] | undefine
 export async function searchConfiguration(
     size: number = 10,
     page: number = 0,
-    filter?: {filterField: string, filterValue: string },
+    filter?: { filterField: string, filterValue: string },
     sort?: { sortField: string, sortOrder: 'asc' | 'desc' }): Promise<PageRequest<Configuration> | undefined> {
-
-    let request = await fetch(window.location.origin + `/api/configuration/search?size=${size}&page=${page}`)
-    if (request.ok) {
-        let content = await request.json()
-        let configuration = (content as PageRequest<Configuration>)
-        if (configuration != null) {
-            return configuration
+        let request = await fetch(window.location.origin + `/api/configuration/search?size=${size}&page=${page}`)
+        if (request.ok) {
+            let content = await request.json()
+            let configuration = (content as PageRequest<Configuration>)
+            if (configuration != null) {
+                return configuration
+            }
         }
-    }
-    return undefined
+        return undefined
 }
 
 export async function postNewConfiguration(configurationData: CreateConfigurationData): Promise<boolean> {
     let myConfig = globalStateResponseFormatter(configurationData)
-
     let request = await fetch(window.location.origin + "/api/configuration/create",
         {
             method: "POST",
@@ -122,7 +119,6 @@ export async function postNewConfiguration(configurationData: CreateConfiguratio
 }
 
 export async function getConfiguration(id: number): Promise<Configuration | undefined> {
-
     let request = await fetch(window.location.origin + `/api/configuration/${id}`)
     if (request.ok) {
         let content = await request.json()

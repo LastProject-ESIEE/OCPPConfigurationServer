@@ -36,7 +36,6 @@ function FormInput({
         }
     }, [value, backgroundColor, checkIsWrong, onError]);
 
-
     return (
         <Paper elevation={2} sx={{p: 2, pt: 0, mt: 3, backgroundColor: actualBackground}}>
             <Grid direction={"column"} container justifyContent="space-between">

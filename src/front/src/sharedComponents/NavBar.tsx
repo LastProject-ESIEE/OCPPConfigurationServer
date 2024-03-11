@@ -203,7 +203,6 @@ export function NavBar() {
 
   function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}){
       const [open, setOpen] = React.useState(false);
-
       const handleClick = () => {
         setOpen(!open);
       };

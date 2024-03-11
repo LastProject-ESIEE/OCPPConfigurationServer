@@ -41,7 +41,6 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
         }
         getFirmware(props.id).then(result => {
             if (!result) {
-                console.log("Erreur lors de la récupération du firmware.")
                 return
             }
             setFormData({
@@ -179,7 +178,10 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                         }
                                                     })
                                                 }
-                                            }>Valider</Button>
+                                            }
+                                            >
+                                                Valider
+                                            </Button>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>

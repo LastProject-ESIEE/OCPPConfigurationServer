@@ -24,34 +24,31 @@ class WebSocketListener extends events.EventEmitter {
     connected: boolean;
     websocket: WebSocket | undefined;
 
-    constructor(){
+    constructor() {
       super()
       this.connected = false;
     }
 
     startWebSocket(): void {
-      if(this.connected){
+      if (this.connected) {
         console.error("WebSocket connection is already established.")
         return
       }
       let isLocal = window.location.hostname.startsWith("localhost") || window.location.hostname.startsWith("127.0.0.1")
       let protocol = isLocal ? "ws://" : "wss://"
       let websocketAddress = `${protocol}${window.location.hostname}${isLocal ? ":" + BACKEND_PORT : ""}/websocket/chargepoint`
-      console.log("Connecting to the websocket address: " + websocketAddress)
       this.websocket = new WebSocket(websocketAddress);
-      
       this.websocket.onopen = (ev: Event) => {
           console.log('Websocket connected to the server');
           this.connected = true
       }
-
       this.websocket.onmessage = (ev: MessageEvent<any>) => {
         // Try parse as WebSocketChargePointNotification
         const message = JSON.parse(ev.data) as WebSocketMessage
-        switch(message.name){
+        switch (message.name) {
           case "ChargePointWebsocketNotification":
             let wsChargePointNotification = message.value as WebSocketChargePointNotification
-            if(!wsChargePointNotification){
+            if (!wsChargePointNotification) {
               console.error("Wrongly formatted message received : " + ev.data)
               return
             }
@@ -59,7 +56,7 @@ class WebSocketListener extends events.EventEmitter {
             break;
           case "CriticalityWebsocketNotification":
             let wsNotification = message.value as NotificationMessage
-            if(!wsNotification){
+            if (!wsNotification) {
               console.error("Wrongly formatted message received : " + ev.data)
               return
             }
@@ -71,7 +68,6 @@ class WebSocketListener extends events.EventEmitter {
       }
 
       this.websocket.onclose = (ev: CloseEvent) => {
-          console.log('Websocket disconnected from server');
           this.connected = false
           // If connection closed, try to reconnect the websocket 5 second later
           setTimeout(() => this.startWebSocket(), 5000)
