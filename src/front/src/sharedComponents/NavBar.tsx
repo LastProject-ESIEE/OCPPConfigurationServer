@@ -160,6 +160,7 @@ export function NavBar() {
                               <Grid item>
                                   <IconButton
                                       onClick={() => {
+                                          sessionStorage.clear();
                                           fetch("/logout", {
                                               method: "POST"
                                           })
@@ -203,7 +204,6 @@ export function NavBar() {
 
   function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}){
       const [open, setOpen] = React.useState(false);
-
       const handleClick = () => {
         setOpen(!open);
       };

@@ -43,8 +43,9 @@ public class BusinessLogService {
     return businessLogRepository.findAllByChargepointOrderByIdDesc(chargepoint);
   }
 
-  public long countTotal() {
-    return businessLogRepository.count();
+  public long countTotal(String request) {
+    var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
+    return businessLogRepository.count(condition);
   }
 
   /**

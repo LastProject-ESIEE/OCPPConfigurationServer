@@ -27,8 +27,9 @@ public class TechnicalLogService {
     return technicalLogRepository.findAllByComponentAndLevelOrderByIdDesc(component, level.name());
   }
 
-  public long countTotal() {
-    return technicalLogRepository.count();
+  public long countTotal(String request) {
+    var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
+    return technicalLogRepository.count(condition);
   }
 
   /**

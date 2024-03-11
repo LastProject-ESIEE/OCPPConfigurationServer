@@ -92,7 +92,7 @@ public class ChargePointManager {
       pendingRequest = null;
     }
     if (message.isEmpty()) {
-      ocppObserver.onDisconnection(this);
+      ocppObserver.onMessage(null);
       return;
     }
     var ocppMessage = message.orElseThrow();

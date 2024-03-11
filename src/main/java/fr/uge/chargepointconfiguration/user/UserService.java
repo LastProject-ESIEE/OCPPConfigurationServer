@@ -107,8 +107,9 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public long countTotal() {
-    return userRepository.count();
+  public long countTotal(String request) {
+    var condition = SearchUtils.computeSpecification(request, User.class);
+    return userRepository.count(condition);
   }
 
   /**

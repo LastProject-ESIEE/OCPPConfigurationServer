@@ -23,7 +23,7 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
 
     useEffect(() => {
         // load notification from cache
-        let notificationsCache = localStorage.getItem(LOCAL_STORAGE_NOTIFICATION_KEY)
+        let notificationsCache = sessionStorage.getItem(LOCAL_STORAGE_NOTIFICATION_KEY)
         if (notificationsCache) {
             let notifications = JSON.parse(notificationsCache)
             if (notifications) {
@@ -38,11 +38,11 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
         let newList = [message, ...notificationList]
         if (notificationList.length > LOCAL_STORAGE_MAX_NOTIFICATION_COUNT) {
             let reducedList = newList.slice(0, LOCAL_STORAGE_MAX_NOTIFICATION_COUNT - LOCAL_STORAGE_CLEAR_OFFSET)
-            localStorage.setItem(LOCAL_STORAGE_NOTIFICATION_KEY, JSON.stringify(reducedList))
+            sessionStorage.setItem(LOCAL_STORAGE_NOTIFICATION_KEY, JSON.stringify(reducedList))
             setNotificationlist(reducedList)
             return
         }
-        localStorage.setItem(LOCAL_STORAGE_NOTIFICATION_KEY, JSON.stringify(newList))
+        sessionStorage.setItem(LOCAL_STORAGE_NOTIFICATION_KEY, JSON.stringify(newList))
         setNotificationlist(newList)
     }
 
@@ -75,9 +75,7 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                                 </Grid>
                             </Grid>
                         </Grid>
-
                     </Box>
-
                     <Box height={"88vh"} overflow={"auto"} marginTop={0}>
                         <List style={{overflow: "auto", paddingTop: 0}}>
                             {notificationList.map((notif, index) => {
@@ -119,7 +117,6 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                             })}
                         </List>
                     </Box>
-
                     <Box height={"3vh"} marginTop={1}>
                         <Typography
                             variant="body1">{"L'historique contient " + notificationList.length + " éléments."}</Typography>

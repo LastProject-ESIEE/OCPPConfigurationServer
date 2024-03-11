@@ -46,7 +46,6 @@ public class ChargepointService {
         createChargepointDto.type(),
         createChargepointDto.constructor(),
         createChargepointDto.clientId(),
-        "192.168.0.5",  // TODO variable environnement
         configuration
     ));
     return chargepoint.toDto();
@@ -74,8 +73,9 @@ public class ChargepointService {
         .stream().toList();
   }
 
-  public long countTotal() {
-    return chargepointRepository.count();
+  public long countTotalWithFilters(String request) {
+    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+    return chargepointRepository.count(condition);
   }
 
   /**

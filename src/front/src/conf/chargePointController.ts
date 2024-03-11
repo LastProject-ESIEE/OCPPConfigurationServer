@@ -36,7 +36,6 @@ export type CreateChargepointDto = {
 
 
 export async function postNewChargepoint(chargepoint: CreateChargepointDto): Promise<boolean> {
-
     let request = await fetch("/api/chargepoint/create",
         {
             method: "POST",
@@ -72,15 +71,15 @@ export async function updateChargepoint(id: number, chargepoint: CreateChargepoi
 
 export async function getChargepointById(id: number) {
     let request = await fetch(`/api/chargepoint/${id}`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let chargePoint = (content as ChargePoint)
         if(chargePoint != null){
             return chargePoint
-        }else{
+        } else {
             console.error("Fetch chargepoint failed " + content)
         }
-    }else{
+    } else {
         console.error("Fetch chargepoint failed, error code:" +  request.status)
     }
     return undefined

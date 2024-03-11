@@ -5,7 +5,6 @@ import CreateConfig from "./CreateConfig";
 function ConfigurationEditPage() {
     // Get id from router parameter
     const { id } = useParams();
-    //const [error, setError] = React.useState<string | undefined>(undefined);
 
     let configurationId = id ? Number(id) : undefined;
     return (

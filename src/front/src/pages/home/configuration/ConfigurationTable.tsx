@@ -71,7 +71,7 @@ function ConfigurationTable() {
                 size: PAGE_SIZE,
                 sort: { field: "lastEdit", order: "desc" }
             }).then((result: PageRequest<Configuration> | undefined) => {
-            if(!result){
+            if (!result) {
                 setError("Erreur lors de la récupération des configurations.")
                 return
             }
