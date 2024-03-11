@@ -4,6 +4,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.MessageType;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessage;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.BootNotificationRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.ChangeConfigurationRequest16;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.FirmwareStatusNotificationRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.ResetRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16.UpdateFirmwareRequest16;
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.BootNotificationRequest20;
@@ -102,6 +103,7 @@ public interface WebSocketMessage {
         case UpdateFirmwareRequest16 ignored -> UPDATE_FIRMWARE_REQUEST;
         case SetVariablesRequest20 ignored -> SET_VARIABLES_REQUEST;
         case ResetRequest16 ignored -> RESET_REQUEST;
+        case FirmwareStatusNotificationRequest16 ignored -> STATUS_FIRMWARE_REQUEST;
         default -> OTHER;
       };
     }
