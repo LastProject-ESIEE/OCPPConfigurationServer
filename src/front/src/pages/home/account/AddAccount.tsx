@@ -86,7 +86,7 @@ function AddAccount() {
                                 if (value) {
                                     wsManager.emitNotification({
                                         type: "SUCCESS",
-                                        title: "Succès ",
+                                        title: firstName + " " + lastName + " ",
                                         content: "L'utilisateur a été créé."
                                     });
                                     navigate("/home/account");

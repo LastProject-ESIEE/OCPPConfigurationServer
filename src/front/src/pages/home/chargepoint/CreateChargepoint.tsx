@@ -212,18 +212,34 @@ function CreateChargepoint(props: { id?: number }) {
                                                 let returnValue = handleSubmit();
                                                 returnValue.then(value => {
                                                     if (value) {
-                                                        wsManager.emitNotification({
-                                                            type: "SUCCESS",
-                                                            title: "Succès ",
-                                                            content: "La borne a été créée."
-                                                        });
+                                                        if (props.id) {
+                                                            wsManager.emitNotification({
+                                                                type: "INFO",
+                                                                title: clientId + " ",
+                                                                content: "La borne a été modifiée."
+                                                            });
+                                                        } else {
+                                                            wsManager.emitNotification({
+                                                                type: "SUCCESS",
+                                                                title: clientId + " ",
+                                                                content: "La borne a été créée."
+                                                            });
+                                                        }
                                                         navigate("/home/chargepoint");
                                                     } else {
-                                                        wsManager.emitNotification({
-                                                            type: "ERROR",
-                                                            title: "Erreur ",
-                                                            content: "La borne n'a pas pu être créée."
-                                                        });
+                                                        if (props.id) {
+                                                            wsManager.emitNotification({
+                                                                type: "ERROR",
+                                                                title: "Erreur ",
+                                                                content: "La borne n'a pas pu être modifiée."
+                                                            });
+                                                        } else {
+                                                            wsManager.emitNotification({
+                                                                type: "ERROR",
+                                                                title: "Erreur ",
+                                                                content: "La borne n'a pas pu être créée."
+                                                            });
+                                                        }  
                                                     }
                                                 })
                                             }}>Valider</Button>
