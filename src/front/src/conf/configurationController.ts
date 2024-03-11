@@ -55,7 +55,6 @@ export type Transcriptor = {
 }
 
 export async function getTranscriptors(): Promise<Transcriptor[] | undefined> {
-
     let request = await fetch("/api/configuration/transcriptor")
     if (request.ok) {
         let content = await request.json()
@@ -137,7 +136,6 @@ export async function getConfiguration(id: number): Promise<Configuration | unde
 
 export async function postUpdateConfiguration(id: number, configurationData: CreateConfigurationData): Promise<boolean> {
     let myConfig = globalStateResponseFormatter(configurationData)
-
     let request = await fetch(window.location.origin + "/api/configuration/update",
         {
             method: "POST",

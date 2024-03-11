@@ -13,7 +13,7 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher",
+                label: "Afficher/modifier",
                 href: "",
                 subButtons: []
             },
@@ -21,12 +21,6 @@ export const buttons: ButtonData[] = [
                 roles: ["ADMINISTRATOR", "EDITOR"],
                 label: "Créer",
                 href: "/new",
-                subButtons: []
-            },
-            {
-                roles: ["ADMINISTRATOR", "EDITOR"],
-                label: "Modifier",
-                href: "/edit",
                 subButtons: []
             },
         ]
@@ -38,14 +32,14 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Créer une borne",
-                href: "/new",
+                label: "Liste des bornes",
+                href: "",
                 subButtons: []
             },
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Liste des bornes",
-                href: "",
+                label: "Créer une borne",
+                href: "/new",
                 subButtons: []
             },
         ]

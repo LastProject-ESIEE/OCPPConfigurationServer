@@ -1,4 +1,3 @@
-import { PageRequest } from "../sharedComponents/DisplayTable"
 import { Configuration } from "./configurationController";
 
 // Websocket notification for charge point status update
@@ -25,28 +24,6 @@ export type ChargePoint = {
     clientId: string,
     configuration: Configuration,
     status: ChargePointStatus,
-}
-
-
-export async function searchChargePoint(
-        size: number = 10,
-        page: number = 0,
-        filter?: {filterField: string, filterValue: string },
-        sort?: { sortField: string, sortOrder: 'asc' | 'desc' }): Promise<PageRequest<ChargePoint> | undefined> {
-
-    let request = await fetch(window.location.origin + `/api/chargepoint/search?size=${size}&page=${page}`)
-    if(request.ok){
-        let content = await request.json()
-        let chargePoint = (content as PageRequest<ChargePoint>)
-        if(chargePoint != null){
-          return chargePoint
-        }else{
-            console.error("Fetch charge point page failed " + content)
-        }
-    }else{
-        console.error("Fetch configuration list failed, error code:" +  request.status)
-    }
-    return undefined
 }
 
 export type CreateChargepointDto = {
