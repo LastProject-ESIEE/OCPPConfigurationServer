@@ -16,7 +16,7 @@ export type CreateConfigurationData = {
     name: string,
     description: string,
     configuration: KeyValueConfiguration[],
-    firmware: string
+    firmware: string,
 }
 
 /**

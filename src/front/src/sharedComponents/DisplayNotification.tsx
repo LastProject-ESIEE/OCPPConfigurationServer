@@ -75,7 +75,6 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                                 </Grid>
                             </Grid>
                         </Grid>
-
                     </Box>
 
                     <Box height={"88vh"} overflow={"auto"} marginTop={0}>
