@@ -27,15 +27,15 @@ INSERT INTO configuration (name, description, configuration, last_edit, id_firmw
 ('configuration copropriété #2', 'Description config copro #2', '{"1":"0","5":"500"}', '2024-02-21 15:12:09', null),
 ('configuration voisins', 'Description config voisins', '{"1":"100"}', '2023-12-25 22:31:34', 1);
 
-INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id, server_address, id_configuration, last_update, error, state, step, step_status) VALUES
-('ACE0000001', 'Eve Single S-line', 'Alfen BV', 'borne to be alive', 'https://server_address', null, '2024-03-08 10:34:09', '', 1, 'CONFIGURATION', 'PENDING'),
-('ACE0000002', 'Eve Double S-line', 'Alfen BV', 'dépasse les bornes', 'https://server_address', 2, '2024-03-08 10:34:09', '', 0, 'CONFIGURATION', 'PROCESSING'),
-('ACE0000003', 'Eve Single S-line', 'Alfen BV', 'borne de test', 'https://server_address', 1, '2024-03-08 10:34:09', 'erreur de test', 1, 'CONFIGURATION', 'FINISHED'),
-('ACE0000004', 'Eve Double S-line', 'Alfen BV', 'elisabeth borne', 'https://server_address', 3, '2024-03-08 10:34:09', '', 1, 'CONFIGURATION', 'FAILED'),
-('ACE0000005', 'Eve Double S-line', 'Alfen BV', 'nom de la borne', 'https://server_address', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PENDING'),
-('ACE0000005', 'Eve Single S-line', 'Alfen BV', 'born to kill', 'https://server_address', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PROCESSING'),
-('ACE0000006', 'Eve Double S-line', 'Alfen BV', 'stéphane borne (l''historien)', 'https://server_address', 4, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FINISHED'),
-('ACE0000007', 'Eve Single S-line', 'Alfen BV', 'les bornés', 'https://server_address', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
+INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id, id_configuration, last_update, error, state, step, step_status) VALUES
+('ACE0000001', 'Eve Single S-line', 'Alfen BV', 'borne to be alive', null, '2024-03-08 10:34:09', '', 1, 'CONFIGURATION', 'PENDING'),
+('ACE0000002', 'Eve Double S-line', 'Alfen BV', 'dépasse les bornes', 2, '2024-03-08 10:34:09', '', 0, 'CONFIGURATION', 'PROCESSING'),
+('ACE0000003', 'Eve Single S-line', 'Alfen BV', 'borne de test', 1, '2024-03-08 10:34:09', 'erreur de test', 1, 'CONFIGURATION', 'FINISHED'),
+('ACE0000004', 'Eve Double S-line', 'Alfen BV', 'elisabeth borne', 3, '2024-03-08 10:34:09', '', 1, 'CONFIGURATION', 'FAILED'),
+('ACE0000005', 'Eve Double S-line', 'Alfen BV', 'nom de la borne', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PENDING'),
+('ACE0000005', 'Eve Single S-line', 'Alfen BV', 'born to kill', 5, '2024-03-08 10:34:09', '', 0, 'FIRMWARE', 'PROCESSING'),
+('ACE0000006', 'Eve Double S-line', 'Alfen BV', 'stéphane borne (l''historien)', 4, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FINISHED'),
+('ACE0000007', 'Eve Single S-line', 'Alfen BV', 'les bornés', 2, '2024-03-08 10:34:09', '', 1, 'FIRMWARE', 'FAILED');
 
 INSERT INTO business_logs (date, complete_log, chargepoint_id, user_id, category, level) VALUES
 ('2024-03-08 13:00:00', 'Un utilisateur s''est connecté', null, 1, 'LOGIN', 'INFO'),
