@@ -11,7 +11,6 @@ import fr.uge.chargepointconfiguration.status.StatusDto;
  * @param type The commercial name of the chargepoint.
  * @param constructor The chargepoint's manufacturer.
  * @param clientId The client's name of the chargepoint.
- * @param serverAddress The server's URL of the chargepoint.
  * @param configuration A JSON containing the chargepoint's configuration.
  * @param status {@link StatusDto}.
  */
@@ -21,7 +20,6 @@ public record ChargepointDto(
     String type,
     String constructor,
     String clientId,
-    String serverAddress,
     ConfigurationDto configuration,
     StatusDto status) {
 }
