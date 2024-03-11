@@ -43,7 +43,7 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>
                                 <pre>
-                                    {JSON.stringify(JSON.parse(configuration.configuration) || "{}", null, 2)}
+                                    {JSON.stringify(JSON.parse(configuration.configuration), null, 2)}
                                 </pre>
                             </Typography>
                             <Typography sx={{p: 2, pt: 0, mt: 0}}>
