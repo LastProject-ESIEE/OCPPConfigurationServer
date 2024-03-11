@@ -26,22 +26,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
   @Override
   public void afterConnectionEstablished(@NonNull WebSocketSession session) {
     // Perform actions when a new WebSocket connection is established
-    System.out.println("afterConnectionEstablished");
     synchronized (lock) {
       usersSession.add(session);
     }
-  }
-
-  /**
-   * Call when an error append or if the connection is closed on the client websocket connection.
-   *
-   * @param session   client websocket session
-   * @param exception TODO
-   * @throws Exception TODO
-   */
-  public void handleTransportError(@NonNull WebSocketSession session,
-                                   @NonNull Throwable exception) throws Exception {
-    System.out.println("handleTransportError");
   }
 
   /**
@@ -52,7 +39,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
    * @throws Exception throw
    */
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-    System.out.println("afterConnectionClosed with reason: " + status);
     synchronized (lock) {
       usersSession.remove(session);
     }

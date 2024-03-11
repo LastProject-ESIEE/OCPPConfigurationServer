@@ -76,9 +76,10 @@ export default function SelectItemsList<T>(props: {
                         {props.selectedItems.length !== 0 && (
                             <Grid sx={{pt: 1, pb: 1}} direction="column" container alignItems="flex-start"
                                 justifyContent="space-evenly">
-                                {props.selectedItems.map((item) => {
+                                {props.selectedItems.map((item, index) => {
                                     return (
                                         <ListItem 
+                                            key={"select-list-element-"+index}
                                             selectKind={props.selectKind}
                                             item={item}
                                             onInputChange={newValue => {
@@ -102,9 +103,9 @@ export default function SelectItemsList<T>(props: {
 
 function ListItem<T>(props: {item: KeyValueItem<T>, selectKind: SelectItemKind, onInputChange: (value: string) => void, onRemove: () => void}){
     const [backgroundColor, setBackgroundColor] = useState("rgb(249, 246, 251)");
-
+    console.log(props.item)
     return (
-        <Box key={"selected-item-" + props.item.id}>
+        <Box>
             <Grid sx={{pt: 1, pb: 1}} container alignItems="center">
                 {/*Button used to remove the element from the list*/}
                 <Button

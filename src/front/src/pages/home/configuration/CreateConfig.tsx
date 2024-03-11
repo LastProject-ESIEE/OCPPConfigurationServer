@@ -18,6 +18,8 @@ import {SkeletonConfiguration} from "./components/SkeletonConfiguration";
 import BackButton from '../../../sharedComponents/BackButton';
 import {useNavigate} from "react-router";
 import {wsManager} from "../Home";
+import { Firmware } from '../../../conf/FirmwareController';
+import { getAllElements } from '../../../conf/backendController';
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -26,7 +28,8 @@ function CreateConfig(props: { id?: number }) {
         firmware: ""
     })
     const [title, setTitle] = useState("");
-    const [firmware, setFirmware] = useState("");
+    const [firmwareList, setFirmwareList] = useState<Firmware[]>([]);
+    const [firmware, setFirmware] = useState<Firmware | undefined>(undefined);
     const [description, setDescription] = useState("");
     const [keys, setKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<KeyValueItem<Transcriptor>[]>([]);
@@ -57,7 +60,7 @@ function CreateConfig(props: { id?: number }) {
             error = true;
         }
 
-        if (firmware.length === 0) {
+        if (firmware === undefined) {
             setErrorState((prevState) => ({
                 ...prevState,
                 firmware: "Le firmware est obligatoire.",
@@ -79,7 +82,7 @@ function CreateConfig(props: { id?: number }) {
                     }
                 }),
                 description: description,
-                firmware: firmware,
+                firmware: firmware ? firmware.id + "" : "",
             }
             // If props.id not undefined then it's an update
             if (props.id) {
@@ -122,6 +125,15 @@ function CreateConfig(props: { id?: number }) {
 
     // Fetch the configuration
     useEffect(() => {
+        // Fetch firmware list
+        getAllElements<Firmware>("/api/firmware/all").then(result => {
+            if(!result){
+                console.error("Failed to fetch firmware list.")
+                return
+            }
+            setFirmwareList(result)
+        })
+        // Fetch transcriptors and current configuration
         getTranscriptors().then(transcriptors => {
             if (!transcriptors) {
                 return
@@ -139,9 +151,10 @@ function CreateConfig(props: { id?: number }) {
                     }
                 }
             )
-            setKeys(items)
-
+            
+            // If not not an update skip the next step
             if (!props.id) {
+                setKeys(items)
                 setLoading(false)
                 return
             }
@@ -150,16 +163,26 @@ function CreateConfig(props: { id?: number }) {
                 if (!result) {
                     return
                 }
-                let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => ({
-                    key: transcriptors.find(t => t.id === Number(key)),
-                    value: value,
-                } as KeyValueConfiguration));
+                // Transform data and retrieve the transcriptor for each configuration fields
+                let config: KeyValueConfiguration[] = Object.entries(JSON.parse(result.configuration)).map(([key, value]) => {
+                    let configurationItem = items.find(item => item.id === key)
+                    if (configurationItem) {
+                        configurationItem.value = (value as string)
+                    } else {
+                        console.warn("A configuration field in the configuration is not set in the configuration field list.")
+                    }
+                    return {
+                        key: transcriptors.find(t => t.id === Number(key)),
+                        value: value,
+                    } as KeyValueConfiguration
+                })
                 var configurationKeys: number[] = config.map(conf => conf.key.id)
                 setSelectedKeys(items.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
                 setTitle(result.name)
-                setFirmware(result.firmware.version)
+                setFirmware(result.firmware)
                 setDescription(result.description)
                 setLoading(false)
+                setKeys(items)
             });
         })
     }, [props.id])
@@ -176,7 +199,12 @@ function CreateConfig(props: { id?: number }) {
                             <Grid item xs={12} md={6}>
                                 <Box>
                                     <TitleComponent errorState={errorState} value={title} setValue={setTitle}/>
-                                    <FirmwareComponent errorState={errorState} value={firmware} setValue={setFirmware}/>
+                                    <FirmwareComponent 
+                                        errorState={errorState} 
+                                        current={firmware} 
+                                        firmwareList={firmwareList} 
+                                        onSelectionChange={value => setFirmware(value)}
+                                    />
                                     <DescriptionComponent errorState={errorState} value={description}
                                                           setValue={setDescription}/>
                                 </Box>
