@@ -183,7 +183,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
       loadKeyValue();
       loaded = true;
     }
-    currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PROCESSING);
+    currentChargepoint.setStatus(Chargepoint.StatusProcess.PROCESSING);
     chargepointRepository.save(currentChargepoint);
     // Dispatch information to users
     chargePointManager.notifyStatusUpdate();
@@ -280,7 +280,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private void processFirmwareRequest() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
     if (currentChargepoint.getConfiguration() == null) {
-      currentChargepoint.setStatusProcess(Chargepoint.StatusProcess.PENDING);
+      currentChargepoint.setStatus(Chargepoint.StatusProcess.PENDING);
       chargepointRepository.save(currentChargepoint);
       chargePointManager.notifyStatusUpdate();
       return;
