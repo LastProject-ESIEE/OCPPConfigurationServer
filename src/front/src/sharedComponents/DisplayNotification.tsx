@@ -77,7 +77,6 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                         </Grid>
 
                     </Box>
-
                     <Box height={"88vh"} overflow={"auto"} marginTop={0}>
                         <List style={{overflow: "auto", paddingTop: 0}}>
                             {notificationList.map((notif, index) => {
@@ -119,7 +118,6 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                             })}
                         </List>
                     </Box>
-
                     <Box height={"3vh"} marginTop={1}>
                         <Typography
                             variant="body1">{"L'historique contient " + notificationList.length + " éléments."}</Typography>

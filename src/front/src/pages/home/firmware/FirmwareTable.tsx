@@ -72,7 +72,7 @@ function FirmwareTable() {
                 size: PAGE_SIZE,
                 sort: { field: "version", order: "desc" }
             }).then((result: PageRequest<Firmware> | undefined) => {
-            if(!result){
+            if (!result) {
                 setError("Erreur lors de la récupération des firmwares.")
                 return
             }
@@ -94,7 +94,6 @@ function FirmwareTable() {
                 arr.push(separator + type.type)
                 separator = ", "
             })
-
             return (
                 <Box key={"box-firmware-edit-path-" + firmware.id} paddingTop={1} maxWidth={"true"}>
                     <Link key={"firmware-edit-path-" + firmware.id} to={{pathname: 'edit/' + firmware.id}}
@@ -137,7 +136,7 @@ function FirmwareTable() {
         fetchData: (filters, sort) => {
             const nextPage = currentPage + 1;
             searchElements<Firmware>("/api/firmware/search", {page: nextPage, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<Firmware> | undefined) => {
-                if(!result){
+                if (!result) {
                     setError("Erreur lors de la récupération des firmwares.")
                     return
                 }
@@ -150,7 +149,7 @@ function FirmwareTable() {
             // Reset page and search
             setCurrentPage(0)
             searchElements<Firmware>("/api/firmware/search", {page: 0, size: PAGE_SIZE, filters: filters, sort: sort}).then((result: PageRequest<Firmware> | undefined) => {
-                if(!result){
+                if (!result) {
                     setError("Erreur lors de la récupération des firmwares.")
                     return
                 }

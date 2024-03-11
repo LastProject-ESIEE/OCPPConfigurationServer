@@ -116,10 +116,9 @@ function CreateConfig(props: { id?: number }) {
                         content: "La configuration n'a pas pu être créée."
                     })
                 }
-            }) // manage response to display error or success
+            })
         }
     }
-
 
     // Fetch the configuration
     useEffect(() => {
@@ -155,7 +154,6 @@ function CreateConfig(props: { id?: number }) {
                     key: transcriptors.find(t => t.id === Number(key)),
                     value: value,
                 } as KeyValueConfiguration));
-
                 var configurationKeys: number[] = config.map(conf => conf.key.id)
                 setSelectedKeys(items.filter(transcriptor => configurationKeys.includes(transcriptor.item.id)))
                 setTitle(result.name)
@@ -202,13 +200,14 @@ function CreateConfig(props: { id?: number }) {
                                 variant="contained"
                                 color="primary"
                                 onClick={handleSubmit}
-                            >Valider</Button>
+                            >
+                                Valider
+                            </Button>
                         </Box>
                     </>
                 )}
             </Container>
         </Box>
-
     );
 }
 

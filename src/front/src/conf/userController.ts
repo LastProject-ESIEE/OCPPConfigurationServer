@@ -1,7 +1,7 @@
 import {PageRequest} from "../sharedComponents/DisplayTable"
 
 export function apiRoleToFrench(role: ApiRole): string {
-    switch (role) {
+    switch(role) {
         case "ADMINISTRATOR":
             return "Administrateur";
         case "EDITOR":
@@ -14,7 +14,7 @@ export function apiRoleToFrench(role: ApiRole): string {
 }
 
 export function frenchToEnglishRole(role: FrenchRole): string {
-    switch (role) {
+    switch(role) {
         case "Administrateur":
             return "ADMINISTRATOR";
         case "Éditeur":
@@ -51,7 +51,6 @@ export async function searchUser(
     page: number = 0,
     filter?: {filterField: string, filterValue: string },
     sort?: { sortField: string, sortOrder: 'asc' | 'desc' }): Promise<PageRequest<User> | undefined> {
-
     let request = await fetch(window.location.origin + `/api/user/search?size=${size}&page=${page}`)
     if (request.ok) {
         let content = await request.json()

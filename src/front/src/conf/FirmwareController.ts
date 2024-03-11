@@ -17,29 +17,26 @@ export type Firmware = {
 }
 
 export async function getFirmware(id: number): Promise<Firmware | undefined> {
-
     let request = await fetch(`/api/firmware/${id}`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let firmware = content as Firmware
-        if(firmware){
+        if (firmware) {
             return firmware
-        }else{
+        } else {
             console.error("Failed to fetch firmware with id :" + id, content)
         }
-    }else{
+    } else {
         console.error("Fetch firmware failed, error code:" +  request.status)
     }
     return undefined
 }
 
 export async function postCreateFirmware(firmware: CreateFirmwareFormData): Promise<boolean> {
-
     let typesArray: TypeAllowed[] = []
     firmware.typesAllowed.forEach(item => {
         typesArray.push(item)
     })
-
     let request = await fetch(window.location.origin + "/api/firmware/create",
         {
             method: "POST",
@@ -66,7 +63,6 @@ export async function updateFirmware(id: number, firmware: CreateFirmwareFormDat
     firmware.typesAllowed.forEach(item => {
         typesArray.push(item)
     })
-
     let request = await fetch(`/api/firmware/update/${id}`,
         {
             method: "PATCH",
@@ -89,17 +85,14 @@ export async function updateFirmware(id: number, firmware: CreateFirmwareFormDat
 }
 
 export async function getTypeAllowed(): Promise<TypeAllowed[] | undefined> {
-
     let request = await fetch(`/api/type/all`)
-    if(request.ok){
+    if (request.ok) {
         let content = await request.json()
         let typesAllowed = content as TypeAllowed[]
-        if(typesAllowed != null){
+        if (typesAllowed != null) {
             return typesAllowed
-        }else{
-            console.log("Failed to fetch type allowed.")
         }
-    }else{
+    } else {
         console.error("Fetch type allowed list failed, error code:" +  request.status)
     }
     return undefined

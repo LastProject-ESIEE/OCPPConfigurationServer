@@ -52,9 +52,9 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
     const [sortField, setSortField] = useState("");
     const [sortOrder, setSortOrder] = useState<TableSortType>("asc");
     const updateFilter = (filterField: string, filterValue: string) => {
-        if(props.onFiltering){
+        if (props.onFiltering) {
             // If filter not present add it
-            if(!filters.find(v => v.filterField === filterField)){
+            if (!filters.find(v => v.filterField === filterField)) {
                 let newFilters = [...filters, {filterField: filterField ?? "", filterValue: filterValue}]
                 setFilters(newFilters)
                 props.onFiltering(newFilters, sortField === "" ? undefined : {field: sortField, order: sortOrder})
@@ -70,7 +70,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                 })
 
                 // As function is async props.onFiltering should be call here
-                if(props.onFiltering){
+                if (props.onFiltering) {
                     props.onFiltering(newValues, sortField === "" ? undefined : {field: sortField, order: sortOrder})
                 }
                 return newValues
@@ -95,11 +95,11 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                                     style={{height: 30}}
                                                     variant="text" 
                                                     onClick={() => {
-                                                        if(column.sort){
+                                                        if (column.sort) {
                                                             let order: TableSortType = sortOrder === "asc" ? "desc": "asc"
                                                             setSortField(column.sort.apiField)
                                                             setSortOrder(order)
-                                                            if(props.onFiltering){
+                                                            if (props.onFiltering) {
                                                                 props.onFiltering(filters, {field: column.sort.apiField, order: order})
                                                             }
                                                         }
@@ -131,7 +131,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                                 <TableColumnFilter
                                                     column={column}
                                                     onFilterValidate={filterValue => {
-                                                        if(column.filter){
+                                                        if (column.filter) {
                                                             updateFilter(column.filter.apiField, filterValue)
                                                         }
                                                     }}
@@ -194,7 +194,6 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
 function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (value: string, order?: FilterOrder) => void}){
     const [filterValue, setFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
-    //const [filterOrder, setFilterOrder] = useState<FilterOrder>("=")
     return (
         <Grid container maxWidth={"true"} justifyContent={"center"}>
             {(props.column.filter?.filterType === "input") && (
@@ -203,15 +202,15 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                 disabled={props.column.filter.disable}
                 size="small"
                 onKeyDown={event => {
-                    if(event.key === 'Enter'){
-                        if(previousValue !== filterValue){
+                    if (event.key === 'Enter') {
+                        if (previousValue !== filterValue) {
                             props.onFilterValidate(filterValue)
                             setPreviousValue(filterValue)
                         }
                     }
                 }}
                 onBlur={() => {
-                    if(previousValue !== filterValue){
+                    if (previousValue !== filterValue) {
                         props.onFilterValidate(filterValue)
                         setPreviousValue(filterValue)
                     }
@@ -231,7 +230,7 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                     onChange={event => {
                         let value = event.target.value
                         setFilterValue(value)
-                        if(props.column.filter?.apiValueFormatter){
+                        if (props.column.filter?.apiValueFormatter) {
                             props.onFilterValidate(props.column.filter.apiValueFormatter(value))
                             return
                         }
