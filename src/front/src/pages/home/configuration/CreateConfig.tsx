@@ -83,10 +83,40 @@ function CreateConfig(props: { id?: number }) {
             }
             // If props.id not undefined then it's an update
             if (props.id) {
-                postUpdateConfiguration(props.id, resultData)
+                postUpdateConfiguration(props.id, resultData).then(value => {
+                    if (value) {
+                        wsManager.emitNotification({
+                            type: "INFO",
+                            title: "Info ",
+                            content: "La configuration a été modifiée."
+                        });
+                        navigate("/home/configuration");
+                    } else {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: "La configuration n'a pas pu être modifiée."
+                        })
+                    }
+                })
                 return
             }
-            postNewConfiguration(resultData) // manage response to display error or success
+            postNewConfiguration(resultData).then(value => {
+                if (value) {
+                    wsManager.emitNotification({
+                        type: "SUCCESS",
+                        title: "Succès ",
+                        content: "La configuration a été créée."
+                    });
+                    navigate("/home/configuration");
+                } else {
+                    wsManager.emitNotification({
+                        type: "ERROR",
+                        title: "Erreur ",
+                        content: "La configuration n'a pas pu être créée."
+                    })
+                }
+            }) // manage response to display error or success
         }
     }
 
@@ -171,23 +201,7 @@ function CreateConfig(props: { id?: number }) {
                                 sx={{borderRadius: 28}}
                                 variant="contained"
                                 color="primary"
-                                onClick={() => {
-                                    if (!check()) {
-                                        wsManager.emitNotification({
-                                            type: "SUCCESS",
-                                            title: "Succès ",
-                                            content: "La configuration a été créée."
-                                        });
-                                        navigate("/home/configuration");
-                                    } else {
-                                        wsManager.emitNotification({
-                                            type: "ERROR",
-                                            title: "Erreur ",
-                                            content: "La configuration n'a pas pu être créée."
-                                        })
-                                    }
-                                    handleSubmit();
-                                }}
+                                onClick={handleSubmit}
                             >Valider</Button>
                         </Box>
                     </>
