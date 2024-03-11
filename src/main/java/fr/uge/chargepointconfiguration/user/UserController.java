@@ -176,6 +176,7 @@ public class UserController {
       @RequestParam(required = false, defaultValue = "") String request
   ) {
     var total = userService.countTotal(request);
+    var totalElement = userService.count();
     var data = userService.search(
             request,
             PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order), sortBy))
@@ -183,7 +184,7 @@ public class UserController {
         .stream()
         .map(User::toDto)
         .toList();
-    return new PageDto<>(total, page, size, data);
+    return new PageDto<>(total, totalElement, page, size, data);
   }
 
   /**

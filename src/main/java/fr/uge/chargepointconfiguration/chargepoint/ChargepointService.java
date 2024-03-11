@@ -78,6 +78,10 @@ public class ChargepointService {
     return chargepointRepository.count(condition);
   }
 
+  public long count() {
+    return chargepointRepository.count();
+  }
+
   /**
    * Update a chargepoint and returns the updated chargepoint.
    *

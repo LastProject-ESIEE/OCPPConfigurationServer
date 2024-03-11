@@ -1,5 +1,5 @@
 import { Box, Grid, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
     DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
@@ -76,13 +76,15 @@ const userTableColumns: TableColumnDefinition[] = [
 
 
 function UserTable() {
-    const [tableData, setTableData] = useState<User[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
-    const [error, setError] = useState<string | undefined>(undefined);
-    const [userRoleList, setUserRoleList] = useState<ApiRole[]>([]);
-    const [me, setMe] = useState<User | undefined>(undefined);
-
+    const [tableData, setTableData] = React.useState<User[]>([]);
+    const [currentPage, setCurrentPage] = React.useState(0);
+    const [hasMore, setHasMore] = React.useState(true);
+    const [error, setError] = React.useState<string | undefined>(undefined);
+    const [userRoleList, setUserRoleList] = React.useState<ApiRole[]>([]);
+    const [me, setMe] = React.useState<User | undefined>(undefined);
+    const [total, setTotal] = React.useState<number>();
+    const [totalElement, setTotalElement] = React.useState<number>();
+    const [loaded, setLoaded] = React.useState(false);
 
     useEffect(() => {
         searchElements<User>("/api/user/search", {
@@ -96,6 +98,9 @@ function UserTable() {
             }
             setTableData(result.data)
             setHasMore(result.total > PAGE_SIZE)
+            setTotal(result.total)
+            setTotalElement(result.totalElement)
+            setLoaded(true)
         });
     }, [])
 
@@ -211,6 +216,7 @@ function UserTable() {
                         </Grid>
                     </Box>
                 </Box>
+                
             )
         },
         fetchData: (filters, sort) => {
@@ -227,6 +233,8 @@ function UserTable() {
                 }
                 setTableData([...tableData, ...result.data])
                 setHasMore(result.total > PAGE_SIZE * (nextPage + 1))
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
             setCurrentPage(nextPage)
         },
@@ -245,11 +253,32 @@ function UserTable() {
                 }
                 setTableData(result.data)
                 setHasMore(result.total > PAGE_SIZE)
+                setTotal(result.total)
+                setTotalElement(result.totalElement)
             });
         }
     }
 
-    return InfinityScrollItemsTable(props)
+    return (
+        <Box>
+            {
+                InfinityScrollItemsTable(props)
+            }
+            {
+                loaded && (
+                    <Typography 
+                        color={"primary"} 
+                        variant="body1" 
+                        marginLeft={5}
+                        >
+                        {
+                            (total === totalElement) ? totalElement?.toLocaleString() + " élément(s)" : total?.toLocaleString() + " élément(s) sur " + totalElement?.toLocaleString()
+                        }
+                    </Typography>
+                )
+            }
+        </Box>
+    )
 }
 
 export default UserTable;

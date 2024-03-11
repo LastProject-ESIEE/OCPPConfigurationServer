@@ -39,6 +39,9 @@ public class FirmwareService {
     return firmwareRepository.count(condition);
   }
 
+  public long count() {
+    return firmwareRepository.count();
+  }
 
   /**
    * Search for {@link Firmware} with a pagination.
