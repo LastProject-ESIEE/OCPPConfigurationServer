@@ -14,7 +14,7 @@ export function apiRoleToFrench(role: ApiRole): string {
 }
 
 export function frenchToEnglishRole(role: FrenchRole): string {
-    switch(role) {
+    switch (role) {
         case "Administrateur":
             return "ADMINISTRATOR";
         case "Éditeur":
