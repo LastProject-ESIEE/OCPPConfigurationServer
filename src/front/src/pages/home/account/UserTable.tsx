@@ -7,9 +7,9 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User } from "../../../conf/userController";
+import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User, UserInformation } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
-import { searchElements } from "../../../conf/backendController";
+import { getUserInformation, searchElements } from "../../../conf/backendController";
 
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
@@ -81,7 +81,7 @@ function UserTable() {
     const [hasMore, setHasMore] = React.useState(true);
     const [error, setError] = React.useState<string | undefined>(undefined);
     const [userRoleList, setUserRoleList] = React.useState<ApiRole[]>([]);
-    const [me, setMe] = React.useState<User | undefined>(undefined);
+    const [me, setMe] = React.useState<UserInformation | undefined>(undefined);
     const [total, setTotal] = React.useState<number>();
     const [totalElement, setTotalElement] = React.useState<number>();
     const [loaded, setLoaded] = React.useState(false);
@@ -114,12 +114,13 @@ function UserTable() {
     }, []);
 
     useEffect(() => {
-        const fetchCurrentUser = async () => {
-            const response = await fetch('/api/user/me');
-            const data = await response.json();
-            setMe(data);
-        }
-        fetchCurrentUser();
+        getUserInformation().then(userInfo => {
+            if (!userInfo) {
+                console.error("Failed to retrieve user information.")
+                return
+            }
+            setMe(userInfo)
+        })
     }, []);
 
 
@@ -216,7 +217,7 @@ function UserTable() {
                         </Grid>
                     </Box>
                 </Box>
-                
+
             )
         },
         fetchData: (filters, sort) => {
@@ -266,9 +267,9 @@ function UserTable() {
             }
             {
                 loaded && (
-                    <Typography 
-                        color={"primary"} 
-                        variant="body1" 
+                    <Typography
+                        color={"primary"}
+                        variant="body1"
                         marginLeft={5}
                         >
                         {

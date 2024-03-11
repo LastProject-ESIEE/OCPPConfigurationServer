@@ -2,28 +2,31 @@ import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/materi
 import {useEffect, useState} from "react";
 import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
 import {wsManager} from "../Home";
+import { getUserInformation } from "../../../conf/backendController";
+import { User } from "../../../conf/userController";
 
 function Account() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | undefined>(undefined);
     const [oldPassword, setOldPassword] = useState("");
     const [password1, setPassword1] = useState("");
     const [password2, setPassword2]= useState("");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
     useEffect(() => {
-        fetch("/api/user/me")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw response;
+        getUserInformation().then(userInfo => {
+            if (!userInfo) {
+                console.error("Failed to retrieve user information.")
+                return
+            }
+            setUser({
+                email: userInfo.email,
+                firstName: userInfo.firstName,
+                lastName: userInfo.lastName,
+                id: userInfo.id,
+                role: userInfo.role,
+                password: "",
             })
-            .then(data => {
-                setUser(data);
-            })
-            .catch(error => {
-                console.error("ERROR ", error);
-            });
+        })
     }, []);
 
     useEffect(() => {
@@ -38,6 +41,10 @@ function Account() {
     }, [password1, password2]);
 
     const handleButtonClick = () => {
+        if(!user){
+            console.error("User not defined.")
+            return
+        }
         if (oldPassword !== "" && password1 === password2) {
             fetch("/api/user/updatePassword/" + user.id, {
                 method: "PATCH",

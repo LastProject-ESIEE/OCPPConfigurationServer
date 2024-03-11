@@ -19,33 +19,33 @@ import Typography from "@mui/material/Typography";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { apiRoleToFrench } from "../conf/userController";
+import { ApiRole, UserInformation, apiRoleToFrench } from "../conf/userController";
+import { getUserInformation } from "../conf/backendController";
 
 export function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const location = useLocation();
     const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
-    const [userRole, setUserRole] = useState<any>(null);
-    const [user, setUser] = useState<any>(null);
+    const [userRole, setUserRole] = useState<ApiRole>("VISUALIZER");
+    const [user, setUser] = useState<UserInformation>({
+        id: -1,
+        email: "notconnected@error.com",
+        firstName: "Prénom",
+        lastName: "Nom",
+        role: "VISUALIZER"
+    });
 
     // Update the currentButton state when the URL changes
     useEffect(() => {
-        fetch("/api/user/me")
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw response;
-            })
+        getUserInformation()
             .then(data => {
+                if(!data){
+                    console.error("Failed to retrieve user information.")
+                    return
+                }
                 setUser(data);
                 setUserRole(data.role);
             })
-            .catch(error => {
-                console.error("ERROR ", error);
-                setUser({firstName: "Prénom", lastName: "Nom", role: "ADMINISTRATOR"});
-                setUserRole("ADMINISTRATOR");
-            });
         const matchingButton = buttons.find(item => {
             const buttonPath = `/home${item.href}`;
             return location.pathname.startsWith(buttonPath);

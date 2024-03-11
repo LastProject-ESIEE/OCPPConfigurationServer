@@ -38,6 +38,14 @@ export type User = {
     role: ApiRole
 }
 
+export type UserInformation = {
+    id: number,
+    email: string,
+    firstName: string,
+    lastName: string,
+    role: ApiRole,
+}
+
 export type CreateUserDto = {
     email: string,
     lastName: string,

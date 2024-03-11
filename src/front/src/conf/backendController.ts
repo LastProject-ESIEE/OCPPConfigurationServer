@@ -1,4 +1,5 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
+import { UserInformation } from "./userController";
 
 function filterOrderToAPI(order: FilterOrder) {
     switch (order) {
@@ -26,6 +27,25 @@ export type SearchElementsParameters = {
     page: number,
     filters?: SearchFilter[],
     sort?: SearchSort,
+}
+
+let cachedUserInformation: UserInformation | undefined = undefined
+
+export async function getUserInformation(): Promise<UserInformation | undefined> {
+    if(cachedUserInformation) {
+        return cachedUserInformation
+    }
+    let response = await fetch("/api/user/me")
+    if (response.ok) {
+        let content = await response.json();
+        let userInformation = content as UserInformation
+        if(!userInformation){
+            return undefined
+        }
+        cachedUserInformation = userInformation
+        return userInformation;
+    }
+    return undefined
 }
 
 
