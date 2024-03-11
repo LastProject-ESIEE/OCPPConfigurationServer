@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 
 /**
@@ -52,7 +53,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
   }
 
   @Override
-  public void onMessage(OcppMessage ocppMessage) {
+  public Optional<OcppMessage> onMessage(OcppMessage ocppMessage) {
     switch (ocppMessage) {
       case BootNotificationRequest20 b -> processBootNotification(b);
       case SetVariablesResponse20 r -> processConfigurationResponse(r);
@@ -60,6 +61,7 @@ public class OcppConfigurationObserver2 implements OcppObserver {
         // Do nothing
       }
     }
+    return Optional.empty();
   }
 
   @Override
