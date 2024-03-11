@@ -1,7 +1,7 @@
 import {PageRequest} from "../sharedComponents/DisplayTable"
 
 export function apiRoleToFrench(role: ApiRole): string {
-    switch(role) {
+    switch (role) {
         case "ADMINISTRATOR":
             return "Administrateur";
         case "EDITOR":
