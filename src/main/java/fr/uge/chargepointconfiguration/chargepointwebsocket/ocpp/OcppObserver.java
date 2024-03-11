@@ -8,6 +8,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.OcppConfi
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Interface to defines the message observer.<br>
@@ -59,8 +60,9 @@ public interface OcppObserver {
    * Does something when receiving a message.
    *
    * @param ocppMessage {@link OcppMessage}.
+   * @return {@link OcppMessage}, the message sent in response.
    */
-  void onMessage(OcppMessage ocppMessage);
+  Optional<OcppMessage> onMessage(OcppMessage ocppMessage);
 
   /**
    * Does something when a connection has been set.

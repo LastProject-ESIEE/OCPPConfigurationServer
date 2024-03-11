@@ -73,7 +73,7 @@ public class ChargePointManager {
   }
 
   public void setCurrentChargepoint(Chargepoint currentChargepoint) {
-    this.currentChargepoint = Objects.requireNonNull(currentChargepoint);
+    this.currentChargepoint = currentChargepoint;
   }
 
   /**
@@ -81,7 +81,7 @@ public class ChargePointManager {
    *
    * @param webSocketMessage The {@link WebSocketMessage} sent to our server.
    */
-  public void processMessage(WebSocketMessage webSocketMessage) {
+  public Optional<OcppMessage> processMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
     Optional<OcppMessage> message;
     if (webSocketMessage.isRequest()) {
@@ -92,8 +92,7 @@ public class ChargePointManager {
       pendingRequest = null;
     }
     if (message.isEmpty()) {
-      ocppObserver.onMessage(null);
-      return;
+      return ocppObserver.onMessage(null);
     }
     var ocppMessage = message.orElseThrow();
     // Weird message, ignore it.
@@ -102,7 +101,7 @@ public class ChargePointManager {
     } else {
       currentId += 1;
     }
-    ocppObserver.onMessage(message.orElseThrow());
+    return ocppObserver.onMessage(message.orElseThrow());
   }
 
   /**
