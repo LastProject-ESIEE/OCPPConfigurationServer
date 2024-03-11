@@ -90,8 +90,9 @@ public class ConfigurationService {
     return configurationRepository.findById(id).map(Configuration::toDto);
   }
 
-  public long countTotal() {
-    return configurationRepository.count();
+  public long countTotal(String request) {
+    var condition = SearchUtils.computeSpecification(request, Configuration.class);
+    return configurationRepository.count(condition);
   }
 
   /**

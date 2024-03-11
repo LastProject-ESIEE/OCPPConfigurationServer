@@ -224,7 +224,7 @@ public class ConfigurationController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = configurationService.countTotal();
+    var total = configurationService.countTotal(request);
 
     var data = configurationService.search(
             request,
