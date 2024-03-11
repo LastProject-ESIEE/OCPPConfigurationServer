@@ -329,8 +329,7 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                         }
                                     }}
                                     format="DD/MM/YYYY"
-                                    sx={{padding: 0, margin: 0}}
-                                    slotProps={{textField: { size: 'small'}}}
+                                    slotProps={{textField: { size: 'small', error: false}}}
                                 />
                             </LocalizationProvider>
                         </Grid>
@@ -352,8 +351,7 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                             return
                                         }}
                                         format="DD/MM/YYYY"
-                                        sx={{padding: 0, margin: 0}}
-                                        slotProps={{textField: { size: 'small'}}}
+                                        slotProps={{textField: { size: 'small', error: false}}}
                                     />
                                 </LocalizationProvider>
                             )}
