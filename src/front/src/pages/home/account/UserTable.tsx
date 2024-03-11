@@ -7,9 +7,9 @@ import {
     PageRequest,
     TableColumnDefinition
 } from "../../../sharedComponents/DisplayTable";
-import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User } from "../../../conf/userController";
+import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User, UserInformation } from "../../../conf/userController";
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
-import { searchElements } from "../../../conf/backendController";
+import { getUserInformation, searchElements } from "../../../conf/backendController";
 
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
@@ -81,7 +81,7 @@ function UserTable() {
     const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState<string | undefined>(undefined);
     const [userRoleList, setUserRoleList] = useState<ApiRole[]>([]);
-    const [me, setMe] = useState<User | undefined>(undefined);
+    const [me, setMe] = useState<UserInformation | undefined>(undefined);
 
 
     useEffect(() => {
@@ -109,12 +109,13 @@ function UserTable() {
     }, []);
 
     useEffect(() => {
-        const fetchCurrentUser = async () => {
-            const response = await fetch('/api/user/me');
-            const data = await response.json();
-            setMe(data);
-        }
-        fetchCurrentUser();
+        getUserInformation().then(userInfo => {
+            if (!userInfo) {
+                console.error("Failed to retrieve user information.")
+                return
+            }
+            setMe(userInfo)
+        })
     }, []);
 
 
