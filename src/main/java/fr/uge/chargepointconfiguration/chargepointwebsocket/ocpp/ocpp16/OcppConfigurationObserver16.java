@@ -495,15 +495,15 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   private Optional<OcppMessage> processDefaultMessage() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
+    if (currentChargepoint == null) {
+      return processResetRequest();
+    }
     chargePointManager.setCurrentChargepoint(
             chargepointRepository.findBySerialNumberChargepointAndConstructor(
                     currentChargepoint.getSerialNumberChargepoint(),
                     currentChargepoint.getConstructor()
             ));
     currentChargepoint = chargePointManager.getCurrentChargepoint();
-    if (currentChargepoint == null) {
-      return processResetRequest();
-    }
     var step = currentChargepoint.getStep();
     var status = currentChargepoint.getStatus();
     if (step == Chargepoint.Step.CONFIGURATION && status == Chargepoint.StatusProcess.PENDING) {
