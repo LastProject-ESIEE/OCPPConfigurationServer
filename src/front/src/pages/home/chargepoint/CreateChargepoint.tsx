@@ -225,7 +225,7 @@ function CreateChargepoint(props: { id?: number }) {
         } else {
             return createNewElement<ChargePoint>("/api/chargepoint/create", chargepoint)
                 .then(chargePointRequest => {
-                    if(chargePointRequest.succes){
+                    if (chargePointRequest.succes) {
                         let chargepoint = chargePointRequest.succes
                         wsManager.emitNotification({
                             type: "SUCCESS",
@@ -241,7 +241,7 @@ function CreateChargepoint(props: { id?: number }) {
                             content: chargePointRequest.error.message
                         });
                     }
-            })
+                })
         }
     }
 }

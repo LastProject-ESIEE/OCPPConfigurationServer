@@ -149,9 +149,24 @@ public class UserService {
    * @throws EntityAlreadyExistingException when the user is already created.
    */
   public User createUser(CreateUserDto createUserDto) {
+    if (createUserDto.email().isBlank()) {
+      throw new BadRequestException("L'email est requis.");
+    }
     if (userRepository.findByEmail(createUserDto.email()) != null) {
       throw new EntityAlreadyExistingException("L'utilisateur existe déjà : "
                                                + createUserDto.email());
+    }
+
+    if (createUserDto.password().isBlank()) {
+      throw new BadRequestException("Un mot de passe est requis.");
+    }
+
+    if (createUserDto.firstName().isBlank()) {
+      throw new BadRequestException("Le prénom est requis.");
+    }
+
+    if (createUserDto.lastName().isBlank()) {
+      throw new BadRequestException("Le nom est requis.");
     }
 
     var user = new User(
