@@ -14,7 +14,8 @@ import { SkeletonChargepoint } from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
 import { useNavigate } from "react-router";
 import { wsManager } from "../Home";
-import { createNewElement } from "../../../conf/backendController";
+import { createNewElement, getUserInformation } from "../../../conf/backendController";
+import { ApiRole } from "../../../conf/userController";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
@@ -101,7 +102,7 @@ function CreateChargepoint(props: { id?: number }) {
 
     useEffect(() => {
         getUserInformation().then(userInfo => {
-            if(!userInfo){
+            if (!userInfo) {
                 console.error("Failed to retrieve user role.")
                 return
             }
@@ -125,7 +126,7 @@ function CreateChargepoint(props: { id?: number }) {
                     <Grid item xs={12} md={6}>
                         <Box>
                             {loading ? (
-                                <SkeletonChargepoint />
+                                <SkeletonChargepoint/>
                             ) : (
                                 <>
                                     <FormInput name={"N° Série"}
@@ -207,14 +208,15 @@ function CreateChargepoint(props: { id?: number }) {
                                         }}
                                         pt={2}
                                     >
-                                    {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
-                                        <Button
-                                            sx={{borderRadius: 28}}
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={() => handleSubmit()}>
-                                            Valider
-                                        </Button>
+                                        {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
+                                            <Button
+                                                sx={{borderRadius: 28}}
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleSubmit()}>
+                                                Valider
+                                            </Button>
+                                        )}
                                     </Box>
                                 </>
                             )}
