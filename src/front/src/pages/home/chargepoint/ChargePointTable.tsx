@@ -93,7 +93,7 @@ const chargePointTableColumns: TableColumnDefinition[] = [
     size: 2,
     filter: {
       apiField: "lastUpdate",
-      filterType: "input"
+      filterType: "date"
     },
     sort: {
         apiField: "lastUpdate",

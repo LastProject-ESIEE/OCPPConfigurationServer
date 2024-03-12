@@ -1,6 +1,7 @@
 import { Box, Grid, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
+    DEFAULT_FILTER_SELECT_VALUE,
     InfinityScrollItemsTable,
     InfinityScrollItemsTableProps,
     PageRequest,
@@ -19,21 +20,10 @@ const technicalLogTableColumns: TableColumnDefinition[] = [
         size: 2,
         filter: {
             apiField: "date",
-            filterType: "input"
+            filterType: "date"
         },
         sort: {
             apiField: "date",
-        }
-    },
-    {
-        title: "Composant",
-        size: 3,
-        filter: {
-            apiField: "component",
-            filterType: "input"
-        },
-        sort: {
-            apiField: "component",
         }
     },
     {
@@ -41,10 +31,43 @@ const technicalLogTableColumns: TableColumnDefinition[] = [
         size: 2,
         filter: {
             apiField: "level",
-            filterType: "input"
+            filterType: "select",
+            restrictedValues: [
+                DEFAULT_FILTER_SELECT_VALUE,
+                "FATAL",
+                "ERROR",
+                "WARN",
+                "INFO",
+                "DEBUG",
+                "TRACE",
+              ],
+              apiValueFormatter: value => {
+                  return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+              },
         },
         sort: {
             apiField: "level",
+        }
+    },
+    {
+        title: "Composant",
+        size: 3,
+        filter: {
+            apiField: "component",
+            filterType: "select",
+            restrictedValues: [
+                DEFAULT_FILTER_SELECT_VALUE,
+                "BACKEND",
+                "FRONTEND",
+                "WEBSOCKET",
+                "DATABASE",
+              ],
+              apiValueFormatter: value => {
+                  return value === DEFAULT_FILTER_SELECT_VALUE ? "" : value
+              },
+        },
+        sort: {
+            apiField: "component",
         }
     },
     {
@@ -194,14 +217,14 @@ function LogLineItemVMamar(props: { technicalLog: TechnicalLog }) {
                     <Typography variant="body1"
                                 align="center"
                                 noWrap={true}>
-                        {props.technicalLog.component}</Typography>
+                        {props.technicalLog.level}</Typography>
                 </Grid>
                 <Grid item xs={technicalLogTableColumns[2].size}
                       justifyContent={"center"}>
                     <Typography variant="body1"
                                 align="center"
                                 noWrap={true}>
-                        {props.technicalLog.level}</Typography>
+                        {props.technicalLog.component}</Typography>
                 </Grid>
                 <Grid item xs={technicalLogTableColumns[3].size}
                       justifyContent={"center"}>
