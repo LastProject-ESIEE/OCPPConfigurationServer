@@ -1,20 +1,12 @@
-import {Box, Button, Container, Grid} from "@mui/material";
-import {useEffect, useState} from "react";
+import { Box, Button, Container, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import BackButton from "../../../sharedComponents/BackButton";
-import {
-    Firmware,
-    getFirmware,
-    getTypeAllowed,
-    postCreateFirmware,
-    TypeAllowed,
-    updateFirmware
-} from "../../../conf/FirmwareController";
-import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectItemsList";
-import {SkeletonFirmware} from "./components/SkeletonFirmware";
-import {useNavigate} from "react-router";
-import {wsManager} from "../Home";
-import { ChargePoint, CreateChargepointDto, updateChargepoint } from "../../../conf/chargePointController";
+import { Firmware, getFirmware, getTypeAllowed, TypeAllowed, updateFirmware } from "../../../conf/FirmwareController";
+import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
+import { SkeletonFirmware } from "./components/SkeletonFirmware";
+import { useNavigate } from "react-router";
+import { wsManager } from "../Home";
 import { createNewElement } from "../../../conf/backendController";
 
 export type CreateFirmwareFormData = {
