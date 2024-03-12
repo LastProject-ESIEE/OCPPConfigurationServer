@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.firmware;
 
+import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
@@ -77,9 +78,12 @@ public class FirmwareService {
    * @return A firmware created with its information.
    */
   public FirmwareDto save(CreateFirmwareDto createFirmwareDto) {
-
     checkAlreadyExisting(createFirmwareDto);
+    checkFieldsFirmware(createFirmwareDto);
 
+    if (createFirmwareDto.typesAllowed().isEmpty()) {
+      throw new BadRequestException("Aucun modèle compatible n'est renseigné.");
+    }
     var typesAllowed = new HashSet<TypeAllowed>();
     createFirmwareDto.typesAllowed().forEach(typeAllowedDto -> typeAllowedRepository
         .findById(typeAllowedDto.id())
@@ -131,5 +135,13 @@ public class FirmwareService {
     firmware.setUrl(createFirmwareDto.url());
     firmware.setTypesAllowed(typesAllowed);
     return firmwareRepository.save(firmware);
+  }
+
+  private static void checkFieldsFirmware(CreateFirmwareDto newValues) {
+    if (newValues.version().isBlank()
+        || newValues.url().isBlank()
+        || newValues.constructor().isBlank()) {
+      throw new BadRequestException("Version, url, constructeur sont requis");
+    }
   }
 }
