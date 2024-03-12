@@ -2,6 +2,7 @@ package fr.uge.chargepointconfiguration.firmware;
 
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -55,4 +56,6 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
   List<Firmware> findAllByOrderByIdDesc();
 
   Page<Firmware> findAllByOrderByIdDesc(Pageable pageable);
+
+  Optional<Firmware> findByUrl(String url);
 }

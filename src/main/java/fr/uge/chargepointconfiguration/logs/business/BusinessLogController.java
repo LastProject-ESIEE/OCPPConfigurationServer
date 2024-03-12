@@ -92,7 +92,7 @@ public class BusinessLogController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = businessLogService.countTotal(request);
+    var total = businessLogService.countTotalWithFilter(request);
     var totalElement = businessLogService.count();
 
     var data = businessLogService.search(

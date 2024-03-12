@@ -96,28 +96,6 @@ export async function searchConfiguration(
         return undefined
 }
 
-export async function postNewConfiguration(configurationData: CreateConfigurationData): Promise<boolean> {
-    let myConfig = globalStateResponseFormatter(configurationData)
-    let request = await fetch(window.location.origin + "/api/configuration/create",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: configurationData.name,
-                description: configurationData.description,
-                configuration: myConfig,
-                firmware: configurationData.firmware
-            })
-        })
-    if (request.ok) {
-        return true
-    } else {
-        return false
-    }
-}
-
 export async function getConfiguration(id: number): Promise<Configuration | undefined> {
     let request = await fetch(window.location.origin + `/api/configuration/${id}`)
     if (request.ok) {
@@ -153,7 +131,7 @@ export async function postUpdateConfiguration(id: number, configurationData: Cre
     }
 }
 
-function globalStateResponseFormatter(configurationData : CreateConfigurationData){
+export function globalStateResponseFormatter(configurationData : CreateConfigurationData){
     let myConfig = configurationData.configuration.map(keyValue => `"${keyValue.key.id}":"${keyValue.value}"`)
         .join(", ")
 

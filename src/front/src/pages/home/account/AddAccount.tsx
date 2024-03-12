@@ -1,11 +1,12 @@
-import {Button, Grid} from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import BackButton from "../../../sharedComponents/BackButton";
-import {ApiRole, createNewUser} from "../../../conf/userController";
-import {wsManager} from "../Home";
-import {useNavigate} from "react-router";
+import { ApiRole, User } from "../../../conf/userController";
+import { wsManager } from "../Home";
+import { useNavigate } from "react-router";
+import { createNewElement } from "../../../conf/backendController";
 
 function AddAccount() {
     const [lastName, setLastName] = useState("");
@@ -81,21 +82,40 @@ function AddAccount() {
                                 password: password1, 
                                 role: role
                             }
-                            let returnValue = createNewUser(user)
-                            returnValue.then(value => {
-                                if (value) {
+                            // let returnValue = createNewUser(user)
+                            // returnValue.then(value => {
+                            //     if (value) {
+                            //         wsManager.emitNotification({
+                            //             type: "SUCCESS",
+                            //             title: firstName + " " + lastName + " ",
+                            //             content: "L'utilisateur a été créé."
+                            //         });
+                            //         navigate("/home/account");
+                            //     } else {
+                            //         wsManager.emitNotification({
+                            //             type: "ERROR",
+                            //             title: "Erreur ",
+                            //             content: "L'utilisateur n'a pas pu être créé."
+                            //         })
+                            //     }
+                            // })
+                        createNewElement<User>("/api/user/create", user)
+                            .then(userRequest => {
+                                if (userRequest.succes) {
+                                    let user = userRequest.succes
                                     wsManager.emitNotification({
                                         type: "SUCCESS",
-                                        title: firstName + " " + lastName + " ",
+                                        title: user.email + " ",
                                         content: "L'utilisateur a été créé."
                                     });
                                     navigate("/home/account");
-                                } else {
+                                }
+                                if (userRequest.error) {
                                     wsManager.emitNotification({
                                         type: "ERROR",
                                         title: "Erreur ",
-                                        content: "L'utilisateur n'a pas pu être créé."
-                                    })
+                                        content: userRequest.error.message
+                                    });
                                 }
                             })
                         }

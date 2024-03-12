@@ -1,5 +1,6 @@
 package fr.uge.chargepointconfiguration.logs.technical;
 
+import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
@@ -27,9 +28,19 @@ public class TechnicalLogService {
     return technicalLogRepository.findAllByComponentAndLevelOrderByIdDesc(component, level.name());
   }
 
-  public long countTotal(String request) {
-    var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
-    return technicalLogRepository.count(condition);
+  /**
+   * Count the number of entities with the constraint of the given request.
+   *
+   * @param request the request used to search
+   * @return the amount of entities with the constraint of the given request
+   */
+  public long countTotalWithFilter(String request) {
+    try {
+      var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
+      return technicalLogRepository.count(condition);
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
   public long count() {
@@ -44,8 +55,12 @@ public class TechnicalLogService {
    * @return the list of corresponding {@link TechnicalLogEntity}
    */
   public List<TechnicalLogEntity> search(String request, PageRequest pageable) {
-    var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
-    return technicalLogRepository.findAll(condition, pageable)
-          .stream().toList();
+    try {
+      var condition = SearchUtils.computeSpecification(request, TechnicalLogEntity.class);
+      return technicalLogRepository.findAll(condition, pageable)
+            .stream().toList();
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 }

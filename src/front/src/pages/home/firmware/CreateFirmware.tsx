@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import BackButton from "../../../sharedComponents/BackButton";
 import {
+    Firmware,
     getFirmware,
     getTypeAllowed,
     postCreateFirmware,
@@ -13,6 +14,8 @@ import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectIte
 import {SkeletonFirmware} from "./components/SkeletonFirmware";
 import {useNavigate} from "react-router";
 import {wsManager} from "../Home";
+import { ChargePoint, CreateChargepointDto, updateChargepoint } from "../../../conf/chargePointController";
+import { createNewElement } from "../../../conf/backendController";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -129,59 +132,9 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                         pt={2}
                                         >
                                         <Button sx={{borderRadius: 28}} variant="contained" color="primary"
-                                                onClick={() => {
-                                                    let typesAllowed = new Set<TypeAllowed>()
-                                                    selectedItems.forEach(item => {
-                                                        typesAllowed.add(item.item)
-                                                    })
-                                                    let firmware: CreateFirmwareFormData = {
-                                                        constructor: formData.constructor,
-                                                        url: formData.url,
-                                                        typesAllowed: typesAllowed,
-                                                        version: formData.version,
-                                                    }
-                                                    // If id is defined then it's a firmware update
-                                                    if (props.id) {
-                                                        updateFirmware(props.id, firmware).then(value => {
-                                                            if (value) {
-                                                                wsManager.emitNotification({
-                                                                    type: "INFO",
-                                                                    title: formData.version + " ",
-                                                                    content: "Le firmware a été modifié."
-                                                                });
-                                                                navigate("/home/firmware");
-                                                            } else {
-                                                                wsManager.emitNotification({
-                                                                    type: "ERROR",
-                                                                    title: "Erreur ",
-                                                                    content: "Le firmware n'a pas pu être modifié."
-                                                                })
-                                                            }
-                                                        })
-                                                        return
-                                                    }
-                                                    // Otherwise it's a firmware creation
-                                                    postCreateFirmware(firmware).then(value => {
-                                                        if (value) {
-                                                            wsManager.emitNotification({
-                                                                type: "SUCCESS",
-                                                                title: formData.version + " ",
-                                                                content: "Le firmware a été créé."
-                                                            });
-                                                            navigate("/home/firmware");
-                                                        } else {
-                                                            wsManager.emitNotification({
-                                                                type: "ERROR",
-                                                                title: "Erreur ",
-                                                                content: "Le firmware n'a pas pu être créé."
-                                                            })
-                                                        }
-                                                    })
-                                                }
-                                            }
-                                            >
+                                                onClick={() => handleSubmit()}>
                                                 Valider
-                                            </Button>
+                                        </Button>
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
@@ -201,4 +154,49 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
             </Grid>
         </Box>
     );
+
+    function handleSubmit() {
+        if (props.id) {
+            return updateFirmware(props.id, formData);
+        } else {
+            let typesAllowed = new Set<TypeAllowed>()
+            selectedItems.forEach(item => {
+                typesAllowed.add(item.item)
+            })
+            let firmware: CreateFirmwareFormData = {
+                constructor: formData.constructor,
+                url: formData.url,
+                typesAllowed: typesAllowed,
+                version: formData.version,
+            }
+            let typesArray: TypeAllowed[] = []
+            firmware.typesAllowed.forEach(item => {
+                typesArray.push(item)
+            })
+            return createNewElement<Firmware>("/api/firmware/create", {
+                version: firmware.version,
+                url: firmware.url,
+                constructor: firmware.constructor,
+                typesAllowed: typesArray,
+            })
+                .then(firmwareRequest => {
+                    if(firmwareRequest.succes){
+                        let firmware = firmwareRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: firmware.version + " | " + firmware.constructor + " ",
+                            content: "La firmware a été créée."
+                        });
+                        navigate("/home/firmware");
+                    }
+                    if (firmwareRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: firmwareRequest.error.message
+                        });
+                    }
+                })
+        }
+    }
 }

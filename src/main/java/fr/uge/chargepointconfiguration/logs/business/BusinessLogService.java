@@ -1,6 +1,8 @@
 package fr.uge.chargepointconfiguration.logs.business;
 
 import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
@@ -38,14 +40,24 @@ public class BusinessLogService {
    * @return a list of business logs by chargepoint.
    */
   public List<BusinessLogEntity> getAllByChargepointId(int chargepointId) {
-    var chargepoint = chargepointRepository.findById(chargepointId).orElseThrow();
-    // TODO : exception BAD REQUEST si id est pas un nombre
+    var chargepoint = chargepointRepository.findById(chargepointId)
+        .orElseThrow(() -> new EntityNotFoundException("Aucune borne avec l'id " + chargepointId));
     return businessLogRepository.findAllByChargepointOrderByIdDesc(chargepoint);
   }
 
-  public long countTotal(String request) {
-    var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
-    return businessLogRepository.count(condition);
+  /**
+   * Count the number of entities with the constraint of the given request.
+   *
+   * @param request the request used to search
+   * @return the amount of entities with the constraint of the given request
+   */
+  public long countTotalWithFilter(String request) {
+    try {
+      var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
+      return businessLogRepository.count(condition);
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
   public long count() {
@@ -60,8 +72,12 @@ public class BusinessLogService {
    * @return the list of corresponding {@link BusinessLogEntity}
    */
   public List<BusinessLogEntity> search(String request, PageRequest pageable) {
-    var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
-    return businessLogRepository.findAll(condition, pageable)
+    try {
+      var condition = SearchUtils.computeSpecification(request, BusinessLogEntity.class);
+      return businessLogRepository.findAll(condition, pageable)
           .stream().toList();
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 }

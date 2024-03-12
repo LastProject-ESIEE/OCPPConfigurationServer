@@ -98,7 +98,7 @@ public class TechnicalLogController {
       @Parameter(description = "The request used to search.")
       @RequestParam(required = false, defaultValue = "") String request
   ) {
-    var total = technicalLogService.countTotal(request);
+    var total = technicalLogService.countTotalWithFilter(request);
     var totalElement = technicalLogService.count();
 
     var data = technicalLogService.search(
