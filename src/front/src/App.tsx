@@ -1,45 +1,64 @@
-import React, { useEffect } from 'react';
-import './styles/App.css';
-import FullWidthTabs from './pages/HomeMenu';
+import React from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
+import Login from "./pages/Login";
+import About from "./pages/about/About";
+import Home from "./pages/home/Home";
+import ConfigurationTable from "./pages/home/configuration/ConfigurationTable";
+import ConfigurationEditPage from "./pages/home/configuration/ConfigurationEditPage";
+import CreateConfig from "./pages/home/configuration/CreateConfig";
+import ChargePointTable from "./pages/home/chargepoint/ChargePointTable";
+import CreateChargepoint from "./pages/home/chargepoint/CreateChargepoint";
+import Error from "./pages/other/Error";
+import FirmwareTable from "./pages/home/firmware/FirmwareTable";
+import UserTable from "./pages/home/account/UserTable";
+import BusinessLogTable from "./pages/home/logs/BusinessLogTable";
+import TechnicalLogTable from "./pages/home/logs/TechnicalLogTable";
+import Account from "./pages/home/account/Account";
+import AddAccount from './pages/home/account/AddAccount';
+import ChargepointEditPage from "./pages/home/chargepoint/ChargepointEditPage";
+import CreateFirmware from './pages/home/firmware/CreateFirmware';
+import EditFirmwarePage from './pages/home/firmware/EditFirmware';
 
-function Home() {
-    useEffect(() =>
-    {
-        // Get current server address
-        let address = window.location.href.replace("http://", "").replace("https://", "").replace("/","")
-        let protocol = address.startsWith("localhost") || address.startsWith("127.0.0.1") ? "ws://" : "wss://"
-        let websocketAddress = protocol + address + "/websocket/chargepoint"
-        console.log("Connecting to the websocket address: " + websocketAddress)
-        const ws = new WebSocket(websocketAddress);
-
-        if(ws != null){
-            ws.onopen = (ev: Event) => {
-                console.log('Connected to server');
-                ws.send('Hello, server!');
-            }
-
-            ws.onmessage = (ev: MessageEvent<any>) => {
-                var message = ev.data
-                console.log(`Received message from server: ${message}`);
-            }
-
-            ws.onclose = (ev: CloseEvent) => {
-                console.log('Disconnected from server');
-            }
-        }
-    }, [])
-
-    return (
-        <div>Home</div>
-    )
-}
 
 function App(): JSX.Element {
     return (
-        <div>
-            {Home()}
-            {FullWidthTabs()}
-        </div>
+        <React.StrictMode>
+            <Router>
+                <Routes>
+                    <Route path="" element={<Login/>}/>
+                    <Route path="about" element={<About/>}/>
+                    <Route path="home" element={<Home/>}>
+                        <Route path="" element={<Navigate to="chargepoint"/>}/>
+                        <Route path="configuration">
+                            <Route path="" element={<ConfigurationTable/>}/>
+                            <Route path="edit/:id" element={<ConfigurationEditPage/>}/>
+                            <Route path="new" element={<CreateConfig/>}/>
+                        </Route>
+                        <Route path="chargepoint">
+                            <Route path="" element={<ChargePointTable/>}/>
+                            <Route path="new" element={<CreateChargepoint/>}/>
+                            <Route path="edit/:id" element={<ChargepointEditPage/>}/>
+                        </Route>
+                        <Route path="firmware">
+                            <Route path="" element={<FirmwareTable/>}/>
+                            <Route path="new" element={<CreateFirmware/>}/>
+                            <Route path="edit/:id" element={<EditFirmwarePage/>}/>
+                        </Route>
+                        <Route path="account">
+                            <Route path="" element={<UserTable/>}/>
+                            <Route path="new" element={<AddAccount/>}/>
+                        </Route>
+                        <Route path="logs">
+                            <Route path="" element={<Navigate to="business"/>}/>
+                            <Route path="business" element={<BusinessLogTable/>}/>
+                            <Route path="technical" element={<TechnicalLogTable/>}/>
+                        </Route>
+                        <Route path="myAccount" element={<Account/>}/>
+                    </Route>
+                    <Route path="*" element={<Error/>}/>
+                </Routes>
+            </Router>
+        </React.StrictMode>
     );
 }
 

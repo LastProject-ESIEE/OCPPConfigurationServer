@@ -1,14 +1,13 @@
 package fr.uge.chargepointconfiguration;
 
-import fr.uge.chargepointconfiguration.chargepoint.ConfigurationServer;
-import fr.uge.chargepointconfiguration.repository.ChargepointRepository;
-import fr.uge.chargepointconfiguration.repository.ConfigurationRepository;
-import fr.uge.chargepointconfiguration.repository.FirmwareRepository;
-import fr.uge.chargepointconfiguration.repository.StatusRepository;
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.chargepoint.ChargepointRepository;
+import fr.uge.chargepointconfiguration.chargepointwebsocket.ConfigurationServer;
+import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
+import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
+import fr.uge.chargepointconfiguration.user.UserRepository;
 import java.net.InetSocketAddress;
 import java.util.Objects;
-import org.java_websocket.server.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,8 +23,9 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   private final UserRepository userRepository;
   private final ChargepointRepository chargepointRepository;
   private final FirmwareRepository firmwareRepository;
-  private final StatusRepository statusRepository;
   private final ConfigurationRepository configurationRepository;
+  private final CustomLogger logger;
+
 
   /**
    * The class's constructor.<br>
@@ -37,14 +37,15 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
   public ChargepointconfigurationApplication(UserRepository userRepository,
                                              ChargepointRepository chargepointRepository,
                                              FirmwareRepository firmwareRepository,
-                                             StatusRepository statusRepository,
-                                             ConfigurationRepository configurationRepository) {
+                                             ConfigurationRepository configurationRepository,
+                                             CustomLogger customLogger) {
     this.userRepository = userRepository;
     this.chargepointRepository = chargepointRepository;
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
-    this.statusRepository = Objects.requireNonNull(statusRepository);
     this.configurationRepository = configurationRepository;
+    this.logger = customLogger;
   }
+
 
   /**
    * Launches the server by instantiating the application and running it.
@@ -75,8 +76,9 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
                 new InetSocketAddress(websocketUrl, websocketPort),
                 chargepointRepository,
                 firmwareRepository,
-                statusRepository
+                logger
         );
+        server.setReuseAddr(true);
         server.run();
       });
     } catch (NumberFormatException e) {

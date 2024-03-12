@@ -13,7 +13,7 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher",
+                label: "Afficher/modifier",
                 href: "",
                 subButtons: []
             },
@@ -23,25 +23,25 @@ export const buttons: ButtonData[] = [
                 href: "/new",
                 subButtons: []
             },
-            {
-                roles: ["ADMINISTRATOR", "EDITOR"],
-                label: "Modifier",
-                href: "/edit",
-                subButtons: []
-            },
         ]
     },
     {
         roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-        label: "Consulter les bornes",
+        label: "Bornes",
         href: "/chargepoint",
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Liste des bornes",
+                label: "Afficher/Modifier ",
                 href: "",
                 subButtons: []
-            }
+            },
+            {
+                roles: ["ADMINISTRATOR", "EDITOR"],
+                label: "Créer",
+                href: "/new",
+                subButtons: []
+            },
         ]
     },
     {
@@ -70,14 +70,33 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR"],
-                label: "Modification",
+                label: "Afficher/Modifier",
                 href: "",
                 subButtons: []
             },
             {
                 roles: ["ADMINISTRATOR"],
-                label: "Création",
+                label: "Créer",
                 href: "/new",
+                subButtons: []
+            }
+        ]
+    },
+    {
+        roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
+        label: "Logs",
+        href: "/logs",
+        subButtons: [
+            {
+                roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
+                label: "Fonctionnel",
+                href: "/business",
+                subButtons: []
+            },
+            {
+                roles: ["ADMINISTRATOR", "EDITOR"],
+                label: "Technique",
+                href: "/technical",
                 subButtons: []
             }
         ]

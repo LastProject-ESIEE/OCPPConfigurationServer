@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.security;
 
-import fr.uge.chargepointconfiguration.entities.User;
+import fr.uge.chargepointconfiguration.user.User;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    var authority = new SimpleGrantedAuthority(user.getRole().name());
+    var authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
     return List.of(authority);
   }
 

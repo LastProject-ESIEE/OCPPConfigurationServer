@@ -1,6 +1,6 @@
 package fr.uge.chargepointconfiguration.security;
 
-import fr.uge.chargepointconfiguration.repository.UserRepository;
+import fr.uge.chargepointconfiguration.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,8 +62,8 @@ public class WebSecurityConfig {
   static RoleHierarchy roleHierarchy() {
     var hierarchy = new RoleHierarchyImpl();
     hierarchy.setHierarchy("""
-          ROLE_Administrator > ROLE_Editor
-          ROLE_Editor > ROLE_Visualizer
+          ROLE_ADMINISTRATOR > ROLE_EDITOR
+          ROLE_EDITOR > ROLE_VISUALIZER
           """);
     return hierarchy;
   }
@@ -103,5 +103,4 @@ public class WebSecurityConfig {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
-
 }

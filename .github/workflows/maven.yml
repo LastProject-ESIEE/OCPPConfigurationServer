@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev"  ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
 
@@ -22,6 +22,7 @@ jobs:
       DB_ADDRESS: ${{secrets.DB_ADDRESS}}
       DB_USERNAME: ${{secrets.DB_USERNAME}}
       DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      FINAL_WS_SERVER_ADDRESS: ${{secrets.FINAL_WS_SERVER_ADDRESS}}
       WEBSOCKET_URL: ${{secrets.WEBSOCKET_URL}}
       WEBSOCKET_PORT: ${{secrets.WEBSOCKET_PORT}}
     steps:

@@ -20,7 +20,7 @@ function Login() {
             }}>
                 <Grid xs={12}>
                     <Box textAlign={"center"}>
-                        <img src="assets/logo-brs.png" alt="logo de BRS"/>
+                        <img src="/assets/logo-brs.png" alt="logo de BRS" style={{maxWidth: "40%"}}/>
                     </Box>
                 </Grid>
                 <Grid xs={12}>
@@ -70,7 +70,8 @@ function Login() {
                                 borderRadius: '4px',
                                 color: 'red',
                                 fontWeight: 'bold',
-                                display: 'block'
+                                display: 'block',
+                                textAlign: 'center'
                             }}>
                                 Mauvais identifiant et/ou mot passe. Veuillez réessayer
                             </div>
