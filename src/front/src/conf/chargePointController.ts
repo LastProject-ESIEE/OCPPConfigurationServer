@@ -35,22 +35,22 @@ export type CreateChargepointDto = {
 }
 
 
-export async function postNewChargepoint(chargepoint: CreateChargepointDto): Promise<boolean> {
-    let request = await fetch("/api/chargepoint/create",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(chargepoint)
-        })
-    if (request.ok) {
-        return true
-    } else {
-        console.error("Couldn't save chargepoint, error code: " + request.status)
-        return false
-    }
-}
+// export async function postNewChargepoint(chargepoint: CreateChargepointDto): Promise<boolean> {
+//     let request = await fetch("/api/chargepoint/create",
+//         {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify(chargepoint)
+//         })
+//     if (request.ok) {
+//         return true
+//     } else {
+//         console.error("Couldn't save chargepoint, error code: " + request.status)
+//         return false
+//     }
+// }
 
 export async function updateChargepoint(id: number, chargepoint: CreateChargepointDto) {
     let request = await fetch(`/api/chargepoint/${id}`,

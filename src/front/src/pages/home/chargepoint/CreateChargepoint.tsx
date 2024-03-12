@@ -1,19 +1,20 @@
-import React, {useEffect, useState} from "react";
-import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, Container, Grid, MenuItem, Paper, Select } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Configuration, getAllConfigurations, noConfig} from "../../../conf/configurationController";
+import { Configuration, getAllConfigurations, noConfig } from "../../../conf/configurationController";
 import {
+    ChargePoint,
     CreateChargepointDto,
     getChargepointById,
-    postNewChargepoint,
     updateChargepoint
 } from "../../../conf/chargePointController";
-import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
+import { SkeletonChargepoint } from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
-import {useNavigate} from "react-router";
-import {wsManager} from "../Home";
+import { useNavigate } from "react-router";
+import { wsManager } from "../Home";
+import { createNewElement } from "../../../conf/backendController";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
@@ -202,41 +203,9 @@ function CreateChargepoint(props: { id?: number }) {
                                             sx={{borderRadius: 28}}
                                             variant="contained"
                                             color="primary"
-                                            onClick={() => {
-                                                let returnValue = handleSubmit();
-                                                returnValue.then(value => {
-                                                    if (value) {
-                                                        if (props.id) {
-                                                            wsManager.emitNotification({
-                                                                type: "INFO",
-                                                                title: clientId + " ",
-                                                                content: "La borne a été modifiée."
-                                                            });
-                                                        } else {
-                                                            wsManager.emitNotification({
-                                                                type: "SUCCESS",
-                                                                title: clientId + " ",
-                                                                content: "La borne a été créée."
-                                                            });
-                                                        }
-                                                        navigate("/home/chargepoint");
-                                                    } else {
-                                                        if (props.id) {
-                                                            wsManager.emitNotification({
-                                                                type: "ERROR",
-                                                                title: "Erreur ",
-                                                                content: "La borne n'a pas pu être modifiée."
-                                                            });
-                                                        } else {
-                                                            wsManager.emitNotification({
-                                                                type: "ERROR",
-                                                                title: "Erreur ",
-                                                                content: "La borne n'a pas pu être créée."
-                                                            });
-                                                        }  
-                                                    }
-                                                })
-                                            }}>Valider</Button>
+                                            onClick={() => handleSubmit()}>
+                                            Valider
+                                        </Button>
                                     </Box>
                                 </>
                             )}
@@ -254,7 +223,25 @@ function CreateChargepoint(props: { id?: number }) {
         if (props.id) {
             return updateChargepoint(props.id, chargepoint);
         } else {
-            return postNewChargepoint(chargepoint);
+            return createNewElement<ChargePoint>("/api/chargepoint/create", chargepoint)
+                .then(chargePointRequest => {
+                    if(chargePointRequest.succes){
+                        let chargepoint = chargePointRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: chargepoint.clientId + " ",
+                            content: "La borne a été créée."
+                        });
+                        navigate("/home/chargepoint");
+                    }
+                    if (chargePointRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: chargePointRequest.error.message
+                        });
+                    }
+            })
         }
     }
 }
