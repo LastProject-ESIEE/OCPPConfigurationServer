@@ -112,10 +112,10 @@ export function NavBar() {
                       </Menu>
                   </Box>
                   {/*Large menu*/}
-                  <Box key={"navBar-top-buttons-box"} sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex'} }}>
-                      <Grid key={"navBar-top-buttons-box-container"} container flexDirection={"row"} paddingTop={2}>
+                  <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex'} }}>
+                      <Grid container flexDirection={"row"} paddingTop={2}>
                       {/* Buttons on the left */}
-                          <Grid key={"navBar-top-buttons-box-container-column"} container direction="column" padding={0}>
+                          <Grid container direction="column" padding={0}>
                               {/* First line of buttons */}
                               <Grid key={"navBar-top-buttons-box-container-first-line"} item container direction="row" justifyContent="center">
                                   {buttons.filter((item) => item.roles.includes(userRole))
@@ -156,7 +156,7 @@ export function NavBar() {
                   <Box>
                       {/* Profile box on the right */}
                       <Grid item>
-                          <Grid direction="row" container alignItems="center" justifyContent="space-between">
+                          <Grid direction="row" wrap="nowrap" container alignItems="center" justifyContent="space-between">
                               <Grid item>
                                   <IconButton
                                       onClick={() => {
@@ -183,12 +183,11 @@ export function NavBar() {
                               <Grid item>
                                   <Link style={{textDecoration: 'none', color: 'inherit'}} to="/home/myAccount">
                                       <Grid container direction="column" alignItems="center">
-                                          <Grid item>
-                                              <Typography
-                                                  variant="body1">{user && user.firstName} {user && user.lastName}</Typography>
+                                          <Grid item width={150}>
+                                            <Typography noWrap variant="body1">{user && `${user.firstName} ${user.lastName}`}</Typography>
                                           </Grid>
-                                          <Grid item>
-                                              <Typography variant="body2">{apiRoleToFrench(userRole)}</Typography>
+                                          <Grid item width={150}>
+                                              <Typography noWrap variant="body2">{apiRoleToFrench(userRole)}</Typography>
                                           </Grid>
                                       </Grid>
                                   </Link>
