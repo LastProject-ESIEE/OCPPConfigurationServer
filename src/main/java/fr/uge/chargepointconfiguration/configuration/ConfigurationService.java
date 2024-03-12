@@ -52,7 +52,7 @@ public class ConfigurationService {
    */
   public ConfigurationDto save(CreateConfigurationDto createConfigurationDto) {
     if (createConfigurationDto.name().isBlank()) {
-      throw new BadRequestException("Le nom est requis");
+      throw new BadRequestException("Le titre est requis");
     }
 
     var firmware = firmwareRepository.findById(

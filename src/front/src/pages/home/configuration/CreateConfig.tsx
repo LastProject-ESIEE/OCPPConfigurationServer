@@ -4,12 +4,13 @@ import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
 import {
+    Configuration,
     CreateConfigurationData,
     ErrorState,
     getConfiguration,
     getTranscriptors,
+    globalStateResponseFormatter,
     KeyValueConfiguration,
-    postNewConfiguration,
     postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
@@ -19,7 +20,7 @@ import BackButton from '../../../sharedComponents/BackButton';
 import { useNavigate } from "react-router";
 import { wsManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
-import { getAllElements } from '../../../conf/backendController';
+import { createNewElement, getAllElements } from '../../../conf/backendController';
 
 function CreateConfig(props: { id?: number }) {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -104,22 +105,33 @@ function CreateConfig(props: { id?: number }) {
                 })
                 return
             }
-            postNewConfiguration(resultData).then(value => {
-                if (value) {
-                    wsManager.emitNotification({
-                        type: "SUCCESS",
-                        title: title + " ",
-                        content: "La configuration a été créée."
-                    });
-                    navigate("/home/configuration");
-                } else {
-                    wsManager.emitNotification({
-                        type: "ERROR",
-                        title: "Erreur ",
-                        content: "La configuration n'a pas pu être créée."
-                    })
-                }
+
+            const myConfig = globalStateResponseFormatter(resultData)
+
+            createNewElement<Configuration>("/api/configuration/create", {
+                name: resultData.name,
+                description: resultData.description,
+                configuration: myConfig,
+                firmware: resultData.firmware
             })
+                .then(configurationRequest => {
+                    if(configurationRequest.succes){
+                        let configuration = configurationRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: configuration.name + " ",
+                            content: "La configuration a été créée."
+                        });
+                        navigate("/home/configuration");
+                    }
+                    if (configurationRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: configurationRequest.error.message
+                        });
+                    }
+                })
         }
     }
 
