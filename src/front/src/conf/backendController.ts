@@ -178,7 +178,7 @@ export async function updateElement<T>(method: "PATCH" | "PUT", path: string, da
         console.error("Unexpected response type received: " + path, response)
     } else {
         let error = (await response.json()) as ErrorMessage
-        if(error){
+        if (error) {
             return {
                 error: error
             }
