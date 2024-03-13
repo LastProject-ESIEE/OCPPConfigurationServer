@@ -170,7 +170,7 @@ export async function updateElement<T>(method: "PATCH" | "PUT", path: string, da
 
     if (response.ok) {
         let result = (await response.json()) as T
-        if(result){
+        if (result) {
             return {
                 succes: result
             }
