@@ -58,6 +58,10 @@ const configurationTableColumns: TableColumnDefinition[] = [
     },
 ]
 
+/**
+ * Display configuration table
+ * @returns The react component
+ */
 function ConfigurationTable() {
     const [tableData, setTableData] = React.useState<Configuration[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
@@ -67,6 +71,7 @@ function ConfigurationTable() {
     const [totalElement, setTotalElement] = React.useState<number>();
     const [loaded, setLoaded] = React.useState(false);
 
+    // Fetch first configuration page on load
     useEffect(() => {
         searchElements<Configuration>("/api/configuration/search",
             {
@@ -86,7 +91,7 @@ function ConfigurationTable() {
         });
     }, [])
 
-
+    // Define configuration table props 
     let props: InfinityScrollItemsTableProps<Configuration> = {
         columns: configurationTableColumns,
         key: "configuration-table",

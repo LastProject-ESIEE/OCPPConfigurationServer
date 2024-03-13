@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-import { NavBar } from "../../sharedComponents/NavBar";
 import events from "events";
 import { WebSocketChargePointNotification } from "../../conf/chargePointController";
 import { IconButton } from "@mui/material";
@@ -7,6 +6,7 @@ import DisplayNotification, { NotificationMessage } from "../../sharedComponents
 import { useState } from "react";
 import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
 import { BACKEND_PORT } from "../../conf/backendController";
+import NavBar from "../../sharedComponents/NavBar";
 
 /**
  * Define all listener event that can be emitted 

@@ -98,7 +98,7 @@ function CreateConfig(props: { id?: number }) {
                     .then(configurationRequest => {
                         if (configurationRequest.succes) {
                             let configuration = configurationRequest.succes
-                            wsManager.emitNotification({
+                            notificationManager.emitNotification({
                                 type: "SUCCESS",
                                 title: configuration.name + " ",
                                 content: "La configuration a été modifiée."
@@ -106,7 +106,7 @@ function CreateConfig(props: { id?: number }) {
                             navigate("/home/configuration");
                         }
                         if (configurationRequest.error) {
-                            wsManager.emitNotification({
+                            notificationManager.emitNotification({
                                 type: "ERROR",
                                 title: "Erreur ",
                                 content: configurationRequest.error.message
@@ -128,7 +128,7 @@ function CreateConfig(props: { id?: number }) {
                 .then(configurationRequest => {
                     if(configurationRequest.succes){
                         let configuration = configurationRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: configuration.name + " ",
                             content: "La configuration a été créée."
@@ -136,7 +136,7 @@ function CreateConfig(props: { id?: number }) {
                         navigate("/home/configuration");
                     }
                     if (configurationRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: configurationRequest.error.message
