@@ -3,8 +3,12 @@ package fr.uge.chargepointconfiguration.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.firmware.FirmwareRepository;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
+import fr.uge.chargepointconfiguration.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,6 +28,10 @@ public class ConfigurationService {
 
   private final FirmwareRepository firmwareRepository;
 
+  private final UserService userService;
+
+  private final CustomLogger logger;
+
   record ConfigurationJson(
       @JsonProperty("1") String lightIntensity,
       @JsonProperty("4") String localAuthList,
@@ -39,9 +47,13 @@ public class ConfigurationService {
    */
   @Autowired
   public ConfigurationService(ConfigurationRepository configurationRepository,
-                              FirmwareRepository firmwareRepository) {
+                              FirmwareRepository firmwareRepository,
+                              UserService userService,
+                              CustomLogger logger) {
     this.configurationRepository = configurationRepository;
     this.firmwareRepository = firmwareRepository;
+    this.userService = userService;
+    this.logger = logger;
   }
 
   /**
@@ -72,8 +84,11 @@ public class ConfigurationService {
             firmware
         )
     );
-
-    return configuration.toDto(); // TODO refacto for dealing with multiple entity<DTO>
+    logger.info(new BusinessLog(userService.getAuthenticatedUser(),
+        null,
+        BusinessLogEntity.Category.CONFIG,
+        "New configuration saved : " + configuration.getName()));
+    return configuration.toDto();
   }
 
   private static void checkerConfig(CreateConfigurationDto createConfigurationDto) {
@@ -116,7 +131,7 @@ public class ConfigurationService {
   /**
    * Update a configuration.
    *
-   * @param id the id of the configuration to be updated
+   * @param id               the id of the configuration to be updated
    * @param configurationDto All the necessary information for a configuration update.
    * @return A configuration created with its information.
    */
@@ -136,7 +151,14 @@ public class ConfigurationService {
             .orElseThrow(() -> new EntityNotFoundException("Aucun firmware avec l'id "
                                                            + configurationDto.firmware()))
     );
-    return configurationRepository.save(configuration);
+
+    var result = configurationRepository.save(configuration);
+    logger.info(new BusinessLog(userService.getAuthenticatedUser(),
+        null,
+        BusinessLogEntity.Category.CONFIG,
+        "Configuration updated : " + configuration));
+
+    return result;
   }
 
   /**
@@ -181,7 +203,7 @@ public class ConfigurationService {
   /**
    * Search for {@link Configuration} with a pagination.
    *
-   * @param request the request used to search
+   * @param request  the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link Configuration}
    */

@@ -3,9 +3,13 @@ package fr.uge.chargepointconfiguration.firmware;
 import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLogEntity;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowed;
 import fr.uge.chargepointconfiguration.typeallowed.TypeAllowedRepository;
+import fr.uge.chargepointconfiguration.user.UserService;
 import java.util.HashSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +23,27 @@ import org.springframework.stereotype.Service;
 public class FirmwareService {
   private final FirmwareRepository firmwareRepository;
   private final TypeAllowedRepository typeAllowedRepository;
+  private final UserService userService;
+  private final CustomLogger logger;
 
+  /**
+   * Constructor for {@link FirmwareService}.
+   *
+   * @param firmwareRepository {@link FirmwareRepository}
+   * @param typeAllowedRepository {@link TypeAllowedRepository}
+   * @param userService {@link UserService}
+   * @param logger {@link CustomLogger}
+   */
   @Autowired
   public FirmwareService(
       FirmwareRepository firmwareRepository,
-      TypeAllowedRepository typeAllowedRepository) {
+      TypeAllowedRepository typeAllowedRepository,
+      UserService userService,
+      CustomLogger logger) {
     this.firmwareRepository = firmwareRepository;
     this.typeAllowedRepository = typeAllowedRepository;
+    this.userService = userService;
+    this.logger = logger;
   }
 
   public List<Firmware> getAllFirmwares() {
@@ -102,6 +120,12 @@ public class FirmwareService {
             typesAllowed
         )
     );
+
+    logger.info(new BusinessLog(userService.getAuthenticatedUser(),
+        null,
+        BusinessLogEntity.Category.FIRM,
+        "New firmware saved : " + firmware));
+
     return firmware.toDto();
   }
 
@@ -142,7 +166,15 @@ public class FirmwareService {
     firmware.setVersion(createFirmwareDto.version());
     firmware.setUrl(createFirmwareDto.url());
     firmware.setTypesAllowed(typesAllowed);
-    return firmwareRepository.save(firmware);
+    var result = firmwareRepository.save(firmware);
+
+
+    logger.info(new BusinessLog(userService.getAuthenticatedUser(),
+        null,
+        BusinessLogEntity.Category.FIRM,
+        "Firmware updated : " + firmware));
+
+    return result;
   }
 
   private static void checkFieldsFirmware(CreateFirmwareDto newValues) {
