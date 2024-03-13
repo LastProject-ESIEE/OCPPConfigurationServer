@@ -136,9 +136,10 @@ public class ChargepointService {
 
     var existingByConstructorAndSerialNumber = chargepointRepository
         .findBySerialNumberChargepointAndConstructor(
-        newValues.serialNumberChargepoint(), newValues.constructor());
+            newValues.serialNumberChargepoint(), newValues.constructor());
 
-    if (existingByConstructorAndSerialNumber.getSerialNumberChargepoint()
+    if (id != existingByConstructorAndSerialNumber.getId()
+        && existingByConstructorAndSerialNumber.getSerialNumberChargepoint()
             .equals(newValues.serialNumberChargepoint())
         && existingByConstructorAndSerialNumber.getConstructor()
             .equals(newValues.constructor())) {
