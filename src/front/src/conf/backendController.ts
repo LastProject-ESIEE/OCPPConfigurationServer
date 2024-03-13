@@ -183,7 +183,7 @@ export async function updateElement<T>(method: "PATCH" | "PUT", path: string, da
                 error: error
             }
         }
-        console.error("UUpdate element request failed: " + path, response)
+        console.error("Update element request failed: " + path, response)
     }
     // Return default error response
     return {
