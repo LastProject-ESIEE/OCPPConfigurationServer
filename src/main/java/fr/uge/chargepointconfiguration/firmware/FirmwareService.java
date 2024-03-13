@@ -99,8 +99,8 @@ public class FirmwareService {
    * @return A firmware created with its information.
    */
   public FirmwareDto save(CreateFirmwareDto createFirmwareDto) {
-    checkAlreadyExisting(createFirmwareDto);
     checkFieldsFirmware(createFirmwareDto);
+    checkAlreadyExisting(createFirmwareDto);
 
     if (createFirmwareDto.typesAllowed().isEmpty()) {
       throw new BadRequestException("Aucun modèle compatible n'est renseigné.");
@@ -144,6 +144,7 @@ public class FirmwareService {
    * @return A firmware updated with its information.
    */
   public Firmware update(int id, CreateFirmwareDto createFirmwareDto) {
+    checkFieldsFirmware(createFirmwareDto);
     var firm = firmwareRepository.findByUrl(createFirmwareDto.url());
     // Firm can have the same URL if it's itself
     if (firm.isPresent() && firm.get().getId() != id) {

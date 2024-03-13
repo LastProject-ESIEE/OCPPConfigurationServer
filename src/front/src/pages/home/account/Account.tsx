@@ -1,8 +1,8 @@
-import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
-import {notificationManager} from "../Home";
+import { Button, Container, Grid, Paper, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { notificationManager } from "../Home";
 import { getUserInformation } from "../../../conf/backendController";
-import { User, apiRoleToFrench } from "../../../conf/userController";
+import { apiRoleToFrench, User } from "../../../conf/userController";
 
 /**
  * Account page component
@@ -69,7 +69,7 @@ function Account() {
                     setPassword1("");
                     setPassword2("");
                     notificationManager.emitNotification({
-                        type: "SUCCESS",
+                        type: "INFO",
                         title: "Succès ",
                         content: "Le mot de passe a été mis à jour."
                     });
