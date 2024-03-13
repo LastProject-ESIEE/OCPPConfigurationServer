@@ -508,7 +508,11 @@ public class OcppConfigurationObserver16 implements OcppObserver {
     var status = currentChargepoint.getStatus();
     if (step == Chargepoint.Step.CONFIGURATION && status == Chargepoint.StatusProcess.PENDING) {
       return processConfigurationRequest();
-    } else if (step == Chargepoint.Step.FIRMWARE && status == Chargepoint.StatusProcess.PENDING) {
+    } else if (step == Chargepoint.Step.FIRMWARE && status == Chargepoint.StatusProcess.PENDING
+            || (status == Chargepoint.StatusProcess.FAILED
+            || status == Chargepoint.StatusProcess.FINISHED)) {
+      loaded = false;
+      lastOrderModeOn = false;
       return processFirmwareRequest();
     } else {
       return Optional.empty();
