@@ -3,7 +3,7 @@ import { PageRequest } from "../sharedComponents/DisplayTable"
 /**
  * Translate api role to french 
  * @param role api role to be translated
- * @returns 
+ * @returns A translated (into french) string.
  */
 export function apiRoleToFrench(role: ApiRole): string {
     switch (role) {
