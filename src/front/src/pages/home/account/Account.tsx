@@ -47,7 +47,7 @@ function Account() {
 
     // Manage the account information update when user submit the form
     const handleButtonClick = () => {
-        if(!user){
+        if (!user) {
             console.error("User not defined.")
             return
         }
