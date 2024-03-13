@@ -5,7 +5,6 @@ import {Grid, MenuItem, Paper, Select, Typography} from "@mui/material";
 /**
  * Editable role componant
  * @param props The component props
- * @returns 
  */
 function RoleComponent(props: {
     role: ApiRole,
