@@ -176,7 +176,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                         wsManager.emitNotification({
                             type: "SUCCESS",
                             title: firmware.version + " | " + firmware.constructor + " ",
-                            content: "La firmware a été modifié."
+                            content: "Le firmware a été modifié."
                         });
                         navigate("/home/firmware");
                     }
