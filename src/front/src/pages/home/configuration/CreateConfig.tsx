@@ -88,22 +88,6 @@ function CreateConfig(props: { id?: number }) {
             }
             // If props.id not undefined then it's an update
             if (props.id) {
-                // postUpdateConfiguration(props.id, resultData).then(value => {
-                //     if (value) {
-                //         wsManager.emitNotification({
-                //             type: "INFO",
-                //             title: title + " ",
-                //             content: "La configuration a été modifiée."
-                //         });
-                //         navigate("/home/configuration");
-                //     } else {
-                //         wsManager.emitNotification({
-                //             type: "ERROR",
-                //             title: "Erreur ",
-                //             content: "La configuration n'a pas pu être modifiée."
-                //         })
-                //     }
-                // })
                 const myConfig = globalStateResponseFormatter(resultData)
                 updateElement<Configuration>("PATCH", `/api/configuration/${props.id}`, {
                     name: resultData.name,
