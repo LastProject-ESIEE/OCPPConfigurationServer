@@ -339,7 +339,7 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                     }
                                     setFilterOrder(value)
                                     if(value === "="){
-                                        if(firstFilterValue !== "" && secondFilterValue !== ""){
+                                        if (firstFilterValue !== "" && secondFilterValue !== "") {
                                             props.onFilterValidate([
                                                 {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: ">"},
                                                 {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: "<"},
