@@ -82,16 +82,6 @@ public class UserService {
   }
 
   /**
-   * Retrieve information about a user.
-   *
-   * @param id of the user.
-   * @return information about the user.
-   */
-  public User getUserById(int id) {
-    return getById(id);
-  }
-
-  /**
    * Retrieve info in database for all users.
    *
    * @return Details about all the users.
