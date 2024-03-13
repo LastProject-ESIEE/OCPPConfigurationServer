@@ -4,6 +4,8 @@ import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.errors.exceptions.IllegalOperationException;
+import fr.uge.chargepointconfiguration.logs.CustomLogger;
+import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -21,11 +23,23 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final CustomLogger logger;
 
+
+  /**
+   * Constructor for {@link UserService}.
+   *
+   * @param userRepository {@link UserRepository}
+   * @param passwordEncoder {@link PasswordEncoder}
+   * @param logger {@link CustomLogger}
+   */
   @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserService(UserRepository userRepository,
+                     PasswordEncoder passwordEncoder,
+                     CustomLogger logger) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.logger = logger;
   }
 
   /**
@@ -52,7 +66,13 @@ public class UserService {
 
     user.setPassword(passwordEncoder.encode(changePasswordUserDto.newPassword()));
 
-    return userRepository.save(user);
+    var result = userRepository.save(user);
+    logger.info(new BusinessLog(getAuthenticatedUser(),
+        null,
+        null,
+        "Password updated for user : " + user.getId()));
+
+    return result;
   }
 
   private boolean validatePassword(String s) {
@@ -106,13 +126,20 @@ public class UserService {
       throw new IllegalOperationException("Vous ne pouvez pas changer votre propre rôle.");
     }
     user.setRole(role);
-    return userRepository.save(user);
+    var result = userRepository.save(user);
+
+    logger.info(new BusinessLog(getAuthenticatedUser(),
+        null,
+        null,
+        "Role updated for user : " + user.getId() + " " + user.getRole()));
+
+    return result;
   }
 
   /**
    * Count with filters.
    *
-   * @param request  the request used to search
+   * @param request the request used to search
    * @return the count of entities with the request
    */
   public long countWithFilters(String request) {
@@ -181,7 +208,14 @@ public class UserService {
         createUserDto.role()
     );
 
-    return userRepository.save(user);
+    var result = userRepository.save(user);
+
+    logger.info(new BusinessLog(getAuthenticatedUser(),
+        null,
+        null,
+        "New user saved : " + user.getId() + " " + user.getRole()));
+
+    return result;
   }
 
   /**
