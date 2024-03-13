@@ -20,7 +20,7 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
    * Returns a Chargepoint from the database according to the serial number and vendor.
    *
    * @param serialNumber Chargepoint's unique serial number.
-   * @param constructor Chargepoint's vendor.
+   * @param constructor  Chargepoint's vendor.
    * @return The correct Chargepoint or null if the chargepoint couldn't be found.
    */
   Chargepoint findBySerialNumberChargepointAndConstructor(String serialNumber,
@@ -35,6 +35,6 @@ public interface ChargepointRepository extends CrudRepository<Chargepoint, Integ
   List<Chargepoint> findAllByOrderByIdDesc();
 
   Page<Chargepoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-        Pageable pageable,
-        String clientId);
+      Pageable pageable,
+      String clientId);
 }

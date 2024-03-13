@@ -31,12 +31,12 @@ public interface TechnicalLogRepository extends CrudRepository<TechnicalLogEntit
    * Method to return all technical logs by the component.
    *
    * @param component the type of component in the system.
-   * @param level {@link Level}
+   * @param level     {@link Level}
    * @return the list of technical logs by component.
    */
   List<TechnicalLogEntity> findAllByComponentAndLevelOrderByIdDesc(
-          TechnicalLogEntity.Component component,
-          String level);
+      TechnicalLogEntity.Component component,
+      String level);
 
   /**
    * Method to return all technical logs by the criticality.

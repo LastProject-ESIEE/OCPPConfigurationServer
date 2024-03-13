@@ -22,8 +22,8 @@ public class SearchUtils {
    * Each given parameter must match the name of an attribute of the given entity.<br>
    *
    * @param request A string formatted with a specific pattern to determine the request
-   * @param entity The entity to filter on
-   * @param <T> The type of the entity
+   * @param entity  The entity to filter on
+   * @param <T>     The type of the entity
    * @return The JPA specification to use
    * @throws IllegalArgumentException if the request contains fields not declared in the entity
    */

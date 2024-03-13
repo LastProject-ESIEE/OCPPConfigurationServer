@@ -73,10 +73,10 @@ public class ChargepointconfigurationApplication implements CommandLineRunner {
       var websocketPort = Integer.parseInt(websocketPortString);
       Thread.ofPlatform().start(() -> {
         var server = new ConfigurationServer(
-                new InetSocketAddress(websocketUrl, websocketPort),
-                chargepointRepository,
-                firmwareRepository,
-                logger
+            new InetSocketAddress(websocketUrl, websocketPort),
+            chargepointRepository,
+            firmwareRepository,
+            logger
         );
         server.setReuseAddr(true);
         server.run();

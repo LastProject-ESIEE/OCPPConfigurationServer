@@ -42,17 +42,17 @@ public class Firmware implements DtoEntity<FirmwareDto> {
 
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(name = "compatibility",
-          joinColumns = @JoinColumn(name = "id_firmware"),
-          inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
+      joinColumns = @JoinColumn(name = "id_firmware"),
+      inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
   private Set<TypeAllowed> typesAllowed;
 
   /**
    * Firmware's constructor.
    *
-   * @param url Link where is the firmware stored.
-   * @param version Firmware reference version.
-   * @param constructor Manufacturer of this firmware.
-   * @param  typesAllowed Set of all the compatible firmware.
+   * @param url          Link where is the firmware stored.
+   * @param version      Firmware reference version.
+   * @param constructor  Manufacturer of this firmware.
+   * @param typesAllowed Set of all the compatible firmware.
    */
   public Firmware(String url,
                   String version,

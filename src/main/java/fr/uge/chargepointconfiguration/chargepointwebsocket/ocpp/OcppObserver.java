@@ -19,12 +19,12 @@ public interface OcppObserver {
   /**
    * Instantiates the correct observer according to the {@link OcppVersion}.
    *
-   * @param ocppVersion {@link OcppVersion}.
-   * @param chargePointManager {@link ChargePointManager}.
-   * @param ocppMessageSender {@link OcppMessageSender}.
+   * @param ocppVersion           {@link OcppVersion}.
+   * @param chargePointManager    {@link ChargePointManager}.
+   * @param ocppMessageSender     {@link OcppMessageSender}.
    * @param chargepointRepository {@link ChargepointRepository}.
-   * @param firmwareRepository {@link FirmwareRepository}.
-   * @param logger {@link CustomLogger}.
+   * @param firmwareRepository    {@link FirmwareRepository}.
+   * @param logger                {@link CustomLogger}.
    * @return {@link OcppObserver}.
    */
   static OcppObserver instantiateFromVersion(OcppVersion ocppVersion,
@@ -41,17 +41,17 @@ public interface OcppObserver {
     Objects.requireNonNull(logger);
     return switch (ocppVersion) {
       case V1_6 -> new OcppConfigurationObserver16(
-              ocppMessageSender,
-              chargePointManager,
-              chargepointRepository,
-              firmwareRepository,
-              logger
+          ocppMessageSender,
+          chargePointManager,
+          chargepointRepository,
+          firmwareRepository,
+          logger
       );
       case V2 -> new OcppConfigurationObserver2(
-              ocppMessageSender,
-              chargePointManager,
-              chargepointRepository,
-              firmwareRepository
+          ocppMessageSender,
+          chargePointManager,
+          chargepointRepository,
+          firmwareRepository
       );
     };
   }

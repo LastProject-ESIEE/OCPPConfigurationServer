@@ -53,10 +53,10 @@ public class ConfigurationController {
    */
   @Operation(summary = "Get all configuration")
   @ApiResponse(responseCode = "200",
-          description = "Found all the configuration.",
-          content = @Content(mediaType = "application/json",
-              schema = @Schema(implementation = ConfigurationDto.class)
-          )
+      description = "Found all the configuration.",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationDto.class)
+      )
   )
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
@@ -74,17 +74,17 @@ public class ConfigurationController {
    */
   @Operation(summary = "Get configuration by its id")
   @ApiResponses(value = { @ApiResponse(responseCode = "200",
-          description = "Found the corresponding configuration",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationDto.class)) }), @ApiResponse(
-          responseCode = "404",
-          description = "This configuration does not exist",
-          content = @Content) })
+      description = "Found the corresponding configuration",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationDto.class)) }), @ApiResponse(
+      responseCode = "404",
+      description = "This configuration does not exist",
+      content = @Content) })
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")   // For showing detailed infos
   public ConfigurationDto getConfigurationById(
-          @Parameter(description = "Id of the configuration your are looking for.")
-          @PathVariable int id) {
+      @Parameter(description = "Id of the configuration your are looking for.")
+      @PathVariable int id) {
     return configurationService.getConfiguration(id).toDto();
   }
 
@@ -95,32 +95,31 @@ public class ConfigurationController {
    * @return A configuration created with its information and its http result status.
    */
   @Operation(summary = "Create a configuration")
-  @ApiResponses(value = { @ApiResponse(responseCode = "201",
-          description = "Configuration created",
-          content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationDto.class)
-          )
-        )
-  })
+  @ApiResponse(responseCode = "201",
+      description = "Configuration created",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationDto.class)
+      )
+  )
   @PostMapping("/create")
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> registerConfiguration(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = "The configuration to be sent to the controller.",
-            required = true,
-            content = @Content(
-                  examples = @ExampleObject(
-                        """
-                        {
-                          "name": "the name of the configuration",
-                          "description": "A short description about the configuration",
-                          "configuration": "{"1":"100"}",
-                          "firmware": 1
-                        }
-                        """
-                  )
-            )
+          description = "The configuration to be sent to the controller.",
+          required = true,
+          content = @Content(
+              examples = @ExampleObject(
+                  """
+                      {
+                        "name": "the name of the configuration",
+                        "description": "A short description about the configuration",
+                        "configuration": "{"1":"100"}",
+                        "firmware": 1
+                      }
+                      """
+              )
+          )
       )
       @RequestBody CreateConfigurationDto createConfigurationDto) {
     return new ResponseEntity<>(configurationService.save(createConfigurationDto),
@@ -134,14 +133,13 @@ public class ConfigurationController {
    * @return A configuration created with its information and its http result status.
    */
   @Operation(summary = "Update a configuration")
-  @ApiResponses(value = { @ApiResponse(responseCode = "201",
-          description = "Configuration updated",
-          content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationDto.class)
-          )
+  @ApiResponse(responseCode = "201",
+      description = "Configuration updated",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationDto.class)
       )
-  })
+  )
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> updateConfiguration(
@@ -175,19 +173,19 @@ public class ConfigurationController {
    */
   @Operation(summary = "Get all fullName key configuration")
   @ApiResponse(responseCode = "200",
-          description = "Found all fullName key configuration.",
-          content = @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = ConfigurationTranscriptorDto.class)
-          )
+      description = "Found all fullName key configuration.",
+      content = @Content(mediaType = "application/json",
+          schema = @Schema(implementation = ConfigurationTranscriptorDto.class)
+      )
   )
   @GetMapping(value = "/transcriptor")
   @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationTranscriptorDto> getAllConfigurationTranscriptor() {
     return Arrays.stream(ConfigurationTranscriptor.values())
-            .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
-                                    && transcriptor != ConfigurationTranscriptor.NETWORK_PROFILE)
-            .map(ConfigurationTranscriptor::toDto)
-            .toList();
+        .filter(transcriptor -> transcriptor != ConfigurationTranscriptor.CHARGEPOINT_IDENTITY
+                                && transcriptor != ConfigurationTranscriptor.NETWORK_PROFILE)
+        .map(ConfigurationTranscriptor::toDto)
+        .toList();
   }
 
   /**

@@ -42,7 +42,7 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
   private int id;
 
   @Column(name = "date", nullable = false,
-          columnDefinition = "datetime default current_timestamp")
+      columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
   private LocalDateTime date;
 
@@ -61,8 +61,8 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
   /**
    * TechnicalLog's constructor.
    *
-   * @param component {@link Component}
-   * @param level String version of {@link Level}
+   * @param component   {@link Component}
+   * @param level       String version of {@link Level}
    * @param completeLog All the log in a String.
    */
   public TechnicalLogEntity(Component component, String level, String completeLog) {
@@ -187,10 +187,10 @@ public final class TechnicalLogEntity implements LogEntity, DtoEntity<TechnicalL
   @Override
   public int hashCode() {
     return Objects.hash(getId(),
-            getDate(),
-            getComponent(),
-            getLevel(),
-            getCompleteLog());
+        getDate(),
+        getComponent(),
+        getLevel(),
+        getCompleteLog());
   }
 
   @Override

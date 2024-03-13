@@ -33,8 +33,8 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
    * @return {@link Firmware}.
    */
   @Query("select f from Firmware f "
-          + "join f.typesAllowed "
-          + "where :typeAllowed member of f.typesAllowed order by f.version asc")
+         + "join f.typesAllowed "
+         + "where :typeAllowed member of f.typesAllowed order by f.version asc")
   List<Firmware> findAllByTypeAllowedAsc(@Param("typeAllowed") TypeAllowed typeAllowed);
 
   /**
@@ -44,8 +44,8 @@ public interface FirmwareRepository extends CrudRepository<Firmware, Integer>,
    * @return {@link Firmware}.
    */
   @Query("select f from Firmware f "
-          + "join f.typesAllowed "
-          + "where :typeAllowed member of f.typesAllowed order by f.version desc")
+         + "join f.typesAllowed "
+         + "where :typeAllowed member of f.typesAllowed order by f.version desc")
   List<Firmware> findAllByTypeAllowedDesc(@Param("typeAllowed") TypeAllowed typeAllowed);
 
   /**

@@ -7,6 +7,6 @@ package fr.uge.chargepointconfiguration.user;
  * @param newPassword new password of the user
  */
 public record ChangePasswordUserDto(
-        String oldPassword,
-        String newPassword) {
+    String oldPassword,
+    String newPassword) {
 }

@@ -30,9 +30,9 @@ public class UserService {
   /**
    * Constructor for {@link UserService}.
    *
-   * @param userRepository {@link UserRepository}
+   * @param userRepository  {@link UserRepository}
    * @param passwordEncoder {@link PasswordEncoder}
-   * @param logger {@link CustomLogger}
+   * @param logger          {@link CustomLogger}
    */
   @Autowired
   public UserService(UserRepository userRepository,

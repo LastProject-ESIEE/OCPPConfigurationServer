@@ -20,10 +20,10 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 @Table(name = "app_user")
 @SQLDelete(sql = """
-      update app_user 
-      set is_deleted = true
-      where id = ?
-      """)
+    update app_user 
+    set is_deleted = true
+    where id = ?
+    """)
 @SQLRestriction("not is_deleted")
 public class User implements DtoEntity<UserDto> {
 
@@ -66,10 +66,10 @@ public class User implements DtoEntity<UserDto> {
    * User's constructor.
    *
    * @param firstName String.
-   * @param lastName String.
-   * @param email String.
-   * @param password String.
-   * @param role Role.
+   * @param lastName  String.
+   * @param email     String.
+   * @param password  String.
+   * @param role      Role.
    */
   public User(String firstName,
               String lastName,
@@ -241,12 +241,12 @@ public class User implements DtoEntity<UserDto> {
   @Override
   public String toString() {
     return "User{"
-            + "id=" + id
-            + ", email='" + email + '\''
-            + ", lastName='" + lastName + '\''
-            + ", firstName='" + firstName + '\''
-            + ", role=" + role
-            + ", isDeleted=" + isDeleted
-            + '}';
+           + "id=" + id
+           + ", email='" + email + '\''
+           + ", lastName='" + lastName + '\''
+           + ", firstName='" + firstName + '\''
+           + ", role=" + role
+           + ", isDeleted=" + isDeleted
+           + '}';
   }
 }

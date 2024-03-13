@@ -35,7 +35,7 @@ public class TypeAllowed implements DtoEntity<TypeAllowedDto> {
    * TypeAllowed's constructor.
    *
    * @param constructor A chargepoint's manufacturer where a firmware is working on.
-   * @param type The commercial name of a chargepoint where a firmware is working on.
+   * @param type        The commercial name of a chargepoint where a firmware is working on.
    */
   public TypeAllowed(String constructor,
                      String type) {

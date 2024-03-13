@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
     registry.addHandler(new WebSocketHandler(), "/websocket/chargepoint")
-            .setAllowedOrigins("*"); //TODO: maybe check CORS
+        .setAllowedOrigins("*"); //TODO: maybe check CORS
   }
 
   /**

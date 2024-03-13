@@ -29,10 +29,10 @@ public class FirmwareService {
   /**
    * Constructor for {@link FirmwareService}.
    *
-   * @param firmwareRepository {@link FirmwareRepository}
+   * @param firmwareRepository    {@link FirmwareRepository}
    * @param typeAllowedRepository {@link TypeAllowedRepository}
-   * @param userService {@link UserService}
-   * @param logger {@link CustomLogger}
+   * @param userService           {@link UserService}
+   * @param logger                {@link CustomLogger}
    */
   @Autowired
   public FirmwareService(

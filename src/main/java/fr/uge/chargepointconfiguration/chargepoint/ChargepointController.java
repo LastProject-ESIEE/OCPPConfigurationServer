@@ -39,7 +39,7 @@ public class ChargepointController {
   /**
    * ChargepointController's constructor.
    *
-   * @param chargepointService   A ChargePointService.
+   * @param chargepointService A ChargePointService.
    */
   @Autowired
   public ChargepointController(ChargepointService chargepointService) {
@@ -156,14 +156,14 @@ public class ChargepointController {
           content = @Content(
               examples = @ExampleObject(
                   """
-                  {
-                    "serialNumber": "string",
-                    "type": "string",
-                    "constructor": "string",
-                    "clientId": "string",
-                    "configuration": -1
-                  }
-                  """
+                      {
+                        "serialNumber": "string",
+                        "type": "string",
+                        "constructor": "string",
+                        "clientId": "string",
+                        "configuration": -1
+                      }
+                      """
               )
           )
       )
@@ -183,27 +183,27 @@ public class ChargepointController {
   @Operation(summary = "Update a chargepoint by its id")
   @ApiResponses({
       @ApiResponse(
-            responseCode = "200",
-            description = "Updated the corresponding chargepoint",
-            content = {
-                @Content(mediaType = "application/json",
-                      schema = @Schema(implementation = ChargepointDto.class)
-                )
-            }
+          responseCode = "200",
+          description = "Updated the corresponding chargepoint",
+          content = {
+              @Content(mediaType = "application/json",
+                  schema = @Schema(implementation = ChargepointDto.class)
+              )
+          }
       ),
       @ApiResponse(
-            responseCode = "404",
-            description = "This chargepoint does not exist",
-            content = @Content
+          responseCode = "404",
+          description = "This chargepoint does not exist",
+          content = @Content
       )
   })
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('EDITOR')")
   public ChargepointDto updateChargepoint(
-        @Parameter(description = "Id of the chargepoint your are looking for.")
-        @PathVariable int id,
+      @Parameter(description = "Id of the chargepoint your are looking for.")
+      @PathVariable int id,
 
-        @RequestBody CreateChargepointDto createChargepointDto) {
+      @RequestBody CreateChargepointDto createChargepointDto) {
     return chargepointService.update(id, createChargepointDto).toDto();
   }
 }

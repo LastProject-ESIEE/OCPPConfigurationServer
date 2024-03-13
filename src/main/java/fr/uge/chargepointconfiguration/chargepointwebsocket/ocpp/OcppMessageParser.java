@@ -28,7 +28,7 @@ public interface OcppMessageParser {
    * This method should be called after the server sent a request to the chargepoint.<br>
    * Returns an empty optional if the packet is unknown.
    *
-   * @param requestMessage The {@link WebSocketMessage} the server sent to the chargepoint.
+   * @param requestMessage  The {@link WebSocketMessage} the server sent to the chargepoint.
    * @param responseMessage The {@link WebSocketMessage} response sent by the chargepoint.
    * @return An optional of an {@link OcppMessage}.
    */

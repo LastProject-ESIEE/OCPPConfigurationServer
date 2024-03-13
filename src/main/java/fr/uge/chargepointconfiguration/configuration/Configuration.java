@@ -20,7 +20,7 @@ import org.hibernate.annotations.CreationTimestamp;
  * A configuration class representation in the database.
  * A configuration has an Id, a name, a description and
  * the JSON configuration.
-*/
+ */
 @Entity
 @Table(name = "configuration")
 public class Configuration implements DtoEntity<ConfigurationDto> {
@@ -54,10 +54,10 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   /**
    * Configuration's constructor.
    *
-   * @param name How you want your configuration to be named.
-   * @param description Describe the meaning of this configuration.
+   * @param name          How you want your configuration to be named.
+   * @param description   Describe the meaning of this configuration.
    * @param configuration A JSON containing key and values for your configuration.
-   * @param firmware The chargepoint's firmware.
+   * @param firmware      The chargepoint's firmware.
    */
   public Configuration(String name,
                        String description,
@@ -70,7 +70,7 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   /**
    * Configuration's constructor without defaults values.
    *
-   * @param name How you want your configuration to be named.
+   * @param name          How you want your configuration to be named.
    * @param configuration A JSON containing key and values for your configuration.
    */
   public Configuration(String name,
@@ -83,12 +83,12 @@ public class Configuration implements DtoEntity<ConfigurationDto> {
   }
 
   /**
-   *  Configuration's constructor without all values.
+   * Configuration's constructor without all values.
    *
-   * @param id configuration id in the database.
-   * @param name configuration name.
+   * @param id            configuration id in the database.
+   * @param name          configuration name.
    * @param configuration configuration definition
-   * @param firmware configuration firmware version
+   * @param firmware      configuration firmware version
    */
   public Configuration(int id,
                        String name,

@@ -81,14 +81,14 @@ public class ChargepointService {
 
   public Chargepoint getChargepointById(int id) {
     return chargepointRepository.findById(id).orElseThrow(
-            () -> new EntityNotFoundException("Pas de borne avec l'id : " + id));
+        () -> new EntityNotFoundException("Pas de borne avec l'id : " + id));
   }
 
   /**
    * Search for chargepoints with a pagination.
    *
-   * @param request the request used to search
-   * @param pageable         The page requested
+   * @param request  the request used to search
+   * @param pageable The page requested
    * @return the list of corresponding chargepoint
    */
   public List<Chargepoint> search(String request, PageRequest pageable) {
@@ -123,13 +123,13 @@ public class ChargepointService {
   /**
    * Update a chargepoint and returns the updated chargepoint.
    *
-   * @param id id of the chargepoint to update
+   * @param id        id of the chargepoint to update
    * @param newValues the new values chargepoint
    * @return the updated chargepoint
    */
   public Chargepoint update(int id, CreateChargepointDto newValues) {
     var chargepoint = chargepointRepository.findById(id).orElseThrow(
-            () -> new EntityNotFoundException("Pas de borne avec l'id : " + id)
+        () -> new EntityNotFoundException("Pas de borne avec l'id : " + id)
     );
     checkAlreadyExistingChargepoint(newValues);
     checkFieldsChargepoint(newValues);
@@ -142,10 +142,10 @@ public class ChargepointService {
       chargepoint.setConfiguration(null);
     } else {
       chargepoint.setConfiguration(
-            configurationRepository.findById(newValues.configuration()).orElseThrow(
-                    () -> new EntityNotFoundException("Pas de configuration avec l'id : "
-                            + newValues.configuration())
-            )
+          configurationRepository.findById(newValues.configuration()).orElseThrow(
+              () -> new EntityNotFoundException("Pas de configuration avec l'id : "
+                                                + newValues.configuration())
+          )
       );
     }
     return chargepointRepository.save(chargepoint);

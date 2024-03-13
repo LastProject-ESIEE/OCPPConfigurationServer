@@ -3,9 +3,9 @@ package fr.uge.chargepointconfiguration.chargepoint.notification;
 /**
  * Content for the {@link CriticalityWebsocketNotification}.
  *
- * @param title The title of the front.
+ * @param title       The title of the front.
  * @param criticality {@link Type}.
- * @param content The content of the toast.
+ * @param content     The content of the toast.
  */
 public record CriticalityWebsocketContent(String title, Type criticality, String content) {
 

@@ -47,19 +47,19 @@ public class UserController {
    */
   @Operation(summary = "Get all users.")
   @ApiResponse(responseCode = "200",
-        description = "Found all users",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
+      description = "Found all users",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class)
+      )
   )
   @GetMapping("/all")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<UserDto> getAllUsers() {
     return userService.getAllUsers()
-          .stream()
-          .map(User::toDto)
-          .toList();
+        .stream()
+        .map(User::toDto)
+        .toList();
   }
 
   /**
@@ -69,11 +69,11 @@ public class UserController {
    */
   @Operation(summary = "Get the current authenticated user.")
   @ApiResponse(responseCode = "200",
-        description = "Found the authenticated user",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
+      description = "Found the authenticated user",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class)
+      )
   )
   @GetMapping("/me")
   @PreAuthorize("hasRole('VISUALIZER')")
@@ -89,21 +89,21 @@ public class UserController {
    */
   @Operation(summary = "Update password")
   @ApiResponse(responseCode = "200",
-        description = "Update the password of the current user",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = UserDto.class)
-        )
+      description = "Update the password of the current user",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class)
+      )
   )
   @PatchMapping("/updatePassword/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")
   public ResponseEntity<UserDto> updatePassword(
-        @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "Old and new password.",
-              required = true
-        )
-        @RequestBody ChangePasswordUserDto changePasswordUserDto,
-        @PathVariable int id) {
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "Old and new password.",
+          required = true
+      )
+      @RequestBody ChangePasswordUserDto changePasswordUserDto,
+      @PathVariable int id) {
     var user = userService.updatePassword(id, changePasswordUserDto);
     return new ResponseEntity<>(user.toDto(), HttpStatus.OK);
   }
@@ -111,7 +111,7 @@ public class UserController {
   /**
    * Update the role of the user.
    *
-   * @param id the id of the user to change.
+   * @param id   the id of the user to change.
    * @param role the new role to be applied.
    * @return a ResponseEntity of UserDto.
    */
@@ -190,15 +190,15 @@ public class UserController {
    */
   @Operation(summary = "Get all availables roles")
   @ApiResponse(responseCode = "200",
-          description = "Found roles",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = User.Role.class))
-          })
+      description = "Found roles",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = User.Role.class))
+      })
   @GetMapping(value = "/allRoles")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public List<User.Role> getAllRoles() {
     return Arrays.stream(User.Role.values())
-            .toList();
+        .toList();
   }
 
   /**
@@ -209,22 +209,22 @@ public class UserController {
    */
   @Operation(summary = "Create new user")
   @ApiResponse(responseCode = "201",
-          description = "User created",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = UserDto.class))
-          })
+      description = "User created",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = UserDto.class))
+      })
   @PostMapping(value = "/create")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<UserDto> addUser(
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "JSON with all parameters of the new user.",
-                  required = true
-          )
-          @RequestBody CreateUserDto createUserDto) {
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "JSON with all parameters of the new user.",
+          required = true
+      )
+      @RequestBody CreateUserDto createUserDto) {
     var user = userService.createUser(createUserDto);
     return new ResponseEntity<>(user.toDto(), HttpStatus.CREATED);
   }
-  
+
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<Void> delete(@PathVariable int id) {

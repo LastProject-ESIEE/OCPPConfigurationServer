@@ -47,7 +47,7 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   private int id;
 
   @Column(name = "date", nullable = false,
-          columnDefinition = "datetime default current_timestamp")
+      columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
   private LocalDateTime date;
 
@@ -78,10 +78,10 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   /**
    * BusinessLog's constructor.
    *
-   * @param user User logged currently implied with this log, null if not.
+   * @param user        User logged currently implied with this log, null if not.
    * @param chargepoint Chargepoint implied with this log, null if not.
-   * @param category {@link TechnicalLogEntity.Component}
-   * @param level String version of {@link Level}.
+   * @param category    {@link TechnicalLogEntity.Component}
+   * @param level       String version of {@link Level}.
    * @param completeLog All the log in a String.
    */
   public BusinessLogEntity(User user,
@@ -100,8 +100,8 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   /**
    * BusinessLog's constructor.
    *
-   * @param category {@link TechnicalLogEntity.Component}
-   * @param level String version of {@link Level}.
+   * @param category    {@link TechnicalLogEntity.Component}
+   * @param level       String version of {@link Level}.
    * @param completeLog All the log in a String.
    */
   public BusinessLogEntity(Category category, String level, String completeLog) {
@@ -194,12 +194,12 @@ public final class BusinessLogEntity implements LogEntity, DtoEntity<BusinessLog
   @Override
   public int hashCode() {
     return Objects.hash(getId(),
-            getDate(),
-            getUser(),
-            getChargepoint(),
-            getCategory(),
-            getLevel(),
-            getCompleteLog());
+        getDate(),
+        getUser(),
+        getChargepoint(),
+        getCategory(),
+        getLevel(),
+        getCompleteLog());
   }
 
   @Override

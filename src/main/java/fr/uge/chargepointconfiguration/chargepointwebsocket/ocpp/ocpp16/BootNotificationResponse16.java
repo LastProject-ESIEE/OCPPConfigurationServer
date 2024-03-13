@@ -9,10 +9,10 @@ import java.util.Objects;
  * See this as an ACK packet.
  *
  * @param currentTime The current server time of the server in String.
- * @param interval This value defines the interval in second that the remote should respect
- *                 before sending a HeartBeat packet (which is like a PING).
- * @param status This enum serves as a response for the message. If it is accepted,
- *               rejected or something else.
+ * @param interval    This value defines the interval in second that the remote should respect
+ *                    before sending a HeartBeat packet (which is like a PING).
+ * @param status      This enum serves as a response for the message. If it is accepted,
+ *                    rejected or something else.
  */
 public record BootNotificationResponse16(String currentTime,
                                          int interval,
@@ -22,10 +22,10 @@ public record BootNotificationResponse16(String currentTime,
    * {@link BootNotificationResponse16}'s constructor.
    *
    * @param currentTime The current server time of the server in String.
-   * @param interval This value defines the interval in second that the remote should respect
-   *                 before sending a HeartBeat packet (which is like a PING).
-   * @param status This enum serves as a response for the message. If it is accepted,
-   *               rejected or something else.
+   * @param interval    This value defines the interval in second that the remote should respect
+   *                    before sending a HeartBeat packet (which is like a PING).
+   * @param status      This enum serves as a response for the message. If it is accepted,
+   *                    rejected or something else.
    */
   public BootNotificationResponse16 {
     Objects.requireNonNull(currentTime);
