@@ -2,12 +2,12 @@ import { Box, Button, Container, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import FormInput from "../../../sharedComponents/FormInput";
 import BackButton from "../../../sharedComponents/BackButton";
-import { Firmware, getFirmware, getTypeAllowed, TypeAllowed, updateFirmware } from "../../../conf/FirmwareController";
+import { Firmware, getFirmware, getTypeAllowed, TypeAllowed } from "../../../conf/FirmwareController";
 import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 import { SkeletonFirmware } from "./components/SkeletonFirmware";
 import { useNavigate } from "react-router";
 import { wsManager } from "../Home";
-import { createNewElement } from "../../../conf/backendController";
+import { createNewElement, updateElement } from "../../../conf/backendController";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -149,7 +149,46 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
 
     function handleSubmit() {
         if (props.id) {
-            return updateFirmware(props.id, formData);
+            // return updateFirmware(props.id, formData);
+            let typesAllowed = new Set<TypeAllowed>()
+            selectedItems.forEach(item => {
+                typesAllowed.add(item.item)
+            })
+            let firmware: CreateFirmwareFormData = {
+                constructor: formData.constructor,
+                url: formData.url,
+                typesAllowed: typesAllowed,
+                version: formData.version,
+            }
+            let typesArray: TypeAllowed[] = []
+            firmware.typesAllowed.forEach(item => {
+                typesArray.push(item)
+            })
+            updateElement<Firmware>("PATCH", `/api/firmware/update/${props.id}`,{
+                version: firmware.version,
+                url: firmware.url,
+                constructor: firmware.constructor,
+                typesAllowed: typesArray,
+            })
+                .then(firmwareRequest => {
+                    if (firmwareRequest.succes) {
+                        let firmware = firmwareRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: firmware.version + " | " + firmware.constructor + " ",
+                            content: "Le firmware a été modifié."
+                        });
+                        navigate("/home/firmware");
+                    }
+                    if (firmwareRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: firmwareRequest.error.message
+                        });
+                    }
+                })
+
         } else {
             let typesAllowed = new Set<TypeAllowed>()
             selectedItems.forEach(item => {

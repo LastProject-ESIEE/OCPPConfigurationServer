@@ -227,15 +227,18 @@ public class FirmwareController {
                                     "url": "http://exemple.com",
                                     "version": "6.0.54",
                                     "constructor": "Alfen BV",
-                                    "typesAllowed": [{
-                                      id: 1,
-                                      constructor: "Alfen BV"
-                                      type: "NGX9"
-                                    },{
-                                      id: 2,
-                                      constructor: "Alfen BV"
-                                      type: "NGX99"
-                                    }]
+                                    "typesAllowed": [
+                                      {
+                                        id: 1,
+                                        constructor: "Alfen BV"
+                                        type: "NGX9"
+                                      },
+                                      {
+                                        id: 2,
+                                        constructor: "Alfen BV"
+                                        type: "NGX99"
+                                      }
+                                    ]
                                   }
                                   """
                           )

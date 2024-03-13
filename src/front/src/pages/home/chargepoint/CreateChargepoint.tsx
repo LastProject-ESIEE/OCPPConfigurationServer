@@ -4,17 +4,12 @@ import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Configuration, getAllConfigurations, noConfig } from "../../../conf/configurationController";
-import {
-    ChargePoint,
-    CreateChargepointDto,
-    getChargepointById,
-    updateChargepoint
-} from "../../../conf/chargePointController";
+import { ChargePoint, CreateChargepointDto, getChargepointById } from "../../../conf/chargePointController";
 import { SkeletonChargepoint } from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
 import { useNavigate } from "react-router";
 import { wsManager } from "../Home";
-import { createNewElement, getUserInformation } from "../../../conf/backendController";
+import { createNewElement, getUserInformation, updateElement } from "../../../conf/backendController";
 import { ApiRole } from "../../../conf/userController";
 
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
@@ -232,7 +227,25 @@ function CreateChargepoint(props: { id?: number }) {
 
     function handleSubmit() {
         if (props.id) {
-            return updateChargepoint(props.id, chargepoint);
+            return updateElement<ChargePoint>("PATCH", `/api/chargepoint/${props.id}`, chargepoint)
+                .then(chargePointRequest => {
+                    if (chargePointRequest.succes) {
+                        let chargepoint = chargePointRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: chargepoint.clientId + " ",
+                            content: "La borne a été modifiée."
+                        });
+                        navigate("/home/chargepoint");
+                    }
+                    if (chargePointRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: chargePointRequest.error.message
+                        });
+                    }
+                })
         } else {
             return createNewElement<ChargePoint>("/api/chargepoint/create", chargepoint)
                 .then(chargePointRequest => {

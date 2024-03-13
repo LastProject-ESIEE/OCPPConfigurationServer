@@ -121,7 +121,7 @@ export type ErrorMessage = {
 }
 
 export async function createNewElement<T>(path: string, data: any): Promise<RequestResponse<T>> {
-    let request = await fetch(path,
+    let response = await fetch(path,
         {
             method: "POST",
             headers: {
@@ -129,27 +129,66 @@ export async function createNewElement<T>(path: string, data: any): Promise<Requ
             },
             body: JSON.stringify(data)
         })
-    if (request.ok) {
-        let result = (await request.json()) as T
-        if(result){
+    if (response.ok) {
+        let result = (await response.json()) as T
+        if (result) {
             return {
                 succes: result
             }
         }
-        console.error("Unexpected response type received: " + path, request)
+        console.error("Unexpected response type received: " + path, response)
     } else {
-        let error = (await request.json()) as ErrorMessage
+        let error = (await response.json()) as ErrorMessage
         if(error){
             return {
                 error: error
             }
         }
-        console.error("Create new element request failed: " + path, request)
+        console.error("Create new element request failed: " + path, response)
     }
     // Return default error response
     return {
         error: {
             message: `Erreur lors de la création avec l'URL ${path}`,
+        }
+    }
+}
+
+
+export async function updateElement<T>(method: "PATCH" | "PUT", path: string, data?: any): Promise<RequestResponse<T>> {
+    const request = data ? {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        } :
+        {
+            method: method,
+        }
+    let response = await fetch(path, request)
+
+    if (response.ok) {
+        let result = (await response.json()) as T
+        if (result) {
+            return {
+                succes: result
+            }
+        }
+        console.error("Unexpected response type received: " + path, response)
+    } else {
+        let error = (await response.json()) as ErrorMessage
+        if (error) {
+            return {
+                error: error
+            }
+        }
+        console.error("Update element request failed: " + path, response)
+    }
+    // Return default error response
+    return {
+        error: {
+            message: `Erreur lors de la modification avec l'URL ${path}`,
         }
     }
 }
