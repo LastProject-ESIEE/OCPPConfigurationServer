@@ -12,7 +12,7 @@ import {
 import SelectItemsList, {KeyValueItem} from "../../../sharedComponents/SelectItemsList";
 import {SkeletonFirmware} from "./components/SkeletonFirmware";
 import {useNavigate} from "react-router";
-import {wsManager} from "../Home";
+import {notificationManager} from "../Home";
 
 export type CreateFirmwareFormData = {
     version: string,
@@ -144,14 +144,14 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                     if (props.id) {
                                                         updateFirmware(props.id, firmware).then(value => {
                                                             if (value) {
-                                                                wsManager.emitNotification({
+                                                                notificationManager.emitNotification({
                                                                     type: "INFO",
                                                                     title: formData.version + " ",
                                                                     content: "Le firmware a été modifié."
                                                                 });
                                                                 navigate("/home/firmware");
                                                             } else {
-                                                                wsManager.emitNotification({
+                                                                notificationManager.emitNotification({
                                                                     type: "ERROR",
                                                                     title: "Erreur ",
                                                                     content: "Le firmware n'a pas pu être modifié."
@@ -163,14 +163,14 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                                     // Otherwise it's a firmware creation
                                                     postCreateFirmware(firmware).then(value => {
                                                         if (value) {
-                                                            wsManager.emitNotification({
+                                                            notificationManager.emitNotification({
                                                                 type: "SUCCESS",
                                                                 title: formData.version + " ",
                                                                 content: "Le firmware a été créé."
                                                             });
                                                             navigate("/home/firmware");
                                                         } else {
-                                                            wsManager.emitNotification({
+                                                            notificationManager.emitNotification({
                                                                 type: "ERROR",
                                                                 title: "Erreur ",
                                                                 content: "Le firmware n'a pas pu être créé."

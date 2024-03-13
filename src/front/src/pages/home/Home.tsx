@@ -6,21 +6,28 @@ import { IconButton } from "@mui/material";
 import DisplayNotification, { NotificationMessage } from "../../sharedComponents/DisplayNotification";
 import { useState } from "react";
 import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
+import { BACKEND_PORT } from "../../conf/backendController";
 
-// Define backend server port
-const BACKEND_PORT = 8080
-
-declare interface WebSocketListener {
+/**
+ * Define all listener event that can be emitted 
+ */
+declare interface AppListener {
     on(event: 'charge-point-update', listener: (message: WebSocketChargePointNotification) => void): this;
     on(event: 'notify', listener: (message: NotificationMessage) => void): this;
 }
 
+/** Definition of web socket messages sent by the backend */
 type WebSocketMessage = {
+  /** Types of messages */
   name: "ChargePointWebsocketNotification" | "CriticalityWebsocketNotification",
+  /** Message content */
   value: any,
 }
 
-class WebSocketListener extends events.EventEmitter {
+/**
+ * This class is used to dispatch notification all around the application.
+ */
+class AppListener extends events.EventEmitter {
     connected: boolean;
     websocket: WebSocket | undefined;
 
@@ -29,11 +36,15 @@ class WebSocketListener extends events.EventEmitter {
       this.connected = false;
     }
 
+    /**
+     * Start the web socket connection with the backend
+     */
     startWebSocket(): void {
       if (this.connected) {
         console.error("WebSocket connection is already established.")
         return
       }
+
       let isLocal = window.location.hostname.startsWith("localhost") || window.location.hostname.startsWith("127.0.0.1")
       let protocol = isLocal ? "ws://" : "wss://"
       let websocketAddress = `${protocol}${window.location.hostname}${isLocal ? ":" + BACKEND_PORT : ""}/websocket/chargepoint`
@@ -45,6 +56,7 @@ class WebSocketListener extends events.EventEmitter {
       this.websocket.onmessage = (ev: MessageEvent<any>) => {
         // Try parse as WebSocketChargePointNotification
         const message = JSON.parse(ev.data) as WebSocketMessage
+        // Parse message content
         switch (message.name) {
           case "ChargePointWebsocketNotification":
             let wsChargePointNotification = message.value as WebSocketChargePointNotification
@@ -74,14 +86,23 @@ class WebSocketListener extends events.EventEmitter {
       }
     }
 
+    /**
+     * Emit a notification through the listener
+     * @param message Notification message
+     */
     emitNotification(message: NotificationMessage){
       this.emit("notify", message)
     }
 }
 
-export const wsManager = new WebSocketListener();
-wsManager.startWebSocket()
+// Create the application listener
+export const notificationManager = new AppListener();
+notificationManager.startWebSocket()
 
+/**
+ * Define the home page React component (navBar, embedded page, notification)
+ * @returns The react component of the home page
+ */
 export function Home() {
     const [openNotification, setOpenNotification] = useState(false);
     return (

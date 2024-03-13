@@ -17,7 +17,7 @@ import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectI
 import { SkeletonConfiguration } from "./components/SkeletonConfiguration";
 import BackButton from '../../../sharedComponents/BackButton';
 import { useNavigate } from "react-router";
-import { wsManager } from "../Home";
+import { notificationManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
 import { getAllElements, getUserInformation } from '../../../conf/backendController';
 import { ApiRole } from '../../../conf/userController';
@@ -90,14 +90,14 @@ function CreateConfig(props: { id?: number }) {
             if (props.id) {
                 postUpdateConfiguration(props.id, resultData).then(value => {
                     if (value) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "INFO",
                             title: title + " ",
                             content: "La configuration a été modifiée."
                         });
                         navigate("/home/configuration");
                     } else {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: "La configuration n'a pas pu être modifiée."
@@ -108,14 +108,14 @@ function CreateConfig(props: { id?: number }) {
             }
             postNewConfiguration(resultData).then(value => {
                 if (value) {
-                    wsManager.emitNotification({
+                    notificationManager.emitNotification({
                         type: "SUCCESS",
                         title: title + " ",
                         content: "La configuration a été créée."
                     });
                     navigate("/home/configuration");
                 } else {
-                    wsManager.emitNotification({
+                    notificationManager.emitNotification({
                         type: "ERROR",
                         title: "Erreur ",
                         content: "La configuration n'a pas pu être créée."

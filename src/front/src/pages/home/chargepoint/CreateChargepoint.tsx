@@ -13,10 +13,15 @@ import {
 import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
 import {useNavigate} from "react-router";
-import {wsManager} from "../Home";
+import {notificationManager} from "../Home";
 import { getUserInformation } from "../../../conf/backendController";
 import { ApiRole } from "../../../conf/userController";
 
+/**
+ * Display the configuration view 
+ * @param props Component properties 
+ * @returns 
+ */
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
         <Box sx={{height: "100%"}}>
@@ -58,6 +63,11 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
     )
 }
 
+/**
+ * Display and manage the create charge point page. 
+ * @param props Component properties
+ * @returns 
+ */
 function CreateChargepoint(props: { id?: number }) {
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
     const [serialNumber, setSerialNumber] = useState<string>("")
@@ -76,6 +86,7 @@ function CreateChargepoint(props: { id?: number }) {
         configuration: configuration.id,
     });
 
+    // If prps.id is defined (edit mode) then retrieve the existing charge point information
     useEffect(() => {
         if (!props.id) {
             return
@@ -100,6 +111,7 @@ function CreateChargepoint(props: { id?: number }) {
         })
     }, [props.id]);
 
+    // Retrieve user information and all configuration that can be set to the chargepoint
     useEffect(() => {
         getUserInformation().then(userInfo => {
             if(!userInfo){
@@ -118,9 +130,20 @@ function CreateChargepoint(props: { id?: number }) {
         })
     }, []);
 
+    // Manage form submission
+    function handleSubmit() {
+        if (props.id) {
+            return updateChargepoint(props.id, chargepoint);
+        } else {
+            return postNewChargepoint(chargepoint);
+        }
+    }
+
     return (
         <Grid>
+            {/* Display button to return to the chargepoint list page */}
             <BackButton link={"/home/chargepoint"} top={15}/>
+            {/*  */}
             <Container maxWidth="xl" sx={{mb: 4}}>
                 <Grid container spacing={15}>
                     <Grid item xs={12} md={6}>
@@ -129,6 +152,7 @@ function CreateChargepoint(props: { id?: number }) {
                                 <SkeletonChargepoint />
                             ) : (
                                 <>
+                                    {/* Display charge point information inputs */}
                                     <FormInput name={"N° Série"}
                                                onChange={val => {
                                                    setSerialNumber(val)
@@ -200,6 +224,7 @@ function CreateChargepoint(props: { id?: number }) {
                                             </Grid>
                                         </Grid>
                                     </Paper>
+                                    {/* Display form validation button */}
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -218,13 +243,13 @@ function CreateChargepoint(props: { id?: number }) {
                                             returnValue.then(value => {
                                                 if (value) {
                                                     if (props.id) {
-                                                        wsManager.emitNotification({
+                                                        notificationManager.emitNotification({
                                                             type: "INFO",
                                                             title: clientId + " ",
                                                             content: "La borne a été modifiée."
                                                         });
                                                     } else {
-                                                        wsManager.emitNotification({
+                                                        notificationManager.emitNotification({
                                                             type: "SUCCESS",
                                                             title: clientId + " ",
                                                             content: "La borne a été créée."
@@ -233,13 +258,13 @@ function CreateChargepoint(props: { id?: number }) {
                                                     navigate("/home/chargepoint");
                                                 } else {
                                                     if (props.id) {
-                                                        wsManager.emitNotification({
+                                                        notificationManager.emitNotification({
                                                             type: "ERROR",
                                                             title: "Erreur ",
                                                             content: "La borne n'a pas pu être modifiée."
                                                         });
                                                     } else {
-                                                        wsManager.emitNotification({
+                                                        notificationManager.emitNotification({
                                                             type: "ERROR",
                                                             title: "Erreur ",
                                                             content: "La borne n'a pas pu être créée."
@@ -257,6 +282,7 @@ function CreateChargepoint(props: { id?: number }) {
                             )}
                         </Box>
                     </Grid>
+                    {/* Display selected configuration information */}
                     <Grid item xs={12} md={6}>
                         <DisplayConfiguration configuration={configuration}/>
                     </Grid>
@@ -264,14 +290,6 @@ function CreateChargepoint(props: { id?: number }) {
             </Container>
         </Grid>
     );
-
-    function handleSubmit() {
-        if (props.id) {
-            return updateChargepoint(props.id, chargepoint);
-        } else {
-            return postNewChargepoint(chargepoint);
-        }
-    }
 }
 
 export default CreateChargepoint;

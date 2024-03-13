@@ -22,7 +22,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { ApiRole, UserInformation, apiRoleToFrench } from "../conf/userController";
 import { getUserInformation } from "../conf/backendController";
 
-export function NavBar() {
+/**
+ * Menu bar on the top of the application that allow to navigate throught pages.
+ * @returns 
+ */
+export default function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const location = useLocation();
     const [currentButton, setCurrentButton] = useState<ButtonData | undefined>(undefined);
@@ -202,6 +206,11 @@ export function NavBar() {
     );
   }
 
+  /**
+   * Sub menu items for the menu displayed when the windows is too small.
+   * @param props Component properties
+   * @returns 
+   */
   function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}){
       const [open, setOpen] = React.useState(false);
       const handleClick = () => {
@@ -246,4 +255,3 @@ export function NavBar() {
       )
   }
 
-export { apiRoleToFrench as englishRoleToFrench };

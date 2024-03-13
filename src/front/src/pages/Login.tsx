@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Box from "@mui/material/Box";
 import {Grid} from "@mui/material";
 
+/**
+ * Display the login form.
+ * @returns 
+ */
 function Login() {
     const [failed, setFailed] = useState(false);
 

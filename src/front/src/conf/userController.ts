@@ -1,5 +1,10 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 
+/**
+ * Translate api role to french 
+ * @param role api role to be translated
+ * @returns 
+ */
 export function apiRoleToFrench(role: ApiRole): string {
     switch (role) {
         case "ADMINISTRATOR":
@@ -13,6 +18,11 @@ export function apiRoleToFrench(role: ApiRole): string {
     }
 }
 
+/**
+ * Translate french role to api role 
+ * @param role french role to be translated
+ * @returns 
+ */
 export function frenchToEnglishRole(role: FrenchRole): string {
     switch (role) {
         case "Administrateur":

@@ -1,10 +1,13 @@
 import {Button, Container, Grid, Paper, TextField, Typography} from "@mui/material";
 import {useEffect, useState} from "react";
-import {englishRoleToFrench} from "../../../sharedComponents/NavBar";
-import {wsManager} from "../Home";
+import {notificationManager} from "../Home";
 import { getUserInformation } from "../../../conf/backendController";
-import { User } from "../../../conf/userController";
+import { User, apiRoleToFrench } from "../../../conf/userController";
 
+/**
+ * Account page component
+ * @returns 
+ */
 function Account() {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [oldPassword, setOldPassword] = useState("");
@@ -12,6 +15,7 @@ function Account() {
     const [password2, setPassword2]= useState("");
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+    // Retrieve user's information on component load
     useEffect(() => {
         getUserInformation().then(userInfo => {
             if (!userInfo) {
@@ -29,6 +33,7 @@ function Account() {
         })
     }, []);
 
+    // Check both password inputs when their values changed 
     useEffect(() => {
         if (
             password1 === password2
@@ -40,6 +45,7 @@ function Account() {
         }
     }, [password1, password2]);
 
+    // Manage the account information update when user submit the form
     const handleButtonClick = () => {
         if(!user){
             console.error("User not defined.")
@@ -62,13 +68,13 @@ function Account() {
                     setOldPassword("");
                     setPassword1("");
                     setPassword2("");
-                    wsManager.emitNotification({
+                    notificationManager.emitNotification({
                         type: "SUCCESS",
                         title: "Succès ",
                         content: "Le mot de passe a été mis à jour."
                     });
                 } else {
-                    wsManager.emitNotification({
+                    notificationManager.emitNotification({
                         type: "ERROR",
                         title: "Erreur ",
                         content: "Le mot de passe n'a pas pu être modifié. Nouveau mot de passe non conforme ou mauvais ancien mot de passe de l'utilisateur."
@@ -139,7 +145,7 @@ function Account() {
                             </Grid>
                             <Grid item>
                                 <Typography variant="h6">
-                                    <b>Rôle :</b> {(user && englishRoleToFrench(user.role)) || "Inconnu"}
+                                    <b>Rôle :</b> {(user && apiRoleToFrench(user.role)) || "Inconnu"}
                                 </Typography>
                             </Grid>
                         </Grid>
