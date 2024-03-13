@@ -126,7 +126,7 @@ function CreateConfig(props: { id?: number }) {
                 firmware: resultData.firmware
             })
                 .then(configurationRequest => {
-                    if(configurationRequest.succes){
+                    if (configurationRequest.succes) {
                         let configuration = configurationRequest.succes
                         notificationManager.emitNotification({
                             type: "SUCCESS",
