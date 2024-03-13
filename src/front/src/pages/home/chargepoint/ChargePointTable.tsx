@@ -105,7 +105,6 @@ const chargePointTableColumns: TableColumnDefinition[] = [
 /**
  * Display chargepoint table
  * 
- * @returns 
  */
 function ChargePointTable() {
     const [tableData, setTableData] = React.useState<ChargePoint[]>([]);
