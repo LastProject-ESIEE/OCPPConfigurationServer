@@ -249,7 +249,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
  * Display and manage a column filter 
  * @param props Component properties
  */
-function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (filters: SearchFilter[]) => void}){
+function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (filters: SearchFilter[]) => void}) {
     const [firstFilterValue, setFirstFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [secondFilterValue, setSecondFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
