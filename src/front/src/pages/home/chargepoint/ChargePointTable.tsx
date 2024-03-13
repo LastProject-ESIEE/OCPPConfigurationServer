@@ -9,11 +9,12 @@ import {
 } from "../../../sharedComponents/DisplayTable";
 import { ChargePoint, WebSocketChargePointNotification } from "../../../conf/chargePointController";
 import { Link } from "react-router-dom";
-import { wsManager } from "../Home";
+import { notificationManager } from "../Home";
 import { searchElements } from "../../../conf/backendController";
 
 const PAGE_SIZE = 30; // Max items displayed in the chargepoint table
 
+// Table columns definition 
 const chargePointTableColumns: TableColumnDefinition[] = [
   {
     title: "Identifiant client",
@@ -101,6 +102,10 @@ const chargePointTableColumns: TableColumnDefinition[] = [
   }
 ]
 
+/**
+ * Display chargepoint table
+ * 
+ */
 function ChargePointTable() {
     const [tableData, setTableData] = React.useState<ChargePoint[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
@@ -121,9 +126,9 @@ function ChargePointTable() {
         chargePoint.status = Object.assign({}, message.status)
         setTableData([...tableData]) 
       }
-      wsManager.addListener('charge-point-update', callBack)
+      notificationManager.addListener('charge-point-update', callBack)
       return () => {
-        wsManager.removeListener('charge-point-update', callBack)
+        notificationManager.removeListener('charge-point-update', callBack)
       };
     }, [tableData])
 

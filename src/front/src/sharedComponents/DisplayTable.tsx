@@ -8,52 +8,99 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+// Html id of the scrollable div
 const scrollListElement = "scrollableDiv"
 
+// Default value for select filter
 export const DEFAULT_FILTER_SELECT_VALUE = "Aucun"
 
+/**
+ * Filtering properties for a table column
+ */
 export type TableColumnFilterDefinition = {
+    /** API field where the filter is applied */
     apiField: string,
+    /** Type of filtering behavior */
     filterType: "input" | "select" | "date",
-    disable?: boolean, // set if the input is disabled or not, allow to display input without filtering functionality 
-    restrictedValues?: string[], // must be set for select input
-    apiValueFormatter?: (value: string) => string, // must be set for select input to transform input value to api value
+    /** Set if the filter is disable or not, allow to display input without filtering functionality */
+    disable?: boolean,
+    /** Restricted values in case of a select filter type (only used in case of a select filter) */
+    restrictedValues?: string[],
+    /** Function called to transform the filtering value to the api expeceted format */
+    apiValueFormatter?: (value: string) => string,
 }
 
+/**
+ * Define the sorting behavior for a column of the table
+ */
 export type TableColumnSortDefinition = {
+    /** API field where the sort is applied */
     apiField: string
 }
 
+/**
+ * Represent a table column definition 
+ */
 export type TableColumnDefinition = {
+    /** Title of the column */
     title: string,
+    /** Width of the column between 0 and 12 (with a max width of 12 for the sum of all columns) */
     size?: number,
+    /** Column filtering behavior (optional) */
     filter?: TableColumnFilterDefinition,
+    /** Column sorting behavior (optional) */
     sort?: TableColumnSortDefinition,
 }
 
+/**
+ * Pageable search elements request response
+ */
 export type PageRequest<T> = {
+    /** Total number of elements filtered */
     total: number,
+    /** Total number of elements contained in the database */
     totalElement: number,
+    /** Page number in the pageable search */
     page: number,
+    /** Max elements by page */
     size: number,
+    /** Elements of the page */
     data: T[],
+    /** The next page url */
     next: string
 }
 
+/**
+ * Type definition of the table props with T as the type of the elements contained in the table.
+ */
 export type InfinityScrollItemsTableProps<T> = {
-    key: string, // table key
-    columns: TableColumnDefinition[], // table columns definition
-    data: T[], // items displayed in the table
-    hasMore: boolean, // boolean that check if there is no more element
+    /** Table key must be unique  */
+    key: string,
+    /** Columns definition of the table  */
+    columns: TableColumnDefinition[],
+    /** Elements displayed in the table */
+    data: T[], 
+    /** Boolean informing if there are remaining elements to be fetched */
+    hasMore: boolean, 
+    /** If defined it will display the error message in the table */
     error: string | undefined,
-    onSelection?: (item: T) => void, // function call when an element is selected in the list
-    formatter: (item: T, index: number) => JSX.Element // function that transform an item to a JSX element
-    fetchData: (filters: SearchFilter[], sort?: SearchSort) => void, // function that fetch next items
-    onFiltering?: (filters: SearchFilter[], sort?: SearchSort) => void, // function call when filters changed
+    /** This function is call when an element is selected in the table and pass as argument the selected element */
+    onSelection?: (item: T) => void,
+    /** The formatter function that transform an element to a table line */
+    formatter: (item: T, index: number) => JSX.Element
+    /** The function call to fetch next elements */
+    fetchData: (filters: SearchFilter[], sort?: SearchSort) => void,
+    /** The function called on filtering and sorting */
+    onFiltering?: (filters: SearchFilter[], sort?: SearchSort) => void,
 }
 
 
-
+/**
+ * Generic data table that allow fitlering and sorting based on the columns definition.
+ * 
+ * @param props - The table props 
+ * @returns The React component
+ */
 export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps<T>) {
     const [filters, setFilters] = useState<SearchFilter[]>([]);
     const [sortField, setSortField] = useState("");
@@ -75,13 +122,14 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
 
     return (
         <Box maxWidth={"true"} paddingTop={1} marginLeft={2} marginBottom={2}>
+            {/*Display table columns*/}
             <Box marginRight={2} marginBottom={1}>
-                {/*Display table columns*/}
                 <Grid key={"table-header-columns"} container flexDirection={"row"} maxWidth={"true"}>
                     {props.columns.map(column => {
                         return (
                             <Grid xs={column?.size ?? 12/props.columns.length} item key={"table-header-column-" + column.title} overflow={"hidden"}>
                                 <Grid container flexDirection={"column"} justifyContent={"center"}>
+                                    {/*Display column title and sort icon*/}
                                     <Grid item>
                                         <Grid container justifyContent={"center"}>
                                             <Grid item>
@@ -121,6 +169,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                                             </Grid>
                                         </Grid>
                                     </Grid>  
+                                    {/*Display column filter*/}
                                     <Grid item>
                                         <Box>
                                             {column.filter && (
@@ -144,7 +193,7 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
                     })}
                 </Grid>
             </Box>
-             {/*Display table content*/}
+             {/* Display scrollable table content */}
             <Box key={"box-items-scrollable-list"} maxWidth={"true"} marginRight={2} marginLeft={2}>
                 <div 
                     id={scrollListElement}
@@ -196,8 +245,11 @@ export function InfinityScrollItemsTable<T>(props: InfinityScrollItemsTableProps
     );
 }
 
-
-function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (filters: SearchFilter[]) => void}){
+/**
+ * Display and manage a column filter 
+ * @param props Component properties
+ */
+function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValidate: (filters: SearchFilter[]) => void}) {
     const [firstFilterValue, setFirstFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [secondFilterValue, setSecondFilterValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "");
     const [previousValue, setPreviousValue] = useState(props.column.filter?.filterType === "select" ? DEFAULT_FILTER_SELECT_VALUE : "")
@@ -285,11 +337,11 @@ function TableColumnFilter(props: {column: TableColumnDefinition, onFilterValida
                                         return
                                     }
                                     setFilterOrder(value)
-                                    if(value === "="){
-                                        if(firstFilterValue !== "" && secondFilterValue !== ""){
+                                    if (value === "=") {
+                                        if (firstFilterValue !== "" && secondFilterValue !== "") {
                                             props.onFilterValidate([
-                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: value},
-                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: value},
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(firstFilterValue,true), filterOrder: ">"},
+                                                {filterField: props.column.filter?.apiField ?? "", filterValue: dateFormatter(secondFilterValue,false), filterOrder: "<"},
                                             ])
                                         }
                                         return

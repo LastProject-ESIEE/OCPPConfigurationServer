@@ -17,7 +17,7 @@ import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectI
 import { SkeletonConfiguration } from "./components/SkeletonConfiguration";
 import BackButton from '../../../sharedComponents/BackButton';
 import { useNavigate } from "react-router";
-import { wsManager } from "../Home";
+import { notificationManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
 import { createNewElement, getAllElements, getUserInformation, updateElement } from '../../../conf/backendController';
 import { ApiRole } from '../../../conf/userController';
@@ -98,7 +98,7 @@ function CreateConfig(props: { id?: number }) {
                     .then(configurationRequest => {
                         if (configurationRequest.succes) {
                             let configuration = configurationRequest.succes
-                            wsManager.emitNotification({
+                            notificationManager.emitNotification({
                                 type: "SUCCESS",
                                 title: configuration.name + " ",
                                 content: "La configuration a été modifiée."
@@ -106,7 +106,7 @@ function CreateConfig(props: { id?: number }) {
                             navigate("/home/configuration");
                         }
                         if (configurationRequest.error) {
-                            wsManager.emitNotification({
+                            notificationManager.emitNotification({
                                 type: "ERROR",
                                 title: "Erreur ",
                                 content: configurationRequest.error.message
@@ -126,9 +126,9 @@ function CreateConfig(props: { id?: number }) {
                 firmware: resultData.firmware
             })
                 .then(configurationRequest => {
-                    if(configurationRequest.succes){
+                    if (configurationRequest.succes) {
                         let configuration = configurationRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: configuration.name + " ",
                             content: "La configuration a été créée."
@@ -136,7 +136,7 @@ function CreateConfig(props: { id?: number }) {
                         navigate("/home/configuration");
                     }
                     if (configurationRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: configurationRequest.error.message

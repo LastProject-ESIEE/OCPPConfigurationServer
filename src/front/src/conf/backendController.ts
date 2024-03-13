@@ -1,6 +1,9 @@
 import { PageRequest } from "../sharedComponents/DisplayTable"
 import { UserInformation } from "./userController";
 
+// Define backend server port
+export const BACKEND_PORT = 8080
+
 function filterOrderToAPI(order: FilterOrder) {
     switch (order) {
         case "<":

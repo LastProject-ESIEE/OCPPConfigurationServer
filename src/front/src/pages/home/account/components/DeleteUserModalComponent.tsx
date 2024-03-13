@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { User, searchUser } from "../../../../conf/userController";
+import { User, apiRoleToFrench, searchUser } from "../../../../conf/userController";
 import { Box, Button, Grid, IconButton, Modal, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { englishRoleToFrench } from "../../../../sharedComponents/NavBar";
 import { PageRequest } from "../../../../sharedComponents/DisplayTable";
 
 const PAGE_SIZE = 30; // Max items displayed in the user table
@@ -51,7 +50,7 @@ function DeleteUserModalComponent(props: {
                         <Typography variant="h6" sx={{paddingBottom: 2}}>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</Typography>
                         <Typography>{"Nom : " + props.user.lastName}</Typography>
                         <Typography>{"Prénom : " + props.user.firstName}</Typography>
-                        <Typography>{"Rôle : " + englishRoleToFrench(props.user.role)}</Typography>
+                        <Typography>{"Rôle : " + apiRoleToFrench(props.user.role)}</Typography>
                         <Grid container>
                             <Grid item xs={12} md={6}>
                                 <Button

@@ -1,6 +1,6 @@
 import { Box, Drawer, Grid, IconButton, List, ListItem, ListItemText, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { wsManager } from "../pages/home/Home";
+import { notificationManager } from "../pages/home/Home";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -18,6 +18,12 @@ export type NotificationMessage = {
     date?: string,
 }
 
+/**
+ * Component used to display notification on the right Drawer, it also manage the notification storage in cache.
+ *  
+ * @param props - Component props
+ * @returns The React component
+ */
 export default function DisplayNotification(props: { open: boolean, onClose: () => void }) {
     const [notificationList, setNotificationlist] = useState<NotificationMessage[]>([]);
 
@@ -157,9 +163,9 @@ function NotificationItems(props: { onNotificationReceived: (message: Notificati
             enqueueSnackbar(message.title + ": " + message.content, {variant: backgroundColor as any})
             props.onNotificationReceived(message)
         }
-        wsManager.addListener('notify', callBack)
+        notificationManager.addListener('notify', callBack)
         return () => {
-            wsManager.removeListener('notify', callBack)
+            notificationManager.removeListener('notify', callBack)
         };
     }, [props, enqueueSnackbar])
 

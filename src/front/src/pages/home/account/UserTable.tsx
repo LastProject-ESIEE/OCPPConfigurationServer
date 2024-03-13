@@ -11,9 +11,9 @@ import { ApiRole, apiRoleToFrench, FrenchRole, frenchToEnglishRole, User, UserIn
 import DeleteUserModalComponent from "./components/DeleteUserModalComponent";
 import { getUserInformation, searchElements } from "../../../conf/backendController";
 
-
 const PAGE_SIZE = 30; // Max items displayed in the user table
 
+// Table columns defintion
 const userTableColumns: TableColumnDefinition[] = [
     {
         title: "Nom",
@@ -74,7 +74,9 @@ const userTableColumns: TableColumnDefinition[] = [
     }
 ]
 
-
+/**
+ * Display users table
+ */
 function UserTable() {
     const [tableData, setTableData] = React.useState<User[]>([]);
     const [currentPage, setCurrentPage] = React.useState(0);
@@ -86,6 +88,7 @@ function UserTable() {
     const [totalElement, setTotalElement] = React.useState<number>();
     const [loaded, setLoaded] = React.useState(false);
 
+    // Fetch first page of users
     useEffect(() => {
         searchElements<User>("/api/user/search", {
             page: 0,
@@ -104,6 +107,7 @@ function UserTable() {
         });
     }, [])
 
+    // Fetch user role list
     useEffect(() => {
         const fetchRoleList = async () => {
             const response = await fetch('/api/user/allRoles');
@@ -113,6 +117,7 @@ function UserTable() {
         fetchRoleList();
     }, []);
 
+    // Retrieve user's information
     useEffect(() => {
         getUserInformation().then(userInfo => {
             if (!userInfo) {
@@ -123,7 +128,7 @@ function UserTable() {
         })
     }, []);
 
-
+    // Update user role on input change 
     function onChangeEvent(event: SelectChangeEvent<ApiRole>, user: User) {
         let role = event.target.value as ApiRole
         fetch(`/api/user/${user.id}/role/${role}`, {

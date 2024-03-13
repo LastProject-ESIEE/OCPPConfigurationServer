@@ -8,10 +8,14 @@ import { ChargePoint, CreateChargepointDto, getChargepointById } from "../../../
 import { SkeletonChargepoint } from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
 import { useNavigate } from "react-router";
-import { wsManager } from "../Home";
+import { notificationManager } from "../Home";
 import { createNewElement, getUserInformation, updateElement } from "../../../conf/backendController";
 import { ApiRole } from "../../../conf/userController";
 
+/**
+ * Display the configuration view
+ * @param props Component properties
+ */
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
         <Box sx={{height: "100%"}}>
@@ -53,6 +57,10 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
     )
 }
 
+/**
+ * Display and manage the create charge point page.
+ * @param props Component properties
+ */
 function CreateChargepoint(props: { id?: number }) {
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
     const [serialNumber, setSerialNumber] = useState<string>("")
@@ -71,6 +79,7 @@ function CreateChargepoint(props: { id?: number }) {
         configuration: configuration.id,
     });
 
+    // If prps.id is defined (edit mode) then retrieve the existing charge point information
     useEffect(() => {
         if (!props.id) {
             return
@@ -95,6 +104,7 @@ function CreateChargepoint(props: { id?: number }) {
         })
     }, [props.id]);
 
+    // Retrieve user information and all configuration that can be set to the chargepoint
     useEffect(() => {
         getUserInformation().then(userInfo => {
             if (!userInfo) {
@@ -115,6 +125,7 @@ function CreateChargepoint(props: { id?: number }) {
 
     return (
         <Grid>
+            {/* Display button to return to the chargepoint list page */}
             <BackButton link={"/home/chargepoint"} top={15}/>
             <Container maxWidth="xl" sx={{mb: 4}}>
                 <Grid container spacing={15}>
@@ -124,6 +135,7 @@ function CreateChargepoint(props: { id?: number }) {
                                 <SkeletonChargepoint/>
                             ) : (
                                 <>
+                                    {/* Display charge point information inputs */}
                                     <FormInput name={"N° Série"}
                                                onChange={val => {
                                                    setSerialNumber(val)
@@ -195,6 +207,7 @@ function CreateChargepoint(props: { id?: number }) {
                                             </Grid>
                                         </Grid>
                                     </Paper>
+                                    {/* Display form validation button */}
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -217,6 +230,7 @@ function CreateChargepoint(props: { id?: number }) {
                             )}
                         </Box>
                     </Grid>
+                    {/* Display selected configuration information */}
                     <Grid item xs={12} md={6}>
                         <DisplayConfiguration configuration={configuration}/>
                     </Grid>
@@ -231,7 +245,7 @@ function CreateChargepoint(props: { id?: number }) {
                 .then(chargePointRequest => {
                     if (chargePointRequest.succes) {
                         let chargepoint = chargePointRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: chargepoint.clientId + " ",
                             content: "La borne a été modifiée."
@@ -239,7 +253,7 @@ function CreateChargepoint(props: { id?: number }) {
                         navigate("/home/chargepoint");
                     }
                     if (chargePointRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: chargePointRequest.error.message
@@ -251,7 +265,7 @@ function CreateChargepoint(props: { id?: number }) {
                 .then(chargePointRequest => {
                     if (chargePointRequest.succes) {
                         let chargepoint = chargePointRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: chargepoint.clientId + " ",
                             content: "La borne a été créée."
@@ -259,7 +273,7 @@ function CreateChargepoint(props: { id?: number }) {
                         navigate("/home/chargepoint");
                     }
                     if (chargePointRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: chargePointRequest.error.message

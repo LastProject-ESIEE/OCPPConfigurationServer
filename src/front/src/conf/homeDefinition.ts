@@ -1,3 +1,7 @@
+
+/**
+ * Data model definition of a button in the nav bar
+ */
 export interface ButtonData {
     roles: string[];
     label: string;
@@ -5,6 +9,9 @@ export interface ButtonData {
     subButtons: ButtonData[];
 }
 
+/**
+ * Define all nav bar buttons and theirs restrictions based on the user role 
+ */
 export const buttons: ButtonData[] = [
     {
         roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
@@ -32,7 +39,7 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher/Modifier ",
+                label: "Afficher/Modifier",
                 href: "",
                 subButtons: []
             },

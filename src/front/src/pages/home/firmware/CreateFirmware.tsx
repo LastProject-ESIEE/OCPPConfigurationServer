@@ -6,7 +6,7 @@ import { Firmware, getFirmware, getTypeAllowed, TypeAllowed } from "../../../con
 import SelectItemsList, { KeyValueItem } from "../../../sharedComponents/SelectItemsList";
 import { SkeletonFirmware } from "./components/SkeletonFirmware";
 import { useNavigate } from "react-router";
-import { wsManager } from "../Home";
+import { notificationManager } from "../Home";
 import { createNewElement, updateElement } from "../../../conf/backendController";
 
 export type CreateFirmwareFormData = {
@@ -130,10 +130,10 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                                     </Box>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
-                                    <SelectItemsList 
+                                    <SelectItemsList
                                         title={"Modèles compatibles"}
                                         keyTitle={"Modèles"}
-                                        items={typeAllowedList} 
+                                        items={typeAllowedList}
                                         selectKind="values"
                                         setSelectedItems={setSelectedItems}
                                         selectedItems={selectedItems}
@@ -173,7 +173,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                 .then(firmwareRequest => {
                     if (firmwareRequest.succes) {
                         let firmware = firmwareRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: firmware.version + " | " + firmware.constructor + " ",
                             content: "Le firmware a été modifié."
@@ -181,7 +181,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                         navigate("/home/firmware");
                     }
                     if (firmwareRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: firmwareRequest.error.message
@@ -211,9 +211,9 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                 typesAllowed: typesArray,
             })
                 .then(firmwareRequest => {
-                    if(firmwareRequest.succes){
+                    if (firmwareRequest.succes) {
                         let firmware = firmwareRequest.succes
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "SUCCESS",
                             title: firmware.version + " | " + firmware.constructor + " ",
                             content: "La firmware a été créée."
@@ -221,7 +221,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                         navigate("/home/firmware");
                     }
                     if (firmwareRequest.error) {
-                        wsManager.emitNotification({
+                        notificationManager.emitNotification({
                             type: "ERROR",
                             title: "Erreur ",
                             content: firmwareRequest.error.message

@@ -1,5 +1,8 @@
 import { ChargePoint } from "./chargePointController";
 
+/**
+ * Business log data model
+ */
 export type BusinessLog = {
     id: number,
     date: Date,
@@ -10,6 +13,9 @@ export type BusinessLog = {
     completeLog: string
 }
 
+/**
+ * User data model
+ */
 export type User = {
     id: number,
     firstName: string,

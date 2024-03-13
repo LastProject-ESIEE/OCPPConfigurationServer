@@ -1,9 +1,11 @@
 import {useEffect, useState} from "react";
-import {ApiRole} from "../../../../conf/userController";
+import {ApiRole, apiRoleToFrench} from "../../../../conf/userController";
 import {Grid, MenuItem, Paper, Select, Typography} from "@mui/material";
-import {englishRoleToFrench} from "../../../../sharedComponents/NavBar";
 
-
+/**
+ * Editable role componant
+ * @param props The component props
+ */
 function RoleComponent(props: {
     role: ApiRole,
     setRole: React.Dispatch<React.SetStateAction<ApiRole>>
@@ -41,7 +43,7 @@ function RoleComponent(props: {
                                 value={role}
                                 disabled={role === props.role}
                             >
-                                {englishRoleToFrench(role)}
+                                {apiRoleToFrench(role)}
                             </MenuItem>
                         )})}
                     </Select>
