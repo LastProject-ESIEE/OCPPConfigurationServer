@@ -21,7 +21,7 @@ export function apiRoleToFrench(role: ApiRole): string {
 /**
  * Translate french role to api role 
  * @param role french role to be translated
- * @returns 
+ * @returns A translated (into french) string.
  */
 export function frenchToEnglishRole(role: FrenchRole): string {
     switch (role) {
