@@ -514,6 +514,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
             || status == Chargepoint.StatusProcess.FINISHED) {
       if (currentChargepoint.getConfiguration().getLastEdit()
               .isAfter(currentChargepoint.getLastUpdate())) {
+        loaded = false;
+        lastOrderModeOn = false;
         return processFirmwareRequest();
       }
       return Optional.empty();
