@@ -4,7 +4,6 @@ import {Grid} from "@mui/material";
 
 /**
  * Display the login form.
- * @returns 
  */
 function Login() {
     const [failed, setFailed] = useState(false);
