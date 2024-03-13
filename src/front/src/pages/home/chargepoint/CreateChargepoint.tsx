@@ -61,7 +61,6 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
 /**
  * Display and manage the create charge point page.
  * @param props Component properties
- * @returns
  */
 function CreateChargepoint(props: { id?: number }) {
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
