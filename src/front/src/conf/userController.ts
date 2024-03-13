@@ -79,21 +79,3 @@ export async function searchUser(
     }
     return undefined
 }
-
-export async function createNewUser(user: CreateUserDto) {
-
-    let request = await fetch("/api/user/create",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user)
-        })
-    if (request.ok) {
-        return true
-    } else {
-        console.error("Couldn't save the user, error code: " + request.status)
-        return false
-    }
-}

@@ -1,10 +1,14 @@
 package fr.uge.chargepointconfiguration.chargepoint;
 
+import static fr.uge.chargepointconfiguration.configuration.Configuration.NO_CONFIG_ID;
+
 import fr.uge.chargepointconfiguration.configuration.Configuration;
 import fr.uge.chargepointconfiguration.configuration.ConfigurationRepository;
+import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
+import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -38,26 +42,46 @@ public class ChargepointService {
    * @param createChargepointDto All the necessary information for a configuration creation.
    * @return A chargepoint created with its information.
    */
-  public ChargepointDto save(CreateChargepointDto createChargepointDto) {
-    var configuration = configurationRepository.findById(createChargepointDto.configuration())
-        .orElse(null);
-    var chargepoint = chargepointRepository.save(new Chargepoint(
+  public Chargepoint save(CreateChargepointDto createChargepointDto) {
+    checkAlreadyExistingChargepoint(createChargepointDto);
+    checkFieldsChargepoint(createChargepointDto);
+
+    Configuration configuration;
+    if (createChargepointDto.configuration() == NO_CONFIG_ID) {
+      configuration = null;
+    } else {
+      configuration = configurationRepository.findById(createChargepointDto.configuration())
+          .orElseThrow(() -> new EntityNotFoundException("Aucune configuration avec l'id "
+                                                         + createChargepointDto.configuration()));
+    }
+    return chargepointRepository.save(new Chargepoint(
         createChargepointDto.serialNumberChargepoint(),
         createChargepointDto.type(),
         createChargepointDto.constructor(),
         createChargepointDto.clientId(),
         configuration
     ));
-    return chargepoint.toDto();
   }
 
-  public List<ChargepointDto> getAllChargepoints() {
-    return chargepointRepository.findAllByOrderByIdDesc().stream().map(Chargepoint::toDto).toList();
+  private void checkAlreadyExistingChargepoint(CreateChargepointDto createChargepointDto) {
+    var chargepoint = chargepointRepository.findBySerialNumberChargepointAndConstructor(
+        createChargepointDto.serialNumberChargepoint(), createChargepointDto.constructor());
+
+    if (chargepoint != null) {
+      throw new EntityAlreadyExistingException(
+          "Une borne utilise déjà ce numéro de série et constructeur : "
+          + createChargepointDto.serialNumberChargepoint() + ", "
+          + createChargepointDto.constructor());
+    }
   }
 
-  public Optional<ChargepointDto> getChargepointById(int id) {
-    // TODO : exception BAD REQUEST si id est pas un nombre
-    return Optional.of(chargepointRepository.findById(id).orElseThrow().toDto());
+  public List<Chargepoint> getAllChargepoints() {
+    return chargepointRepository.findAllByOrderByIdDesc().stream().toList();
+  }
+
+  public Chargepoint getChargepointById(int id) {
+    return chargepointRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException("Pas de borne avec l'id : " + id));
   }
 
   /**
@@ -68,14 +92,28 @@ public class ChargepointService {
    * @return the list of corresponding chargepoint
    */
   public List<Chargepoint> search(String request, PageRequest pageable) {
-    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
-    return chargepointRepository.findAll(condition, pageable)
-        .stream().toList();
+    try {
+      var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+      return chargepointRepository.findAll(condition, pageable)
+          .stream().toList();
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
-  public long countTotalWithFilters(String request) {
-    var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
-    return chargepointRepository.count(condition);
+  /**
+   * Count the number of entities with the constraint of the given request.
+   *
+   * @param request the request used to search
+   * @return the amount of entities with the constraint of the given request
+   */
+  public long countTotalWithFilter(String request) {
+    try {
+      var condition = SearchUtils.computeSpecification(request, Chargepoint.class);
+      return chargepointRepository.count(condition);
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestException("Requête invalide pour les filtres : " + request);
+    }
   }
 
   public long count() {
@@ -90,21 +128,36 @@ public class ChargepointService {
    * @return the updated chargepoint
    */
   public Chargepoint update(int id, CreateChargepointDto newValues) {
+    var chargepoint = chargepointRepository.findById(id).orElseThrow(
+            () -> new EntityNotFoundException("Pas de borne avec l'id : " + id)
+    );
+    checkAlreadyExistingChargepoint(newValues);
+    checkFieldsChargepoint(newValues);
 
-    var chargepoint = chargepointRepository.findById(id).orElseThrow();
     chargepoint.setSerialNumberChargepoint(newValues.serialNumberChargepoint());
     chargepoint.setClientId(newValues.clientId());
     chargepoint.setConstructor(newValues.constructor());
     chargepoint.setType(newValues.type());
-
-    if (newValues.configuration() == Configuration.NO_CONFIG_ID) {
+    if (newValues.configuration() == NO_CONFIG_ID) {
       chargepoint.setConfiguration(null);
     } else {
       chargepoint.setConfiguration(
-            configurationRepository.findById(newValues.configuration()).orElseThrow()
+            configurationRepository.findById(newValues.configuration()).orElseThrow(
+                    () -> new EntityNotFoundException("Pas de configuration avec l'id : "
+                            + newValues.configuration())
+            )
       );
     }
-
     return chargepointRepository.save(chargepoint);
+  }
+
+  private static void checkFieldsChargepoint(CreateChargepointDto newValues) {
+    if (newValues.serialNumberChargepoint().isBlank()
+        || newValues.constructor().isBlank()
+        || newValues.type().isBlank()
+        || newValues.clientId().isBlank()) {
+      throw new BadRequestException("Constructeur, numéro de série, type "
+                                    + "et identifiant client sont requis");
+    }
   }
 }

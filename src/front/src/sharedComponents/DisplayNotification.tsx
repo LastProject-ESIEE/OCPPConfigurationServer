@@ -125,7 +125,11 @@ export default function DisplayNotification(props: { open: boolean, onClose: () 
                     </Box>
                     <Box height={"3vh"} marginTop={1}>
                         <Typography
-                            variant="body1">{"L'historique contient " + notificationList.length + " éléments."}</Typography>
+                            variant="body1"
+                            color={"primary"}
+                        >
+                            {"L'historique contient " + notificationList.length + " élément(s)."}
+                         </Typography>
                     </Box>
                 </Box>
             </Drawer>

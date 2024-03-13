@@ -64,6 +64,7 @@ function DeleteUserModalComponent(props: {
                                     onClick={async () => {
                                         let value = await deleteUser(props.user)
                                         if (value) {
+                                            handleClose();
                                             searchUser(PAGE_SIZE).then((result: PageRequest<User> | undefined) => {
                                                 if(!result){
                                                     props.setError("Erreur lors de la récupération des utilisateurs.")

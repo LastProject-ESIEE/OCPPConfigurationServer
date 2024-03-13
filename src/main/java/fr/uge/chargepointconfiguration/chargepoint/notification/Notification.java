@@ -107,7 +107,7 @@ public record Notification(String name, WebSocketNotification value) {
         var message = new CriticalityWebsocketNotification(
                 chargepoint.getClientId(),
                 CriticalityWebsocketNotification.Type.SUCCESS,
-                "Réussite du " + currentStep
+                "Réussite du " + Chargepoint.Step.FIRMWARE
         );
         return Optional.of(new Notification(CriticalityWebsocketNotification.class.getSimpleName(),
                 message));

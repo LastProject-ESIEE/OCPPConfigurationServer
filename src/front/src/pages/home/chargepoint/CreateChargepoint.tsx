@@ -1,26 +1,21 @@
-import React, {useEffect, useState} from "react";
-import {Button, Container, Grid, MenuItem, Paper, Select} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, Container, Grid, MenuItem, Paper, Select } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import {Configuration, getAllConfigurations, noConfig} from "../../../conf/configurationController";
-import {
-    CreateChargepointDto,
-    getChargepointById,
-    postNewChargepoint,
-    updateChargepoint
-} from "../../../conf/chargePointController";
-import {SkeletonChargepoint} from "./components/SkeletonChargepoint";
+import { Configuration, getAllConfigurations, noConfig } from "../../../conf/configurationController";
+import { ChargePoint, CreateChargepointDto, getChargepointById } from "../../../conf/chargePointController";
+import { SkeletonChargepoint } from "./components/SkeletonChargepoint";
 import BackButton from "../../../sharedComponents/BackButton";
-import {useNavigate} from "react-router";
-import {notificationManager} from "../Home";
-import { getUserInformation } from "../../../conf/backendController";
+import { useNavigate } from "react-router";
+import { notificationManager } from "../Home";
+import { createNewElement, getUserInformation, updateElement } from "../../../conf/backendController";
 import { ApiRole } from "../../../conf/userController";
 
 /**
- * Display the configuration view 
- * @param props Component properties 
- * @returns 
+ * Display the configuration view
+ * @param props Component properties
+ * @returns
  */
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
@@ -64,9 +59,9 @@ function DisplayConfiguration({configuration}: { configuration: Configuration })
 }
 
 /**
- * Display and manage the create charge point page. 
+ * Display and manage the create charge point page.
  * @param props Component properties
- * @returns 
+ * @returns
  */
 function CreateChargepoint(props: { id?: number }) {
     const [configurationList, setConfigurationList] = useState<Configuration[]>([]);
@@ -114,7 +109,7 @@ function CreateChargepoint(props: { id?: number }) {
     // Retrieve user information and all configuration that can be set to the chargepoint
     useEffect(() => {
         getUserInformation().then(userInfo => {
-            if(!userInfo){
+            if (!userInfo) {
                 console.error("Failed to retrieve user role.")
                 return
             }
@@ -130,26 +125,16 @@ function CreateChargepoint(props: { id?: number }) {
         })
     }, []);
 
-    // Manage form submission
-    function handleSubmit() {
-        if (props.id) {
-            return updateChargepoint(props.id, chargepoint);
-        } else {
-            return postNewChargepoint(chargepoint);
-        }
-    }
-
     return (
         <Grid>
             {/* Display button to return to the chargepoint list page */}
             <BackButton link={"/home/chargepoint"} top={15}/>
-            {/*  */}
             <Container maxWidth="xl" sx={{mb: 4}}>
                 <Grid container spacing={15}>
                     <Grid item xs={12} md={6}>
                         <Box>
                             {loading ? (
-                                <SkeletonChargepoint />
+                                <SkeletonChargepoint/>
                             ) : (
                                 <>
                                     {/* Display charge point information inputs */}
@@ -233,50 +218,15 @@ function CreateChargepoint(props: { id?: number }) {
                                         }}
                                         pt={2}
                                     >
-                                    {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
-                                        <Button
-                                        sx={{borderRadius: 28}}
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => {
-                                            let returnValue = handleSubmit();
-                                            returnValue.then(value => {
-                                                if (value) {
-                                                    if (props.id) {
-                                                        notificationManager.emitNotification({
-                                                            type: "INFO",
-                                                            title: clientId + " ",
-                                                            content: "La borne a été modifiée."
-                                                        });
-                                                    } else {
-                                                        notificationManager.emitNotification({
-                                                            type: "SUCCESS",
-                                                            title: clientId + " ",
-                                                            content: "La borne a été créée."
-                                                        });
-                                                    }
-                                                    navigate("/home/chargepoint");
-                                                } else {
-                                                    if (props.id) {
-                                                        notificationManager.emitNotification({
-                                                            type: "ERROR",
-                                                            title: "Erreur ",
-                                                            content: "La borne n'a pas pu être modifiée."
-                                                        });
-                                                    } else {
-                                                        notificationManager.emitNotification({
-                                                            type: "ERROR",
-                                                            title: "Erreur ",
-                                                            content: "La borne n'a pas pu être créée."
-                                                        });
-                                                    }  
-                                                }
-                                            })
-                                        }}>
-                                            Valider
-                                        </Button>
-                                    )}
-
+                                        {(userRole === "ADMINISTRATOR" || userRole === "EDITOR") && (
+                                            <Button
+                                                sx={{borderRadius: 28}}
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleSubmit()}>
+                                                Valider
+                                            </Button>
+                                        )}
                                     </Box>
                                 </>
                             )}
@@ -290,6 +240,50 @@ function CreateChargepoint(props: { id?: number }) {
             </Container>
         </Grid>
     );
+
+    function handleSubmit() {
+        if (props.id) {
+            return updateElement<ChargePoint>("PATCH", `/api/chargepoint/${props.id}`, chargepoint)
+                .then(chargePointRequest => {
+                    if (chargePointRequest.succes) {
+                        let chargepoint = chargePointRequest.succes
+                        notificationManager.emitNotification({
+                            type: "SUCCESS",
+                            title: chargepoint.clientId + " ",
+                            content: "La borne a été modifiée."
+                        });
+                        navigate("/home/chargepoint");
+                    }
+                    if (chargePointRequest.error) {
+                        notificationManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: chargePointRequest.error.message
+                        });
+                    }
+                })
+        } else {
+            return createNewElement<ChargePoint>("/api/chargepoint/create", chargepoint)
+                .then(chargePointRequest => {
+                    if (chargePointRequest.succes) {
+                        let chargepoint = chargePointRequest.succes
+                        notificationManager.emitNotification({
+                            type: "SUCCESS",
+                            title: chargepoint.clientId + " ",
+                            content: "La borne a été créée."
+                        });
+                        navigate("/home/chargepoint");
+                    }
+                    if (chargePointRequest.error) {
+                        notificationManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: chargePointRequest.error.message
+                        });
+                    }
+                })
+        }
+    }
 }
 
 export default CreateChargepoint;

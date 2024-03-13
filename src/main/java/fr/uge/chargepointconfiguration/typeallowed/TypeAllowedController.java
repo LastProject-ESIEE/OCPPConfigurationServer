@@ -1,8 +1,5 @@
 package fr.uge.chargepointconfiguration.typeallowed;
 
-import fr.uge.chargepointconfiguration.chargepoint.Chargepoint;
-import fr.uge.chargepointconfiguration.chargepoint.ChargepointDto;
-import fr.uge.chargepointconfiguration.firmware.FirmwareService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

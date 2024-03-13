@@ -4,13 +4,13 @@ import TitleComponent from "./components/TitleComponent";
 import FirmwareComponent from "./components/FirmwareComponent";
 import DescriptionComponent from "./components/DescriptionComponent";
 import {
+    Configuration,
     CreateConfigurationData,
     ErrorState,
     getConfiguration,
     getTranscriptors,
+    globalStateResponseFormatter,
     KeyValueConfiguration,
-    postNewConfiguration,
-    postUpdateConfiguration,
     Transcriptor
 } from "../../../conf/configurationController";
 import SelectItemsList, { KeyValueItem } from '../../../sharedComponents/SelectItemsList';
@@ -19,7 +19,7 @@ import BackButton from '../../../sharedComponents/BackButton';
 import { useNavigate } from "react-router";
 import { notificationManager } from "../Home";
 import { Firmware } from '../../../conf/FirmwareController';
-import { getAllElements, getUserInformation } from '../../../conf/backendController';
+import { createNewElement, getAllElements, getUserInformation, updateElement } from '../../../conf/backendController';
 import { ApiRole } from '../../../conf/userController';
 
 function CreateConfig(props: { id?: number }) {
@@ -88,40 +88,61 @@ function CreateConfig(props: { id?: number }) {
             }
             // If props.id not undefined then it's an update
             if (props.id) {
-                postUpdateConfiguration(props.id, resultData).then(value => {
-                    if (value) {
-                        notificationManager.emitNotification({
-                            type: "INFO",
-                            title: title + " ",
-                            content: "La configuration a été modifiée."
-                        });
-                        navigate("/home/configuration");
-                    } else {
-                        notificationManager.emitNotification({
-                            type: "ERROR",
-                            title: "Erreur ",
-                            content: "La configuration n'a pas pu être modifiée."
-                        })
-                    }
+                const myConfig = globalStateResponseFormatter(resultData)
+                updateElement<Configuration>("PATCH", `/api/configuration/${props.id}`, {
+                    name: resultData.name,
+                    description: resultData.description,
+                    configuration: myConfig,
+                    firmware: resultData.firmware
                 })
+                    .then(configurationRequest => {
+                        if (configurationRequest.succes) {
+                            let configuration = configurationRequest.succes
+                            wsManager.emitNotification({
+                                type: "SUCCESS",
+                                title: configuration.name + " ",
+                                content: "La configuration a été modifiée."
+                            });
+                            navigate("/home/configuration");
+                        }
+                        if (configurationRequest.error) {
+                            wsManager.emitNotification({
+                                type: "ERROR",
+                                title: "Erreur ",
+                                content: configurationRequest.error.message
+                            });
+                        }
+                    })
+
                 return
             }
-            postNewConfiguration(resultData).then(value => {
-                if (value) {
-                    notificationManager.emitNotification({
-                        type: "SUCCESS",
-                        title: title + " ",
-                        content: "La configuration a été créée."
-                    });
-                    navigate("/home/configuration");
-                } else {
-                    notificationManager.emitNotification({
-                        type: "ERROR",
-                        title: "Erreur ",
-                        content: "La configuration n'a pas pu être créée."
-                    })
-                }
+
+            const myConfig = globalStateResponseFormatter(resultData)
+
+            createNewElement<Configuration>("/api/configuration/create", {
+                name: resultData.name,
+                description: resultData.description,
+                configuration: myConfig,
+                firmware: resultData.firmware
             })
+                .then(configurationRequest => {
+                    if(configurationRequest.succes){
+                        let configuration = configurationRequest.succes
+                        wsManager.emitNotification({
+                            type: "SUCCESS",
+                            title: configuration.name + " ",
+                            content: "La configuration a été créée."
+                        });
+                        navigate("/home/configuration");
+                    }
+                    if (configurationRequest.error) {
+                        wsManager.emitNotification({
+                            type: "ERROR",
+                            title: "Erreur ",
+                            content: configurationRequest.error.message
+                        });
+                    }
+                })
         }
     }
 

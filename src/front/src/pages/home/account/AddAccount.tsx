@@ -1,15 +1,16 @@
-import {Button, Grid} from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import FormInput from "../../../sharedComponents/FormInput";
 import RoleComponent from "./components/RoleComponent";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import BackButton from "../../../sharedComponents/BackButton";
-import {ApiRole, createNewUser} from "../../../conf/userController";
-import {notificationManager} from "../Home";
-import {useNavigate} from "react-router";
+import { ApiRole, User } from "../../../conf/userController";
+import { notificationManager } from "../Home";
+import { useNavigate } from "react-router";
+import { createNewElement } from "../../../conf/backendController";
 
 /**
  * React component that allow to create an new account for the application
- * @returns 
+ * @returns
  */
 function AddAccount() {
     const [lastName, setLastName] = useState("");
@@ -82,7 +83,7 @@ function AddAccount() {
                 </Grid>
                 <Grid item xs={12} sx={{ml: "35%", mr: "35%", mt: "1%", textAlign: "center"}}>
                 {/* Validation button */}
-                <Button 
+                <Button
                     sx={{borderRadius: 28}} 
                     variant="contained" 
                     color="primary"
@@ -95,21 +96,23 @@ function AddAccount() {
                                 password: password1, 
                                 role: role
                             }
-                            let returnValue = createNewUser(user)
-                            returnValue.then(value => {
-                                if (value) {
+                        createNewElement<User>("/api/user/create", user)
+                            .then(userRequest => {
+                                if (userRequest.succes) {
+                                    let user = userRequest.succes
                                     notificationManager.emitNotification({
                                         type: "SUCCESS",
-                                        title: firstName + " " + lastName + " ",
+                                        title: user.email + " ",
                                         content: "L'utilisateur a été créé."
                                     });
                                     navigate("/home/account");
-                                } else {
+                                }
+                                if (userRequest.error) {
                                     notificationManager.emitNotification({
                                         type: "ERROR",
                                         title: "Erreur ",
-                                        content: "L'utilisateur n'a pas pu être créé."
-                                    })
+                                        content: userRequest.error.message
+                                    });
                                 }
                             })
                         }
