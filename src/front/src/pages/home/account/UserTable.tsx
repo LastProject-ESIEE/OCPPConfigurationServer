@@ -76,7 +76,6 @@ const userTableColumns: TableColumnDefinition[] = [
 
 /**
  * Display users table
- * @returns 
  */
 function UserTable() {
     const [tableData, setTableData] = React.useState<User[]>([]);
