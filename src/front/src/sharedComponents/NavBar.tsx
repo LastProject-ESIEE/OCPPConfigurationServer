@@ -209,7 +209,7 @@ export default function NavBar() {
    * Sub menu items for the menu displayed when the windows is too small.
    * @param props Component properties
    */
-  function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}){
+  function SubMenuItems(props: {title: string, userRole: string, onSelection: () => void}) {
       const [open, setOpen] = React.useState(false);
       const handleClick = () => {
         setOpen(!open);
