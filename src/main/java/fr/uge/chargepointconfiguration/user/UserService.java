@@ -5,7 +5,8 @@ import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingEx
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
 import fr.uge.chargepointconfiguration.errors.exceptions.IllegalOperationException;
 import fr.uge.chargepointconfiguration.logs.CustomLogger;
-import fr.uge.chargepointconfiguration.logs.sealed.BusinessLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLog;
+import fr.uge.chargepointconfiguration.logs.sealed.TechnicalLogEntity;
 import fr.uge.chargepointconfiguration.shared.SearchUtils;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -67,9 +68,7 @@ public class UserService {
     user.setPassword(passwordEncoder.encode(changePasswordUserDto.newPassword()));
 
     var result = userRepository.save(user);
-    logger.info(new BusinessLog(getAuthenticatedUser(),
-        null,
-        null,
+    logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
         "Password updated for user : " + user.getId()));
 
     return result;
@@ -128,9 +127,7 @@ public class UserService {
     user.setRole(role);
     var result = userRepository.save(user);
 
-    logger.info(new BusinessLog(getAuthenticatedUser(),
-        null,
-        null,
+    logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
         "Role updated for user : " + user.getId() + " " + user.getRole()));
 
     return result;
@@ -210,9 +207,7 @@ public class UserService {
 
     var result = userRepository.save(user);
 
-    logger.info(new BusinessLog(getAuthenticatedUser(),
-        null,
-        null,
+    logger.info(new TechnicalLog(TechnicalLogEntity.Component.BACKEND,
         "New user saved : " + user.getId() + " " + user.getRole()));
 
     return result;
