@@ -15,7 +15,6 @@ import { ApiRole } from "../../../conf/userController";
 /**
  * Display the configuration view
  * @param props Component properties
- * @returns
  */
 function DisplayConfiguration({configuration}: { configuration: Configuration }) {
     return (
