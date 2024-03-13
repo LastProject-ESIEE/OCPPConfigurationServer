@@ -211,7 +211,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                 typesAllowed: typesArray,
             })
                 .then(firmwareRequest => {
-                    if(firmwareRequest.succes){
+                    if (firmwareRequest.succes) {
                         let firmware = firmwareRequest.succes
                         notificationManager.emitNotification({
                             type: "SUCCESS",
