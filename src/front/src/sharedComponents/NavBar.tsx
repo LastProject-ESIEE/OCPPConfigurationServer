@@ -24,7 +24,6 @@ import { getUserInformation } from "../conf/backendController";
 
 /**
  * Menu bar on the top of the application that allow to navigate throught pages.
- * @returns 
  */
 export default function NavBar() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
