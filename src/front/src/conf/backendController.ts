@@ -131,7 +131,7 @@ export async function createNewElement<T>(path: string, data: any): Promise<Requ
         })
     if (response.ok) {
         let result = (await response.json()) as T
-        if(result){
+        if (result) {
             return {
                 succes: result
             }
