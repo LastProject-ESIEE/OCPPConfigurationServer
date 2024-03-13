@@ -39,7 +39,7 @@ export const buttons: ButtonData[] = [
         subButtons: [
             {
                 roles: ["ADMINISTRATOR", "EDITOR", "VISUALIZER"],
-                label: "Afficher/Modifier ",
+                label: "Afficher/Modifier",
                 href: "",
                 subButtons: []
             },
