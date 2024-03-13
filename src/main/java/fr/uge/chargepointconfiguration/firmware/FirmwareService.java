@@ -121,7 +121,7 @@ public class FirmwareService {
    */
   public Firmware update(int id, CreateFirmwareDto createFirmwareDto) {
     var firm = firmwareRepository.findByUrl(createFirmwareDto.url());
-    // I can have the same URL if it's me
+    // Firm can have the same URL if it's itself
     if (firm.isPresent() && firm.get().getId() != id) {
       throw new EntityAlreadyExistingException(
           "Un firmware avec l'URL existe déjà : " + createFirmwareDto.url());
