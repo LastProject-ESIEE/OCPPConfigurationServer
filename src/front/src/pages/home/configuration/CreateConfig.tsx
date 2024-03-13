@@ -99,7 +99,7 @@ function CreateConfig(props: { id?: number }) {
                         if (configurationRequest.succes) {
                             let configuration = configurationRequest.succes
                             notificationManager.emitNotification({
-                                type: "SUCCESS",
+                                type: "INFO",
                                 title: configuration.name + " ",
                                 content: "La configuration a été modifiée."
                             });

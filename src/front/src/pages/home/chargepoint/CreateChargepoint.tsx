@@ -246,7 +246,7 @@ function CreateChargepoint(props: { id?: number }) {
                     if (chargePointRequest.succes) {
                         let chargepoint = chargePointRequest.succes
                         notificationManager.emitNotification({
-                            type: "SUCCESS",
+                            type: "INFO",
                             title: chargepoint.clientId + " ",
                             content: "La borne a été modifiée."
                         });
