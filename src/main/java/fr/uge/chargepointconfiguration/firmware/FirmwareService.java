@@ -1,6 +1,5 @@
 package fr.uge.chargepointconfiguration.firmware;
 
-import fr.uge.chargepointconfiguration.chargepoint.CreateChargepointDto;
 import fr.uge.chargepointconfiguration.errors.exceptions.BadRequestException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityAlreadyExistingException;
 import fr.uge.chargepointconfiguration.errors.exceptions.EntityNotFoundException;
@@ -121,7 +120,12 @@ public class FirmwareService {
    * @return A firmware updated with its information.
    */
   public Firmware update(int id, CreateFirmwareDto createFirmwareDto) {
-    checkAlreadyExisting(createFirmwareDto);
+    var firm = firmwareRepository.findByUrl(createFirmwareDto.url());
+    // I can have the same URL if it's me
+    if (firm.isPresent() && firm.get().getId() != id) {
+      throw new EntityAlreadyExistingException(
+          "Un firmware avec l'URL existe déjà : " + createFirmwareDto.url());
+    }
 
     var typesAllowed = new HashSet<TypeAllowed>();
     createFirmwareDto.typesAllowed().forEach(typeAllowedDto -> typeAllowedRepository
