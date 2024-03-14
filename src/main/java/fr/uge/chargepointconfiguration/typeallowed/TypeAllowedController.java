@@ -44,10 +44,10 @@ public class TypeAllowedController {
    */
   @Operation(summary = "Get all the type allowed")
   @ApiResponse(responseCode = "200",
-          description = "Found all type allowed",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TypeAllowedDto.class))
-          })
+      description = "Found all type allowed",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = TypeAllowedDto.class))
+      })
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('EDITOR')")
   public List<TypeAllowedDto> getAllTypeAllowed() {

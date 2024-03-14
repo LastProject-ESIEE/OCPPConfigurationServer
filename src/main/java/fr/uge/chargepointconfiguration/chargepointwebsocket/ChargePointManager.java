@@ -40,11 +40,11 @@ public class ChargePointManager {
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.chargepointRepository = Objects.requireNonNull(chargepointRepository);
     this.ocppObserver = OcppObserver.instantiateFromVersion(Objects.requireNonNull(ocppVersion),
-            this,
-            ocppMessageSender,
-            chargepointRepository,
-            Objects.requireNonNull(firmwareRepository),
-            Objects.requireNonNull(logger)
+        this,
+        ocppMessageSender,
+        chargepointRepository,
+        Objects.requireNonNull(firmwareRepository),
+        Objects.requireNonNull(logger)
     );
   }
 
@@ -88,7 +88,7 @@ public class ChargePointManager {
       message = ocppMessageParser.parseRequestMessage(webSocketMessage);
     } else {
       message = ocppMessageParser.parseResponseMessage(pendingRequest,
-              webSocketMessage);
+          webSocketMessage);
       pendingRequest = null;
     }
     if (message.isEmpty()) {
@@ -137,7 +137,7 @@ public class ChargePointManager {
   public void notifyStatusUpdate() {
     var notification = Notification.notificationOnStatusChange(currentChargepoint);
     WebSocketHandler.sendMessageToUsers(
-            notification
+        notification
     );
   }
 
@@ -149,7 +149,7 @@ public class ChargePointManager {
     var notification = Notification.notificationOnFinishedProcess(currentChargepoint);
     if (notification.isPresent()) {
       WebSocketHandler.sendMessageToUsers(
-              notification.orElseThrow()
+          notification.orElseThrow()
       );
     }
   }

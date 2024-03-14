@@ -8,7 +8,7 @@ import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp2.data.Firm
  * with the given firmware (URI + retrieve time).
  *
  * @param requestId The Id of this request.
- * @param firmware {@link Firmware}.
+ * @param firmware  {@link Firmware}.
  */
 public record UpdateFirmwareRequest20(int requestId,
                                       Firmware firmware) implements OcppMessageRequest {

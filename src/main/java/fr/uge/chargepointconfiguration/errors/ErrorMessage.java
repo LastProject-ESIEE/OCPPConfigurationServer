@@ -5,4 +5,5 @@ package fr.uge.chargepointconfiguration.errors;
  *
  * @param message The content of the error
  */
-public record ErrorMessage(String message) {}
+public record ErrorMessage(String message) {
+}

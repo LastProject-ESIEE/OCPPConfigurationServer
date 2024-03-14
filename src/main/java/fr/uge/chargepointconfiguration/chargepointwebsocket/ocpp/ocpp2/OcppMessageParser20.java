@@ -30,8 +30,8 @@ public class OcppMessageParser20 implements OcppMessageParser {
     Objects.requireNonNull(responseMessage);
     return switch (requestMessage.messageName()) {
       case SET_VARIABLES_REQUEST -> Optional.of(
-              JsonParser.stringToObject(SetVariablesResponse20.class,
-                      responseMessage.data()));
+          JsonParser.stringToObject(SetVariablesResponse20.class,
+              responseMessage.data()));
       default -> Optional.empty();
     };
   }

@@ -1,4 +1,3 @@
-
 package fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.ocpp16;
 
 import fr.uge.chargepointconfiguration.chargepointwebsocket.ocpp.OcppMessageRequest;
@@ -9,7 +8,7 @@ import java.util.Objects;
  * Sent by the server to change a value of a chargepoint's key.<br>
  * It should be answered by a {@link ChangeConfigurationResponse16}.
  *
- * @param key The element we want to change the value of.
+ * @param key   The element we want to change the value of.
  * @param value The value to be changed.
  */
 public record ChangeConfigurationRequest16(String key, String value) implements OcppMessageRequest {
@@ -17,7 +16,7 @@ public record ChangeConfigurationRequest16(String key, String value) implements 
   /**
    * {@link ChangeConfigurationRequest16}'s constructor.
    *
-   * @param key The element we want to change the value of.
+   * @param key   The element we want to change the value of.
    * @param value The value to be changed.
    */
   public ChangeConfigurationRequest16 {

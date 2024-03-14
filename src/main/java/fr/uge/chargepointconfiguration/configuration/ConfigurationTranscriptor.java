@@ -12,46 +12,46 @@ import java.util.Objects;
 public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscriptorDto> {
 
   LIGHT_INTENSITY(1,
-          "Intensité de la LED",
-          FirmwareKey.LIGHT_INTENSITY,
-          "UNKNOWN",
-          new Component("UNKNOWN"),
-          "^(100|\\d{1,2})$"),
+      "Intensité de la LED",
+      FirmwareKey.LIGHT_INTENSITY,
+      "UNKNOWN",
+      new Component("UNKNOWN"),
+      "^(100|\\d{1,2})$"),
 
   NETWORK_PROFILE(2,
-          "Adresse du prochain serveur",
-          FirmwareKey.NETWORK_PROFILE,
-          "",
-          new Component(""),
-          ""),
+      "Adresse du prochain serveur",
+      FirmwareKey.NETWORK_PROFILE,
+      "",
+      new Component(""),
+      ""),
 
   CHARGEPOINT_IDENTITY(3,
-          "Nom de la borne",
-          FirmwareKey.CHARGEPOINT_IDENTITY,
-          "Identity",
-          new Component("SecurityCtrlr"),
-          "^.{0,20}$"),
+      "Nom de la borne",
+      FirmwareKey.CHARGEPOINT_IDENTITY,
+      "Identity",
+      new Component("SecurityCtrlr"),
+      "^.{0,20}$"),
 
   LOCAL_AUTH_LIST(4,
-          "Activer la liste des badges d'authentification ?",
-          FirmwareKey.LOCAL_AUTH_LIST,
-          "LocalAuthListEnabled",
-          new Component("LocalAuthListCtrlr"),
-          ""),
+      "Activer la liste des badges d'authentification ?",
+      FirmwareKey.LOCAL_AUTH_LIST,
+      "LocalAuthListEnabled",
+      new Component("LocalAuthListCtrlr"),
+      ""),
 
   STATION_MAX_CURRENT(5,
-          "Courant max de la borne",
-          FirmwareKey.STATION_MAX_CURRENT,
-          "",
-          new Component(""),
-          ""),
+      "Courant max de la borne",
+      FirmwareKey.STATION_MAX_CURRENT,
+      "",
+      new Component(""),
+      ""),
 
   STATION_PASSWORD(6,
-          "Changer le mot de passe de la borne",
-          FirmwareKey.STATION_PASSWORD,
-          "BasicAuthPassword",
-          new Component("SecurityCtrlr"),
-          "^(?!.*[\\\\\",]).{10,40}$");
+      "Changer le mot de passe de la borne",
+      FirmwareKey.STATION_PASSWORD,
+      "BasicAuthPassword",
+      new Component("SecurityCtrlr"),
+      "^(?!.*[\\\\\",]).{10,40}$");
 
   private final int id;
   private final String fullName;
@@ -63,7 +63,7 @@ public enum ConfigurationTranscriptor implements DtoEntity<ConfigurationTranscri
   /**
    * Enum's constructor. Should be private and not called outside this enum.
    *
-   * @param fullName The name which will be displayed to the user, it should be unique.
+   * @param fullName  The name which will be displayed to the user, it should be unique.
    * @param ocpp16Key The configuration key according to the OCPP 1.6 protocol.
    * @param ocpp20Key The configuration key according to the OCPP 2.0.1 protocol.
    * @param component {@link Component}.

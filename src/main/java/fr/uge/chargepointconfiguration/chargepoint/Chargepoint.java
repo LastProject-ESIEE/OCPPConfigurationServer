@@ -67,7 +67,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   private String clientId;
 
   @Column(name = "last_update", nullable = false,
-          columnDefinition = "datetime default current_timestamp")
+      columnDefinition = "datetime default current_timestamp")
   @CreationTimestamp
   private LocalDateTime lastUpdate = LocalDateTime.now();
 
@@ -82,14 +82,14 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   private Step step = Step.FIRMWARE;
 
   @Column(name = "step_status", nullable = false,
-          columnDefinition = "varchar(32) default 'PENDING'")
+      columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
   private StatusProcess status = StatusProcess.PENDING;
 
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(
-          name = "id_configuration",
-          referencedColumnName = "id_configuration"
+      name = "id_configuration",
+      referencedColumnName = "id_configuration"
   )
   private Configuration configuration;
 
@@ -105,7 +105,7 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
    * @param error                   The error message in case of a failure.
    * @param state                   If the chargepoint is disconnected (false) or connected (true).
    * @param step                    {@link Step}.
-   * @param status           {@link StatusProcess}.
+   * @param status                  {@link StatusProcess}.
    */
   public Chargepoint(String serialNumberChargepoint,
                      String type,
@@ -274,16 +274,16 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Override
   public int hashCode() {
     return Objects.hash(id,
-            serialNumberChargepoint,
-            type,
-            constructor,
-            clientId,
-            lastUpdate,
-            error,
-            state,
-            step,
-            status,
-            configuration);
+        serialNumberChargepoint,
+        type,
+        constructor,
+        clientId,
+        lastUpdate,
+        error,
+        state,
+        step,
+        status,
+        configuration);
   }
 
   @Override
@@ -306,20 +306,20 @@ public class Chargepoint implements DtoEntity<ChargepointDto> {
   @Override
   public ChargepointDto toDto() {
     var statusDto = new StatusDto(
-            Timestamp.valueOf(lastUpdate),
-            error,
-            state,
-            step,
-            status
+        Timestamp.valueOf(lastUpdate),
+        error,
+        state,
+        step,
+        status
     );
     return new ChargepointDto(
-            id,
-            serialNumberChargepoint,
-            type,
-            constructor,
-            clientId,
-            configuration != null ? configuration.toDto() : null,
-            statusDto
+        id,
+        serialNumberChargepoint,
+        type,
+        constructor,
+        clientId,
+        configuration != null ? configuration.toDto() : null,
+        statusDto
     );
   }
 }

@@ -3,9 +3,9 @@ package fr.uge.chargepointconfiguration.shared;
 /**
  * A record to represent a criteria for a filter.
  *
- * @param key the name of the key to be tested
+ * @param key       the name of the key to be tested
  * @param operation the {@link Operation} to test
- * @param value the value to be tested with the operation
+ * @param value     the value to be tested with the operation
  */
 public record SearchCriteria(String key,
                              Operation operation,

@@ -5,7 +5,7 @@ import fr.uge.chargepointconfiguration.logs.CustomLogger;
 /**
  * Record used in {@link CustomLogger} for {@link TechnicalLogEntity}.
  *
- * @param component {@link TechnicalLogEntity.Component}
+ * @param component   {@link TechnicalLogEntity.Component}
  * @param completeLog All the log in a String.
  */
 public record TechnicalLog(

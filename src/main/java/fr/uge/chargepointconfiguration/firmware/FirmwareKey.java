@@ -8,29 +8,29 @@ import java.util.Objects;
 public enum FirmwareKey {
 
   LIGHT_INTENSITY(
-          "LightIntensity",
-          "LightIntensity",
-          "LightIntensity"),
+      "LightIntensity",
+      "LightIntensity",
+      "LightIntensity"),
 
   NETWORK_PROFILE("BackOffice-URL-wired",
-          "BackOffice-URL-wired",
-          "BackOfficeNetworkProfile1"),
+      "BackOffice-URL-wired",
+      "BackOfficeNetworkProfile1"),
 
   CHARGEPOINT_IDENTITY("Identity",
-          "Identity",
-          "Identity"),
+      "Identity",
+      "Identity"),
 
   LOCAL_AUTH_LIST("LocalAuthListEnabled",
-          "LocalAuthListEnabled",
-          "LocalAuthListEnabled"),
+      "LocalAuthListEnabled",
+      "LocalAuthListEnabled"),
 
   STATION_MAX_CURRENT("Station-MaxCurrent",
-          "Station-MaxCurrent",
-          "Station-MaxCurrent"),
+      "Station-MaxCurrent",
+      "Station-MaxCurrent"),
 
   STATION_PASSWORD("PW-SetChargerPassword",
-          "PW-SetChargerPassword",
-          "PW-SetChargerPassword");
+      "PW-SetChargerPassword",
+      "PW-SetChargerPassword");
 
   private final String firmwareV4KeyName;
   private final String firmwareV5KeyName;
@@ -44,8 +44,8 @@ public enum FirmwareKey {
    * @param firmwareV6KeyName The key's name in the firmware > 6.*.
    */
   FirmwareKey(String firmwareV4KeyName,
-                            String firmwareV5KeyName,
-                            String firmwareV6KeyName) {
+              String firmwareV5KeyName,
+              String firmwareV6KeyName) {
     this.firmwareV4KeyName = Objects.requireNonNull(firmwareV4KeyName);
     this.firmwareV5KeyName = Objects.requireNonNull(firmwareV5KeyName);
     this.firmwareV6KeyName = Objects.requireNonNull(firmwareV6KeyName);
@@ -78,7 +78,7 @@ public enum FirmwareKey {
     return switch (majorVersion) {
       case "4", "5" -> "%s";
       case "6" -> "ocppVersion{OCPP16}ocppCsmsUrl{%s}"
-              + "messageTimeout{10}securityProfile{0}ocppInterface{Wired0}";
+                  + "messageTimeout{10}securityProfile{0}ocppInterface{Wired0}";
       default -> throw new IllegalStateException("Unknown firmware");
     };
   }

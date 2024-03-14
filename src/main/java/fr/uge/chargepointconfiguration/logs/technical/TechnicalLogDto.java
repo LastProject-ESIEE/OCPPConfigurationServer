@@ -7,10 +7,10 @@ import org.apache.logging.log4j.Level;
 /**
  * DTO to read technical log in database.
  *
- * @param id Database id of the log stored.
- * @param date Date when the log had been created.
- * @param component {@link TechnicalLogEntity.Component}
- * @param level {@link Level}
+ * @param id          Database id of the log stored.
+ * @param date        Date when the log had been created.
+ * @param component   {@link TechnicalLogEntity.Component}
+ * @param level       {@link Level}
  * @param completeLog All the log in one String.
  */
 public record TechnicalLogDto(

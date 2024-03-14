@@ -6,5 +6,5 @@ import fr.uge.chargepointconfiguration.status.StatusDto;
  * Charge point update websocket notification.
  */
 public record ChargePointWebsocketNotification(int id, StatusDto status)
-        implements WebSocketNotification {
+    implements WebSocketNotification {
 }

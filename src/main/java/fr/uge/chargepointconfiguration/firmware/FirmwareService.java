@@ -29,10 +29,10 @@ public class FirmwareService {
   /**
    * Constructor for {@link FirmwareService}.
    *
-   * @param firmwareRepository {@link FirmwareRepository}
+   * @param firmwareRepository    {@link FirmwareRepository}
    * @param typeAllowedRepository {@link TypeAllowedRepository}
-   * @param userService {@link UserService}
-   * @param logger {@link CustomLogger}
+   * @param userService           {@link UserService}
+   * @param logger                {@link CustomLogger}
    */
   @Autowired
   public FirmwareService(
@@ -98,9 +98,9 @@ public class FirmwareService {
    * @param createFirmwareDto All the necessary information for a firmware creation.
    * @return A firmware created with its information.
    */
-  public FirmwareDto save(CreateFirmwareDto createFirmwareDto) {
-    checkFieldsFirmware(createFirmwareDto);
+  public Firmware save(CreateFirmwareDto createFirmwareDto) {
     checkAlreadyExisting(createFirmwareDto);
+    checkFieldsFirmware(createFirmwareDto);
 
     if (createFirmwareDto.typesAllowed().isEmpty()) {
       throw new BadRequestException("Aucun modèle compatible n'est renseigné.");
@@ -126,7 +126,7 @@ public class FirmwareService {
         BusinessLogEntity.Category.FIRM,
         "New firmware saved : " + firmware));
 
-    return firmware.toDto();
+    return firmware;
   }
 
   private void checkAlreadyExisting(CreateFirmwareDto createFirmwareDto) {

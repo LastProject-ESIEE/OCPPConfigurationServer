@@ -1,7 +1,6 @@
 package fr.uge.chargepointconfiguration;
 
 import fr.uge.chargepointconfiguration.chargepoint.notification.Notification;
-import fr.uge.chargepointconfiguration.chargepoint.notification.WebSocketNotification;
 import fr.uge.chargepointconfiguration.tools.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;

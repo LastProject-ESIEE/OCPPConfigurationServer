@@ -17,11 +17,11 @@ public class OcppMessageParser16 implements OcppMessageParser {
     Objects.requireNonNull(webSocketMessage);
     return switch (webSocketMessage.messageName()) {
       case BOOT_NOTIFICATION_REQUEST -> Optional.of(
-              JsonParser.stringToObject(BootNotificationRequest16.class,
-                      webSocketMessage.data()));
+          JsonParser.stringToObject(BootNotificationRequest16.class,
+              webSocketMessage.data()));
       case STATUS_FIRMWARE_REQUEST -> Optional.of(
-              JsonParser.stringToObject(FirmwareStatusNotificationRequest16.class,
-                      webSocketMessage.data()));
+          JsonParser.stringToObject(FirmwareStatusNotificationRequest16.class,
+              webSocketMessage.data()));
       default -> Optional.empty();
     };
   }
@@ -33,14 +33,14 @@ public class OcppMessageParser16 implements OcppMessageParser {
     Objects.requireNonNull(responseMessage);
     return switch (requestMessage.messageName()) {
       case CHANGE_CONFIGURATION_REQUEST -> Optional.of(
-              JsonParser.stringToObject(ChangeConfigurationResponse16.class,
-                      responseMessage.data()));
+          JsonParser.stringToObject(ChangeConfigurationResponse16.class,
+              responseMessage.data()));
       case RESET_REQUEST -> Optional.of(
-              JsonParser.stringToObject(ResetResponse16.class,
-                      responseMessage.data()));
+          JsonParser.stringToObject(ResetResponse16.class,
+              responseMessage.data()));
       case UPDATE_FIRMWARE_REQUEST -> Optional.of(
-              JsonParser.stringToObject(UpdateFirmwareResponse16.class,
-                      "{}")); // Empty value because it is an acknowledgement
+          JsonParser.stringToObject(UpdateFirmwareResponse16.class,
+              "{}")); // Empty value because it is an acknowledgement
       default -> Optional.empty();
     };
   }

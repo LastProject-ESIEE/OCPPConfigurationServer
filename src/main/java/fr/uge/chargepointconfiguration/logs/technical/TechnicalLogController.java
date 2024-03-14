@@ -43,21 +43,21 @@ public class TechnicalLogController {
   /**
    * Returns a list of technical logs according to the given component and criticality.
    *
-   * @param component   a type of component of the system.
-   * @param level a {@link Level}.
+   * @param component a type of component of the system.
+   * @param level     a {@link Level}.
    * @return a list of technical logs by component and criticality.
    */
   @Operation(summary = "Get a list of logs by its component and level")
   @ApiResponse(responseCode = "200",
-          description = "Found the list of technical logs",
-          content = { @Content(mediaType = "application/json",
-                  schema = @Schema(implementation = TechnicalLogDto.class))
-          })
+      description = "Found the list of technical logs",
+      content = { @Content(mediaType = "application/json",
+          schema = @Schema(implementation = TechnicalLogDto.class))
+      })
   @GetMapping(value = "/{component}/{level}")
   @PreAuthorize("hasRole('EDITOR')")
   public List<TechnicalLogDto> getTechnicalLogByComponentAndLevel(
-          @Parameter @PathVariable TechnicalLogEntity.Component component,
-          @Parameter @PathVariable Level level) {
+      @Parameter @PathVariable TechnicalLogEntity.Component component,
+      @Parameter @PathVariable Level level) {
     return technicalLogService.getTechnicalLogByComponentAndLevel(component, level)
         .stream().map(TechnicalLogEntity::toDto)
         .toList();
@@ -66,11 +66,11 @@ public class TechnicalLogController {
   /**
    * Search for {@link TechnicalLogDto} with a pagination.
    *
-   * @param size Desired size of the requested page.
-   * @param page Requested page.
+   * @param size   Desired size of the requested page.
+   * @param page   Requested page.
    * @param sortBy The column you want to sort by. Must be an attribute of
    *               the {@link TechnicalLogDto}.
-   * @param order The order of the sort. Must be "asc" or "desc".
+   * @param order  The order of the sort. Must be "asc" or "desc".
    * @return A page containing a list of {@link TechnicalLogDto}
    */
   @Operation(summary = "Search for technical logs")

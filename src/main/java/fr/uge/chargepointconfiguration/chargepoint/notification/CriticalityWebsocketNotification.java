@@ -6,7 +6,7 @@ package fr.uge.chargepointconfiguration.chargepoint.notification;
  * @param content {@link CriticalityWebsocketContent}.
  */
 public record CriticalityWebsocketNotification(String title, Type type, String content)
-        implements WebSocketNotification {
+    implements WebSocketNotification {
 
   /**
    * Criticality of the toast.<br>

@@ -47,11 +47,11 @@ public class BusinessLogController {
    */
   @Operation(summary = "Get a list of logs by its charge point")
   @ApiResponse(responseCode = "200",
-        description = "Found the list of business logs",
-        content = @Content(
-              mediaType = "application/json",
-              schema = @Schema(implementation = BusinessLogDto.class)
-        )
+      description = "Found the list of business logs",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = BusinessLogDto.class)
+      )
   )
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('VISUALIZER')")

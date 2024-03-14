@@ -67,7 +67,7 @@ public class BusinessLogService {
   /**
    * Search for {@link BusinessLogEntity} with a pagination.
    *
-   * @param request the request used to search
+   * @param request  the request used to search
    * @param pageable The page requested
    * @return the list of corresponding {@link BusinessLogEntity}
    */

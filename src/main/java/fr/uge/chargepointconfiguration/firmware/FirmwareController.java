@@ -54,11 +54,11 @@ public class FirmwareController {
    */
   @Operation(summary = "Get all the firmwares")
   @ApiResponse(responseCode = "200",
-          description = "Found all the firmwares",
-          content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = FirmwareDto.class)
-          )
+      description = "Found all the firmwares",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = FirmwareDto.class)
+      )
   )
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('EDITOR')")
@@ -76,22 +76,22 @@ public class FirmwareController {
   @Operation(summary = "Get a firmware by its id")
   @ApiResponses(value = {
       @ApiResponse(
-              responseCode = "200",
-              description = "Found the firmware",
-              content = @Content(
-                      mediaType = "application/json",
-                      schema = @Schema(implementation = FirmwareDto.class)
-              )
+          responseCode = "200",
+          description = "Found the firmware",
+          content = @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = FirmwareDto.class)
+          )
       ),
       @ApiResponse(
-              responseCode = "404",
-              description = "This firmware does not exist"
+          responseCode = "404",
+          description = "This firmware does not exist"
       )
   })
   @GetMapping(value = "/{id}")
   @PreAuthorize("hasRole('EDITOR')")
   public FirmwareDto getFirmwareById(
-          @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
+      @Parameter(description = "id of firmware to be searched") @PathVariable int id) {
     return firmwareService.getFirmwareById(id).toDto();
   }
 
@@ -158,43 +158,45 @@ public class FirmwareController {
    * @return A firmware created with its information and its http result status.
    */
   @Operation(summary = "Create a firmware")
-  @ApiResponses(value = { @ApiResponse(responseCode = "201",
-          description = "Firmware created",
-          content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = CreateFirmwareDto.class)
-          )
+  @ApiResponse(responseCode = "201",
+      description = "Firmware created",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = FirmwareDto.class)
       )
-  })
+  )
   @PostMapping("/create")
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<FirmwareDto> registerConfiguration(
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "The firmware to be sent to the controller.",
-                  required = true,
-                  content = @Content(
-                          examples = @ExampleObject(
-                                  """
-                                  {
-                                    "url": "http://exemple.com",
-                                    "version": "6.0.54",
-                                    "constructor": "Alfen BV",
-                                    "typesAllowed": [{
-                                      id: 1,
-                                      constructor: "Alfen BV"
-                                      type: "NGX9"
-                                    },{
-                                      id: 2,
-                                      constructor: "Alfen BV"
-                                      type: "NGX99"
-                                    }]
-                                  }
-                                  """
-                          )
-                  )
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "The firmware to be sent to the controller.",
+          required = true,
+          content = @Content(
+              examples = @ExampleObject(
+                  """
+                  {
+                    "url": "http://exemple.com",
+                    "version": "6.0.54",
+                    "constructor": "Alfen BV",
+                    "typesAllowed": [{
+                      id: 1,
+                      constructor: "Alfen BV"
+                      type: "NGX9"
+                    },
+                    {
+                      id: 2,
+                      constructor: "Alfen BV"
+                      type: "NGX99"
+                    }]
+                  }
+                  """
+              )
           )
-          @RequestBody CreateFirmwareDto createFirmwareDto) {
-    return new ResponseEntity<>(firmwareService.save(createFirmwareDto), HttpStatus.CREATED);
+      )
+      @RequestBody CreateFirmwareDto createFirmwareDto) {
+    return new ResponseEntity<>(
+        firmwareService.save(createFirmwareDto).toDto(),
+        HttpStatus.CREATED);
   }
 
   /**
@@ -204,47 +206,46 @@ public class FirmwareController {
    * @return A firmware updated by the given information and its http result status.
    */
   @Operation(summary = "Update a firmware")
-  @ApiResponses(value = { @ApiResponse(responseCode = "201",
-          description = "Firmware updated",
-          content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = CreateFirmwareDto.class)
-          )
+  @ApiResponse(responseCode = "201",
+      description = "Firmware updated",
+      content = @Content(
+          mediaType = "application/json",
+          schema = @Schema(implementation = FirmwareDto.class)
       )
-  })
+  )
   @PatchMapping("/update/{id}")
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<FirmwareDto> updateConfiguration(
-          @Parameter(description = "Id of the firmware your are looking for.")
-          @PathVariable int id,
-          @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                  description = "The firmware to be sent to the controller.",
-                  required = true,
-                  content = @Content(
-                          examples = @ExampleObject(
-                                  """
-                                  {
-                                    "url": "http://exemple.com",
-                                    "version": "6.0.54",
-                                    "constructor": "Alfen BV",
-                                    "typesAllowed": [
-                                      {
-                                        id: 1,
-                                        constructor: "Alfen BV"
-                                        type: "NGX9"
-                                      },
-                                      {
-                                        id: 2,
-                                        constructor: "Alfen BV"
-                                        type: "NGX99"
-                                      }
-                                    ]
-                                  }
-                                  """
-                          )
-                  )
+      @Parameter(description = "Id of the firmware your are looking for.")
+      @PathVariable int id,
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "The firmware to be sent to the controller.",
+          required = true,
+          content = @Content(
+              examples = @ExampleObject(
+                  """
+                      {
+                        "url": "http://exemple.com",
+                        "version": "6.0.54",
+                        "constructor": "Alfen BV",
+                        "typesAllowed": [
+                          {
+                            id: 1,
+                            constructor: "Alfen BV"
+                            type: "NGX9"
+                          },
+                          {
+                            id: 2,
+                            constructor: "Alfen BV"
+                            type: "NGX99"
+                          }
+                        ]
+                      }
+                      """
+              )
           )
-          @RequestBody CreateFirmwareDto createFirmwareDto) {
+      )
+      @RequestBody CreateFirmwareDto createFirmwareDto) {
     var firmware = firmwareService.update(id, createFirmwareDto);
     return new ResponseEntity<>(firmware.toDto(), HttpStatus.OK);
   }

@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * This class represents the status of a variable change.
  *
  * @param attributeStatus Result status of setting the variable.
- * @param component {@link Component}.
- * @param variable {@link VariableType}.
+ * @param component       {@link Component}.
+ * @param variable        {@link VariableType}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SetVariableResult(String attributeStatus,
