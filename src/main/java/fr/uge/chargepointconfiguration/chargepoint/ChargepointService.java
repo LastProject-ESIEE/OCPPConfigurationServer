@@ -138,7 +138,8 @@ public class ChargepointService {
         .findBySerialNumberChargepointAndConstructor(
             newValues.serialNumberChargepoint(), newValues.constructor());
 
-    if (id != existingByConstructorAndSerialNumber.getId()
+    if (existingByConstructorAndSerialNumber != null
+        && id != existingByConstructorAndSerialNumber.getId()
         && existingByConstructorAndSerialNumber.getSerialNumberChargepoint()
             .equals(newValues.serialNumberChargepoint())
         && existingByConstructorAndSerialNumber.getConstructor()
