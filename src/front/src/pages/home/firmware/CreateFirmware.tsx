@@ -174,7 +174,7 @@ export default function CreateFirmware(props: { id?: number, data?: CreateFirmwa
                     if (firmwareRequest.succes) {
                         let firmware = firmwareRequest.succes
                         notificationManager.emitNotification({
-                            type: "SUCCESS",
+                            type: "INFO",
                             title: firmware.version + " | " + firmware.constructor + " ",
                             content: "Le firmware a été modifié."
                         });

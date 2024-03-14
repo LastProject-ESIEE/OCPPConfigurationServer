@@ -43,8 +43,8 @@ public class ChargepointService {
    * @return A chargepoint created with its information.
    */
   public Chargepoint save(CreateChargepointDto createChargepointDto) {
-    checkAlreadyExistingChargepoint(createChargepointDto);
     checkFieldsChargepoint(createChargepointDto);
+    checkAlreadyExistingChargepoint(createChargepointDto);
 
     Configuration configuration;
     if (createChargepointDto.configuration() == NO_CONFIG_ID) {
@@ -128,11 +128,26 @@ public class ChargepointService {
    * @return the updated chargepoint
    */
   public Chargepoint update(int id, CreateChargepointDto newValues) {
+    checkFieldsChargepoint(newValues);
+
     var chargepoint = chargepointRepository.findById(id).orElseThrow(
         () -> new EntityNotFoundException("Pas de borne avec l'id : " + id)
     );
-    checkAlreadyExistingChargepoint(newValues);
-    checkFieldsChargepoint(newValues);
+
+    var existingByConstructorAndSerialNumber = chargepointRepository
+        .findBySerialNumberChargepointAndConstructor(
+            newValues.serialNumberChargepoint(), newValues.constructor());
+
+    if (id != existingByConstructorAndSerialNumber.getId()
+        && existingByConstructorAndSerialNumber.getSerialNumberChargepoint()
+            .equals(newValues.serialNumberChargepoint())
+        && existingByConstructorAndSerialNumber.getConstructor()
+            .equals(newValues.constructor())) {
+      throw new EntityAlreadyExistingException(
+          "Une borne utilise déjà ce numéro de série et constructeur : "
+          + newValues.serialNumberChargepoint() + ", "
+          + newValues.constructor());
+    }
 
     chargepoint.setSerialNumberChargepoint(newValues.serialNumberChargepoint());
     chargepoint.setClientId(newValues.clientId());
