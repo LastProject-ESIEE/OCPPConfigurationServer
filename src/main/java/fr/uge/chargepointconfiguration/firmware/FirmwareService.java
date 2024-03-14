@@ -98,7 +98,7 @@ public class FirmwareService {
    * @param createFirmwareDto All the necessary information for a firmware creation.
    * @return A firmware created with its information.
    */
-  public FirmwareDto save(CreateFirmwareDto createFirmwareDto) {
+  public Firmware save(CreateFirmwareDto createFirmwareDto) {
     checkAlreadyExisting(createFirmwareDto);
     checkFieldsFirmware(createFirmwareDto);
 
@@ -126,7 +126,7 @@ public class FirmwareService {
         BusinessLogEntity.Category.FIRM,
         "New firmware saved : " + firmware));
 
-    return firmware.toDto();
+    return firmware;
   }
 
   private void checkAlreadyExisting(CreateFirmwareDto createFirmwareDto) {

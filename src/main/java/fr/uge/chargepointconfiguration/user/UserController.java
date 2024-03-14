@@ -226,6 +226,10 @@ public class UserController {
   }
 
   @DeleteMapping("/{id}")
+  @ApiResponse(
+      responseCode = "204",
+      description = "User deleted"
+  )
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     userService.delete(id);

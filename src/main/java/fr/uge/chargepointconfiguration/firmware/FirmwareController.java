@@ -162,7 +162,7 @@ public class FirmwareController {
       description = "Firmware created",
       content = @Content(
           mediaType = "application/json",
-          schema = @Schema(implementation = CreateFirmwareDto.class)
+          schema = @Schema(implementation = FirmwareDto.class)
       )
   )
   @PostMapping("/create")
@@ -174,26 +174,29 @@ public class FirmwareController {
           content = @Content(
               examples = @ExampleObject(
                   """
-                      {
-                        "url": "http://exemple.com",
-                        "version": "6.0.54",
-                        "constructor": "Alfen BV",
-                        "typesAllowed": [{
-                          id: 1,
-                          constructor: "Alfen BV"
-                          type: "NGX9"
-                        },{
-                          id: 2,
-                          constructor: "Alfen BV"
-                          type: "NGX99"
-                        }]
-                      }
-                      """
+                  {
+                    "url": "http://exemple.com",
+                    "version": "6.0.54",
+                    "constructor": "Alfen BV",
+                    "typesAllowed": [{
+                      id: 1,
+                      constructor: "Alfen BV"
+                      type: "NGX9"
+                    },
+                    {
+                      id: 2,
+                      constructor: "Alfen BV"
+                      type: "NGX99"
+                    }]
+                  }
+                  """
               )
           )
       )
       @RequestBody CreateFirmwareDto createFirmwareDto) {
-    return new ResponseEntity<>(firmwareService.save(createFirmwareDto), HttpStatus.CREATED);
+    return new ResponseEntity<>(
+        firmwareService.save(createFirmwareDto).toDto(),
+        HttpStatus.CREATED);
   }
 
   /**
@@ -207,7 +210,7 @@ public class FirmwareController {
       description = "Firmware updated",
       content = @Content(
           mediaType = "application/json",
-          schema = @Schema(implementation = CreateFirmwareDto.class)
+          schema = @Schema(implementation = FirmwareDto.class)
       )
   )
   @PatchMapping("/update/{id}")
