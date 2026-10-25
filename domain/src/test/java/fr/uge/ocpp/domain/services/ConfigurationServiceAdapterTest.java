@@ -39,14 +39,17 @@ class ConfigurationServiceAdapterTest {
   void should_save() {
     // given
     Firmware firmware = dummyFirmware().withId(5L);
-    Configuration configuration = dummyConfiguration().withFirmware(firmware);
+    Configuration configuration = dummyConfiguration().withFirmware(firmware).withName("TEST");
     firmwareRepository.add(firmware);
 
     // when
     adapter.save(configuration);
 
     // then
-    assertThat(configurationRepository.configurations()).singleElement();
+    assertThat(configurationRepository.configurations()).singleElement()
+      .returns(configuration.name(), Configuration::name);
   }
+
+
 
 }
