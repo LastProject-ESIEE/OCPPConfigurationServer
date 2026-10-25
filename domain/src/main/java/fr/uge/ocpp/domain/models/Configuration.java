@@ -8,4 +8,8 @@ public record Configuration(Long id,
                             LocalDateTime lastEdit,
                             String configuration,
                             Firmware firmware) {
+
+  public Configuration withFirmware(Firmware firmware) {
+    return new Configuration(id, name, description, lastEdit, configuration, firmware);
+  }
 }

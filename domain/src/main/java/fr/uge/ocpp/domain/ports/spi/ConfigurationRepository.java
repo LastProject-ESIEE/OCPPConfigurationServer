@@ -9,4 +9,5 @@ public interface ConfigurationRepository {
 
   Configurations findAllByOrderByIdDesc();
   PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery);
+  Configuration save(Configuration configuration);
 }
