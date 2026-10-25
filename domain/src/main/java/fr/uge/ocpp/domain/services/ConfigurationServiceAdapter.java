@@ -1,6 +1,7 @@
 package fr.uge.ocpp.domain.services;
 
 import fr.uge.ocpp.domain.annotations.DomainService;
+import fr.uge.ocpp.domain.exceptions.ConfigurationNotFoundException;
 import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
@@ -10,14 +11,19 @@ import fr.uge.ocpp.domain.ports.api.ConfigurationService;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import fr.uge.ocpp.domain.ports.spi.FirmwareRepository;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @DomainService
-public record ConfigurationServiceAdapter(ConfigurationRepository configurationRepository, FirmwareRepository firmwareRepository) implements ConfigurationService {
+public record ConfigurationServiceAdapter(ConfigurationRepository configurationRepository,
+                                          FirmwareRepository firmwareRepository,
+                                          Clock clock) implements ConfigurationService {
 
   public ConfigurationServiceAdapter {
     Objects.requireNonNull(configurationRepository);
     Objects.requireNonNull(firmwareRepository);
+    Objects.requireNonNull(clock);
   }
 
   @Override
@@ -30,7 +36,13 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
 
   @Override
   public Configuration update(long id, Configuration configuration) {
-    return null;
+    Configuration oldConfiguration = configurationRepository.findById(id).orElseThrow(() -> new ConfigurationNotFoundException("Configuration not found"));
+    Configuration toSave = oldConfiguration.withName(configuration.name())
+      .withDescription(configuration.description())
+      .withConfiguration(configuration.configuration())
+      .withLastEdit(LocalDateTime.now(clock));
+
+    return configurationRepository.save(toSave);
   }
 
   @Override

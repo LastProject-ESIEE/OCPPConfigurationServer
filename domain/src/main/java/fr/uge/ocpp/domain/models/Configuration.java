@@ -9,7 +9,23 @@ public record Configuration(Long id,
                             String configuration,
                             Firmware firmware) {
 
+  public Configuration withId(Long id) {
+    return new Configuration(id, name, description, lastEdit, configuration, firmware);
+  }
+
   public Configuration withName(String name) {
+    return new Configuration(id, name, description, lastEdit, configuration, firmware);
+  }
+
+  public Configuration withDescription(String description) {
+    return  new Configuration(id, name, description, lastEdit, configuration, firmware);
+  }
+
+  public  Configuration withLastEdit(LocalDateTime lastEdit) {
+    return new Configuration(id, name, description, lastEdit, configuration, firmware);
+  }
+
+  public Configuration withConfiguration(String configuration) {
     return new Configuration(id, name, description, lastEdit, configuration, firmware);
   }
 

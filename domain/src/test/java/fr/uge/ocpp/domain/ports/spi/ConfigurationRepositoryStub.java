@@ -8,6 +8,7 @@ import fr.uge.ocpp.domain.models.PageResult;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -22,6 +23,10 @@ public class ConfigurationRepositoryStub implements ConfigurationRepository {
 
   public List<Configuration> configurations() {
     return configurations;
+  }
+
+  public void add(Configuration configuration) {
+    configurations.add(configuration);
   }
 
   @Override
@@ -48,5 +53,10 @@ public class ConfigurationRepositoryStub implements ConfigurationRepository {
     configurations.add(configuration);
 
     return configuration;
+  }
+
+  @Override
+  public Optional<Configuration> findById(long id) {
+    return configurations.stream().filter(configuration -> configuration.id().equals(id)).findFirst();
   }
 }
