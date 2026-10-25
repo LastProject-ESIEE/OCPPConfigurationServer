@@ -12,4 +12,19 @@ public record ChargePoint(Long id,
                           Step step,
                           StatusProcess statusProcess,
                           Configuration configuration) {
+
+  public static ChargePoint of(String serialNumber, String type, String constructor, Configuration configuration) {
+    return new ChargePoint(
+      null,
+      serialNumber,
+      type,
+      constructor,
+      null,
+      null,
+      false,
+      null,
+      null,
+      configuration
+    );
+  }
 }

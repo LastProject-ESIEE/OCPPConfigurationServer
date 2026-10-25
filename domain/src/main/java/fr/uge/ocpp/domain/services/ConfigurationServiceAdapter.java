@@ -47,12 +47,12 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
 
   @Override
   public Configurations findAll() {
-    return null;
+    return configurationRepository.findAllByOrderByIdDesc();
   }
 
   @Override
   public Configuration findById(long id) {
-    return null;
+    return configurationRepository.findById(id).orElseThrow(() -> new ConfigurationNotFoundException("Configuration not found"));
   }
 
   @Override
@@ -62,7 +62,7 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
 
   @Override
   public Configurations search(String request, PageQuery pageQuery) {
-    return null;
+    return Configurations.empty();
   }
 
 }

@@ -8,4 +8,8 @@ public record Configurations(List<Configuration> configurationList) {
   public Configurations {
     configurationList = Objects.requireNonNullElseGet(configurationList, List::of);
   }
+
+  public static Configurations empty() {
+    return new Configurations(List.of());
+  }
 }

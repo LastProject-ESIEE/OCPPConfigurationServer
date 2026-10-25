@@ -5,6 +5,8 @@ import fr.uge.ocpp.domain.models.ChargePoints;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 
+import java.util.Optional;
+
 public interface ChargePointRepository {
 
   ChargePoint findBySerialNumberChargepointAndConstructor(String serialNumber,
@@ -15,4 +17,8 @@ public interface ChargePointRepository {
   PageResult<ChargePoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
     PageQuery pageQuery,
     String clientId);
+
+  Optional<ChargePoint> findById(long id);
+
+  ChargePoint save(ChargePoint chargePoint);
 }
