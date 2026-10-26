@@ -26,6 +26,10 @@ public class FirmwareRepositoryStub implements FirmwareRepository {
     firmwares.clear();
   }
 
+  public List<Firmware> firmwares() {
+    return firmwares;
+  }
+
   @Override
   public Optional<Firmware> findByVersion(String version) {
     return firmwares.stream().filter(firmware -> firmware.version().equals(version)).findFirst();
@@ -72,5 +76,14 @@ public class FirmwareRepositoryStub implements FirmwareRepository {
   @Override
   public Optional<Firmware> findById(long id) {
     return firmwares.stream().filter(firmware -> firmware.id().equals(id)).findFirst();
+  }
+
+  @Override
+  public Firmware save(Firmware firmware) {
+    firmwares.removeIf(existing -> firmware.id() != null
+      && firmware.id().equals(existing.id()));
+    firmwares.add(firmware);
+
+    return firmware;
   }
 }

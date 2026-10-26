@@ -1,7 +1,11 @@
 package fr.uge.ocpp.domain.models;
 
+/** The direction of a sort. */
 public enum Sort {
 
-  ASC, DESC
+  /** Ascending sort. */
+  ASC,
 
+  /** Descending sort. */
+  DESC
 }

@@ -2,6 +2,7 @@ package fr.uge.ocpp.domain.models;
 
 import java.time.LocalDateTime;
 
+/** A configuration of the OCPP configuration server domain. */
 public record Configuration(Long id,
                             String name,
                             String description,
