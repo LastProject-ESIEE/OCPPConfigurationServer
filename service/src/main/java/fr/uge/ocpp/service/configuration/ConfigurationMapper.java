@@ -8,8 +8,7 @@ import fr.uge.ocpp.domain.models.TypesAllowed;
 final class ConfigurationMapper {
 
   /** Creates a new mapper, this class should not be instantiated. */
-  private ConfigurationMapper() {
-  }
+  private ConfigurationMapper() {}
 
   /**
    * Maps the creation values to a configuration domain model.
@@ -19,7 +18,7 @@ final class ConfigurationMapper {
    */
   static Configuration toConfiguration(CreateConfigurationDto dto) {
     var firmware = new Firmware(dto.firmware(), null, null, null, new TypesAllowed(null));
-    return new Configuration(null, dto.name(), dto.description(), null, dto.configuration(),
-        firmware);
+    return new Configuration(
+        null, dto.name(), dto.description(), null, dto.configuration(), firmware);
   }
 }

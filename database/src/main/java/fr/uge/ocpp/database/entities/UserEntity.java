@@ -15,7 +15,9 @@ import org.hibernate.annotations.SQLRestriction;
 /** An application user persisted with JPA in PostgreSQL. */
 @Entity
 @Table(name = "app_user")
-@SQLDelete(sql = """
+@SQLDelete(
+    sql =
+        """
       update app_user
       set is_deleted = true
       where id = ?
@@ -58,23 +60,18 @@ public class UserEntity {
   private boolean isDeleted = false;
 
   /** Creates an empty user, required by JPA. */
-  protected UserEntity() {
-  }
+  protected UserEntity() {}
 
   /**
    * Creates a user.
    *
    * @param firstName the first name of the user.
-   * @param lastName  the last name of the user.
-   * @param email     the email of the user.
-   * @param password  the encoded password of the user.
-   * @param role      the role of the user.
+   * @param lastName the last name of the user.
+   * @param email the email of the user.
+   * @param password the encoded password of the user.
+   * @param role the role of the user.
    */
-  public UserEntity(String firstName,
-                    String lastName,
-                    String email,
-                    String password,
-                    Role role) {
+  public UserEntity(String firstName, String lastName, String email, String password, Role role) {
     this.firstName = Objects.requireNonNull(firstName);
     this.lastName = Objects.requireNonNull(lastName);
     this.email = Objects.requireNonNull(email);
@@ -147,7 +144,8 @@ public class UserEntity {
       return false;
     }
     UserEntity that = (UserEntity) o;
-    return isDeleted == that.isDeleted && Objects.equals(id, that.id)
+    return isDeleted == that.isDeleted
+        && Objects.equals(id, that.id)
         && Objects.equals(email, that.email);
   }
 
@@ -159,12 +157,21 @@ public class UserEntity {
   @Override
   public String toString() {
     return "UserEntity{"
-        + "id=" + id
-        + ", email='" + email + '\''
-        + ", lastName='" + lastName + '\''
-        + ", firstName='" + firstName + '\''
-        + ", role=" + role
-        + ", isDeleted=" + isDeleted
+        + "id="
+        + id
+        + ", email='"
+        + email
+        + '\''
+        + ", lastName='"
+        + lastName
+        + '\''
+        + ", firstName='"
+        + firstName
+        + '\''
+        + ", role="
+        + role
+        + ", isDeleted="
+        + isDeleted
         + '}';
   }
 }

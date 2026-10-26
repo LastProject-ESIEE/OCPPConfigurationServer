@@ -2,7 +2,6 @@ package fr.uge.ocpp.domain.ports.spi;
 
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -30,14 +29,14 @@ public class TypeAllowedRepositoryStub implements TypeAllowedRepository {
   @Override
   public java.util.Optional<TypeAllowed> findById(long id) {
     return typesAllowed.stream()
-      .filter(typeAllowed -> typeAllowed.id() != null && typeAllowed.id() == id)
-      .findFirst();
+        .filter(typeAllowed -> typeAllowed.id() != null && typeAllowed.id() == id)
+        .findFirst();
   }
 
   @Override
   public TypeAllowed save(TypeAllowed typeAllowed) {
-    typesAllowed.removeIf(existing -> typeAllowed.id() != null
-      && typeAllowed.id().equals(existing.id()));
+    typesAllowed.removeIf(
+        existing -> typeAllowed.id() != null && typeAllowed.id().equals(existing.id()));
     typesAllowed.add(typeAllowed);
 
     return typeAllowed;

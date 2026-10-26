@@ -1,9 +1,7 @@
-
 package fr.uge.ocpp.websocket.ocpp.ocpp16;
 
 import fr.uge.ocpp.websocket.ocpp.OcppMessageRequest;
 import java.util.Objects;
-
 
 /**
  * Sent by the server to change a value of a chargepoint's key.<br>

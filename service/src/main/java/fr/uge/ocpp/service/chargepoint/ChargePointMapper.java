@@ -7,8 +7,7 @@ import fr.uge.ocpp.domain.models.Configuration;
 final class ChargePointMapper {
 
   /** Creates a new mapper, this class should not be instantiated. */
-  private ChargePointMapper() {
-  }
+  private ChargePointMapper() {}
 
   /**
    * Maps the creation values to a charge point domain model.
@@ -21,7 +20,11 @@ final class ChargePointMapper {
     if (dto.configuration() != null && dto.configuration() != CreateChargePointDto.NO_CONFIG_ID) {
       configuration = new Configuration(dto.configuration(), null, null, null, null, null);
     }
-    return ChargePoint.of(dto.serialNumberChargepoint(), dto.type(), dto.constructor(),
-        dto.clientId(), configuration);
+    return ChargePoint.of(
+        dto.serialNumberChargepoint(),
+        dto.type(),
+        dto.constructor(),
+        dto.clientId(),
+        configuration);
   }
 }

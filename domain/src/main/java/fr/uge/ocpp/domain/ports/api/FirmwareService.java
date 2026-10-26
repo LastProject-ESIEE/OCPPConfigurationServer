@@ -17,7 +17,7 @@ public interface FirmwareService {
   /**
    * Updates the firmware with the given identifier.
    *
-   * @param id       the identifier of the firmware to update.
+   * @param id the identifier of the firmware to update.
    * @param firmware the new values of the firmware.
    * @return the updated firmware.
    */

@@ -31,9 +31,10 @@ public interface FirmwareJpaRepository
    * @param typeAllowed the allowed type filter.
    * @return the corresponding firmwares.
    */
-  @Query("select f from FirmwareEntity f "
-      + "join f.typesAllowed "
-      + "where :typeAllowed member of f.typesAllowed order by f.version asc")
+  @Query(
+      "select f from FirmwareEntity f "
+          + "join f.typesAllowed "
+          + "where :typeAllowed member of f.typesAllowed order by f.version asc")
   List<FirmwareEntity> findAllByTypeAllowedAsc(@Param("typeAllowed") TypeAllowedEntity typeAllowed);
 
   /**
@@ -42,11 +43,12 @@ public interface FirmwareJpaRepository
    * @param typeAllowed the allowed type filter.
    * @return the corresponding firmwares.
    */
-  @Query("select f from FirmwareEntity f "
-      + "join f.typesAllowed "
-      + "where :typeAllowed member of f.typesAllowed order by f.version desc")
-  List<FirmwareEntity> findAllByTypeAllowedDesc(@Param("typeAllowed")
-      TypeAllowedEntity typeAllowed);
+  @Query(
+      "select f from FirmwareEntity f "
+          + "join f.typesAllowed "
+          + "where :typeAllowed member of f.typesAllowed order by f.version desc")
+  List<FirmwareEntity> findAllByTypeAllowedDesc(
+      @Param("typeAllowed") TypeAllowedEntity typeAllowed);
 
   /**
    * Finds all the firmwares ordered by descending identifier.

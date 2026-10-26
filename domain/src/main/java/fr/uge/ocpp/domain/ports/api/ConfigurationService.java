@@ -18,7 +18,7 @@ public interface ConfigurationService {
   /**
    * Updates the configuration with the given identifier.
    *
-   * @param id           the identifier of the configuration to update.
+   * @param id the identifier of the configuration to update.
    * @param configuration the new values of the configuration.
    * @return the updated configuration.
    */
@@ -50,7 +50,7 @@ public interface ConfigurationService {
   /**
    * Finds the configurations matching the given request, paginated.
    *
-   * @param request   the search request.
+   * @param request the search request.
    * @param pageQuery the pagination query.
    * @return the corresponding configurations.
    */

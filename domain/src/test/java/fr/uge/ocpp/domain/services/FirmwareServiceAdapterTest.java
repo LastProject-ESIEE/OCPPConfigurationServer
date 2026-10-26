@@ -1,5 +1,10 @@
 package fr.uge.ocpp.domain.services;
 
+import static fr.uge.ocpp.domain.models.FirmwareFactory.dummyFirmware;
+import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowed;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import fr.uge.ocpp.domain.exceptions.BadRequestException;
 import fr.uge.ocpp.domain.exceptions.FirmwareAlreadyExistingException;
 import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
@@ -9,11 +14,6 @@ import fr.uge.ocpp.domain.ports.spi.FirmwareRepositoryStub;
 import fr.uge.ocpp.domain.ports.spi.TypeAllowedRepositoryStub;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import static fr.uge.ocpp.domain.models.FirmwareFactory.dummyFirmware;
-import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowed;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class FirmwareServiceAdapterTest {
 
@@ -33,22 +33,23 @@ class FirmwareServiceAdapterTest {
     firmwareRepository.add(dummyFirmware());
 
     assertThatThrownBy(() -> adapter.save(dummyFirmware().withId(null)))
-      .isInstanceOf(FirmwareAlreadyExistingException.class);
+        .isInstanceOf(FirmwareAlreadyExistingException.class);
   }
 
   @Test
   void should_not_save_when_types_allowed_empty() {
-    Firmware firmware = dummyFirmware().withId(null)
-      .withTypesAllowed(new fr.uge.ocpp.domain.models.TypesAllowed(java.util.Set.of()));
+    Firmware firmware =
+        dummyFirmware()
+            .withId(null)
+            .withTypesAllowed(new fr.uge.ocpp.domain.models.TypesAllowed(java.util.Set.of()));
 
-    assertThatThrownBy(() -> adapter.save(firmware))
-      .isInstanceOf(BadRequestException.class);
+    assertThatThrownBy(() -> adapter.save(firmware)).isInstanceOf(BadRequestException.class);
   }
 
   @Test
   void should_not_save_when_type_allowed_not_found() {
     assertThatThrownBy(() -> adapter.save(dummyFirmware().withId(null)))
-      .isInstanceOf(TypeAllowedNotFoundException.class);
+        .isInstanceOf(TypeAllowedNotFoundException.class);
   }
 
   @Test
@@ -57,14 +58,12 @@ class FirmwareServiceAdapterTest {
 
     adapter.save(dummyFirmware().withId(null));
 
-    assertThat(firmwareRepository.firmwares()).singleElement()
-      .returns("1.0.0", Firmware::version);
+    assertThat(firmwareRepository.firmwares()).singleElement().returns("1.0.0", Firmware::version);
   }
 
   @Test
   void should_not_find_by_id_when_firmware_not_found() {
-    assertThatThrownBy(() -> adapter.findById(42L))
-      .isInstanceOf(FirmwareNotFoundException.class);
+    assertThatThrownBy(() -> adapter.findById(42L)).isInstanceOf(FirmwareNotFoundException.class);
   }
 
   @Test
@@ -72,7 +71,7 @@ class FirmwareServiceAdapterTest {
     typeAllowedRepository.add(dummyTypeAllowed());
 
     assertThatThrownBy(() -> adapter.update(42L, dummyFirmware()))
-      .isInstanceOf(FirmwareNotFoundException.class);
+        .isInstanceOf(FirmwareNotFoundException.class);
   }
 
   @Test
@@ -82,7 +81,7 @@ class FirmwareServiceAdapterTest {
     typeAllowedRepository.add(dummyTypeAllowed());
 
     assertThatThrownBy(() -> adapter.update(1L, dummyFirmware().withUrl("other")))
-      .isInstanceOf(FirmwareAlreadyExistingException.class);
+        .isInstanceOf(FirmwareAlreadyExistingException.class);
   }
 
   @Test
@@ -92,7 +91,6 @@ class FirmwareServiceAdapterTest {
 
     adapter.update(1L, dummyFirmware().withVersion("2.0.0"));
 
-    assertThat(firmwareRepository.firmwares()).singleElement()
-      .returns("2.0.0", Firmware::version);
+    assertThat(firmwareRepository.firmwares()).singleElement().returns("2.0.0", Firmware::version);
   }
 }

@@ -5,7 +5,6 @@ import fr.uge.ocpp.domain.exceptions.ConfigurationNotFoundException;
 import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
-import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.ports.api.ConfigurationService;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
@@ -16,16 +15,18 @@ import java.util.Objects;
 
 /** Adapter implementing the configuration use cases on top of the SPI ports. */
 @DomainService
-public record ConfigurationServiceAdapter(ConfigurationRepository configurationRepository,
-                                          FirmwareRepository firmwareRepository,
-                                          Clock clock) implements ConfigurationService {
+public record ConfigurationServiceAdapter(
+    ConfigurationRepository configurationRepository,
+    FirmwareRepository firmwareRepository,
+    Clock clock)
+    implements ConfigurationService {
 
   /**
    * Creates the adapter.
    *
    * @param configurationRepository the configuration persistence port.
-   * @param firmwareRepository     the firmware persistence port.
-   * @param clock                  the clock used to timestamp updates.
+   * @param firmwareRepository the firmware persistence port.
+   * @param clock the clock used to timestamp updates.
    */
   public ConfigurationServiceAdapter {
     Objects.requireNonNull(configurationRepository);
@@ -44,32 +45,43 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
     Objects.requireNonNull(configuration);
     var firmware = configuration.firmware();
     if (firmware != null) {
-      firmwareRepository.findById(firmware.id())
-          .orElseThrow(() -> new FirmwareNotFoundException("Pas de firmware avec l'id : "
-              + firmware.id()));
+      firmwareRepository
+          .findById(firmware.id())
+          .orElseThrow(
+              () -> new FirmwareNotFoundException("Pas de firmware avec l'id : " + firmware.id()));
     }
-    var toSave = new Configuration(null, configuration.name(), configuration.description(),
-        null, configuration.configuration(), firmware);
+    var toSave =
+        new Configuration(
+            null,
+            configuration.name(),
+            configuration.description(),
+            null,
+            configuration.configuration(),
+            firmware);
     return configurationRepository.save(toSave);
   }
 
   /**
    * Updates the configuration with the given identifier.
    *
-   * @param id            the identifier of the configuration to update.
+   * @param id the identifier of the configuration to update.
    * @param configuration the new values of the configuration.
    * @return the updated configuration.
    */
   @Override
   public Configuration update(long id, Configuration configuration) {
     Objects.requireNonNull(configuration);
-    var oldConfiguration = configurationRepository.findById(id)
-        .orElseThrow(() -> new ConfigurationNotFoundException(
-            "Pas de configuration avec l'id : " + id));
-    var toSave = oldConfiguration.withName(configuration.name())
-        .withDescription(configuration.description())
-        .withConfiguration(configuration.configuration())
-        .withLastEdit(LocalDateTime.now(clock));
+    var oldConfiguration =
+        configurationRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ConfigurationNotFoundException("Pas de configuration avec l'id : " + id));
+    var toSave =
+        oldConfiguration
+            .withName(configuration.name())
+            .withDescription(configuration.description())
+            .withConfiguration(configuration.configuration())
+            .withLastEdit(LocalDateTime.now(clock));
     return configurationRepository.save(toSave);
   }
 
@@ -91,9 +103,10 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
    */
   @Override
   public Configuration findById(long id) {
-    return configurationRepository.findById(id)
-        .orElseThrow(() -> new ConfigurationNotFoundException(
-            "Pas de configuration avec l'id : " + id));
+    return configurationRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new ConfigurationNotFoundException("Pas de configuration avec l'id : " + id));
   }
 
   /**
@@ -110,7 +123,7 @@ public record ConfigurationServiceAdapter(ConfigurationRepository configurationR
   /**
    * Finds the configurations matching the given request, paginated.
    *
-   * @param request   the search request.
+   * @param request the search request.
    * @param pageQuery the pagination query.
    * @return the corresponding configurations.
    */

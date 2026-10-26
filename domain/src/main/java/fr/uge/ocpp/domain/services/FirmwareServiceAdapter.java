@@ -18,14 +18,14 @@ import java.util.Set;
 
 /** Adapter implementing the firmware use cases on top of the SPI ports. */
 @DomainService
-public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
-                                     TypeAllowedRepository typeAllowedRepository)
+public record FirmwareServiceAdapter(
+    FirmwareRepository firmwareRepository, TypeAllowedRepository typeAllowedRepository)
     implements FirmwareService {
 
   /**
    * Creates the adapter.
    *
-   * @param firmwareRepository     the firmware persistence port.
+   * @param firmwareRepository the firmware persistence port.
    * @param typeAllowedRepository the allowed type persistence port.
    */
   public FirmwareServiceAdapter {
@@ -34,8 +34,8 @@ public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
   }
 
   /**
-   * Creates a firmware. The url must not be already used and at least one
-   * allowed type must be provided and exist.
+   * Creates a firmware. The url must not be already used and at least one allowed type must be
+   * provided and exist.
    *
    * @param firmware the firmware to create.
    * @return the created firmware.
@@ -46,16 +46,17 @@ public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
     checkFields(firmware);
     checkUrlNotUsed(firmware.url());
     var typesAllowed = resolveTypesAllowed(firmware.typesAllowed());
-    var toSave = new Firmware(null, firmware.url(), firmware.version(), firmware.constructor(),
-        typesAllowed);
+    var toSave =
+        new Firmware(
+            null, firmware.url(), firmware.version(), firmware.constructor(), typesAllowed);
     return firmwareRepository.save(toSave);
   }
 
   /**
-   * Updates the firmware with the given identifier. The new url must not be already
-   * used by another firmware and all the allowed types must exist.
+   * Updates the firmware with the given identifier. The new url must not be already used by another
+   * firmware and all the allowed types must exist.
    *
-   * @param id       the identifier of the firmware to update.
+   * @param id the identifier of the firmware to update.
    * @param firmware the new values of the firmware.
    * @return the updated firmware.
    */
@@ -63,19 +64,24 @@ public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
   public Firmware update(long id, Firmware firmware) {
     Objects.requireNonNull(firmware);
     checkFields(firmware);
-    firmwareRepository.findByUrl(firmware.url())
+    firmwareRepository
+        .findByUrl(firmware.url())
         .filter(existing -> existing.id() != id)
-        .ifPresent(existing -> {
-          throw new FirmwareAlreadyExistingException(
-              "Un firmware avec l'URL existe déjà : " + firmware.url());
-        });
+        .ifPresent(
+            existing -> {
+              throw new FirmwareAlreadyExistingException(
+                  "Un firmware avec l'URL existe déjà : " + firmware.url());
+            });
     var typesAllowed = resolveTypesAllowed(firmware.typesAllowed());
-    var old = firmwareRepository.findById(id)
-        .orElseThrow(() -> new FirmwareNotFoundException("Pas de firmware avec l'id : " + id));
-    var toSave = old.withUrl(firmware.url())
-        .withVersion(firmware.version())
-        .withConstructor(firmware.constructor())
-        .withTypesAllowed(typesAllowed);
+    var old =
+        firmwareRepository
+            .findById(id)
+            .orElseThrow(() -> new FirmwareNotFoundException("Pas de firmware avec l'id : " + id));
+    var toSave =
+        old.withUrl(firmware.url())
+            .withVersion(firmware.version())
+            .withConstructor(firmware.constructor())
+            .withTypesAllowed(typesAllowed);
     return firmwareRepository.save(toSave);
   }
 
@@ -97,14 +103,18 @@ public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
    */
   @Override
   public Firmware findById(long id) {
-    return firmwareRepository.findById(id)
+    return firmwareRepository
+        .findById(id)
         .orElseThrow(() -> new FirmwareNotFoundException("Pas de firmware avec l'id : " + id));
   }
 
   private void checkFields(Firmware firmware) {
-    if (firmware.version() == null || firmware.version().isBlank()
-        || firmware.url() == null || firmware.url().isBlank()
-        || firmware.constructor() == null || firmware.constructor().isBlank()) {
+    if (firmware.version() == null
+        || firmware.version().isBlank()
+        || firmware.url() == null
+        || firmware.url().isBlank()
+        || firmware.constructor() == null
+        || firmware.constructor().isBlank()) {
       throw new BadRequestException("Version, url, constructeur sont requis");
     }
   }
@@ -121,9 +131,13 @@ public record FirmwareServiceAdapter(FirmwareRepository firmwareRepository,
     }
     var resolved = new LinkedHashSet<TypeAllowed>();
     for (var typeAllowed : typesAllowed.typesAllowedSet()) {
-      resolved.add(typeAllowedRepository.findById(typeAllowed.id())
-          .orElseThrow(() -> new TypeAllowedNotFoundException(
-              "Aucun modèle compatible avec l'id " + typeAllowed.id())));
+      resolved.add(
+          typeAllowedRepository
+              .findById(typeAllowed.id())
+              .orElseThrow(
+                  () ->
+                      new TypeAllowedNotFoundException(
+                          "Aucun modèle compatible avec l'id " + typeAllowed.id())));
     }
     return new TypesAllowed(Set.copyOf(resolved));
   }

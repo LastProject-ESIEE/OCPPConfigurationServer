@@ -36,8 +36,7 @@ public class TypeAllowedController {
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('EDITOR')")
   public List<TypeAllowedDto> getAllTypeAllowed() {
-    return typeAllowedService.findAll().typesAllowedSet().stream()
-        .map(TypeAllowedDto::of).toList();
+    return typeAllowedService.findAll().typesAllowedSet().stream().map(TypeAllowedDto::of).toList();
   }
 
   /**
@@ -50,8 +49,9 @@ public class TypeAllowedController {
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<TypeAllowedDto> create(
       @RequestBody CreateTypeAllowedDto createTypeAllowedDto) {
-    TypeAllowed typeAllowed = typeAllowedService.save(new TypeAllowed(null,
-        createTypeAllowedDto.constructor(), createTypeAllowedDto.type()));
+    TypeAllowed typeAllowed =
+        typeAllowedService.save(
+            new TypeAllowed(null, createTypeAllowedDto.constructor(), createTypeAllowedDto.type()));
     return new ResponseEntity<>(TypeAllowedDto.of(typeAllowed), HttpStatus.CREATED);
   }
 }

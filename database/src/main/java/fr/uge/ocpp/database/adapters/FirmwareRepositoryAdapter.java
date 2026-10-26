@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the firmwares in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
-public class FirmwareRepositoryAdapter
-    implements FirmwareRepository {
+public class FirmwareRepositoryAdapter implements FirmwareRepository {
 
   private final FirmwareJpaRepository firmwareJpaRepository;
   private final TypeAllowedJpaRepository typeAllowedJpaRepository;
@@ -29,10 +28,11 @@ public class FirmwareRepositoryAdapter
   /**
    * Creates the adapter.
    *
-   * @param firmwareJpaRepository      the Spring Data repository of firmwares.
+   * @param firmwareJpaRepository the Spring Data repository of firmwares.
    * @param typeAllowedJpaRepository the Spring Data repository of allowed types.
    */
-  public FirmwareRepositoryAdapter(FirmwareJpaRepository firmwareJpaRepository,
+  public FirmwareRepositoryAdapter(
+      FirmwareJpaRepository firmwareJpaRepository,
       TypeAllowedJpaRepository typeAllowedJpaRepository) {
     this.firmwareJpaRepository = Objects.requireNonNull(firmwareJpaRepository);
     this.typeAllowedJpaRepository = Objects.requireNonNull(typeAllowedJpaRepository);
@@ -57,10 +57,14 @@ public class FirmwareRepositoryAdapter
    */
   @Override
   public Firmwares findAllByTypeAllowedAsc(TypeAllowed typeAllowed) {
-    var entity = typeAllowedJpaRepository.findById(typeAllowed.id())
-        .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
-    return new Firmwares(firmwareJpaRepository.findAllByTypeAllowedAsc(entity).stream()
-        .map(EntityMapper::toFirmware).toList());
+    var entity =
+        typeAllowedJpaRepository
+            .findById(typeAllowed.id())
+            .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
+    return new Firmwares(
+        firmwareJpaRepository.findAllByTypeAllowedAsc(entity).stream()
+            .map(EntityMapper::toFirmware)
+            .toList());
   }
 
   /**
@@ -71,10 +75,14 @@ public class FirmwareRepositoryAdapter
    */
   @Override
   public Firmwares findAllByTypeAllowedDesc(TypeAllowed typeAllowed) {
-    var entity = typeAllowedJpaRepository.findById(typeAllowed.id())
-        .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
-    return new Firmwares(firmwareJpaRepository.findAllByTypeAllowedDesc(entity).stream()
-        .map(EntityMapper::toFirmware).toList());
+    var entity =
+        typeAllowedJpaRepository
+            .findById(typeAllowed.id())
+            .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
+    return new Firmwares(
+        firmwareJpaRepository.findAllByTypeAllowedDesc(entity).stream()
+            .map(EntityMapper::toFirmware)
+            .toList());
   }
 
   /**
@@ -84,8 +92,10 @@ public class FirmwareRepositoryAdapter
    */
   @Override
   public Firmwares findAllByOrderByIdDesc() {
-    return new Firmwares(firmwareJpaRepository.findAllByOrderByIdDesc().stream()
-        .map(EntityMapper::toFirmware).toList());
+    return new Firmwares(
+        firmwareJpaRepository.findAllByOrderByIdDesc().stream()
+            .map(EntityMapper::toFirmware)
+            .toList());
   }
 
   /**
@@ -96,8 +106,8 @@ public class FirmwareRepositoryAdapter
    */
   @Override
   public PageResult<Firmware> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(),
-        Sort.by(Sort.Direction.DESC, "id"));
+    var pageable =
+        PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
     var page = firmwareJpaRepository.findAllByOrderByIdDesc(pageable);
     List<Firmware> content = page.stream().map(EntityMapper::toFirmware).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());

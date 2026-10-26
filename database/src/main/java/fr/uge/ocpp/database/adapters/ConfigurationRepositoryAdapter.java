@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the configurations in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
-public class ConfigurationRepositoryAdapter
-    implements ConfigurationRepository {
+public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
 
   private final ConfigurationJpaRepository configurationJpaRepository;
   private final FirmwareJpaRepository firmwareJpaRepository;
@@ -29,9 +28,10 @@ public class ConfigurationRepositoryAdapter
    * Creates the adapter.
    *
    * @param configurationJpaRepository the Spring Data repository of configurations.
-   * @param firmwareJpaRepository      the Spring Data repository of firmwares.
+   * @param firmwareJpaRepository the Spring Data repository of firmwares.
    */
-  public ConfigurationRepositoryAdapter(ConfigurationJpaRepository configurationJpaRepository,
+  public ConfigurationRepositoryAdapter(
+      ConfigurationJpaRepository configurationJpaRepository,
       FirmwareJpaRepository firmwareJpaRepository) {
     this.configurationJpaRepository = Objects.requireNonNull(configurationJpaRepository);
     this.firmwareJpaRepository = Objects.requireNonNull(firmwareJpaRepository);
@@ -44,8 +44,10 @@ public class ConfigurationRepositoryAdapter
    */
   @Override
   public Configurations findAllByOrderByIdDesc() {
-    return new Configurations(configurationJpaRepository.findAllByOrderByIdDesc().stream()
-        .map(EntityMapper::toConfiguration).toList());
+    return new Configurations(
+        configurationJpaRepository.findAllByOrderByIdDesc().stream()
+            .map(EntityMapper::toConfiguration)
+            .toList());
   }
 
   /**
@@ -56,8 +58,8 @@ public class ConfigurationRepositoryAdapter
    */
   @Override
   public PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(),
-        Sort.by(Sort.Direction.DESC, "id"));
+    var pageable =
+        PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
     var page = configurationJpaRepository.findAllByOrderByIdDesc(pageable);
     List<Configuration> content = page.stream().map(EntityMapper::toConfiguration).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());

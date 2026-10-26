@@ -3,9 +3,7 @@ package fr.uge.ocpp.websocket.ocpp;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * An enum to define the multiple version of the OCPP protocol.
- */
+/** An enum to define the multiple version of the OCPP protocol. */
 public enum OcppVersion {
   V1_6,
   V2;

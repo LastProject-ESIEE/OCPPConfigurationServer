@@ -1,5 +1,11 @@
 package fr.uge.ocpp.domain.services;
 
+import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePoint;
+import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePointWithoutConfiguration;
+import static fr.uge.ocpp.domain.models.ConfigurationFactory.dummyConfiguration;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import fr.uge.ocpp.domain.exceptions.BadRequestException;
 import fr.uge.ocpp.domain.exceptions.ChargePointAlreadyExistingException;
 import fr.uge.ocpp.domain.exceptions.ChargePointNotFoundException;
@@ -8,18 +14,11 @@ import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.ports.spi.ChargePointRepositoryStub;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepositoryStub;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
-import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePoint;
-import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePointWithoutConfiguration;
-import static fr.uge.ocpp.domain.models.ConfigurationFactory.dummyConfiguration;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 class ChargePointServiceAdapterTest {
 
@@ -28,9 +27,11 @@ class ChargePointServiceAdapterTest {
   private final ChargePointRepositoryStub chargePointRepository = new ChargePointRepositoryStub();
   private final ConfigurationRepositoryStub configurationRepository =
       new ConfigurationRepositoryStub();
-  private final ChargePointServiceAdapter adapter = new ChargePointServiceAdapter(
-    chargePointRepository, configurationRepository,
-    Clock.fixed(FIXED_TIME.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
+  private final ChargePointServiceAdapter adapter =
+      new ChargePointServiceAdapter(
+          chargePointRepository,
+          configurationRepository,
+          Clock.fixed(FIXED_TIME.toInstant(ZoneOffset.UTC), ZoneOffset.UTC));
 
   @AfterEach
   void tearDown() {
@@ -43,7 +44,7 @@ class ChargePointServiceAdapterTest {
     chargePointRepository.add(dummyChargePoint().withId(3L));
 
     assertThatThrownBy(() -> adapter.save(dummyChargePoint()))
-      .isInstanceOf(ChargePointAlreadyExistingException.class);
+        .isInstanceOf(ChargePointAlreadyExistingException.class);
   }
 
   @Test
@@ -51,15 +52,14 @@ class ChargePointServiceAdapterTest {
     ChargePoint chargePoint = dummyChargePoint().withId(null);
 
     assertThatThrownBy(() -> adapter.save(chargePoint))
-      .isInstanceOf(ConfigurationNotFoundException.class);
+        .isInstanceOf(ConfigurationNotFoundException.class);
   }
 
   @Test
   void should_not_save_when_fields_missing() {
     ChargePoint chargePoint = dummyChargePoint().withId(null).withSerialNumber(" ");
 
-    assertThatThrownBy(() -> adapter.save(chargePoint))
-      .isInstanceOf(BadRequestException.class);
+    assertThatThrownBy(() -> adapter.save(chargePoint)).isInstanceOf(BadRequestException.class);
   }
 
   @Test
@@ -68,20 +68,21 @@ class ChargePointServiceAdapterTest {
 
     adapter.save(dummyChargePoint().withId(null));
 
-    assertThat(chargePointRepository.chargePoints()).singleElement()
-      .returns("client-id", ChargePoint::clientId);
+    assertThat(chargePointRepository.chargePoints())
+        .singleElement()
+        .returns("client-id", ChargePoint::clientId);
   }
 
   @Test
   void should_not_find_by_id_when_charge_point_not_found() {
     assertThatThrownBy(() -> adapter.findById(42L))
-      .isInstanceOf(ChargePointNotFoundException.class);
+        .isInstanceOf(ChargePointNotFoundException.class);
   }
 
   @Test
   void should_not_update_when_charge_point_not_found() {
     assertThatThrownBy(() -> adapter.update(42L, dummyChargePoint()))
-      .isInstanceOf(ChargePointNotFoundException.class);
+        .isInstanceOf(ChargePointNotFoundException.class);
   }
 
   @Test
@@ -90,7 +91,7 @@ class ChargePointServiceAdapterTest {
     chargePointRepository.add(dummyChargePoint().withId(2L).withSerialNumber("other"));
 
     assertThatThrownBy(() -> adapter.update(1L, dummyChargePoint().withSerialNumber("other")))
-      .isInstanceOf(ChargePointAlreadyExistingException.class);
+        .isInstanceOf(ChargePointAlreadyExistingException.class);
   }
 
   @Test
@@ -100,9 +101,10 @@ class ChargePointServiceAdapterTest {
 
     adapter.update(1L, dummyChargePoint().withType("NEW_TYPE"));
 
-    assertThat(chargePointRepository.chargePoints()).singleElement()
-      .returns("NEW_TYPE", ChargePoint::type)
-      .returns(FIXED_TIME, ChargePoint::lastUpdate);
+    assertThat(chargePointRepository.chargePoints())
+        .singleElement()
+        .returns("NEW_TYPE", ChargePoint::type)
+        .returns(FIXED_TIME, ChargePoint::lastUpdate);
   }
 
   @Test
@@ -112,9 +114,10 @@ class ChargePointServiceAdapterTest {
 
     adapter.update(1L, newValues);
 
-    assertThat(chargePointRepository.chargePoints()).singleElement()
-      .returns(null, ChargePoint::configuration)
-      .returns("new-client", ChargePoint::clientId);
+    assertThat(chargePointRepository.chargePoints())
+        .singleElement()
+        .returns(null, ChargePoint::configuration)
+        .returns("new-client", ChargePoint::clientId);
   }
 
   @Test
@@ -124,6 +127,6 @@ class ChargePointServiceAdapterTest {
     ChargePoint newValues = dummyChargePoint().withConfiguration(unknownConfiguration);
 
     assertThatThrownBy(() -> adapter.update(1L, newValues))
-      .isInstanceOf(ConfigurationNotFoundException.class);
+        .isInstanceOf(ConfigurationNotFoundException.class);
   }
 }

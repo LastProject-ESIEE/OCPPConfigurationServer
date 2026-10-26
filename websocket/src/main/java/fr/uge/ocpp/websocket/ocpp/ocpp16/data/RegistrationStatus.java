@@ -8,5 +8,7 @@ package fr.uge.ocpp.websocket.ocpp.ocpp16.data;
  * - Rejected, the message has been rejected.
  */
 public enum RegistrationStatus {
-    Accepted, Pending, Rejected
+  Accepted,
+  Pending,
+  Rejected
 }

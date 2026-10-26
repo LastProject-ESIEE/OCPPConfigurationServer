@@ -29,14 +29,17 @@ public class WebSecurityConfig {
    */
   @Bean
   SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-    http
-        .authorizeHttpRequests(authorize ->
-            authorize.requestMatchers("/api/**").authenticated()
-                .requestMatchers("/", "/about", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                .anyRequest().permitAll())
+    http.authorizeHttpRequests(
+            authorize ->
+                authorize
+                    .requestMatchers("/api/**")
+                    .authenticated()
+                    .requestMatchers("/", "/about", "/v3/api-docs/**", "/swagger-ui/**")
+                    .permitAll()
+                    .anyRequest()
+                    .permitAll())
         .csrf(AbstractHttpConfigurer::disable)
-        .httpBasic(httpBasic -> {
-        });
+        .httpBasic(httpBasic -> {});
     return http.build();
   }
 
@@ -65,12 +68,12 @@ public class WebSecurityConfig {
    * Provides the authentication provider of the API.
    *
    * @param userDetailsService the user details service.
-   * @param passwordEncoder     the password encoder.
+   * @param passwordEncoder the password encoder.
    * @return the authentication provider.
    */
   @Bean
-  DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
-      PasswordEncoder passwordEncoder) {
+  DaoAuthenticationProvider authenticationProvider(
+      UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
     var authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userDetailsService);
     authProvider.setPasswordEncoder(passwordEncoder);

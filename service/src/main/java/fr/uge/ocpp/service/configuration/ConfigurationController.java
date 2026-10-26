@@ -39,7 +39,8 @@ public class ConfigurationController {
   @PreAuthorize("hasRole('VISUALIZER')")
   public List<ConfigurationDto> getAllConfiguration() {
     return configurationService.findAll().configurationList().stream()
-        .map(ConfigurationDto::of).toList();
+        .map(ConfigurationDto::of)
+        .toList();
   }
 
   /**
@@ -72,7 +73,7 @@ public class ConfigurationController {
   /**
    * Updates the configuration with the given identifier.
    *
-   * @param id                    the identifier of the configuration.
+   * @param id the identifier of the configuration.
    * @param createConfigurationDto the new values of the configuration.
    * @return the updated configuration.
    */
@@ -80,8 +81,9 @@ public class ConfigurationController {
   @PreAuthorize("hasRole('EDITOR')")
   public ResponseEntity<ConfigurationDto> update(
       @PathVariable long id, @RequestBody CreateConfigurationDto createConfigurationDto) {
-    Configuration configuration = configurationService.update(id,
-        ConfigurationMapper.toConfiguration(createConfigurationDto));
+    Configuration configuration =
+        configurationService.update(
+            id, ConfigurationMapper.toConfiguration(createConfigurationDto));
     return new ResponseEntity<>(ConfigurationDto.of(configuration), HttpStatus.OK);
   }
 }

@@ -12,15 +12,13 @@ import fr.uge.ocpp.websocket.ocpp.ocpp2.SetVariablesRequest20;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Represents the message sent or received via a web socket.
- */
+/** Represents the message sent or received via a web socket. */
 public interface WebSocketMessage {
 
   /**
    * Returns the message's data.<br>
-   * Often, it is information concerning a change in the configuration
-   * or information about the chargepoint.<br>
+   * Often, it is information concerning a change in the configuration or information about the
+   * chargepoint.<br>
    * It is represented by a json formatted string.
    *
    * @return The message's data (json formatted string).
@@ -55,8 +53,8 @@ public interface WebSocketMessage {
 
   /**
    * Defines the request message type for OCPP 1.6 and OCPP 2.0.1 protocols.<br>
-   * These enums can be sent by the chargepoint (BootNotification, StatusFirmware)
-   * or the server (ChangeConfiguration, SetVariables).<br>
+   * These enums can be sent by the chargepoint (BootNotification, StatusFirmware) or the server
+   * (ChangeConfiguration, SetVariables).<br>
    * By default, if the packet is unknown, we set to other.
    */
   enum MessageTypeRequest {
@@ -109,8 +107,7 @@ public interface WebSocketMessage {
     }
 
     /**
-     * Converts the message name into an enum to make the process
-     * message easier.
+     * Converts the message name into an enum to make the process message easier.
      *
      * @param messageName The message type received from the remote.
      * @return The correct enum if found, an OTHER by default.
@@ -153,18 +150,16 @@ public interface WebSocketMessage {
       case REQUEST -> {
         try {
           var messageId = Long.parseLong(array[1].replaceAll("\"", ""));
-          var messageName = MessageTypeRequest
-                  .nameToEnum(array[2]
-                          .substring(1, array[2].length() - 1));
+          var messageName =
+              MessageTypeRequest.nameToEnum(array[2].substring(1, array[2].length() - 1));
           yield Optional.of(
-                  new WebSocketRequestMessage(callType, messageId, messageName, array[3])
-          );
+              new WebSocketRequestMessage(callType, messageId, messageName, array[3]));
         } catch (NumberFormatException n) {
           yield Optional.empty();
         }
       }
       case UNKNOWN -> // TODO : Log, unknown type.
-              Optional.empty();
+          Optional.empty();
     };
   }
 }

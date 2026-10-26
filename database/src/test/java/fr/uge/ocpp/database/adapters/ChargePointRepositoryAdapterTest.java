@@ -32,14 +32,25 @@ class ChargePointRepositoryAdapterTest {
     var configurationEntity = new ConfigurationEntity("config", "desc", "{}", null);
     configurationEntity.setId(7L);
     when(configurationJpaRepository.findById(7L)).thenReturn(Optional.of(configurationEntity));
-    var savedEntity = new ChargePointEntity("serial", "Type", "Const", "client-id",
-        configurationEntity);
+    var savedEntity =
+        new ChargePointEntity("serial", "Type", "Const", "client-id", configurationEntity);
     savedEntity.setId(3L);
     when(chargePointJpaRepository.save(any(ChargePointEntity.class))).thenReturn(savedEntity);
     var firmware = new fr.uge.ocpp.domain.models.Firmware(9L, "url", "1.0.0", "Const", null);
     var configuration = new Configuration(7L, "config", "desc", null, "{}", firmware);
-    var chargePoint = new ChargePoint(null, "serial", "Type", "Const", "client-id", null, "",
-        false, Step.FIRMWARE, StatusProcess.PENDING, configuration);
+    var chargePoint =
+        new ChargePoint(
+            null,
+            "serial",
+            "Type",
+            "Const",
+            "client-id",
+            null,
+            "",
+            false,
+            Step.FIRMWARE,
+            StatusProcess.PENDING,
+            configuration);
 
     ChargePoint saved = adapter.save(chargePoint);
 
@@ -55,8 +66,7 @@ class ChargePointRepositoryAdapterTest {
   void should_find_by_id_and_map_entity_to_domain_model() {
     var configurationEntity = new ConfigurationEntity("config", "desc", "{}", null);
     configurationEntity.setId(7L);
-    var entity = new ChargePointEntity("serial", "Type", "Const", "client-id",
-        configurationEntity);
+    var entity = new ChargePointEntity("serial", "Type", "Const", "client-id", configurationEntity);
     entity.setId(3L);
     when(chargePointJpaRepository.findById(3L)).thenReturn(Optional.of(entity));
 
@@ -69,18 +79,17 @@ class ChargePointRepositoryAdapterTest {
 
   @Test
   void should_map_page_query_sort_direction() {
-    var pageableCaptor = org.mockito.ArgumentCaptor
-        .forClass(org.springframework.data.domain.Pageable.class);
-    when(chargePointJpaRepository
-        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(any(), any()))
+    var pageableCaptor =
+        org.mockito.ArgumentCaptor.forClass(org.springframework.data.domain.Pageable.class);
+    when(chargePointJpaRepository.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(any(), any()))
         .thenReturn(org.springframework.data.domain.Page.empty());
     var pageQuery = new fr.uge.ocpp.domain.models.PageQuery(2, 10, Sort.ASC);
 
     adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageQuery, "client");
 
     org.mockito.Mockito.verify(chargePointJpaRepository)
-        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageableCaptor.capture(),
-            org.mockito.ArgumentMatchers.eq("client"));
+        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
+            pageableCaptor.capture(), org.mockito.ArgumentMatchers.eq("client"));
     assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(2);
     assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(10);
   }

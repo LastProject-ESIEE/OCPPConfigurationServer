@@ -18,16 +18,18 @@ import java.util.Objects;
 
 /** Adapter implementing the charge point use cases on top of the SPI ports. */
 @DomainService
-public record ChargePointServiceAdapter(ChargePointRepository chargePointRepository,
-                                        ConfigurationRepository configurationRepository,
-                                        Clock clock) implements ChargePointService {
+public record ChargePointServiceAdapter(
+    ChargePointRepository chargePointRepository,
+    ConfigurationRepository configurationRepository,
+    Clock clock)
+    implements ChargePointService {
 
   /**
    * Creates the adapter.
    *
-   * @param chargePointRepository    the charge point persistence port.
+   * @param chargePointRepository the charge point persistence port.
    * @param configurationRepository the configuration persistence port.
-   * @param clock                    the clock used to timestamp updates.
+   * @param clock the clock used to timestamp updates.
    */
   public ChargePointServiceAdapter {
     Objects.requireNonNull(chargePointRepository);
@@ -36,8 +38,8 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
   }
 
   /**
-   * Creates a charge point. A charge point with the same serial number and constructor
-   * must not already exist.
+   * Creates a charge point. A charge point with the same serial number and constructor must not
+   * already exist.
    *
    * @param chargePoint the charge point to create.
    * @return the created charge point.
@@ -48,8 +50,13 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
     checkFields(chargePoint);
     checkAlreadyExisting(chargePoint.serialNumber(), chargePoint.constructor());
     var configuration = resolveConfiguration(chargePoint.configuration());
-    var toSave = ChargePoint.of(chargePoint.serialNumber(), chargePoint.type(),
-        chargePoint.constructor(), chargePoint.clientId(), configuration);
+    var toSave =
+        ChargePoint.of(
+            chargePoint.serialNumber(),
+            chargePoint.type(),
+            chargePoint.constructor(),
+            chargePoint.clientId(),
+            configuration);
     return chargePointRepository.save(toSave);
   }
 
@@ -66,7 +73,7 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
   /**
    * Finds the charge points matching the given request, paginated.
    *
-   * @param request   the search request.
+   * @param request the search request.
    * @param pageQuery the pagination query.
    * @return the corresponding charge points.
    */
@@ -84,10 +91,10 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
    */
   @Override
   public ChargePoint findById(long id) {
-    return chargePointRepository.findById(id)
+    return chargePointRepository
+        .findById(id)
         .orElseThrow(() -> new ChargePointNotFoundException("Pas de borne avec l'id : " + id));
   }
-
 
   /**
    * Counts the charge points matching the given request.
@@ -111,43 +118,53 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
   }
 
   /**
-   * Updates the charge point with the given identifier. The new serial number and
-   * constructor must not be already used by another charge point.
+   * Updates the charge point with the given identifier. The new serial number and constructor must
+   * not be already used by another charge point.
    *
-   * @param id          the identifier of the charge point to update.
-   * @param newValues   the new values of the charge point.
+   * @param id the identifier of the charge point to update.
+   * @param newValues the new values of the charge point.
    * @return the updated charge point.
    */
   @Override
   public ChargePoint update(long id, ChargePoint newValues) {
     Objects.requireNonNull(newValues);
     checkFields(newValues);
-    var old = chargePointRepository.findById(id)
-        .orElseThrow(() -> new ChargePointNotFoundException("Pas de borne avec l'id : " + id));
+    var old =
+        chargePointRepository
+            .findById(id)
+            .orElseThrow(() -> new ChargePointNotFoundException("Pas de borne avec l'id : " + id));
     chargePointRepository
-        .findBySerialNumberChargepointAndConstructor(newValues.serialNumber(),
-            newValues.constructor())
+        .findBySerialNumberChargepointAndConstructor(
+            newValues.serialNumber(), newValues.constructor())
         .filter(existing -> existing.id() != id)
-        .ifPresent(existing -> {
-          throw new ChargePointAlreadyExistingException(
-              "Une borne utilise déjà ce numéro de série et constructeur : "
-                  + newValues.serialNumber() + ", " + newValues.constructor());
-        });
+        .ifPresent(
+            existing -> {
+              throw new ChargePointAlreadyExistingException(
+                  "Une borne utilise déjà ce numéro de série et constructeur : "
+                      + newValues.serialNumber()
+                      + ", "
+                      + newValues.constructor());
+            });
     var configuration = resolveConfiguration(newValues.configuration());
-    var toSave = old.withSerialNumber(newValues.serialNumber())
-        .withType(newValues.type())
-        .withConstructor(newValues.constructor())
-        .withClientId(newValues.clientId())
-        .withConfiguration(configuration)
-        .withLastUpdate(LocalDateTime.now(clock));
+    var toSave =
+        old.withSerialNumber(newValues.serialNumber())
+            .withType(newValues.type())
+            .withConstructor(newValues.constructor())
+            .withClientId(newValues.clientId())
+            .withConfiguration(configuration)
+            .withLastUpdate(LocalDateTime.now(clock));
     return chargePointRepository.save(toSave);
   }
 
   private void checkFields(ChargePoint chargePoint) {
-    if (chargePoint.serialNumber() == null || chargePoint.serialNumber().isBlank()
-        || chargePoint.constructor() == null || chargePoint.constructor().isBlank()
-        || chargePoint.type() == null || chargePoint.type().isBlank()
-        || chargePoint.clientId() == null || chargePoint.clientId().isBlank()) {
+    if (chargePoint.serialNumber() == null
+        || chargePoint.serialNumber().isBlank()
+        || chargePoint.constructor() == null
+        || chargePoint.constructor().isBlank()
+        || chargePoint.type() == null
+        || chargePoint.type().isBlank()
+        || chargePoint.clientId() == null
+        || chargePoint.clientId().isBlank()) {
       throw new BadRequestException(
           "Constructeur, numéro de série, type et identifiant client sont requis");
     }
@@ -159,7 +176,9 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
         .isPresent()) {
       throw new ChargePointAlreadyExistingException(
           "Une borne utilise déjà ce numéro de série et constructeur : "
-              + serialNumber + ", " + constructor);
+              + serialNumber
+              + ", "
+              + constructor);
     }
   }
 
@@ -167,8 +186,11 @@ public record ChargePointServiceAdapter(ChargePointRepository chargePointReposit
     if (configuration == null) {
       return null;
     }
-    return configurationRepository.findById(configuration.id())
-        .orElseThrow(() -> new ConfigurationNotFoundException(
-            "Pas de configuration avec l'id : " + configuration.id()));
+    return configurationRepository
+        .findById(configuration.id())
+        .orElseThrow(
+            () ->
+                new ConfigurationNotFoundException(
+                    "Pas de configuration avec l'id : " + configuration.id()));
   }
 }

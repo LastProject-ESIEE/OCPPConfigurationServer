@@ -7,31 +7,29 @@ import fr.uge.ocpp.websocket.tools.JsonParser;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Parses an OCPP 2.0.1 message.
- */
+/** Parses an OCPP 2.0.1 message. */
 public class OcppMessageParser20 implements OcppMessageParser {
 
   @Override
   public Optional<OcppMessage> parseRequestMessage(WebSocketMessage webSocketMessage) {
     Objects.requireNonNull(webSocketMessage);
     return switch (webSocketMessage.messageName()) {
-      case BOOT_NOTIFICATION_REQUEST -> Optional.of(
-          JsonParser.stringToObject(BootNotificationRequest20.class,
-              webSocketMessage.data()));
+      case BOOT_NOTIFICATION_REQUEST ->
+          Optional.of(
+              JsonParser.stringToObject(BootNotificationRequest20.class, webSocketMessage.data()));
       default -> Optional.empty();
     };
   }
 
   @Override
-  public Optional<OcppMessage> parseResponseMessage(WebSocketMessage requestMessage,
-                                                    WebSocketMessage responseMessage) {
+  public Optional<OcppMessage> parseResponseMessage(
+      WebSocketMessage requestMessage, WebSocketMessage responseMessage) {
     Objects.requireNonNull(requestMessage);
     Objects.requireNonNull(responseMessage);
     return switch (requestMessage.messageName()) {
-      case SET_VARIABLES_REQUEST -> Optional.of(
-              JsonParser.stringToObject(SetVariablesResponse20.class,
-                      responseMessage.data()));
+      case SET_VARIABLES_REQUEST ->
+          Optional.of(
+              JsonParser.stringToObject(SetVariablesResponse20.class, responseMessage.data()));
       default -> Optional.empty();
     };
   }

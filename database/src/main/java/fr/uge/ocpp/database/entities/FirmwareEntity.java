@@ -46,28 +46,28 @@ public class FirmwareEntity {
   @Column(name = "constructor", nullable = false, length = 45)
   private String constructor;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-  @JoinTable(name = "compatibility",
+  @ManyToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+      fetch = FetchType.EAGER)
+  @JoinTable(
+      name = "compatibility",
       joinColumns = @JoinColumn(name = "id_firmware"),
       inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
   private Set<TypeAllowedEntity> typesAllowed = new HashSet<>();
 
   /** Creates an empty firmware, required by JPA. */
-  protected FirmwareEntity() {
-  }
+  protected FirmwareEntity() {}
 
   /**
    * Creates a firmware.
    *
-   * @param url         the url of the firmware.
-   * @param version     the version of the firmware.
+   * @param url the url of the firmware.
+   * @param version the version of the firmware.
    * @param constructor the constructor of the firmware.
    * @param typesAllowed the charge point models compatible with the firmware.
    */
-  public FirmwareEntity(String url,
-                        String version,
-                        String constructor,
-                        Set<TypeAllowedEntity> typesAllowed) {
+  public FirmwareEntity(
+      String url, String version, String constructor, Set<TypeAllowedEntity> typesAllowed) {
     this.url = Objects.requireNonNull(url);
     this.version = Objects.requireNonNull(version);
     this.constructor = Objects.requireNonNull(constructor);
@@ -123,7 +123,8 @@ public class FirmwareEntity {
       return false;
     }
     FirmwareEntity that = (FirmwareEntity) o;
-    return Objects.equals(id, that.id) && Objects.equals(url, that.url)
+    return Objects.equals(id, that.id)
+        && Objects.equals(url, that.url)
         && Objects.equals(version, that.version)
         && Objects.equals(constructor, that.constructor)
         && Objects.equals(typesAllowed, that.typesAllowed);
@@ -137,11 +138,19 @@ public class FirmwareEntity {
   @Override
   public String toString() {
     return "FirmwareEntity{"
-        + "id=" + id
-        + ", url='" + url + '\''
-        + ", version='" + version + '\''
-        + ", constructor='" + constructor + '\''
-        + ", typesAllowed=" + typesAllowed
+        + "id="
+        + id
+        + ", url='"
+        + url
+        + '\''
+        + ", version='"
+        + version
+        + '\''
+        + ", constructor='"
+        + constructor
+        + '\''
+        + ", typesAllowed="
+        + typesAllowed
         + '}';
   }
 }

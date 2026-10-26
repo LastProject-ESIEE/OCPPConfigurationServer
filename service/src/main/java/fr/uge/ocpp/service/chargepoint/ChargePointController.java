@@ -38,8 +38,7 @@ public class ChargePointController {
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
   public List<ChargePointDto> getAllChargepoints() {
-    return chargePointService.findAll().chargePointList().stream()
-        .map(ChargePointDto::of).toList();
+    return chargePointService.findAll().chargePointList().stream().map(ChargePointDto::of).toList();
   }
 
   /**
@@ -78,8 +77,8 @@ public class ChargePointController {
    */
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('EDITOR')")
-  public ResponseEntity<ChargePointDto> update(@PathVariable long id,
-      @RequestBody CreateChargePointDto createChargePointDto) {
+  public ResponseEntity<ChargePointDto> update(
+      @PathVariable long id, @RequestBody CreateChargePointDto createChargePointDto) {
     ChargePoint chargePoint =
         chargePointService.update(id, ChargePointMapper.toChargePoint(createChargePointDto));
     return new ResponseEntity<>(ChargePointDto.of(chargePoint), HttpStatus.OK);

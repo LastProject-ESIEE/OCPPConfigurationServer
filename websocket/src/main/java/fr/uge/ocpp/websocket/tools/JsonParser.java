@@ -4,16 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Objects;
 
-/**
- * Parses a JSON.
- */
+/** Parses a JSON. */
 public class JsonParser {
 
   /**
    * Transform object to formatted JSON string.
    *
    * @param object object to transform
-   * @param <T>    type of the object to transform
+   * @param <T> type of the object to transform
    * @return the string formatted
    */
   public static <T> String objectToJsonString(T object) {
@@ -29,9 +27,9 @@ public class JsonParser {
   /**
    * Transform a JSON string to object.
    *
-   * @param type    type of the object
+   * @param type type of the object
    * @param content json string that represent the object
-   * @param <T>     type of the object generated
+   * @param <T> type of the object generated
    * @return a new instance of object
    */
   public static <T> T stringToObject(Class<T> type, String content) {
@@ -44,6 +42,4 @@ public class JsonParser {
       throw new IllegalArgumentException("Unable to parse JSON string to object : " + e);
     }
   }
-
 }
-

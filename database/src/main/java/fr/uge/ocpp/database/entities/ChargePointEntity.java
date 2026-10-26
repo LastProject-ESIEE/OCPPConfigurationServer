@@ -38,7 +38,9 @@ public class ChargePointEntity {
   @Column(name = "client_id", nullable = false, length = 45)
   private String clientId;
 
-  @Column(name = "last_update", nullable = false,
+  @Column(
+      name = "last_update",
+      nullable = false,
       columnDefinition = "timestamp default current_timestamp")
   @CreationTimestamp
   private LocalDateTime lastUpdate = LocalDateTime.now();
@@ -49,12 +51,13 @@ public class ChargePointEntity {
   @Column(name = "state", nullable = false, columnDefinition = "boolean default false")
   private boolean state = false;
 
-  @Column(name = "step", nullable = false,
-      columnDefinition = "varchar(32) default 'FIRMWARE'")
+  @Column(name = "step", nullable = false, columnDefinition = "varchar(32) default 'FIRMWARE'")
   @Enumerated(EnumType.STRING)
   private Step step = Step.FIRMWARE;
 
-  @Column(name = "step_status", nullable = false,
+  @Column(
+      name = "step_status",
+      nullable = false,
       columnDefinition = "varchar(32) default 'PENDING'")
   @Enumerated(EnumType.STRING)
   private StatusProcess status = StatusProcess.PENDING;
@@ -64,23 +67,23 @@ public class ChargePointEntity {
   private ConfigurationEntity configuration;
 
   /** Creates an empty charge point, required by JPA. */
-  protected ChargePointEntity() {
-  }
+  protected ChargePointEntity() {}
 
   /**
    * Creates a charge point.
    *
    * @param serialNumberChargepoint the serial number of the charge point.
-   * @param type                    the commercial name of the charge point.
-   * @param constructor             the constructor of the charge point.
-   * @param clientId                the client identifier of the charge point.
-   * @param configuration           the configuration applied to the charge point.
+   * @param type the commercial name of the charge point.
+   * @param constructor the constructor of the charge point.
+   * @param clientId the client identifier of the charge point.
+   * @param configuration the configuration applied to the charge point.
    */
-  public ChargePointEntity(String serialNumberChargepoint,
-                          String type,
-                          String constructor,
-                          String clientId,
-                          ConfigurationEntity configuration) {
+  public ChargePointEntity(
+      String serialNumberChargepoint,
+      String type,
+      String constructor,
+      String clientId,
+      ConfigurationEntity configuration) {
     this.serialNumberChargepoint = Objects.requireNonNull(serialNumberChargepoint);
     this.type = Objects.requireNonNull(type);
     this.constructor = Objects.requireNonNull(constructor);
@@ -185,35 +188,65 @@ public class ChargePointEntity {
       return false;
     }
     ChargePointEntity that = (ChargePointEntity) o;
-    return state == that.state && Objects.equals(id, that.id)
+    return state == that.state
+        && Objects.equals(id, that.id)
         && Objects.equals(serialNumberChargepoint, that.serialNumberChargepoint)
-        && Objects.equals(type, that.type) && Objects.equals(constructor, that.constructor)
+        && Objects.equals(type, that.type)
+        && Objects.equals(constructor, that.constructor)
         && Objects.equals(clientId, that.clientId)
-        && Objects.equals(lastUpdate, that.lastUpdate) && Objects.equals(error, that.error)
-        && step == that.step && status == that.status
+        && Objects.equals(lastUpdate, that.lastUpdate)
+        && Objects.equals(error, that.error)
+        && step == that.step
+        && status == that.status
         && Objects.equals(configuration, that.configuration);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, serialNumberChargepoint, type, constructor, clientId, lastUpdate,
-        error, state, step, status, configuration);
+    return Objects.hash(
+        id,
+        serialNumberChargepoint,
+        type,
+        constructor,
+        clientId,
+        lastUpdate,
+        error,
+        state,
+        step,
+        status,
+        configuration);
   }
 
   @Override
   public String toString() {
     return "ChargePointEntity{"
-        + "id=" + id
-        + ", serialNumberChargepoint='" + serialNumberChargepoint + '\''
-        + ", type='" + type + '\''
-        + ", constructor='" + constructor + '\''
-        + ", clientId='" + clientId + '\''
-        + ", lastUpdate=" + lastUpdate
-        + ", error='" + error + '\''
-        + ", state=" + state
-        + ", step=" + step
-        + ", status=" + status
-        + ", configuration=" + (configuration == null ? null : configuration.getId())
+        + "id="
+        + id
+        + ", serialNumberChargepoint='"
+        + serialNumberChargepoint
+        + '\''
+        + ", type='"
+        + type
+        + '\''
+        + ", constructor='"
+        + constructor
+        + '\''
+        + ", clientId='"
+        + clientId
+        + '\''
+        + ", lastUpdate="
+        + lastUpdate
+        + ", error='"
+        + error
+        + '\''
+        + ", state="
+        + state
+        + ", step="
+        + step
+        + ", status="
+        + status
+        + ", configuration="
+        + (configuration == null ? null : configuration.getId())
         + '}';
   }
 }

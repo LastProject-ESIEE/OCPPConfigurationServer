@@ -9,7 +9,5 @@ import fr.uge.ocpp.websocket.ocpp.ocpp2.data.ChargingStation;
  * @param chargingStation ChargingStation information.
  * @param reason String, the reason of why this message has been sent.
  */
-public record BootNotificationRequest20(ChargingStation chargingStation,
-                                        String reason) implements OcppMessageRequest {
-
-}
+public record BootNotificationRequest20(ChargingStation chargingStation, String reason)
+    implements OcppMessageRequest {}

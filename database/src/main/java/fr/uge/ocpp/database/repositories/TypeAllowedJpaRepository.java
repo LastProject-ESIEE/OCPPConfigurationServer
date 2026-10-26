@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 /** Spring Data access to the allowed type table. */
 @Repository
-public interface TypeAllowedJpaRepository extends JpaRepository<TypeAllowedEntity, Long> {
-}
+public interface TypeAllowedJpaRepository extends JpaRepository<TypeAllowedEntity, Long> {}

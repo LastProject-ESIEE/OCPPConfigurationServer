@@ -75,8 +75,8 @@ public class FirmwareController {
    */
   @PatchMapping("/update/{id}")
   @PreAuthorize("hasRole('EDITOR')")
-  public ResponseEntity<FirmwareDto> update(@PathVariable long id,
-      @RequestBody CreateFirmwareDto createFirmwareDto) {
+  public ResponseEntity<FirmwareDto> update(
+      @PathVariable long id, @RequestBody CreateFirmwareDto createFirmwareDto) {
     Firmware firmware =
         firmwareService.update(id, FirmwareMapper.toFirmware(id, createFirmwareDto));
     return new ResponseEntity<>(FirmwareDto.of(firmware), HttpStatus.OK);

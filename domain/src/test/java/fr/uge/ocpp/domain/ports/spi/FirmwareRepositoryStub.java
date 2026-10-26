@@ -1,18 +1,17 @@
 package fr.uge.ocpp.domain.ports.spi;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.Firmwares;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
 
 public class FirmwareRepositoryStub implements FirmwareRepository {
 
@@ -38,32 +37,33 @@ public class FirmwareRepositoryStub implements FirmwareRepository {
   @Override
   public Firmwares findAllByTypeAllowedAsc(TypeAllowed typeAllowed) {
     return firmwares.stream()
-      .filter(firmware -> firmware.typesAllowed().typesAllowedSet().contains(typeAllowed))
-      .collect(collectingAndThen(toList(), Firmwares::new));
+        .filter(firmware -> firmware.typesAllowed().typesAllowedSet().contains(typeAllowed))
+        .collect(collectingAndThen(toList(), Firmwares::new));
   }
 
   @Override
   public Firmwares findAllByTypeAllowedDesc(TypeAllowed typeAllowed) {
     return firmwares.stream()
-      .filter(firmware -> firmware.typesAllowed().typesAllowedSet().contains(typeAllowed))
-      .sorted(Comparator.comparing(Firmware::version).reversed())
-      .collect(collectingAndThen(toList(), Firmwares::new));
+        .filter(firmware -> firmware.typesAllowed().typesAllowedSet().contains(typeAllowed))
+        .sorted(Comparator.comparing(Firmware::version).reversed())
+        .collect(collectingAndThen(toList(), Firmwares::new));
   }
 
   @Override
   public Firmwares findAllByOrderByIdDesc() {
     return firmwares.stream()
-      .sorted(Comparator.comparingLong(Firmware::id).reversed())
-      .collect(collectingAndThen(toList(), Firmwares::new));
+        .sorted(Comparator.comparingLong(Firmware::id).reversed())
+        .collect(collectingAndThen(toList(), Firmwares::new));
   }
 
   @Override
   public PageResult<Firmware> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    List<Firmware> result = firmwares.stream()
-      .skip((long) pageQuery.page() * pageQuery.size())
-      .sorted(Comparator.comparingLong(Firmware::id).reversed())
-      .limit(pageQuery.size())
-      .toList();
+    List<Firmware> result =
+        firmwares.stream()
+            .skip((long) pageQuery.page() * pageQuery.size())
+            .sorted(Comparator.comparingLong(Firmware::id).reversed())
+            .limit(pageQuery.size())
+            .toList();
 
     return new PageResult<>(result, pageQuery.page(), pageQuery.size(), firmwares.size());
   }
@@ -80,8 +80,7 @@ public class FirmwareRepositoryStub implements FirmwareRepository {
 
   @Override
   public Firmware save(Firmware firmware) {
-    firmwares.removeIf(existing -> firmware.id() != null
-      && firmware.id().equals(existing.id()));
+    firmwares.removeIf(existing -> firmware.id() != null && firmware.id().equals(existing.id()));
     firmwares.add(firmware);
 
     return firmware;

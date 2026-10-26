@@ -5,12 +5,13 @@ import fr.uge.ocpp.service.firmware.FirmwareDto;
 import java.sql.Timestamp;
 
 /** A configuration exposed by the API. */
-public record ConfigurationDto(long id,
-                               String name,
-                               String description,
-                               Timestamp lastEdit,
-                               String configuration,
-                               FirmwareDto firmware) {
+public record ConfigurationDto(
+    long id,
+    String name,
+    String description,
+    Timestamp lastEdit,
+    String configuration,
+    FirmwareDto firmware) {
 
   /**
    * Maps a configuration domain model to the corresponding DTO.
@@ -19,10 +20,14 @@ public record ConfigurationDto(long id,
    * @return the corresponding DTO.
    */
   public static ConfigurationDto of(Configuration configuration) {
-    Timestamp lastEdit = configuration.lastEdit() == null ? null
-        : Timestamp.valueOf(configuration.lastEdit());
-    return new ConfigurationDto(configuration.id(), configuration.name(),
-        configuration.description(), lastEdit, configuration.configuration(),
+    Timestamp lastEdit =
+        configuration.lastEdit() == null ? null : Timestamp.valueOf(configuration.lastEdit());
+    return new ConfigurationDto(
+        configuration.id(),
+        configuration.name(),
+        configuration.description(),
+        lastEdit,
+        configuration.configuration(),
         configuration.firmware() == null ? null : FirmwareDto.of(configuration.firmware()));
   }
 }

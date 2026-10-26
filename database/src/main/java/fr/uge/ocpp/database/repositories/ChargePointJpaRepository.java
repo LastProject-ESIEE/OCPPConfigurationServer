@@ -18,11 +18,11 @@ public interface ChargePointJpaRepository
    * Finds the charge point with the given serial number and constructor.
    *
    * @param serialNumber the serial number of the charge point.
-   * @param constructor  the constructor of the charge point.
+   * @param constructor the constructor of the charge point.
    * @return the corresponding charge point if any.
    */
-  Optional<ChargePointEntity> findBySerialNumberChargepointAndConstructor(String serialNumber,
-                                                                          String constructor);
+  Optional<ChargePointEntity> findBySerialNumberChargepointAndConstructor(
+      String serialNumber, String constructor);
 
   /**
    * Finds all the charge points ordered by descending identifier.

@@ -1,8 +1,8 @@
 package fr.uge.ocpp.domain.models;
 
 /** A firmware of the OCPP configuration server domain. */
-public record Firmware(Long id, String url, String version, String constructor,
-                       TypesAllowed typesAllowed) {
+public record Firmware(
+    Long id, String url, String version, String constructor, TypesAllowed typesAllowed) {
 
   /**
    * Returns a copy of this firmware with the given identifier.

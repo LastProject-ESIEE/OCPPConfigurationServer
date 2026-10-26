@@ -1,8 +1,6 @@
 package fr.uge.ocpp.websocket.ocpp;
 
-/**
- * Interface used to define an OCPP message.
- */
+/** Interface used to define an OCPP message. */
 public interface OcppMessage {
 
   /**
@@ -19,5 +17,4 @@ public interface OcppMessage {
       default -> MessageType.UNKNOWN;
     };
   }
-
 }

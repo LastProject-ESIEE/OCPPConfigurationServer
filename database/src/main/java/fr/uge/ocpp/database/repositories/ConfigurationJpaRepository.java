@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConfigurationJpaRepository
     extends JpaRepository<ConfigurationEntity, Long>,
-    JpaSpecificationExecutor<ConfigurationEntity> {
+        JpaSpecificationExecutor<ConfigurationEntity> {
 
   /**
    * Finds all the configurations ordered by descending identifier.

@@ -43,14 +43,13 @@ public class TypeAllowedEntity {
   private Set<FirmwareEntity> firmwares = new HashSet<>();
 
   /** Creates an empty allowed type, required by JPA. */
-  protected TypeAllowedEntity() {
-  }
+  protected TypeAllowedEntity() {}
 
   /**
    * Creates an allowed type.
    *
    * @param constructor the constructor of the charge point model.
-   * @param type        the commercial name of the charge point model.
+   * @param type the commercial name of the charge point model.
    */
   public TypeAllowedEntity(String constructor, String type) {
     this.constructor = Objects.requireNonNull(constructor);
@@ -90,7 +89,8 @@ public class TypeAllowedEntity {
       return false;
     }
     TypeAllowedEntity that = (TypeAllowedEntity) o;
-    return Objects.equals(id, that.id) && Objects.equals(constructor, that.constructor)
+    return Objects.equals(id, that.id)
+        && Objects.equals(constructor, that.constructor)
         && Objects.equals(type, that.type);
   }
 
@@ -102,9 +102,14 @@ public class TypeAllowedEntity {
   @Override
   public String toString() {
     return "TypeAllowedEntity{"
-        + "id=" + id
-        + ", constructor='" + constructor + '\''
-        + ", type='" + type + '\''
+        + "id="
+        + id
+        + ", constructor='"
+        + constructor
+        + '\''
+        + ", type='"
+        + type
+        + '\''
         + '}';
   }
 }

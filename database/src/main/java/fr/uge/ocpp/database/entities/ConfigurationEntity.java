@@ -40,7 +40,9 @@ public class ConfigurationEntity {
   @Column(name = "description", nullable = false, columnDefinition = "text default ''")
   private String description = "";
 
-  @Column(name = "last_edit", nullable = false,
+  @Column(
+      name = "last_edit",
+      nullable = false,
       columnDefinition = "timestamp default current_timestamp")
   @CreationTimestamp
   private LocalDateTime lastEdit = LocalDateTime.now();
@@ -53,21 +55,18 @@ public class ConfigurationEntity {
   private FirmwareEntity firmware;
 
   /** Creates an empty configuration, required by JPA. */
-  protected ConfigurationEntity() {
-  }
+  protected ConfigurationEntity() {}
 
   /**
    * Creates a configuration.
    *
-   * @param name          the name of the configuration.
-   * @param description   the description of the configuration.
+   * @param name the name of the configuration.
+   * @param description the description of the configuration.
    * @param configuration the content of the configuration.
-   * @param firmware      the firmware of the configuration.
+   * @param firmware the firmware of the configuration.
    */
-  public ConfigurationEntity(String name,
-                             String description,
-                             String configuration,
-                             FirmwareEntity firmware) {
+  public ConfigurationEntity(
+      String name, String description, String configuration, FirmwareEntity firmware) {
     this.name = Objects.requireNonNull(name);
     this.description = Objects.requireNonNullElse(description, "");
     this.configuration = Objects.requireNonNull(configuration);
@@ -131,7 +130,8 @@ public class ConfigurationEntity {
       return false;
     }
     ConfigurationEntity that = (ConfigurationEntity) o;
-    return Objects.equals(id, that.id) && Objects.equals(name, that.name)
+    return Objects.equals(id, that.id)
+        && Objects.equals(name, that.name)
         && Objects.equals(description, that.description)
         && Objects.equals(lastEdit, that.lastEdit)
         && Objects.equals(configuration, that.configuration)
@@ -146,12 +146,21 @@ public class ConfigurationEntity {
   @Override
   public String toString() {
     return "ConfigurationEntity{"
-        + "id=" + id
-        + ", name='" + name + '\''
-        + ", description='" + description + '\''
-        + ", lastEdit=" + lastEdit
-        + ", configuration='" + configuration + '\''
-        + ", firmware=" + (firmware == null ? null : firmware.getId())
+        + "id="
+        + id
+        + ", name='"
+        + name
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", lastEdit="
+        + lastEdit
+        + ", configuration='"
+        + configuration
+        + '\''
+        + ", firmware="
+        + (firmware == null ? null : firmware.getId())
         + '}';
   }
 }

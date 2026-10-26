@@ -25,7 +25,7 @@ public interface ChargePointService {
   /**
    * Finds the charge points matching the given request, paginated.
    *
-   * @param request   the search request.
+   * @param request the search request.
    * @param pageQuery the pagination query.
    * @return the corresponding charge points.
    */
@@ -57,7 +57,7 @@ public interface ChargePointService {
   /**
    * Updates the charge point with the given identifier.
    *
-   * @param id         the identifier of the charge point to update.
+   * @param id the identifier of the charge point to update.
    * @param chargePoint the new values of the charge point.
    * @return the updated charge point.
    */

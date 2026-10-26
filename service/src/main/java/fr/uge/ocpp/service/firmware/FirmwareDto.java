@@ -6,11 +6,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /** A firmware exposed by the API. */
-public record FirmwareDto(long id,
-                          String url,
-                          String version,
-                          String constructor,
-                          Set<TypeAllowedDto> typesAllowed) {
+public record FirmwareDto(
+    long id, String url, String version, String constructor, Set<TypeAllowedDto> typesAllowed) {
 
   /**
    * Maps a firmware domain model to the corresponding DTO.
@@ -19,9 +16,15 @@ public record FirmwareDto(long id,
    * @return the corresponding DTO.
    */
   public static FirmwareDto of(Firmware firmware) {
-    return new FirmwareDto(firmware.id(), firmware.url(), firmware.version(),
-        firmware.constructor(), firmware.typesAllowed() == null ? null
+    return new FirmwareDto(
+        firmware.id(),
+        firmware.url(),
+        firmware.version(),
+        firmware.constructor(),
+        firmware.typesAllowed() == null
+            ? null
             : firmware.typesAllowed().typesAllowedSet().stream()
-                .map(TypeAllowedDto::of).collect(Collectors.toSet()));
+                .map(TypeAllowedDto::of)
+                .collect(Collectors.toSet()));
   }
 }

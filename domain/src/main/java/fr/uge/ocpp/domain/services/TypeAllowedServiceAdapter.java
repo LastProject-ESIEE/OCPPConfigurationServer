@@ -40,7 +40,7 @@ public record TypeAllowedServiceAdapter(TypeAllowedRepository typeAllowedReposit
   @Override
   public TypeAllowed save(TypeAllowed typeAllowed) {
     Objects.requireNonNull(typeAllowed);
-    return typeAllowedRepository
-        .save(new TypeAllowed(null, typeAllowed.constructor(), typeAllowed.type()));
+    return typeAllowedRepository.save(
+        new TypeAllowed(null, typeAllowed.constructor(), typeAllowed.type()));
   }
 }

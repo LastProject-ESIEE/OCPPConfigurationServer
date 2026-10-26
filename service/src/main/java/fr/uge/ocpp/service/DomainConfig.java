@@ -33,14 +33,16 @@ public class DomainConfig {
   /**
    * Provides the charge point use cases.
    *
-   * @param chargePointRepository    the charge point persistence port.
+   * @param chargePointRepository the charge point persistence port.
    * @param configurationRepository the configuration persistence port.
-   * @param clock                    the clock used to timestamp updates.
+   * @param clock the clock used to timestamp updates.
    * @return the charge point service.
    */
   @Bean
-  public ChargePointService chargePointService(ChargePointRepository chargePointRepository,
-      ConfigurationRepository configurationRepository, Clock clock) {
+  public ChargePointService chargePointService(
+      ChargePointRepository chargePointRepository,
+      ConfigurationRepository configurationRepository,
+      Clock clock) {
     return new ChargePointServiceAdapter(chargePointRepository, configurationRepository, clock);
   }
 
@@ -48,27 +50,28 @@ public class DomainConfig {
    * Provides the configuration use cases.
    *
    * @param configurationRepository the configuration persistence port.
-   * @param firmwareRepository       the firmware persistence port.
-   * @param clock                    the clock used to timestamp updates.
+   * @param firmwareRepository the firmware persistence port.
+   * @param clock the clock used to timestamp updates.
    * @return the configuration service.
    */
   @Bean
   public ConfigurationService configurationService(
       ConfigurationRepository configurationRepository,
-      FirmwareRepository firmwareRepository, Clock clock) {
+      FirmwareRepository firmwareRepository,
+      Clock clock) {
     return new ConfigurationServiceAdapter(configurationRepository, firmwareRepository, clock);
   }
 
   /**
    * Provides the firmware use cases.
    *
-   * @param firmwareRepository      the firmware persistence port.
+   * @param firmwareRepository the firmware persistence port.
    * @param typeAllowedRepository the allowed type persistence port.
    * @return the firmware service.
    */
   @Bean
-  public FirmwareService firmwareService(FirmwareRepository firmwareRepository,
-      TypeAllowedRepository typeAllowedRepository) {
+  public FirmwareService firmwareService(
+      FirmwareRepository firmwareRepository, TypeAllowedRepository typeAllowedRepository) {
     return new FirmwareServiceAdapter(firmwareRepository, typeAllowedRepository);
   }
 

@@ -9,5 +9,6 @@ import fr.uge.ocpp.websocket.ocpp.ocpp16.ResetRequest16;
  * - Hard, the reboot will be done as soon as possible.
  */
 public enum ResetType {
-  Hard, Soft
+  Hard,
+  Soft
 }

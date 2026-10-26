@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the allowed types in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
-public class TypeAllowedRepositoryAdapter
-    implements TypeAllowedRepository {
+public class TypeAllowedRepositoryAdapter implements TypeAllowedRepository {
 
   private final TypeAllowedJpaRepository typeAllowedJpaRepository;
 
@@ -34,8 +33,10 @@ public class TypeAllowedRepositoryAdapter
    */
   @Override
   public TypesAllowed findAll() {
-    return new TypesAllowed(typeAllowedJpaRepository.findAll().stream()
-        .map(EntityMapper::toTypeAllowed).collect(java.util.stream.Collectors.toSet()));
+    return new TypesAllowed(
+        typeAllowedJpaRepository.findAll().stream()
+            .map(EntityMapper::toTypeAllowed)
+            .collect(java.util.stream.Collectors.toSet()));
   }
 
   /**
