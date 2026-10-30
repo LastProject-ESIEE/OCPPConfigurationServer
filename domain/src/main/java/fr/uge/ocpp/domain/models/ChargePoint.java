@@ -209,6 +209,48 @@ public record ChargePoint(
   }
 
   /**
+   * Returns a copy of this charge point with the given error.
+   *
+   * @param error the new error.
+   * @return a copy of this charge point.
+   */
+  public ChargePoint withError(String error) {
+    return new ChargePoint(
+        id,
+        serialNumber,
+        type,
+        constructor,
+        clientId,
+        lastUpdate,
+        error,
+        state,
+        step,
+        statusProcess,
+        configuration);
+  }
+
+  /**
+   * Returns a copy of this charge point with the given connection state.
+   *
+   * @param state the new connection state.
+   * @return a copy of this charge point.
+   */
+  public ChargePoint withState(boolean state) {
+    return new ChargePoint(
+        id,
+        serialNumber,
+        type,
+        constructor,
+        clientId,
+        lastUpdate,
+        error,
+        state,
+        step,
+        statusProcess,
+        configuration);
+  }
+
+  /**
    * Returns a copy of this charge point with the given process status.
    *
    * @param step the new step of the ongoing process.
