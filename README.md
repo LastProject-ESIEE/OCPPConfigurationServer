@@ -30,20 +30,34 @@ A web application to update or configure a charge point with OCPP protocol.
 
 TODO : Explain the installation process !
 
+## Running locally with an in-memory database (easiest)
 
-## Running program
+The `local` Spring profile uses an in-memory H2 database in PostgreSQL compatibility mode:
+tables are created automatically from the JPA entities and seeded with one charge point
+(serial `ACE0272306`, vendor `Alfen`) and test users (`admin@local`, `editor@local`,
+`viewer@local`, password `admin` for all). The H2 console is available at
+http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:ocpp`).
+
+```bash
+mvn package -DskipTests
+SPRING_PROFILES_ACTIVE=local WEBSOCKET_URL=0.0.0.0 WEBSOCKET_PORT=8765 \
+  java -jar service/target/service-0.0.1-SNAPSHOT.jar
+```
+
+The OCPP websocket server starts with the application on `WEBSOCKET_URL:WEBSOCKET_PORT`.
+Then emulate a charge point with:
+
+```bash
+python3 doc/chargepoint_emulator.py --url ws://127.0.0.1:8765 --serial ACE0272306 --vendor Alfen
+```
+
+## Running program (with a real PostgreSQL database)
 You must set those environment variables in IntelliJ in the edit project configuration:
-- DB_ADDRESS=<*test database url*>;
-- DB_PASSWORD=<*test database password*>;
-- DB_USERNAME=<*test database username*>;
-- FINAL_WS_SERVER_ADDRESS=<*next supervisor server address>;
-- FS_HOST=<*ftp server address*>;
-- FS_PASSWORD=<*ftp password*>;
-- FS_PORT=<*ftp port*>
-- FS_USER=<*ftp user*>;
-- MYSQL_ADDON_USER=<*database username*>;
-- MYSQL_DB_ADDRESS=<*database url*>;
-- MYSQL_DB_PASSWORD=<*database password*>;
+- POSTGRESQL_DB_ADDRESS=<*database url, e.g. jdbc:postgresql://localhost:5432/ocpp*>;
+- POSTGRESQL_DB_USERNAME=<*database username*>;
+- POSTGRESQL_DB_PASSWORD=<*database password*>;
+- SPRING_JPA_HIBERNATE_DDL_AUTO=<*e.g. update to auto-create tables, none otherwise*>;
+- FINAL_WS_SERVER_ADDRESS=<*next supervisor server address*>;
 - WEBSOCKET_PORT=<*websocket port*>;
 - WEBSOCKET_URL=<*websocket ip address*>;
 
