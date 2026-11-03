@@ -18,8 +18,11 @@ INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id
 SELECT 'ACE0272306', 'EVE Single S-Line', 'Alfen', 'client-1', c.id_configuration
 FROM configuration c WHERE c.name = 'default';
 
--- Password for all three users is "admin" (BCrypt). One user per role, since the REST
--- endpoints check a single role (GET -> VISUALIZER, POST/PATCH -> EDITOR).
+-- Password for all users is "admin" (BCrypt). One user per role, since the REST
+-- endpoints check a single role (GET -> VISUALIZER, POST/PATCH -> EDITOR),
+-- plus a generic dummy account for local testing.
+INSERT INTO app_user (email, lastname, firstname, password, role, is_deleted)
+VALUES ('dummy@local', 'Dummy', 'Dummy', '$2b$12$dWkGVgFsvQbtxKrVGpqO8.szRqITU8cU/63KbRFkFa2p0Q4Kco94G', 'VISUALIZER', false);
 INSERT INTO app_user (email, lastname, firstname, password, role, is_deleted)
 VALUES ('admin@local', 'Admin', 'Admin', '$2b$12$dWkGVgFsvQbtxKrVGpqO8.szRqITU8cU/63KbRFkFa2p0Q4Kco94G', 'ADMINISTRATOR', false);
 INSERT INTO app_user (email, lastname, firstname, password, role, is_deleted)
