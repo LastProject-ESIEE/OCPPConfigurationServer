@@ -6,6 +6,7 @@ import fr.uge.ocpp.domain.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -73,5 +74,17 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ResponseEntity<ErrorMessage> handleForbiddenOperationException(RuntimeException ex) {
     return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.FORBIDDEN);
+  }
+
+  /**
+   * Handles the authentication failures (e.g. bad credentials on the login endpoint).
+   *
+   * @param ex the exception to handle.
+   * @return a 401 response with the error message.
+   */
+  @ExceptionHandler({AuthenticationException.class})
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ResponseEntity<ErrorMessage> handleAuthenticationException(AuthenticationException ex) {
+    return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.UNAUTHORIZED);
   }
 }
