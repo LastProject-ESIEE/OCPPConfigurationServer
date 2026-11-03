@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,25 +31,22 @@ public class WebSecurityConfig {
     http.authorizeHttpRequests(
             authorize ->
                 authorize
-                    .requestMatchers("/api/**")
+                    // The Swagger UI and API docs stay public so users can authenticate
+                    // from the Swagger page itself (Authorize button) instead of a
+                    // browser popup before the page loads.
+                    .requestMatchers("/api", "/v3/api-docs/**", "/swagger-ui/**")
+                    .permitAll()
+                    .requestMatchers("/api/**", "/h2-console/**")
                     .authenticated()
-                    .requestMatchers("/", "/about", "/v3/api-docs/**", "/swagger-ui/**")
+                    .requestMatchers("/", "/about")
                     .permitAll()
                     .anyRequest()
                     .permitAll())
         .csrf(AbstractHttpConfigurer::disable)
-        .httpBasic(httpBasic -> {});
+        .httpBasic(httpBasic -> {})
+        // The H2 console (local profile) renders in an iframe, so allow same-origin frames.
+        .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
     return http.build();
-  }
-
-  /**
-   * Removes the default ROLE_ prefix expected by the authority expressions.
-   *
-   * @return the granted authority defaults.
-   */
-  @Bean
-  static GrantedAuthorityDefaults grantedAuthorityDefaults() {
-    return new GrantedAuthorityDefaults("");
   }
 
   /**
