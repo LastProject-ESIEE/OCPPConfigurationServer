@@ -36,7 +36,10 @@ The `local` Spring profile uses an in-memory H2 database in PostgreSQL compatibi
 tables are created automatically from the JPA entities and seeded with one charge point
 (serial `ACE0272306`, vendor `Alfen`) and test users (`admin@local`, `editor@local`,
 `viewer@local`, password `admin` for all). The H2 console is available at
-http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:ocpp`).
+http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:ocpp`); like the REST API, it
+requires HTTP Basic authentication with one of the seeded users. The Swagger UI
+(http://localhost:8080/api) is public: open it, then use the Authorize button to enter your
+bearer token.
 
 ```bash
 mvn package -DskipTests
