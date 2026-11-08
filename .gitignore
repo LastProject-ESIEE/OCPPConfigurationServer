@@ -36,3 +36,14 @@ build/
 src/front/build/
 src/front/node_modules/
 src/main/resources/web/
+
+### Spring Boot environment-specific profiles ###
+# Local/dev config may hold machine-specific values; keep it out of git.
+# Commit a application-<profile>.example.yml template instead.
+**/application-local.yml
+**/application-local.yaml
+**/application-local.properties
+**/application-dev.yml
+**/application-dev.yaml
+**/application-dev.properties
+!**/application-*.example.*
