@@ -1,5 +1,10 @@
 package fr.uge.ocpp.database.entities;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toSet;
+
+import fr.uge.ocpp.domain.models.Firmware;
+import fr.uge.ocpp.domain.models.TypesAllowed;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,27 +19,27 @@ import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /** A firmware persisted with JPA in PostgreSQL. */
 @Entity
 @Table(name = "firmware")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class FirmwareEntity {
-
-  /**
-   * Creates a firmware reference with the given identifier.
-   *
-   * @param id the identifier of the firmware.
-   * @return a firmware reference.
-   */
-  public static FirmwareEntity reference(Long id) {
-    var entity = new FirmwareEntity();
-    entity.setId(id);
-    return entity;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id_firmware")
+  @Column(name = "id")
   private Long id;
 
   @Column(name = "url", nullable = false, columnDefinition = "text")
@@ -55,102 +60,27 @@ public class FirmwareEntity {
       inverseJoinColumns = @JoinColumn(name = "id_type_allowed"))
   private Set<TypeAllowedEntity> typesAllowed = new HashSet<>();
 
-  /** Creates an empty firmware, required by JPA. */
-  protected FirmwareEntity() {}
-
-  /**
-   * Creates a firmware.
-   *
-   * @param url the url of the firmware.
-   * @param version the version of the firmware.
-   * @param constructor the constructor of the firmware.
-   * @param typesAllowed the charge point models compatible with the firmware.
-   */
-  public FirmwareEntity(
-      String url, String version, String constructor, Set<TypeAllowedEntity> typesAllowed) {
-    this.url = Objects.requireNonNull(url);
-    this.version = Objects.requireNonNull(version);
-    this.constructor = Objects.requireNonNull(constructor);
-    this.typesAllowed = Objects.requireNonNullElseGet(typesAllowed, HashSet::new);
+  public static FirmwareEntity fromDomain(Firmware firmware) {
+    TypesAllowed typesAllowed =
+        Objects.requireNonNullElseGet(firmware.typesAllowed(), TypesAllowed::empty);
+    return new FirmwareEntity(
+        firmware.id(),
+        firmware.url(),
+        firmware.version(),
+        firmware.constructor(),
+        typesAllowed.stream().map(TypeAllowedEntity::fromDomain).collect(toSet()));
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-  public String getConstructor() {
-    return constructor;
-  }
-
-  public void setConstructor(String constructor) {
-    this.constructor = constructor;
-  }
-
-  public Set<TypeAllowedEntity> getTypesAllowed() {
-    return typesAllowed;
-  }
-
-  public void setTypesAllowed(Set<TypeAllowedEntity> typesAllowed) {
-    this.typesAllowed = typesAllowed;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    FirmwareEntity that = (FirmwareEntity) o;
-    return Objects.equals(id, that.id)
-        && Objects.equals(url, that.url)
-        && Objects.equals(version, that.version)
-        && Objects.equals(constructor, that.constructor)
-        && Objects.equals(typesAllowed, that.typesAllowed);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, url, version, constructor, typesAllowed);
-  }
-
-  @Override
-  public String toString() {
-    return "FirmwareEntity{"
-        + "id="
-        + id
-        + ", url='"
-        + url
-        + '\''
-        + ", version='"
-        + version
-        + '\''
-        + ", constructor='"
-        + constructor
-        + '\''
-        + ", typesAllowed="
-        + typesAllowed
-        + '}';
+  public Firmware toDomain() {
+    return Firmware.builder()
+        .id(id)
+        .url(url)
+        .version(version)
+        .constructor(constructor)
+        .typesAllowed(
+            typesAllowed.stream()
+                .map(TypeAllowedEntity::toDomain)
+                .collect(collectingAndThen(toSet(), TypesAllowed::new)))
+        .build();
   }
 }

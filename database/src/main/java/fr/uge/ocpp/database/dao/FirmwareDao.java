@@ -1,4 +1,4 @@
-package fr.uge.ocpp.database.repositories;
+package fr.uge.ocpp.database.dao;
 
 import fr.uge.ocpp.database.entities.FirmwareEntity;
 import fr.uge.ocpp.database.entities.TypeAllowedEntity;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 /** Spring Data access to the firmware table. */
 @Repository
-public interface FirmwareJpaRepository
+public interface FirmwareDao
     extends JpaRepository<FirmwareEntity, Long>, JpaSpecificationExecutor<FirmwareEntity> {
 
   /**

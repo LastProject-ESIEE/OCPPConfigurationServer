@@ -1,4 +1,4 @@
-package fr.uge.ocpp.database.repositories;
+package fr.uge.ocpp.database.dao;
 
 import fr.uge.ocpp.database.entities.ConfigurationEntity;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 /** Spring Data access to the configuration table. */
 @Repository
-public interface ConfigurationJpaRepository
+public interface ConfigurationDao
     extends JpaRepository<ConfigurationEntity, Long>,
         JpaSpecificationExecutor<ConfigurationEntity> {
 

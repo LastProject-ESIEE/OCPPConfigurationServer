@@ -1,7 +1,8 @@
 package fr.uge.ocpp.domain.models;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import lombok.Builder;
+import lombok.With;
 
 /**
  * A charge point of the OCPP configuration server domain.
@@ -18,18 +19,19 @@ import java.util.Objects;
  * @param statusProcess the status of the ongoing process.
  * @param configuration the configuration applied to the charge point.
  */
+@Builder
 public record ChargePoint(
-    Long id,
-    String serialNumber,
-    String type,
-    String constructor,
-    String clientId,
-    LocalDateTime lastUpdate,
-    String error,
-    boolean state,
-    Step step,
-    StatusProcess statusProcess,
-    Configuration configuration) {
+    @With Long id,
+    @With String serialNumber,
+    @With String type,
+    @With String constructor,
+    @With String clientId,
+    @With LocalDateTime lastUpdate,
+    @With String error,
+    @With boolean state,
+    @With Step step,
+    @With StatusProcess statusProcess,
+    @With Configuration configuration) {
 
   /**
    * Creates a new charge point with the given identity and configuration.
@@ -58,219 +60,6 @@ public record ChargePoint(
         false,
         null,
         null,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given identifier.
-   *
-   * @param id the new identifier.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withId(Long id) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given serial number.
-   *
-   * @param serialNumber the new serial number.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withSerialNumber(String serialNumber) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given type.
-   *
-   * @param type the new type.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withType(String type) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given constructor.
-   *
-   * @param constructor the new constructor.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withConstructor(String constructor) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given client identifier.
-   *
-   * @param clientId the new client identifier.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withClientId(String clientId) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given last update timestamp.
-   *
-   * @param lastUpdate the new last update timestamp.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withLastUpdate(LocalDateTime lastUpdate) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given configuration.
-   *
-   * @param configuration the new configuration.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withConfiguration(Configuration configuration) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given error.
-   *
-   * @param error the new error.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withError(String error) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given connection state.
-   *
-   * @param state the new connection state.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withState(boolean state) {
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
-        configuration);
-  }
-
-  /**
-   * Returns a copy of this charge point with the given process status.
-   *
-   * @param step the new step of the ongoing process.
-   * @param statusProcess the new status of the ongoing process.
-   * @return a copy of this charge point.
-   */
-  public ChargePoint withStatus(Step step, StatusProcess statusProcess) {
-    Objects.requireNonNull(step);
-    Objects.requireNonNull(statusProcess);
-    return new ChargePoint(
-        id,
-        serialNumber,
-        type,
-        constructor,
-        clientId,
-        lastUpdate,
-        error,
-        state,
-        step,
-        statusProcess,
         configuration);
   }
 }

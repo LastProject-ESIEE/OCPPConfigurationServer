@@ -11,30 +11,25 @@ import fr.uge.ocpp.websocket.ocpp.OcppMessageParser;
 import fr.uge.ocpp.websocket.ocpp.OcppVersion;
 import java.util.Objects;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /** Manages a charge point by listening to and sending messages to it over the web socket. */
+@AllArgsConstructor
+@Getter
+@Setter
+@Slf4j
 public class ChargePointManager {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ChargePointManager.class);
 
   private final OcppMessageParser ocppMessageParser;
   private final ChargePointRepository chargePointRepository;
   private final OcppObserver ocppObserver;
-  private long currentId = 1;
-  private WebSocketMessage pendingRequest = null;
-  private ChargePoint currentChargepoint = null;
+  private long currentId;
+  private WebSocketMessage pendingRequest;
+  private ChargePoint currentChargepoint;
 
-  /**
-   * ChargePointManager's constructor.
-   *
-   * @param ocppVersion the version of the OCPP protocol (1.6 or 2.0.1).
-   * @param ocppMessageSender the web socket connection used to send data.
-   * @param chargePointRepository the charge point's repository for database queries.
-   * @param firmwareRepository the firmware's repository for database queries.
-   * @param finalServerAddress the address of the next supervisor server forwarded to the charge
-   *     point, null or blank if none.
-   */
   public ChargePointManager(
       OcppVersion ocppVersion,
       OcppMessageSender ocppMessageSender,
@@ -51,43 +46,6 @@ public class ChargePointManager {
             chargePointRepository,
             Objects.requireNonNull(firmwareRepository),
             finalServerAddress);
-  }
-
-  /**
-   * Returns the current web socket message id.
-   *
-   * @return a long representing the current web socket message id.
-   */
-  public long getCurrentId() {
-    return currentId;
-  }
-
-  /**
-   * Sets the current pending request.<br>
-   * If the current pending request is set, we now wait for a response from the charge point.
-   *
-   * @param pendingRequest the {@link WebSocketMessage} request sent to the charge point.
-   */
-  public void setPendingRequest(WebSocketMessage pendingRequest) {
-    this.pendingRequest = pendingRequest;
-  }
-
-  /**
-   * Returns the charge point currently handled by this manager.
-   *
-   * @return the current {@link ChargePoint}, null if unknown.
-   */
-  public ChargePoint getCurrentChargepoint() {
-    return currentChargepoint;
-  }
-
-  /**
-   * Sets the charge point currently handled by this manager.
-   *
-   * @param currentChargepoint the current {@link ChargePoint}.
-   */
-  public void setCurrentChargepoint(ChargePoint currentChargepoint) {
-    this.currentChargepoint = currentChargepoint;
   }
 
   /**
@@ -122,7 +80,7 @@ public class ChargePointManager {
     if (currentChargepoint != null) {
       currentChargepoint = chargePointRepository.save(currentChargepoint.withState(false));
       notifyStatusUpdate();
-      LOGGER.info("charge point {} disconnected", currentChargepoint.serialNumber());
+      log.info("charge point {} disconnected", currentChargepoint.serialNumber());
     }
   }
 
@@ -137,16 +95,17 @@ public class ChargePointManager {
           chargePointRepository.save(
               currentChargepoint
                   .withError(ex.toString())
-                  .withStatus(currentChargepoint.step(), StatusProcess.FAILED));
+                  .withStatusProcess(StatusProcess.FAILED)
+                  .withStep(currentChargepoint.step()));
       notifyStatusUpdate();
-      LOGGER.error("an error occurred on charge point {}", currentChargepoint.serialNumber(), ex);
+      log.error("an error occurred on charge point {}", currentChargepoint.serialNumber(), ex);
     }
   }
 
   /** Logs the current status of the current {@link ChargePoint}. */
   public void notifyStatusUpdate() {
     if (currentChargepoint != null) {
-      LOGGER.info(
+      log.info(
           "charge point {} status update: state={} step={} status={}",
           currentChargepoint.serialNumber(),
           currentChargepoint.state(),
@@ -158,7 +117,7 @@ public class ChargePointManager {
   /** Logs the end of the process of the current {@link ChargePoint}. */
   public void notifyProcess() {
     if (currentChargepoint != null) {
-      LOGGER.info(
+      log.info(
           "charge point {} process {}: {}",
           currentChargepoint.serialNumber(),
           currentChargepoint.step(),
@@ -169,7 +128,7 @@ public class ChargePointManager {
   /** Logs the connection of the current {@link ChargePoint}. */
   public void notifyOnConnection() {
     if (currentChargepoint != null) {
-      LOGGER.info("charge point {} connected", currentChargepoint.serialNumber());
+      log.info("charge point {} connected", currentChargepoint.serialNumber());
     }
   }
 }

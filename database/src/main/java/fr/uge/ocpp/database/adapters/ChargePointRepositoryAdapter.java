@@ -1,16 +1,15 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.dao.ChargePointDao;
 import fr.uge.ocpp.database.entities.ChargePointEntity;
-import fr.uge.ocpp.database.repositories.ChargePointJpaRepository;
-import fr.uge.ocpp.database.repositories.ConfigurationJpaRepository;
 import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.ChargePoints;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.ports.spi.ChargePointRepository;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -19,23 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the charge points in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class ChargePointRepositoryAdapter implements ChargePointRepository {
 
-  private final ChargePointJpaRepository chargePointJpaRepository;
-  private final ConfigurationJpaRepository configurationJpaRepository;
-
-  /**
-   * Creates the adapter.
-   *
-   * @param chargePointJpaRepository the Spring Data repository of charge points.
-   * @param configurationJpaRepository the Spring Data repository of configurations.
-   */
-  public ChargePointRepositoryAdapter(
-      ChargePointJpaRepository chargePointJpaRepository,
-      ConfigurationJpaRepository configurationJpaRepository) {
-    this.chargePointJpaRepository = Objects.requireNonNull(chargePointJpaRepository);
-    this.configurationJpaRepository = Objects.requireNonNull(configurationJpaRepository);
-  }
+  private final ChargePointDao chargePointDao;
 
   /**
    * Finds the charge point with the given serial number and constructor.
@@ -47,9 +33,9 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
   @Override
   public Optional<ChargePoint> findBySerialNumberChargepointAndConstructor(
       String serialNumber, String constructor) {
-    return chargePointJpaRepository
+    return chargePointDao
         .findBySerialNumberChargepointAndConstructor(serialNumber, constructor)
-        .map(EntityMapper::toChargePoint);
+        .map(ChargePointEntity::toDomain);
   }
 
   /**
@@ -60,9 +46,7 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
   @Override
   public ChargePoints findAllByOrderByIdDesc() {
     return new ChargePoints(
-        chargePointJpaRepository.findAllByOrderByIdDesc().stream()
-            .map(EntityMapper::toChargePoint)
-            .toList());
+        chargePointDao.findAllByOrderByIdDesc().stream().map(ChargePointEntity::toDomain).toList());
   }
 
   /**
@@ -81,9 +65,8 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
             : Sort.Direction.DESC;
     var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
     var page =
-        chargePointJpaRepository.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-            pageable, clientId);
-    List<ChargePoint> content = page.stream().map(EntityMapper::toChargePoint).toList();
+        chargePointDao.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageable, clientId);
+    List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
 
@@ -95,7 +78,7 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
    */
   @Override
   public Optional<ChargePoint> findById(long id) {
-    return chargePointJpaRepository.findById(id).map(EntityMapper::toChargePoint);
+    return chargePointDao.findById(id).map(ChargePointEntity::toDomain);
   }
 
   /**
@@ -107,8 +90,7 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
   @Override
   @Transactional
   public ChargePoint save(ChargePoint chargePoint) {
-    var entity = EntityMapper.toChargePointEntity(chargePoint, configurationJpaRepository);
-    ChargePointEntity saved = chargePointJpaRepository.save(entity);
-    return EntityMapper.toChargePoint(saved);
+    ChargePointEntity entity = ChargePointEntity.fromDomain(chargePoint);
+    return chargePointDao.save(entity).toDomain();
   }
 }

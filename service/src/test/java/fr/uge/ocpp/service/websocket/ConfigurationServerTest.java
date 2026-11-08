@@ -1,6 +1,7 @@
 package fr.uge.ocpp.service.websocket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fr.uge.ocpp.domain.models.ChargePoint;
@@ -60,7 +61,8 @@ class ConfigurationServerTest {
     var chargePoint =
         ChargePoint.of(SERIAL, "EVE Single S-Line", VENDOR, "client-1", configuration)
             .withId(1L)
-            .withStatus(Step.FIRMWARE, StatusProcess.PENDING);
+            .withStep(Step.FIRMWARE)
+            .withStatusProcess(StatusProcess.PENDING);
     chargePointRepository = new InMemoryChargePointRepository(Map.of(SERIAL + VENDOR, chargePoint));
     var firmwareRepository = new InMemoryFirmwareRepository(List.of(firmware));
     serverStarted = new CountDownLatch(1);
@@ -133,7 +135,9 @@ class ConfigurationServerTest {
           }
 
           @Override
-          public void onError(Exception ex) {}
+          public void onError(Exception ex) {
+            // Test implementation
+          }
         };
     client.addHeader("Sec-WebSocket-Protocol", "ocpp1.6");
     client.connectBlocking(10, TimeUnit.SECONDS);
@@ -163,7 +167,7 @@ class ConfigurationServerTest {
               .orElseThrow();
     }
     assertEquals(StatusProcess.FINISHED, updated.statusProcess());
-    assertEquals(false, updated.state());
+    assertFalse(updated.state());
     client.closeBlocking();
   }
 

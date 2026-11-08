@@ -35,7 +35,13 @@ class JwtAuthenticationFilterTest {
   @Test
   void should_authenticate_request_with_valid_bearer_token() throws Exception {
     var user =
-        new UserEntity("Dummy", "Dummy", "dummy@local", "encoded", UserEntity.Role.VISUALIZER);
+        UserEntity.builder()
+            .firstName("Dummy")
+            .lastName("Dummy")
+            .email("dummy@local")
+            .password("encoded")
+            .role(UserEntity.Role.VISUALIZER)
+            .build();
     when(userDetailsService.loadUserByUsername("dummy@local"))
         .thenReturn(new UserDetailsImpl(user));
     var request = new MockHttpServletRequest();
