@@ -1,6 +1,6 @@
 package fr.uge.ocpp.service.security;
 
-import fr.uge.ocpp.database.repositories.UserJpaRepository;
+import fr.uge.ocpp.database.dao.UserDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -86,12 +86,12 @@ public class WebSecurityConfig {
   /**
    * Provides the user details service backed by the users table.
    *
-   * @param userJpaRepository the Spring Data repository of users.
+   * @param userDao the Spring Data repository of users.
    * @return the user details service.
    */
   @Bean
-  UserDetailsService userDetailsService(UserJpaRepository userJpaRepository) {
-    return new UserDetailsServiceImpl(userJpaRepository);
+  UserDetailsService userDetailsService(UserDao userDao) {
+    return new UserDetailsServiceImpl(userDao);
   }
 
   /**

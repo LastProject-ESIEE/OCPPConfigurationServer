@@ -1,4 +1,4 @@
-package fr.uge.ocpp.database.repositories;
+package fr.uge.ocpp.database.dao;
 
 import fr.uge.ocpp.database.entities.ChargePointEntity;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 /** Spring Data access to the charge point table. */
 @Repository
-public interface ChargePointJpaRepository
+public interface ChargePointDao
     extends JpaRepository<ChargePointEntity, Long>, JpaSpecificationExecutor<ChargePointEntity> {
 
   /**

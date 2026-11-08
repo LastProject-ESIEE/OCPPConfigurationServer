@@ -1,6 +1,6 @@
 package fr.uge.ocpp.service.security;
 
-import fr.uge.ocpp.database.repositories.UserJpaRepository;
+import fr.uge.ocpp.database.dao.UserDao;
 import java.util.Objects;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,15 +9,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 /** Loads the application users from the database for Spring Security. */
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  private final UserJpaRepository userJpaRepository;
+  private final UserDao userDao;
 
   /**
    * Creates the service.
    *
-   * @param userJpaRepository the Spring Data repository of users.
+   * @param userDao the Spring Data repository of users.
    */
-  public UserDetailsServiceImpl(UserJpaRepository userJpaRepository) {
-    this.userJpaRepository = Objects.requireNonNull(userJpaRepository);
+  public UserDetailsServiceImpl(UserDao userDao) {
+    this.userDao = Objects.requireNonNull(userDao);
   }
 
   /**
@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
    */
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    var user = userJpaRepository.findByEmail(username);
+    var user = userDao.findByEmail(username);
     if (user == null) {
       throw new UsernameNotFoundException("User does not exist");
     }

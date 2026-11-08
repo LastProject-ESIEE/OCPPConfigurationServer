@@ -1,8 +1,9 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.dao.FirmwareDao;
+import fr.uge.ocpp.database.dao.TypeAllowedDao;
+import fr.uge.ocpp.database.entities.FirmwareEntity;
 import fr.uge.ocpp.database.entities.TypeAllowedEntity;
-import fr.uge.ocpp.database.repositories.FirmwareJpaRepository;
-import fr.uge.ocpp.database.repositories.TypeAllowedJpaRepository;
 import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.Firmwares;
 import fr.uge.ocpp.domain.models.PageQuery;
@@ -10,8 +11,8 @@ import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.ports.spi.FirmwareRepository;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -20,23 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the firmwares in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class FirmwareRepositoryAdapter implements FirmwareRepository {
 
-  private final FirmwareJpaRepository firmwareJpaRepository;
-  private final TypeAllowedJpaRepository typeAllowedJpaRepository;
-
-  /**
-   * Creates the adapter.
-   *
-   * @param firmwareJpaRepository the Spring Data repository of firmwares.
-   * @param typeAllowedJpaRepository the Spring Data repository of allowed types.
-   */
-  public FirmwareRepositoryAdapter(
-      FirmwareJpaRepository firmwareJpaRepository,
-      TypeAllowedJpaRepository typeAllowedJpaRepository) {
-    this.firmwareJpaRepository = Objects.requireNonNull(firmwareJpaRepository);
-    this.typeAllowedJpaRepository = Objects.requireNonNull(typeAllowedJpaRepository);
-  }
+  private final FirmwareDao firmwareDao;
+  private final TypeAllowedDao typeAllowedDao;
 
   /**
    * Finds the firmware with the given version.
@@ -46,7 +35,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
    */
   @Override
   public Optional<Firmware> findByVersion(String version) {
-    return firmwareJpaRepository.findByVersion(version).map(EntityMapper::toFirmware);
+    return firmwareDao.findByVersion(version).map(FirmwareEntity::toDomain);
   }
 
   /**
@@ -58,12 +47,12 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
   @Override
   public Firmwares findAllByTypeAllowedAsc(TypeAllowed typeAllowed) {
     var entity =
-        typeAllowedJpaRepository
+        typeAllowedDao
             .findById(typeAllowed.id())
             .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
     return new Firmwares(
-        firmwareJpaRepository.findAllByTypeAllowedAsc(entity).stream()
-            .map(EntityMapper::toFirmware)
+        firmwareDao.findAllByTypeAllowedAsc(entity).stream()
+            .map(FirmwareEntity::toDomain)
             .toList());
   }
 
@@ -76,12 +65,12 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
   @Override
   public Firmwares findAllByTypeAllowedDesc(TypeAllowed typeAllowed) {
     var entity =
-        typeAllowedJpaRepository
+        typeAllowedDao
             .findById(typeAllowed.id())
             .orElseGet(() -> TypeAllowedEntity.reference(typeAllowed.id()));
     return new Firmwares(
-        firmwareJpaRepository.findAllByTypeAllowedDesc(entity).stream()
-            .map(EntityMapper::toFirmware)
+        firmwareDao.findAllByTypeAllowedDesc(entity).stream()
+            .map(FirmwareEntity::toDomain)
             .toList());
   }
 
@@ -93,9 +82,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
   @Override
   public Firmwares findAllByOrderByIdDesc() {
     return new Firmwares(
-        firmwareJpaRepository.findAllByOrderByIdDesc().stream()
-            .map(EntityMapper::toFirmware)
-            .toList());
+        firmwareDao.findAllByOrderByIdDesc().stream().map(FirmwareEntity::toDomain).toList());
   }
 
   /**
@@ -108,8 +95,8 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
   public PageResult<Firmware> findAllByOrderByIdDesc(PageQuery pageQuery) {
     var pageable =
         PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
-    var page = firmwareJpaRepository.findAllByOrderByIdDesc(pageable);
-    List<Firmware> content = page.stream().map(EntityMapper::toFirmware).toList();
+    var page = firmwareDao.findAllByOrderByIdDesc(pageable);
+    List<Firmware> content = page.stream().map(FirmwareEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
 
@@ -121,7 +108,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
    */
   @Override
   public Optional<Firmware> findByUrl(String url) {
-    return firmwareJpaRepository.findByUrl(url).map(EntityMapper::toFirmware);
+    return firmwareDao.findByUrl(url).map(FirmwareEntity::toDomain);
   }
 
   /**
@@ -132,7 +119,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
    */
   @Override
   public Optional<Firmware> findById(long id) {
-    return firmwareJpaRepository.findById(id).map(EntityMapper::toFirmware);
+    return firmwareDao.findById(id).map(FirmwareEntity::toDomain);
   }
 
   /**
@@ -144,8 +131,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
   @Override
   @Transactional
   public Firmware save(Firmware firmware) {
-    var entity = EntityMapper.toFirmwareEntity(firmware, typeAllowedJpaRepository);
-    var saved = firmwareJpaRepository.save(entity);
-    return EntityMapper.toFirmware(saved);
+    FirmwareEntity entity = FirmwareEntity.fromDomain(firmware);
+    return firmwareDao.save(entity).toDomain();
   }
 }

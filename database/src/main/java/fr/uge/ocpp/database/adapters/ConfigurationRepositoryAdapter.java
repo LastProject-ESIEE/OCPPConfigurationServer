@@ -1,16 +1,15 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.dao.ConfigurationDao;
 import fr.uge.ocpp.database.entities.ConfigurationEntity;
-import fr.uge.ocpp.database.repositories.ConfigurationJpaRepository;
-import fr.uge.ocpp.database.repositories.FirmwareJpaRepository;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -19,23 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the configurations in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
 
-  private final ConfigurationJpaRepository configurationJpaRepository;
-  private final FirmwareJpaRepository firmwareJpaRepository;
-
-  /**
-   * Creates the adapter.
-   *
-   * @param configurationJpaRepository the Spring Data repository of configurations.
-   * @param firmwareJpaRepository the Spring Data repository of firmwares.
-   */
-  public ConfigurationRepositoryAdapter(
-      ConfigurationJpaRepository configurationJpaRepository,
-      FirmwareJpaRepository firmwareJpaRepository) {
-    this.configurationJpaRepository = Objects.requireNonNull(configurationJpaRepository);
-    this.firmwareJpaRepository = Objects.requireNonNull(firmwareJpaRepository);
-  }
+  private final ConfigurationDao configurationDao;
 
   /**
    * Finds all the configurations ordered by descending identifier.
@@ -45,8 +31,8 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
   @Override
   public Configurations findAllByOrderByIdDesc() {
     return new Configurations(
-        configurationJpaRepository.findAllByOrderByIdDesc().stream()
-            .map(EntityMapper::toConfiguration)
+        configurationDao.findAllByOrderByIdDesc().stream()
+            .map(ConfigurationEntity::toDomain)
             .toList());
   }
 
@@ -60,8 +46,8 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
   public PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery) {
     var pageable =
         PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
-    var page = configurationJpaRepository.findAllByOrderByIdDesc(pageable);
-    List<Configuration> content = page.stream().map(EntityMapper::toConfiguration).toList();
+    var page = configurationDao.findAllByOrderByIdDesc(pageable);
+    List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
 
@@ -74,9 +60,8 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
   @Override
   @Transactional
   public Configuration save(Configuration configuration) {
-    var entity = EntityMapper.toConfigurationEntity(configuration, firmwareJpaRepository);
-    ConfigurationEntity saved = configurationJpaRepository.save(entity);
-    return EntityMapper.toConfiguration(saved);
+    ConfigurationEntity entity = ConfigurationEntity.fromDomain(configuration);
+    return configurationDao.save(entity).toDomain();
   }
 
   /**
@@ -87,6 +72,6 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public Optional<Configuration> findById(long id) {
-    return configurationJpaRepository.findById(id).map(EntityMapper::toConfiguration);
+    return configurationDao.findById(id).map(ConfigurationEntity::toDomain);
   }
 }

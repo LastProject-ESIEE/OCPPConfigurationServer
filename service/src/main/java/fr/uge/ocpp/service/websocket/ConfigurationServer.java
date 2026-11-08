@@ -14,19 +14,18 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Web socket server accepting the charge points' OCPP connections.<br>
  * The OCPP version of a connection is read from the {@code Sec-Websocket-Protocol} handshake header
  * (see {@link OcppVersion#parse(String)}).
  */
+@Slf4j
 public class ConfigurationServer extends WebSocketServer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationServer.class);
 
   private final Map<InetSocketAddress, ChargePointManager> chargePoints = new ConcurrentHashMap<>();
   private final ChargePointRepository chargePointRepository;
@@ -57,20 +56,20 @@ public class ConfigurationServer extends WebSocketServer {
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     Objects.requireNonNull(conn);
     Objects.requireNonNull(handshake);
-    LOGGER.info("new connection to {}", conn.getRemoteSocketAddress());
+    log.info("new connection to {}", conn.getRemoteSocketAddress());
     var ocppVersion = OcppVersion.parse(handshake.getFieldValue("Sec-Websocket-Protocol"));
     if (ocppVersion.isPresent()) {
       chargePoints.putIfAbsent(
           conn.getRemoteSocketAddress(), instantiate(ocppVersion.orElseThrow(), conn));
     } else {
-      LOGGER.warn("unknown OCPP version for {}", conn.getRemoteSocketAddress());
+      log.warn("unknown OCPP version for {}", conn.getRemoteSocketAddress());
     }
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     Objects.requireNonNull(conn);
-    LOGGER.warn(
+    log.warn(
         "closed {} with exit code {} additional info: {}",
         conn.getRemoteSocketAddress(),
         code,
@@ -90,13 +89,13 @@ public class ConfigurationServer extends WebSocketServer {
     var remote = conn.getRemoteSocketAddress();
     var webSocketMessage = WebSocketMessage.parse(message);
     if (webSocketMessage.isEmpty()) {
-      LOGGER.warn("failed to parse message from {}: {}", remote, message);
+      log.warn("failed to parse message from {}: {}", remote, message);
       return;
     }
     if (webSocketMessage.orElseThrow().isRequest()) {
-      LOGGER.info("received request from {}: {}", remote, message);
+      log.info("received request from {}: {}", remote, message);
     } else {
-      LOGGER.info("received response from {}: {}", remote, message);
+      log.info("received response from {}: {}", remote, message);
     }
     chargePoints.get(remote).processMessage(webSocketMessage.orElseThrow());
   }
@@ -105,13 +104,13 @@ public class ConfigurationServer extends WebSocketServer {
   public void onMessage(WebSocket conn, ByteBuffer message) {
     Objects.requireNonNull(conn);
     Objects.requireNonNull(message);
-    LOGGER.info("received ByteBuffer from {}", conn.getRemoteSocketAddress());
+    log.info("received ByteBuffer from {}", conn.getRemoteSocketAddress());
   }
 
   @Override
   public void onError(WebSocket conn, Exception ex) {
     Objects.requireNonNull(ex);
-    LOGGER.error(
+    log.error(
         "an error occurred on connection {}: {}",
         conn == null ? "" : conn.getRemoteSocketAddress(),
         ex.toString());
@@ -125,7 +124,7 @@ public class ConfigurationServer extends WebSocketServer {
 
   @Override
   public void onStart() {
-    LOGGER.info("OCPP web socket server started successfully on {}", getAddress());
+    log.info("OCPP web socket server started successfully on {}", getAddress());
   }
 
   /**
@@ -149,7 +148,7 @@ public class ConfigurationServer extends WebSocketServer {
                       JsonParser.objectToJsonString(ocppMessage));
               chargePointManager.setPendingRequest(request);
               conn.send(request.toString());
-              LOGGER.info("sent request to {}: {}", conn.getRemoteSocketAddress(), request);
+              log.info("sent request to {}: {}", conn.getRemoteSocketAddress(), request);
             }
             case RESPONSE -> {
               var response =
@@ -158,9 +157,9 @@ public class ConfigurationServer extends WebSocketServer {
                       chargePointManager.getCurrentId(),
                       JsonParser.objectToJsonString(ocppMessage));
               conn.send(response.toString());
-              LOGGER.info("sent response to {}: {}", conn.getRemoteSocketAddress(), response);
+              log.info("sent response to {}: {}", conn.getRemoteSocketAddress(), response);
             }
-            default -> LOGGER.error("tried to send an unknown packet: {}", ocppMessage);
+            default -> log.error("tried to send an unknown packet: {}", ocppMessage);
           }
         },
         chargePointRepository,
