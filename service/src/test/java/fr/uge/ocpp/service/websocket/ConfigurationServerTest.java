@@ -66,7 +66,10 @@ class ConfigurationServerTest {
     serverStarted = new CountDownLatch(1);
     server =
         new ConfigurationServer(
-            new InetSocketAddress("127.0.0.1", PORT), chargePointRepository, firmwareRepository) {
+            new InetSocketAddress("127.0.0.1", PORT),
+            chargePointRepository,
+            firmwareRepository,
+            null) {
           @Override
           public void onStart() {
             super.onStart();

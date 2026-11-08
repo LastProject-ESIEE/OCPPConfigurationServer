@@ -43,9 +43,12 @@ bearer token.
 
 ```bash
 mvn package -DskipTests
-SPRING_PROFILES_ACTIVE=local WEBSOCKET_URL=0.0.0.0 WEBSOCKET_PORT=8765 \
-  java -jar service/target/service-0.0.1-SNAPSHOT.jar
+SPRING_PROFILES_ACTIVE=local java -jar service/target/service-0.0.1-SNAPSHOT.jar
 ```
+
+The `local` profile is defined in `service/src/main/resources/application-local.yml`: it uses the
+in-memory H2 database (seeded from `seed-local.sql`) and binds the OCPP web socket server on
+`0.0.0.0:8765`. You can copy that file and tweak the values to fit your setup.
 
 The OCPP websocket server starts with the application on `WEBSOCKET_URL:WEBSOCKET_PORT`.
 Then emulate a charge point with:
@@ -55,14 +58,18 @@ python3 doc/chargepoint_emulator.py --url ws://127.0.0.1:8765 --serial ACE027230
 ```
 
 ## Running program (with a real PostgreSQL database)
-You must set those environment variables in IntelliJ in the edit project configuration:
+Configuration lives in `service/src/main/resources/application.yml`. Secrets and deployment-specific
+values are injected through environment variables (set them in IntelliJ in the edit project
+configuration, or in your shell):
 - POSTGRESQL_DB_ADDRESS=<*database url, e.g. jdbc:postgresql://localhost:5432/ocpp*>;
 - POSTGRESQL_DB_USERNAME=<*database username*>;
 - POSTGRESQL_DB_PASSWORD=<*database password*>;
+- JWT_SECRET=<*HS256 secret, at least 32 bytes; a dev-only default is provided*>;
+- JWT_EXPIRATION_MS=<*token lifetime in ms, defaults to 3600000*>;
+- WEBSOCKET_URL=<*websocket bind ip address, maps to websocket.url*>;
+- WEBSOCKET_PORT=<*websocket port, maps to websocket.port*>;
+- FINAL_WS_SERVER_ADDRESS=<*next supervisor server address, maps to websocket.final-server-address*>;
 - SPRING_JPA_HIBERNATE_DDL_AUTO=<*e.g. update to auto-create tables, none otherwise*>;
-- FINAL_WS_SERVER_ADDRESS=<*next supervisor server address*>;
-- WEBSOCKET_PORT=<*websocket port*>;
-- WEBSOCKET_URL=<*websocket ip address*>;
 
 ## Running check style
 You should install the plugin in IntelliJ CheckStyle-IDEA and set the *checkstyle.xml* in the plugin configuration.

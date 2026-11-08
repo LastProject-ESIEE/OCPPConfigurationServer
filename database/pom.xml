@@ -29,7 +29,7 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- In-memory database used by the "local" profile (see application-local.properties) -->
+        <!-- In-memory database used by the "local" profile (see application-local.yml) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

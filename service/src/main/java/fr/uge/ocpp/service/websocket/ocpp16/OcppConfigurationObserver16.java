@@ -44,6 +44,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
   private final ChargePointManager chargePointManager;
   private final ChargePointRepository chargePointRepository;
   private final FirmwareRepository firmwareRepository;
+  private final String finalServerAddress;
   private final Queue<ChangeConfigurationRequest16> queue = new LinkedList<>();
   private String firmwareVersion;
   private String targetFirmwareVersion;
@@ -57,16 +58,20 @@ public class OcppConfigurationObserver16 implements OcppObserver {
    * @param chargePointManager the charge point's manager.
    * @param chargePointRepository the charge point repository.
    * @param firmwareRepository the firmware repository.
+   * @param finalServerAddress the address of the next supervisor server forwarded to the charge
+   *     point, null or blank if none.
    */
   public OcppConfigurationObserver16(
       OcppMessageSender sender,
       ChargePointManager chargePointManager,
       ChargePointRepository chargePointRepository,
-      FirmwareRepository firmwareRepository) {
+      FirmwareRepository firmwareRepository,
+      String finalServerAddress) {
     this.sender = Objects.requireNonNull(sender);
     this.chargePointManager = Objects.requireNonNull(chargePointManager);
     this.chargePointRepository = Objects.requireNonNull(chargePointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.finalServerAddress = finalServerAddress;
   }
 
   @Override
@@ -220,7 +225,8 @@ public class OcppConfigurationObserver16 implements OcppObserver {
 
   /**
    * Prepares the last orders sent once every configuration key has been applied: the charge point's
-   * identity and, if configured, the address of the next server ({@code FINAL_WS_SERVER_ADDRESS}).
+   * identity and, if configured, the address of the next server ({@code
+   * websocket.final-server-address}).
    */
   private void prepareLastOrder() {
     var currentChargepoint = chargePointManager.getCurrentChargepoint();
@@ -235,8 +241,7 @@ public class OcppConfigurationObserver16 implements OcppObserver {
                 .getKeyAccordingToVersion(firmwareVersion),
             clientId);
     queue.add(changeConfig);
-    var finalServerAddress = System.getenv("FINAL_WS_SERVER_ADDRESS");
-    if (finalServerAddress != null) {
+    if (finalServerAddress != null && !finalServerAddress.isBlank()) {
       changeConfig =
           new ChangeConfigurationRequest16(
               ConfigurationTranscriptor.NETWORK_PROFILE
