@@ -31,6 +31,7 @@ public class ConfigurationServer extends WebSocketServer {
   private final Map<InetSocketAddress, ChargePointManager> chargePoints = new ConcurrentHashMap<>();
   private final ChargePointRepository chargePointRepository;
   private final FirmwareRepository firmwareRepository;
+  private final String finalServerAddress;
 
   /**
    * {@link ConfigurationServer}'s constructor.
@@ -38,14 +39,18 @@ public class ConfigurationServer extends WebSocketServer {
    * @param address the remote address to bind to.
    * @param chargePointRepository the charge point repository.
    * @param firmwareRepository the firmware repository.
+   * @param finalServerAddress the address of the next supervisor server forwarded to the charge
+   *     points, null or blank if none.
    */
   public ConfigurationServer(
       InetSocketAddress address,
       ChargePointRepository chargePointRepository,
-      FirmwareRepository firmwareRepository) {
+      FirmwareRepository firmwareRepository,
+      String finalServerAddress) {
     super(Objects.requireNonNull(address));
     this.chargePointRepository = Objects.requireNonNull(chargePointRepository);
     this.firmwareRepository = Objects.requireNonNull(firmwareRepository);
+    this.finalServerAddress = finalServerAddress;
   }
 
   @Override
@@ -159,6 +164,7 @@ public class ConfigurationServer extends WebSocketServer {
           }
         },
         chargePointRepository,
-        firmwareRepository);
+        firmwareRepository,
+        finalServerAddress);
   }
 }

@@ -31,11 +31,43 @@ public interface OcppObserver {
       OcppMessageSender ocppMessageSender,
       ChargePointRepository chargePointRepository,
       FirmwareRepository firmwareRepository) {
+    return instantiateFromVersion(
+        ocppVersion,
+        chargePointManager,
+        ocppMessageSender,
+        chargePointRepository,
+        firmwareRepository,
+        null);
+  }
+
+  /**
+   * Instantiates the correct observer according to the {@link OcppVersion}.
+   *
+   * @param ocppVersion the OCPP version negotiated during the handshake.
+   * @param chargePointManager the charge point's manager.
+   * @param ocppMessageSender the web socket sender.
+   * @param chargePointRepository the charge point repository.
+   * @param firmwareRepository the firmware repository.
+   * @param finalServerAddress the address of the next supervisor server forwarded to the charge
+   *     point, null or blank if none.
+   * @return the {@link OcppObserver} matching the OCPP version.
+   */
+  static OcppObserver instantiateFromVersion(
+      OcppVersion ocppVersion,
+      ChargePointManager chargePointManager,
+      OcppMessageSender ocppMessageSender,
+      ChargePointRepository chargePointRepository,
+      FirmwareRepository firmwareRepository,
+      String finalServerAddress) {
     Objects.requireNonNull(ocppVersion);
     return switch (ocppVersion) {
       case V1_6 ->
           new OcppConfigurationObserver16(
-              ocppMessageSender, chargePointManager, chargePointRepository, firmwareRepository);
+              ocppMessageSender,
+              chargePointManager,
+              chargePointRepository,
+              firmwareRepository,
+              finalServerAddress);
       case V2 ->
           new OcppConfigurationObserver2(
               ocppMessageSender, chargePointManager, chargePointRepository, firmwareRepository);

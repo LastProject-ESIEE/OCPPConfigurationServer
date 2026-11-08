@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: ${POSTGRESQL_DB_ADDRESS}
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRESQL_DB_USERNAME}
+    password: ${POSTGRESQL_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    path: /api
+
+# JWT authentication (HS256). Real deployments override these values through the environment;
+# the dummy default secret is for local development and tests only (must be >= 32 bytes).
+jwt:
+  secret: ${JWT_SECRET:local-dev-secret-key-that-is-long-enough-for-hs256}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
+# OCPP web socket server accepting the charge points' connections. Each value can be overridden
+# with the WEBSOCKET_URL, WEBSOCKET_PORT and FINAL_WS_SERVER_ADDRESS environment variables;
+# see application-local.yml for ready-to-use local defaults.
+websocket:
+  url: ${WEBSOCKET_URL:}
+  port: ${WEBSOCKET_PORT:}
+  final-server-address: ${FINAL_WS_SERVER_ADDRESS:}

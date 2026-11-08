@@ -32,12 +32,15 @@ public class ChargePointManager {
    * @param ocppMessageSender the web socket connection used to send data.
    * @param chargePointRepository the charge point's repository for database queries.
    * @param firmwareRepository the firmware's repository for database queries.
+   * @param finalServerAddress the address of the next supervisor server forwarded to the charge
+   *     point, null or blank if none.
    */
   public ChargePointManager(
       OcppVersion ocppVersion,
       OcppMessageSender ocppMessageSender,
       ChargePointRepository chargePointRepository,
-      FirmwareRepository firmwareRepository) {
+      FirmwareRepository firmwareRepository,
+      String finalServerAddress) {
     this.ocppMessageParser = OcppMessageParser.instantiateFromVersion(ocppVersion);
     this.chargePointRepository = Objects.requireNonNull(chargePointRepository);
     this.ocppObserver =
@@ -46,7 +49,8 @@ public class ChargePointManager {
             this,
             Objects.requireNonNull(ocppMessageSender),
             chargePointRepository,
-            Objects.requireNonNull(firmwareRepository));
+            Objects.requireNonNull(firmwareRepository),
+            finalServerAddress);
   }
 
   /**
