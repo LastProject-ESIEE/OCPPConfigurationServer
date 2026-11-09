@@ -7,15 +7,15 @@ INSERT INTO type_allowed (constructor, type) VALUES ('Alfen', 'EVE Single S-Line
 INSERT INTO firmware (url, version, constructor) VALUES ('ftp://fs.example/6.2.0.fwi', '6.2.0', 'Alfen');
 
 INSERT INTO compatibility (id_firmware, id_type_allowed)
-SELECT f.id_firmware, t.id_type_allowed
+SELECT f.id, t.id
 FROM firmware f, type_allowed t
 WHERE f.version = '6.2.0' AND t.constructor = 'Alfen';
 
 INSERT INTO configuration (name, description, configuration, id_firmware)
-SELECT 'default', '', '{"1":"80"}', f.id_firmware FROM firmware f WHERE f.version = '6.2.0';
+SELECT 'default', '', '{"1":"80"}', f.id FROM firmware f WHERE f.version = '6.2.0';
 
-INSERT INTO chargepoint (serial_number_chargepoint, type, constructor, client_id, id_configuration)
-SELECT 'ACE0272306', 'EVE Single S-Line', 'Alfen', 'client-1', c.id_configuration
+INSERT INTO charge_point (serial_number_chargepoint, type, constructor, client_id, id_configuration)
+SELECT 'ACE0272306', 'EVE Single S-Line', 'Alfen', 'client-1', c.id
 FROM configuration c WHERE c.name = 'default';
 
 -- Password for all users is "admin" (BCrypt). One user per role, since the REST
