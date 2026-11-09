@@ -11,7 +11,7 @@ spring:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
-    path: /api
+    # default path /swagger-ui.html is used
 
 # JWT authentication (HS256). Real deployments override these values through the environment;
 # the dummy default secret is for local development and tests only (must be >= 32 bytes).

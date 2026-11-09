@@ -4,6 +4,7 @@ import fr.uge.ocpp.database.dao.UserDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -19,12 +20,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /** Security configuration of the REST API (JWT bearer authentication). */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
+
+  /**
+   * Provides the security filter chain of the H2 console (local profile only). The console is left
+   * public (no authentication) so it can be opened directly in a browser; unlike the API chain it
+   * keeps HTTP sessions because the console stores its database connection in the session.
+   *
+   * @param http the security builder.
+   * @return the security filter chain.
+   * @throws Exception if the configuration fails.
+   */
+  @Bean
+  @Order(1)
+  SecurityFilterChain h2ConsoleFilterChain(HttpSecurity http) throws Exception {
+    // Ant matcher on purpose: the Mvc matcher does not match the console servlet paths.
+    http.securityMatcher(AntPathRequestMatcher.antMatcher("/h2-console/**"))
+        .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+        // The console posts its forms without a CSRF token.
+        .csrf(AbstractHttpConfigurer::disable)
+        // The console renders in an iframe, so allow same-origin frames.
+        .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+    return http.build();
+  }
 
   /**
    * Provides the security filter chain of the API.
@@ -36,6 +60,7 @@ public class WebSecurityConfig {
    * @throws Exception if the configuration fails.
    */
   @Bean
+  @Order(2)
   SecurityFilterChain apiFilterChain(
       HttpSecurity http, JwtService jwtService, UserDetailsService userDetailsService)
       throws Exception {
@@ -45,9 +70,14 @@ public class WebSecurityConfig {
                     // The Swagger UI, API docs and login endpoint stay public so users can
                     // authenticate from the Swagger page itself (Authorize button) and get a
                     // token from /api/login.
-                    .requestMatchers("/api", "/v3/api-docs/**", "/swagger-ui/**", "/api/login")
+                    .requestMatchers(
+                        "/api",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/api/login")
                     .permitAll()
-                    .requestMatchers("/api/**", "/h2-console/**")
+                    .requestMatchers("/api/**")
                     .authenticated()
                     .requestMatchers("/", "/about")
                     .permitAll()
@@ -64,9 +94,7 @@ public class WebSecurityConfig {
                     new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
         .addFilterBefore(
             new JwtAuthenticationFilter(jwtService, userDetailsService),
-            UsernamePasswordAuthenticationFilter.class)
-        // The H2 console (local profile) renders in an iframe, so allow same-origin frames.
-        .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+            UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
