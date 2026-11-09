@@ -9,7 +9,7 @@ import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import java.util.List;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 /** Adapter persisting the configurations in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
 
   private final ConfigurationDao configurationDao;
