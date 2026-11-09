@@ -77,7 +77,7 @@ public class ChargePointEntity {
   private StatusProcess status = StatusProcess.PENDING;
 
   @ManyToOne
-  @JoinColumn(name = "id_configuration", referencedColumnName = "id_configuration")
+  @JoinColumn(name = "id_configuration", referencedColumnName = "id")
   private ConfigurationEntity configuration;
 
   public static ChargePointEntity fromDomain(ChargePoint chargePoint) {

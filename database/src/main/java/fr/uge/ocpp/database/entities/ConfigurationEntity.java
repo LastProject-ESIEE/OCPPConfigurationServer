@@ -53,7 +53,7 @@ public class ConfigurationEntity {
   private String configuration;
 
   @ManyToOne
-  @JoinColumn(name = "id_firmware", referencedColumnName = "id_firmware")
+  @JoinColumn(name = "id_firmware", referencedColumnName = "id")
   private FirmwareEntity firmware;
 
   public static ConfigurationEntity fromDomain(Configuration configuration) {
