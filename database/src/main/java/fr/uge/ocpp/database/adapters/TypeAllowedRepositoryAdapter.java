@@ -6,14 +6,14 @@ import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import fr.uge.ocpp.domain.ports.spi.TypeAllowedRepository;
 import java.util.Optional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /** Adapter persisting the allowed types in PostgreSQL through JPA. */
 @Repository
 @Transactional(readOnly = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TypeAllowedRepositoryAdapter implements TypeAllowedRepository {
 
   private final TypeAllowedDao typeAllowedDao;

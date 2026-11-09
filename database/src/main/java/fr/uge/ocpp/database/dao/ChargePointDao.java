@@ -7,10 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 /** Spring Data access to the charge point table. */
-@Repository
 public interface ChargePointDao
     extends JpaRepository<ChargePointEntity, Long>, JpaSpecificationExecutor<ChargePointEntity> {
 

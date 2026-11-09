@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @EntityScan(basePackages = "fr.uge.ocpp.database.entities")
-@EnableJpaRepositories(basePackages = "fr.uge.ocpp.database.repositories")
+@EnableJpaRepositories(basePackages = "fr.uge.ocpp.database.dao")
 public class DatabaseConfig {}
