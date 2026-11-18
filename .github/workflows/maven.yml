@@ -14,36 +14,56 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
+permissions:
+  contents: read
+  # Needed to post/update the coverage comment on pull requests
+  pull-requests: write
+
 jobs:
 
   test:
     runs-on: ubuntu-latest
-    env:
-      DB_ADDRESS: ${{secrets.DB_ADDRESS}}
-      DB_USERNAME: ${{secrets.DB_USERNAME}}
-      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-      FINAL_WS_SERVER_ADDRESS: ${{secrets.FINAL_WS_SERVER_ADDRESS}}
-      WEBSOCKET_URL: ${{secrets.WEBSOCKET_URL}}
-      WEBSOCKET_PORT: ${{secrets.WEBSOCKET_PORT}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Run unitary tests
+      - name: Run tests and generate coverage report
+        env:
+          POSTGRESQL_DB_ADDRESS: ${{ secrets.DB_ADDRESS }}
+          POSTGRESQL_DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          POSTGRESQL_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FINAL_WS_SERVER_ADDRESS: ${{ secrets.FINAL_WS_SERVER_ADDRESS }}
+          WEBSOCKET_URL: ${{ secrets.WEBSOCKET_URL }}
+          WEBSOCKET_PORT: ${{ secrets.WEBSOCKET_PORT }}
         run: |
-          echo "Cleaning the project..."
-          mvn clean
           echo "Process Check Style..."
-          $MAVEN_HOME/bin/mvn validate
-          echo "Process test..."
-          export DB_ADDRESS=$DB_ADDRESS
-          export DB_USERNAME=$DB_USERNAME
-          export DB_PASSWORD=$DB_PASSWORD
-          export WEBSOCKET_URL=$WEBSOCKET_URL
-          export WEBSOCKET_PORT=$WEBSOCKET_PORT
-          echo "Installing the project..."
-          mvn install
+          mvn validate
+          echo "Running tests with JaCoCo coverage..."
+          mvn verify
+      - name: Upload JaCoCo coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-report
+          # Aggregate (all modules) lives in the dedicated coverage-report module;
+          # per-module reports are under each module's target/site/jacoco/.
+          path: |
+            coverage-report/target/site/jacoco-aggregate/
+            */target/site/jacoco/
+          retention-days: 14
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          # Required because "main" is a protected branch (Codecov policy).
+          # Get the token at: https://app.codecov.io/gh/LastProject-ESIEE/OCPPConfigurationServer/settings
+          # then add it as a repo secret named CODECOV_TOKEN
+          # (GitHub → repo Settings → Secrets and variables → Actions → New repository secret).
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-report/target/site/jacoco-aggregate/jacoco.xml
+          flags: unit
+          fail_ci_if_error: false
