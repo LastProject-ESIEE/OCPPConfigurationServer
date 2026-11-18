@@ -19,11 +19,14 @@
 		<module>database</module>
 		<module>websocket</module>
 		<module>service</module>
+		<module>coverage-report</module>
 	</modules>
 	<properties>
 		<java.version>21</java.version>
 		<!-- Override the version managed by spring-boot-starter-parent (1.18.30), which does not support JDK 25 -->
 		<lombok.version>1.18.42</lombok.version>
+		<!-- JaCoCo 0.8.13 supports up to JDK 25 class files -->
+		<jacoco.version>0.8.13</jacoco.version>
 	</properties>
 
 	<dependencies>
@@ -52,9 +55,38 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+			<!-- JaCoCo code coverage: inherited by every child module.
+			     prepare-agent sets the argLine picked up by maven-surefire-plugin;
+			     report generates a per-module HTML report at <module>/target/site/jacoco/.
+			     The cross-module aggregate report is generated only in the dedicated
+			     coverage-report module (see coverage-report/pom.xml). -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
 				<plugin>
 					<groupId>com.diffplug.spotless</groupId>
 					<artifactId>spotless-maven-plugin</artifactId>
