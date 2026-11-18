@@ -3,8 +3,8 @@ package fr.uge.ocpp.database.adapters;
 import static fr.uge.ocpp.database.DatabaseFixtures.persistConfiguration;
 import static fr.uge.ocpp.database.DatabaseFixtures.persistFirmware;
 import static fr.uge.ocpp.database.DatabaseFixtures.persistTypeAllowed;
-import static fr.uge.ocpp.database.factories.ConfigurationFactory.dummyConfiguration;
-import static fr.uge.ocpp.database.factories.FirmwareFactory.dummyFirmware;
+import static fr.uge.ocpp.domain.models.ConfigurationFactory.dummyConfiguration;
+import static fr.uge.ocpp.domain.models.FirmwareFactory.dummyFirmware;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.database.dao.ConfigurationDao;

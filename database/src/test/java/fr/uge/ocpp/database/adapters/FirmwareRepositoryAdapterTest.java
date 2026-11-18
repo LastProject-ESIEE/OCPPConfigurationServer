@@ -2,7 +2,7 @@ package fr.uge.ocpp.database.adapters;
 
 import static fr.uge.ocpp.database.DatabaseFixtures.persistFirmware;
 import static fr.uge.ocpp.database.DatabaseFixtures.persistTypeAllowed;
-import static fr.uge.ocpp.database.factories.FirmwareFactory.dummyFirmwareWithoutTypesAllowed;
+import static fr.uge.ocpp.domain.models.FirmwareFactory.dummyFirmware;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.database.dao.FirmwareDao;
@@ -15,6 +15,7 @@ import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
+import fr.uge.ocpp.domain.models.TypesAllowed;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -210,7 +211,8 @@ class FirmwareRepositoryAdapterTest {
   void should_save_and_map_domain_model_to_entity() {
     // Given an empty database
     // When a new domain firmware is saved
-    Firmware saved = adapter.save(dummyFirmwareWithoutTypesAllowed().withId(null));
+    Firmware saved =
+        adapter.save(dummyFirmware().withId(null).withTypesAllowed(TypesAllowed.empty()));
 
     // Then the firmware is persisted with a generated id and mapped back to the domain
     assertThat(saved.id()).isNotNull();

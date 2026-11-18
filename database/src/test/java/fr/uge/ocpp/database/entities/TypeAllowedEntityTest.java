@@ -1,6 +1,6 @@
 package fr.uge.ocpp.database.entities;
 
-import static fr.uge.ocpp.database.factories.TypeAllowedFactory.dummyTypeAllowed;
+import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowed;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;

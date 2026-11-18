@@ -1,7 +1,7 @@
 package fr.uge.ocpp.database.entities;
 
 import static fr.uge.ocpp.database.factories.ConfigurationEntityFactory.dummyConfigurationEntityWithoutFirmware;
-import static fr.uge.ocpp.database.factories.ConfigurationFactory.dummyConfiguration;
+import static fr.uge.ocpp.domain.models.ConfigurationFactory.dummyConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ class ConfigurationEntityTest {
     // Then every field is copied and the firmware is mapped to an entity
     assertThat(entity.getId()).isEqualTo(1L);
     assertThat(entity.getName()).isEqualTo("test");
-    assertThat(entity.getDescription()).isEqualTo("desc");
-    assertThat(entity.getConfiguration()).isEqualTo("{}");
+    assertThat(entity.getDescription()).isEqualTo("test");
+    assertThat(entity.getConfiguration()).isEqualTo("config");
     assertThat(entity.getFirmware()).isNotNull();
     assertThat(entity.getFirmware().getId()).isEqualTo(1L);
   }

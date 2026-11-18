@@ -1,7 +1,6 @@
 package fr.uge.ocpp.database.entities;
 
-import static fr.uge.ocpp.database.factories.FirmwareFactory.dummyFirmware;
-import static fr.uge.ocpp.database.factories.FirmwareFactory.dummyFirmwareWithoutTypesAllowed;
+import static fr.uge.ocpp.domain.models.FirmwareFactory.dummyFirmware;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.domain.models.TypeAllowed;
@@ -28,7 +27,7 @@ class FirmwareEntityTest {
   @Test
   void should_map_domain_model_with_null_types_allowed_to_entity_with_empty_set() {
     // Given a domain firmware without allowed types
-    var firmware = dummyFirmwareWithoutTypesAllowed();
+    var firmware = dummyFirmware().withTypesAllowed(null);
 
     // When the firmware is mapped to an entity
     FirmwareEntity entity = FirmwareEntity.fromDomain(firmware);

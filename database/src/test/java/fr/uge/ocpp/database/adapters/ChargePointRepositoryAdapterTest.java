@@ -2,8 +2,8 @@ package fr.uge.ocpp.database.adapters;
 
 import static fr.uge.ocpp.database.DatabaseFixtures.persistChargePoint;
 import static fr.uge.ocpp.database.DatabaseFixtures.persistConfiguration;
-import static fr.uge.ocpp.database.factories.ChargePointFactory.dummyChargePoint;
-import static fr.uge.ocpp.database.factories.ConfigurationFactory.dummyConfiguration;
+import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePoint;
+import static fr.uge.ocpp.domain.models.ConfigurationFactory.dummyConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.database.dao.ChargePointDao;
@@ -181,9 +181,10 @@ class ChargePointRepositoryAdapterTest {
 
   @Test
   void should_apply_pagination_on_client_id_search() {
-    // Given a charge point
+    // Given three charge points, two of them matching the client id filter
     var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
     var matching1 = persistChargePoint(chargePointDao, configuration, "Client-A");
+    persistChargePoint(chargePointDao, configuration, "CLIENT-2");
     persistChargePoint(chargePointDao, configuration, "other");
 
     // When the second page of size 1 is requested with a descending sort

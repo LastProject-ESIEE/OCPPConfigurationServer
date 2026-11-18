@@ -1,7 +1,7 @@
 package fr.uge.ocpp.database.adapters;
 
 import static fr.uge.ocpp.database.DatabaseFixtures.persistTypeAllowed;
-import static fr.uge.ocpp.database.factories.TypeAllowedFactory.dummyTypeAllowedWithoutId;
+import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowedWithoutId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.database.dao.TypeAllowedDao;
