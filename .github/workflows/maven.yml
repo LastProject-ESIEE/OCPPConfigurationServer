@@ -59,9 +59,11 @@ jobs:
         if: always()
         uses: codecov/codecov-action@v5
         with:
-          # Public repo: no token required. For reliability (rate limits), add a
-          # CODECOV_TOKEN repository secret and uncomment the line below:
-          # token: ${{ secrets.CODECOV_TOKEN }}
+          # Required because "main" is a protected branch (Codecov policy).
+          # Get the token at: https://app.codecov.io/gh/LastProject-ESIEE/OCPPConfigurationServer/settings
+          # then add it as a repo secret named CODECOV_TOKEN
+          # (GitHub → repo Settings → Secrets and variables → Actions → New repository secret).
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage-report/target/site/jacoco-aggregate/jacoco.xml
           flags: unit
           fail_ci_if_error: false
