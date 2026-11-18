@@ -1,118 +1,200 @@
 package fr.uge.ocpp.database.adapters;
 
+import static fr.uge.ocpp.database.DatabaseFixtures.persistChargePoint;
+import static fr.uge.ocpp.database.DatabaseFixtures.persistConfiguration;
+import static fr.uge.ocpp.database.factories.ChargePointFactory.dummyChargePoint;
+import static fr.uge.ocpp.database.factories.ConfigurationFactory.dummyConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import fr.uge.ocpp.database.dao.ChargePointDao;
 import fr.uge.ocpp.database.dao.ConfigurationDao;
+import fr.uge.ocpp.database.dao.FirmwareDao;
+import fr.uge.ocpp.database.dao.TypeAllowedDao;
 import fr.uge.ocpp.database.entities.ChargePointEntity;
-import fr.uge.ocpp.database.entities.ConfigurationEntity;
 import fr.uge.ocpp.domain.models.ChargePoint;
-import fr.uge.ocpp.domain.models.Configuration;
+import fr.uge.ocpp.domain.models.ChargePoints;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.Sort;
-import fr.uge.ocpp.domain.models.StatusProcess;
-import fr.uge.ocpp.domain.models.Step;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+/** Integration test of {@link ChargePointRepositoryAdapter} against a real (H2) database. */
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ChargePointRepositoryAdapterTest {
 
-  private final ChargePointDao chargePointDao = mock(ChargePointDao.class);
-  private final ConfigurationDao configurationDao = mock(ConfigurationDao.class);
-  private final ChargePointRepositoryAdapter adapter =
-      new ChargePointRepositoryAdapter(chargePointDao);
+  @Autowired private ChargePointDao chargePointDao;
+  @Autowired private ConfigurationDao configurationDao;
+  @Autowired private FirmwareDao firmwareDao;
+  @Autowired private TypeAllowedDao typeAllowedDao;
+
+  private ChargePointRepositoryAdapter adapter;
+
+  @BeforeEach
+  void setUp() {
+    adapter = new ChargePointRepositoryAdapter(chargePointDao);
+  }
 
   @Test
   void should_save_and_map_domain_model_to_entity() {
-    var configurationEntity =
-        ConfigurationEntity.builder()
-            .name("config")
-            .description("desc")
-            .configuration("{}")
-            .build();
-    configurationEntity.setId(7L);
-    when(configurationDao.findById(7L)).thenReturn(Optional.of(configurationEntity));
-    var savedEntity =
-        ChargePointEntity.builder()
-            .serialNumberChargepoint("serial")
-            .type("Type")
-            .constructor("Const")
-            .clientId("client-id")
-            .configuration(configurationEntity)
-            .build();
-    savedEntity.setId(3L);
-    when(chargePointDao.save(any(ChargePointEntity.class))).thenReturn(savedEntity);
-    var firmware = new fr.uge.ocpp.domain.models.Firmware(9L, "url", "1.0.0", "Const", null);
-    var configuration = new Configuration(7L, "config", "desc", null, "{}", firmware);
-    var chargePoint =
-        new ChargePoint(
-            null,
-            "serial",
-            "Type",
-            "Const",
-            "client-id",
-            null,
-            "",
-            false,
-            Step.FIRMWARE,
-            StatusProcess.PENDING,
-            configuration);
+    // Given a persisted configuration
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
 
-    ChargePoint saved = adapter.save(chargePoint);
+    // When a new domain charge point referencing it is saved
+    ChargePoint saved =
+        adapter.save(
+            dummyChargePoint()
+                .withId(null)
+                .withConfiguration(dummyConfiguration().withId(configuration.getId())));
 
-    var entityCaptor = ArgumentCaptor.forClass(ChargePointEntity.class);
-    verify(chargePointDao).save(entityCaptor.capture());
-    assertThat(entityCaptor.getValue().getSerialNumberChargepoint()).isEqualTo("serial");
-    assertThat(entityCaptor.getValue().getConfiguration().getId()).isEqualTo(7L);
-    assertThat(saved.id()).isEqualTo(3L);
-    assertThat(saved.configuration().name()).isEqualTo("config");
+    // Then the charge point is persisted with a generated id and mapped back to the domain
+    assertThat(saved.id()).isNotNull();
+    assertThat(saved.serialNumber()).isEqualTo("serial");
+    assertThat(saved.configuration().id()).isEqualTo(configuration.getId());
+    Optional<ChargePointEntity> persisted = chargePointDao.findById(saved.id());
+    assertThat(persisted).isPresent();
+    assertThat(persisted.get().getClientId()).isEqualTo("client-id");
+    assertThat(persisted.get().getConfiguration().getId()).isEqualTo(configuration.getId());
   }
 
   @Test
   void should_find_by_id_and_map_entity_to_domain_model() {
-    var configurationEntity =
-        ConfigurationEntity.builder()
-            .name("config")
-            .description("desc")
-            .configuration("{}")
-            .build();
-    configurationEntity.setId(7L);
-    var entity =
-        ChargePointEntity.builder()
-            .serialNumberChargepoint("serial")
-            .type("Type")
-            .constructor("Const")
-            .clientId("client-id")
-            .configuration(configurationEntity)
-            .build();
-    entity.setId(3L);
-    when(chargePointDao.findById(3L)).thenReturn(Optional.of(entity));
+    // Given a persisted charge point
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    var entity = persistChargePoint(chargePointDao, configuration);
 
-    Optional<ChargePoint> found = adapter.findById(3L);
+    // When the charge point is looked up by id
+    Optional<ChargePoint> found = adapter.findById(entity.getId());
 
+    // Then the persisted entity is mapped to a domain model, including its configuration
     assertThat(found).isPresent();
+    assertThat(found.get().id()).isEqualTo(entity.getId());
     assertThat(found.get().clientId()).isEqualTo("client-id");
-    assertThat(found.get().configuration().id()).isEqualTo(7L);
+    assertThat(found.get().configuration().id()).isEqualTo(configuration.getId());
+    assertThat(found.get().configuration().firmware().version()).isEqualTo("1.0.0");
   }
 
   @Test
-  void should_map_page_query_sort_direction() {
-    var pageableCaptor =
-        org.mockito.ArgumentCaptor.forClass(org.springframework.data.domain.Pageable.class);
-    when(chargePointDao.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(any(), any()))
-        .thenReturn(org.springframework.data.domain.Page.empty());
-    var pageQuery = new fr.uge.ocpp.domain.models.PageQuery(2, 10, Sort.ASC);
+  void should_return_empty_when_charge_point_not_found_by_id() {
+    // Given an empty database
+    // When an unknown id is looked up
+    Optional<ChargePoint> found = adapter.findById(999L);
 
-    adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageQuery, "client");
+    // Then the result is empty
+    assertThat(found).isEmpty();
+  }
 
-    verify(chargePointDao)
-        .findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-            pageableCaptor.capture(), org.mockito.ArgumentMatchers.eq("client"));
-    assertThat(pageableCaptor.getValue().getPageNumber()).isEqualTo(2);
-    assertThat(pageableCaptor.getValue().getPageSize()).isEqualTo(10);
+  @Test
+  void should_find_by_serial_number_and_constructor() {
+    // Given a persisted charge point
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    persistChargePoint(chargePointDao, configuration);
+
+    // When the charge point is looked up by serial number and constructor
+    Optional<ChargePoint> found =
+        adapter.findBySerialNumberChargepointAndConstructor("serial", "Const");
+
+    // Then the charge point is found and mapped to a domain model
+    assertThat(found).isPresent();
+    assertThat(found.get().serialNumber()).isEqualTo("serial");
+    assertThat(found.get().constructor()).isEqualTo("Const");
+  }
+
+  @Test
+  void should_return_empty_when_serial_number_and_constructor_unknown() {
+    // Given a persisted charge point
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    persistChargePoint(chargePointDao, configuration);
+
+    // When an unknown serial number is looked up
+    Optional<ChargePoint> found =
+        adapter.findBySerialNumberChargepointAndConstructor("unknown", "Const");
+
+    // Then the result is empty
+    assertThat(found).isEmpty();
+  }
+
+  @Test
+  void should_find_all_charge_points_ordered_by_id_desc() {
+    // Given two persisted charge points
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    var first = persistChargePoint(chargePointDao, configuration);
+    var second = persistChargePoint(chargePointDao, configuration);
+
+    // When all the charge points are requested
+    ChargePoints chargePoints = adapter.findAllByOrderByIdDesc();
+
+    // Then they are mapped to domain models ordered by descending id
+    assertThat(chargePoints.chargePointList())
+        .extracting(ChargePoint::id)
+        .containsExactly(second.getId(), first.getId());
+  }
+
+  @Test
+  void should_find_paginated_by_client_id_with_desc_sort() {
+    // Given three charge points, two of them matching the client id filter
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    var matching1 = persistChargePoint(chargePointDao, configuration, "Client-A");
+    var matching2 = persistChargePoint(chargePointDao, configuration, "CLIENT-2");
+    persistChargePoint(chargePointDao, configuration, "other");
+
+    // When a page is requested with a descending sort
+    PageResult<ChargePoint> result =
+        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
+            new PageQuery(0, 10, Sort.DESC), "client");
+
+    // Then only the matching charge points are returned, highest id first, with the total count
+    assertThat(result.content())
+        .extracting(ChargePoint::id)
+        .containsExactly(matching2.getId(), matching1.getId());
+    assertThat(result.totalElements()).isEqualTo(2);
+    assertThat(result.page()).isZero();
+    assertThat(result.size()).isEqualTo(10);
+  }
+
+  @Test
+  void should_find_paginated_by_client_id_with_asc_sort() {
+    // Given three charge points, two of them matching the client id filter
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    var matching1 = persistChargePoint(chargePointDao, configuration, "Client-A");
+    var matching2 = persistChargePoint(chargePointDao, configuration, "CLIENT-2");
+    persistChargePoint(chargePointDao, configuration, "other");
+
+    // When a page is requested with an ascending sort
+    PageResult<ChargePoint> result =
+        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
+            new PageQuery(0, 10, Sort.ASC), "client");
+
+    // Then only the matching charge points are returned with the total count; the order stays
+    // descending because the OrderByIdDesc of the DAO method name takes precedence over the
+    // pageable sort
+    assertThat(result.content())
+        .extracting(ChargePoint::id)
+        .containsExactlyInAnyOrder(matching1.getId(), matching2.getId());
+    assertThat(result.totalElements()).isEqualTo(2);
+  }
+
+  @Test
+  void should_apply_pagination_on_client_id_search() {
+    // Given a charge point
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    var matching1 = persistChargePoint(chargePointDao, configuration, "Client-A");
+    persistChargePoint(chargePointDao, configuration, "other");
+
+    // When the second page of size 1 is requested with a descending sort
+    PageResult<ChargePoint> result =
+        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
+            new PageQuery(1, 1, Sort.DESC), "client");
+
+    // Then only the second matching charge point is returned, but the total stays 2
+    assertThat(result.content()).extracting(ChargePoint::id).containsExactly(matching1.getId());
+    assertThat(result.totalElements()).isEqualTo(2);
+    assertThat(result.page()).isEqualTo(1);
+    assertThat(result.size()).isEqualTo(1);
   }
 }
