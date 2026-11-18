@@ -14,6 +14,11 @@ on:
   pull_request:
     branches: [ "main", "dev" ]
 
+permissions:
+  contents: read
+  # Needed to post/update the coverage comment on pull requests
+  pull-requests: write
+
 jobs:
 
   test:
@@ -50,3 +55,39 @@ jobs:
             coverage-report/target/site/jacoco-aggregate/
             */target/site/jacoco/
           retention-days: 14
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          # Public repo: no token required. For reliability (rate limits), add a
+          # CODECOV_TOKEN repository secret and uncomment the line below:
+          # token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage-report/target/site/jacoco-aggregate/jacoco.xml
+          flags: unit
+          fail_ci_if_error: false
+      - name: Extract coverage percentages from JaCoCo XML
+        if: always()
+        id: coverage
+        run: |
+          python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('coverage-report/target/site/jacoco-aggregate/jacoco.xml')
+          counters = {c.get('type'): c for c in tree.getroot().findall('counter')}
+          def pct(c):
+              covered = int(c.get('covered')); missed = int(c.get('missed'))
+              return round(covered / (covered + missed) * 100, 1) if covered + missed else 0.0
+          for name in ('INSTRUCTION', 'LINE', 'BRANCH', 'METHOD'):
+              print(f\"{name.lower()}={pct(counters[name])}\")
+          " >> \"$GITHUB_OUTPUT\"
+      - name: Write coverage to job summary
+        if: always()
+        run: |
+          cat >> \"$GITHUB_STEP_SUMMARY\" << EOF
+          ## Code Coverage (JaCoCo aggregate)
+          | Metric | Coverage |
+          |---|---|
+          | Instructions | ${{ steps.coverage.outputs.instruction }}% |
+          | Lines | ${{ steps.coverage.outputs.line }}% |
+          | Branches | ${{ steps.coverage.outputs.branch }}% |
+          | Methods | ${{ steps.coverage.outputs.method }}% |
+          EOF
