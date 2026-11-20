@@ -74,6 +74,7 @@ See `README.md` for details (Swagger UI, H2 console, charge point emulator in `d
 - Base branch is `dev` (`main` is protected). Never push directly to `dev` or `main`.
 - Work on a dedicated branch: `vibe/<short-slug>-e38b99` (or the branch named by the issue).
 - Commits use conventional commits: `type: subject` (`feat`, `fix`, `test`, `refactor`, `docs`, ...), one focused commit per unit of work.
+- Write all work artifacts in English: commit messages, PR titles and descriptions, and issue/PR comments. Only user-facing runtime error messages are in French.
 - Open a ready-for-review PR targeting `dev`, with a body containing:
   - `## Summary` — what and why;
   - `## Verification` — the exact commands run;
