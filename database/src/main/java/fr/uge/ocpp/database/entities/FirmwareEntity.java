@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toSet;
 
 import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.TypesAllowed;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,9 +50,7 @@ public class FirmwareEntity {
   @Column(name = "constructor", nullable = false, length = 45)
   private String constructor;
 
-  @ManyToMany(
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-      fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "compatibility",
       joinColumns = @JoinColumn(name = "id_firmware"),
