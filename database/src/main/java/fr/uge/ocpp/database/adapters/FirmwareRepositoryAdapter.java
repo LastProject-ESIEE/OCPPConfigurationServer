@@ -1,5 +1,6 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.database.dao.FirmwareDao;
 import fr.uge.ocpp.database.dao.TypeAllowedDao;
 import fr.uge.ocpp.database.entities.FirmwareEntity;
@@ -13,8 +14,6 @@ import fr.uge.ocpp.domain.ports.spi.FirmwareRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,12 +92,7 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
    */
   @Override
   public PageResult<Firmware> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var direction =
-        pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
-            ? Sort.Direction.ASC
-            : Sort.Direction.DESC;
-    var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
-    var page = firmwareDao.findAllByOrderByIdDesc(pageable);
+    var page = firmwareDao.findAllByOrderByIdDesc(PageQueries.byId(pageQuery));
     List<Firmware> content = page.stream().map(FirmwareEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }

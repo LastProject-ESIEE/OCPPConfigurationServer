@@ -1,7 +1,9 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.database.dao.ConfigurationDao;
 import fr.uge.ocpp.database.entities.ConfigurationEntity;
+import fr.uge.ocpp.database.specifications.ConfigurationSpecifications;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
 import fr.uge.ocpp.domain.models.PageQuery;
@@ -10,10 +12,6 @@ import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +44,7 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var page = configurationDao.findAllByOrderByIdDesc(pageable(pageQuery));
+    var page = configurationDao.findAllByOrderByIdDesc(PageQueries.byId(pageQuery));
     List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
@@ -60,7 +58,9 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public PageResult<Configuration> search(String request, PageQuery pageQuery) {
-    var page = configurationDao.findAll(requestSpecification(request), pageable(pageQuery));
+    var page =
+        configurationDao.findAll(
+            ConfigurationSpecifications.request(request), PageQueries.byId(pageQuery));
     List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
@@ -73,26 +73,7 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public long count(String request) {
-    return configurationDao.count(requestSpecification(request));
-  }
-
-  private static Pageable pageable(PageQuery pageQuery) {
-    var direction =
-        pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
-            ? Sort.Direction.ASC
-            : Sort.Direction.DESC;
-    return PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
-  }
-
-  private static Specification<ConfigurationEntity> requestSpecification(String request) {
-    if (request == null || request.isBlank()) {
-      return (root, query, cb) -> cb.conjunction();
-    }
-    var pattern = "%" + request.toLowerCase() + "%";
-    return (root, query, cb) ->
-        cb.or(
-            cb.like(cb.lower(root.get("name")), pattern),
-            cb.like(cb.lower(root.get("description")), pattern));
+    return configurationDao.count(ConfigurationSpecifications.request(request));
   }
 
   /**

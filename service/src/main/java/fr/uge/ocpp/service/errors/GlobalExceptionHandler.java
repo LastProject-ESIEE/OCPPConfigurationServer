@@ -66,6 +66,18 @@ public class GlobalExceptionHandler {
   }
 
   /**
+   * Handles the invalid argument exceptions (e.g. an invalid pagination query).
+   *
+   * @param ex the exception to handle.
+   * @return a 400 response with the error message.
+   */
+  @ExceptionHandler(IllegalArgumentException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ResponseEntity<ErrorMessage> handleIllegalArgumentException(IllegalArgumentException ex) {
+    return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
+  /**
    * Handles the access denied exceptions.
    *
    * @param ex the exception to handle.

@@ -100,6 +100,14 @@ class ChargePointControllerTest {
   }
 
   @Test
+  void should_return_400_when_pagination_query_invalid() throws Exception {
+    mockMvc
+        .perform(get("/api/chargepoint/all").param("page", "-1"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("page >= 0 and size >= 1 required"));
+  }
+
+  @Test
   void should_create_charge_point() throws Exception {
     var chargePoint =
         new ChargePoint(

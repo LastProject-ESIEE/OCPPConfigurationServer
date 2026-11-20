@@ -1,7 +1,9 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.database.dao.ChargePointDao;
 import fr.uge.ocpp.database.entities.ChargePointEntity;
+import fr.uge.ocpp.database.specifications.ChargePointSpecifications;
 import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.ChargePoints;
 import fr.uge.ocpp.domain.models.PageQuery;
@@ -10,10 +12,6 @@ import fr.uge.ocpp.domain.ports.spi.ChargePointRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +57,7 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
    */
   @Override
   public PageResult<ChargePoint> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var page = chargePointDao.findAll(pageable(pageQuery));
+    var page = chargePointDao.findAll(PageQueries.byId(pageQuery));
     List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
@@ -74,7 +72,9 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
    */
   @Override
   public PageResult<ChargePoint> search(String request, PageQuery pageQuery) {
-    var page = chargePointDao.findAll(requestSpecification(request), pageable(pageQuery));
+    var page =
+        chargePointDao.findAll(
+            ChargePointSpecifications.request(request), PageQueries.byId(pageQuery));
     List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
   }
@@ -97,28 +97,7 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
    */
   @Override
   public long count(String request) {
-    return chargePointDao.count(requestSpecification(request));
-  }
-
-  private static Pageable pageable(PageQuery pageQuery) {
-    var direction =
-        pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
-            ? Sort.Direction.ASC
-            : Sort.Direction.DESC;
-    return PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
-  }
-
-  private static Specification<ChargePointEntity> requestSpecification(String request) {
-    if (request == null || request.isBlank()) {
-      return (root, query, cb) -> cb.conjunction();
-    }
-    var pattern = "%" + request.toLowerCase() + "%";
-    return (root, query, cb) ->
-        cb.or(
-            cb.like(cb.lower(root.get("serialNumberChargepoint")), pattern),
-            cb.like(cb.lower(root.get("constructor")), pattern),
-            cb.like(cb.lower(root.get("type")), pattern),
-            cb.like(cb.lower(root.get("clientId")), pattern));
+    return chargePointDao.count(ChargePointSpecifications.request(request));
   }
 
   /**

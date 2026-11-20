@@ -52,4 +52,18 @@ class GlobalExceptionHandlerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(response.getBody()).isEqualTo(new ErrorMessage(ex.getMessage()));
   }
+
+  @Test
+  void should_return_400_with_error_message_when_argument_invalid() {
+    // given
+    var handler = new GlobalExceptionHandler();
+    var ex = new IllegalArgumentException("page >= 0 and size >= 1 required");
+
+    // when
+    var response = handler.handleIllegalArgumentException(ex);
+
+    // then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody()).isEqualTo(new ErrorMessage(ex.getMessage()));
+  }
 }
