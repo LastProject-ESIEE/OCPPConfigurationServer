@@ -234,8 +234,7 @@ class ConfigurationServerTest {
 
     @Override
     public PageResult<ChargePoint> search(String request, PageQuery pageQuery) {
-      var matching =
-          store.values().stream().filter(cp -> matches(cp, request)).toList();
+      var matching = store.values().stream().filter(cp -> matches(cp, request)).toList();
       var content =
           matching.stream()
               .sorted(java.util.Comparator.comparingLong(ChargePoint::id).reversed())

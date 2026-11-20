@@ -200,8 +200,7 @@ class ChargePointRepositoryAdapterTest {
     var third = persistChargePoint(chargePointDao, configuration);
 
     // When the first page of size 2 is requested, descending
-    PageResult<ChargePoint> result =
-        adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
+    PageResult<ChargePoint> result = adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
 
     // Then the two newest charge points are returned with the total count
     assertThat(result.content())

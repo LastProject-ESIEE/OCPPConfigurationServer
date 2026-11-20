@@ -71,8 +71,17 @@ class ChargePointControllerTest {
   void should_return_paginated_filtered_charge_points() throws Exception {
     var chargePoint =
         new ChargePoint(
-            1L, "serial", "Type", "Const", "client-id", null, "", false, Step.FIRMWARE,
-            StatusProcess.PENDING, null);
+            1L,
+            "serial",
+            "Type",
+            "Const",
+            "client-id",
+            null,
+            "",
+            false,
+            Step.FIRMWARE,
+            StatusProcess.PENDING,
+            null);
     when(chargePointService.findAll(any(), any()))
         .thenReturn(new PageResult<>(List.of(chargePoint), 0, 20, 1));
 

@@ -39,8 +39,7 @@ class TypeAllowedRepositoryAdapterTest {
     var third = persistTypeAllowed(typeAllowedDao);
 
     // When the first page of size 2 is requested, descending
-    PageResult<TypeAllowed> result =
-        adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
+    PageResult<TypeAllowed> result = adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
 
     // Then the two newest allowed types are returned with the total count
     assertThat(result.content())
