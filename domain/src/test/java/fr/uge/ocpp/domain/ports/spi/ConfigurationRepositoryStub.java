@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ConfigurationRepositoryStub implements ConfigurationRepository {
 
@@ -47,6 +48,36 @@ public class ConfigurationRepositoryStub implements ConfigurationRepository {
 
     return new PageResult<>(
         configurationList, pageQuery.page(), pageQuery.size(), configurations.size());
+  }
+
+  @Override
+  public PageResult<Configuration> search(String request, PageQuery pageQuery) {
+    List<Configuration> matching = matching(request).toList();
+    List<Configuration> result =
+        matching.stream()
+            .sorted(Comparator.comparingLong(Configuration::id).reversed())
+            .skip((long) pageQuery.page() * pageQuery.size())
+            .limit(pageQuery.size())
+            .toList();
+
+    return new PageResult<>(result, pageQuery.page(), pageQuery.size(), matching.size());
+  }
+
+  @Override
+  public long count(String request) {
+    return matching(request).count();
+  }
+
+  private Stream<Configuration> matching(String request) {
+    if (request == null || request.isBlank()) {
+      return configurations.stream();
+    }
+    var pattern = request.toLowerCase();
+    return configurations.stream()
+        .filter(
+            configuration ->
+                configuration.name().toLowerCase().contains(pattern)
+                    || configuration.description().toLowerCase().contains(pattern));
   }
 
   @Override

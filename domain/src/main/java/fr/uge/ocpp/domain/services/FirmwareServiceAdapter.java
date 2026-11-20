@@ -7,6 +7,8 @@ import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.exceptions.TypeAllowedNotFoundException;
 import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.Firmwares;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import fr.uge.ocpp.domain.ports.api.FirmwareService;
@@ -93,6 +95,18 @@ public record FirmwareServiceAdapter(
   @Override
   public Firmwares findAll() {
     return firmwareRepository.findAllByOrderByIdDesc();
+  }
+
+  /**
+   * Finds all the firmwares, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of firmwares.
+   */
+  @Override
+  public PageResult<Firmware> findAll(PageQuery pageQuery) {
+    Objects.requireNonNull(pageQuery);
+    return firmwareRepository.findAllByOrderByIdDesc(pageQuery);
   }
 
   /**

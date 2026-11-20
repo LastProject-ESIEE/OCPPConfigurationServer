@@ -27,14 +27,37 @@ public interface ChargePointRepository {
   ChargePoints findAllByOrderByIdDesc();
 
   /**
-   * Finds the charge points with a client id containing the given request, paginated.
+   * Finds all the charge points ordered by descending identifier, paginated.
    *
    * @param pageQuery the pagination query.
-   * @param clientId the client id filter.
    * @return the corresponding page of charge points.
    */
-  PageResult<ChargePoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-      PageQuery pageQuery, String clientId);
+  PageResult<ChargePoint> findAllByOrderByIdDesc(PageQuery pageQuery);
+
+  /**
+   * Finds the charge points matching the given request on serial number, type, constructor or
+   * client id, paginated.
+   *
+   * @param request the search request.
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of charge points.
+   */
+  PageResult<ChargePoint> search(String request, PageQuery pageQuery);
+
+  /**
+   * Counts all the charge points.
+   *
+   * @return the number of charge points.
+   */
+  long count();
+
+  /**
+   * Counts the charge points matching the given request.
+   *
+   * @param request the search request.
+   * @return the number of matching charge points.
+   */
+  long count(String request);
 
   /**
    * Finds the charge point with the given identifier.

@@ -25,6 +25,23 @@ public interface ConfigurationRepository {
   PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery);
 
   /**
+   * Finds the configurations matching the given request on name or description, paginated.
+   *
+   * @param request the search request.
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of configurations.
+   */
+  PageResult<Configuration> search(String request, PageQuery pageQuery);
+
+  /**
+   * Counts the configurations matching the given request.
+   *
+   * @param request the search request.
+   * @return the number of matching configurations.
+   */
+  long count(String request);
+
+  /**
    * Saves the given configuration.
    *
    * @param configuration the configuration to save.

@@ -1,6 +1,8 @@
 package fr.uge.ocpp.domain.services;
 
 import fr.uge.ocpp.domain.annotations.DomainService;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import fr.uge.ocpp.domain.ports.api.TypeAllowedService;
@@ -29,6 +31,18 @@ public record TypeAllowedServiceAdapter(TypeAllowedRepository typeAllowedReposit
   @Override
   public TypesAllowed findAll() {
     return typeAllowedRepository.findAll();
+  }
+
+  /**
+   * Finds all the allowed types, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of allowed types.
+   */
+  @Override
+  public PageResult<TypeAllowed> findAll(PageQuery pageQuery) {
+    Objects.requireNonNull(pageQuery);
+    return typeAllowedRepository.findAllByOrderByIdDesc(pageQuery);
   }
 
   /**

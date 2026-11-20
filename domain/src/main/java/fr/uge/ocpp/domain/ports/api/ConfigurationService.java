@@ -3,6 +3,7 @@ package fr.uge.ocpp.domain.ports.api;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
 import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 
 /** API port exposing the configuration use cases. */
 public interface ConfigurationService {
@@ -32,6 +33,14 @@ public interface ConfigurationService {
   Configurations findAll();
 
   /**
+   * Finds all the configurations, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of configurations.
+   */
+  PageResult<Configuration> findAll(PageQuery pageQuery);
+
+  /**
    * Finds the configuration with the given identifier.
    *
    * @param id the identifier of the configuration.
@@ -54,5 +63,5 @@ public interface ConfigurationService {
    * @param pageQuery the pagination query.
    * @return the corresponding configurations.
    */
-  Configurations search(String request, PageQuery pageQuery);
+  PageResult<Configuration> search(String request, PageQuery pageQuery);
 }

@@ -3,6 +3,7 @@ package fr.uge.ocpp.domain.ports.api;
 import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.ChargePoints;
 import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 
 /** API port exposing the charge point use cases. */
 public interface ChargePointService {
@@ -23,13 +24,13 @@ public interface ChargePointService {
   ChargePoints findAll();
 
   /**
-   * Finds the charge points matching the given request, paginated.
+   * Finds the charge points matching the given request, paginated. A blank request matches all.
    *
    * @param request the search request.
    * @param pageQuery the pagination query.
-   * @return the corresponding charge points.
+   * @return the corresponding page of charge points.
    */
-  ChargePoints findAll(String request, PageQuery pageQuery);
+  PageResult<ChargePoint> findAll(String request, PageQuery pageQuery);
 
   /**
    * Finds the charge point with the given identifier.

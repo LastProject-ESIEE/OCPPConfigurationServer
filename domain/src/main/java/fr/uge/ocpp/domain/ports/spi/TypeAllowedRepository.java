@@ -1,5 +1,7 @@
 package fr.uge.ocpp.domain.ports.spi;
 
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import java.util.Optional;
@@ -13,6 +15,14 @@ public interface TypeAllowedRepository {
    * @return all the allowed types.
    */
   TypesAllowed findAll();
+
+  /**
+   * Finds all the allowed types ordered by descending identifier, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of allowed types.
+   */
+  PageResult<TypeAllowed> findAllByOrderByIdDesc(PageQuery pageQuery);
 
   /**
    * Finds the allowed type with the given identifier.
