@@ -1,8 +1,8 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.database.dao.TypeAllowedDao;
 import fr.uge.ocpp.database.entities.TypeAllowedEntity;
-import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.domain.models.PageQuery;
 import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;

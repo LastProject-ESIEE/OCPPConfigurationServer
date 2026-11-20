@@ -9,8 +9,8 @@ public final class ConfigurationSpecifications {
   private ConfigurationSpecifications() {}
 
   /**
-   * Matches the configurations whose name or description contains the given request, ignoring
-   * case. A blank request matches everything.
+   * Matches the configurations whose name or description contains the given request, ignoring case.
+   * A blank request matches everything.
    *
    * @param request the search request.
    * @return the corresponding specification.
