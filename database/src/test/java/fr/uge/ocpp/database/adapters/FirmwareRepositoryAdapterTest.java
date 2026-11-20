@@ -17,6 +17,7 @@ import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,6 +222,29 @@ class FirmwareRepositoryAdapterTest {
     assertThat(persisted).isPresent();
     assertThat(persisted.get().getUrl()).isEqualTo("url");
     assertThat(persisted.get().getTypesAllowed()).isEmpty();
+  }
+
+  @Test
+  void should_save_firmware_without_cascading_to_types_allowed() {
+    // Given an existing allowed type
+    var typeAllowed = persistTypeAllowed(typeAllowedDao);
+    long typeId = typeAllowed.getId();
+    var expectedConstructor = typeAllowed.getConstructor();
+    var expectedType = typeAllowed.getType();
+
+    // When a firmware referencing it is saved with tampered type data
+    var tampered = new TypeAllowed(typeId, "tampered", "tampered");
+    var types = new TypesAllowed(Set.of(tampered));
+    Firmware saved = adapter.save(dummyFirmware().withId(null).withTypesAllowed(types));
+
+    // Then the allowed type row is left untouched and only the join row is created
+    assertThat(typeAllowedDao.count()).isEqualTo(1);
+    var reloaded = typeAllowedDao.findById(typeId).orElseThrow();
+    assertThat(reloaded.getConstructor()).isEqualTo(expectedConstructor);
+    assertThat(reloaded.getType()).isEqualTo(expectedType);
+    assertThat(firmwareDao.findById(saved.id()).orElseThrow().getTypesAllowed())
+        .extracting(TypeAllowedEntity::getId)
+        .containsExactly(typeId);
   }
 
   private static TypeAllowed toDomain(TypeAllowedEntity entity) {

@@ -10,8 +10,11 @@ import fr.uge.ocpp.domain.exceptions.FirmwareAlreadyExistingException;
 import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.exceptions.TypeAllowedNotFoundException;
 import fr.uge.ocpp.domain.models.Firmware;
+import fr.uge.ocpp.domain.models.TypeAllowed;
+import fr.uge.ocpp.domain.models.TypesAllowed;
 import fr.uge.ocpp.domain.ports.spi.FirmwareRepositoryStub;
 import fr.uge.ocpp.domain.ports.spi.TypeAllowedRepositoryStub;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,6 +62,24 @@ class FirmwareServiceAdapterTest {
     adapter.save(dummyFirmware().withId(null));
 
     assertThat(firmwareRepository.firmwares()).singleElement().returns("1.0.0", Firmware::version);
+  }
+
+  @Test
+  void should_save_with_types_allowed_resolved_from_repository() {
+    // given an existing allowed type in the repository
+    typeAllowedRepository.add(dummyTypeAllowed());
+    // and a firmware whose input type carries tampered data for the same id
+    var tampered = new TypeAllowed(1L, "tampered", "tampered");
+    var types = new TypesAllowed(Set.of(tampered));
+
+    // when the firmware is saved
+    var saved = adapter.save(dummyFirmware().withId(null).withTypesAllowed(types));
+
+    // then the persisted types are the ones resolved from the repository, not the input
+    assertThat(saved.typesAllowed().typesAllowedSet())
+        .singleElement()
+        .returns("Const", TypeAllowed::constructor)
+        .returns("Type", TypeAllowed::type);
   }
 
   @Test
