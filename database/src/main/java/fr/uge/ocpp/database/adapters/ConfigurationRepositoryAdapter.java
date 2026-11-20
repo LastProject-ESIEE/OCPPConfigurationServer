@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +46,53 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var pageable =
-        PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
-    var page = configurationDao.findAllByOrderByIdDesc(pageable);
+    var page = configurationDao.findAllByOrderByIdDesc(pageable(pageQuery));
     List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Finds the configurations matching the given request on name or description, paginated.
+   *
+   * @param request the search request.
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of configurations.
+   */
+  @Override
+  public PageResult<Configuration> search(String request, PageQuery pageQuery) {
+    var page = configurationDao.findAll(requestSpecification(request), pageable(pageQuery));
+    List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
+    return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Counts the configurations matching the given request.
+   *
+   * @param request the search request.
+   * @return the number of matching configurations.
+   */
+  @Override
+  public long count(String request) {
+    return configurationDao.count(requestSpecification(request));
+  }
+
+  private static Pageable pageable(PageQuery pageQuery) {
+    var direction =
+        pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
+            ? Sort.Direction.ASC
+            : Sort.Direction.DESC;
+    return PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
+  }
+
+  private static Specification<ConfigurationEntity> requestSpecification(String request) {
+    if (request == null || request.isBlank()) {
+      return (root, query, cb) -> cb.conjunction();
+    }
+    var pattern = "%" + request.toLowerCase() + "%";
+    return (root, query, cb) ->
+        cb.or(
+            cb.like(cb.lower(root.get("name")), pattern),
+            cb.like(cb.lower(root.get("description")), pattern));
   }
 
   /**

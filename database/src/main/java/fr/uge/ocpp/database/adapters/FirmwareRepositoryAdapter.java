@@ -93,8 +93,11 @@ public class FirmwareRepositoryAdapter implements FirmwareRepository {
    */
   @Override
   public PageResult<Firmware> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var pageable =
-        PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
+    var direction =
+        pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
+            ? Sort.Direction.ASC
+            : Sort.Direction.DESC;
+    var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
     var page = firmwareDao.findAllByOrderByIdDesc(pageable);
     List<Firmware> content = page.stream().map(FirmwareEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());

@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,24 +52,73 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
   }
 
   /**
-   * Finds the charge points with a client id containing the given one, paginated.
+   * Finds all the charge points ordered by identifier, paginated.
    *
    * @param pageQuery the pagination query.
-   * @param clientId the client id filter.
    * @return the corresponding page of charge points.
    */
   @Override
-  public PageResult<ChargePoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-      PageQuery pageQuery, String clientId) {
+  public PageResult<ChargePoint> findAllByOrderByIdDesc(PageQuery pageQuery) {
+    var page = chargePointDao.findAll(pageable(pageQuery));
+    List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
+    return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Finds the charge points matching the given request on serial number, type, constructor or
+   * client id, paginated.
+   *
+   * @param request the search request.
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of charge points.
+   */
+  @Override
+  public PageResult<ChargePoint> search(String request, PageQuery pageQuery) {
+    var page = chargePointDao.findAll(requestSpecification(request), pageable(pageQuery));
+    List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
+    return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Counts all the charge points.
+   *
+   * @return the number of charge points.
+   */
+  @Override
+  public long count() {
+    return chargePointDao.count();
+  }
+
+  /**
+   * Counts the charge points matching the given request.
+   *
+   * @param request the search request.
+   * @return the number of matching charge points.
+   */
+  @Override
+  public long count(String request) {
+    return chargePointDao.count(requestSpecification(request));
+  }
+
+  private static Pageable pageable(PageQuery pageQuery) {
     var direction =
         pageQuery.sort() == fr.uge.ocpp.domain.models.Sort.ASC
             ? Sort.Direction.ASC
             : Sort.Direction.DESC;
-    var pageable = PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
-    var page =
-        chargePointDao.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(pageable, clientId);
-    List<ChargePoint> content = page.stream().map(ChargePointEntity::toDomain).toList();
-    return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+    return PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, "id"));
+  }
+
+  private static Specification<ChargePointEntity> requestSpecification(String request) {
+    if (request == null || request.isBlank()) {
+      return (root, query, cb) -> cb.conjunction();
+    }
+    var pattern = "%" + request.toLowerCase() + "%";
+    return (root, query, cb) ->
+        cb.or(
+            cb.like(cb.lower(root.get("serialNumberChargepoint")), pattern),
+            cb.like(cb.lower(root.get("constructor")), pattern),
+            cb.like(cb.lower(root.get("type")), pattern),
+            cb.like(cb.lower(root.get("clientId")), pattern));
   }
 
   /**
