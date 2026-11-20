@@ -144,9 +144,7 @@ class ChargePointRepositoryAdapterTest {
     persistChargePoint(chargePointDao, configuration, "other");
 
     // When a page is requested with a descending sort
-    PageResult<ChargePoint> result =
-        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-            new PageQuery(0, 10, Sort.DESC), "client");
+    PageResult<ChargePoint> result = adapter.search("client", new PageQuery(0, 10, Sort.DESC));
 
     // Then only the matching charge points are returned, highest id first, with the total count
     assertThat(result.content())
@@ -166,16 +164,12 @@ class ChargePointRepositoryAdapterTest {
     persistChargePoint(chargePointDao, configuration, "other");
 
     // When a page is requested with an ascending sort
-    PageResult<ChargePoint> result =
-        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-            new PageQuery(0, 10, Sort.ASC), "client");
+    PageResult<ChargePoint> result = adapter.search("client", new PageQuery(0, 10, Sort.ASC));
 
-    // Then only the matching charge points are returned with the total count; the order stays
-    // descending because the OrderByIdDesc of the DAO method name takes precedence over the
-    // pageable sort
+    // Then only the matching charge points are returned, lowest id first, with the total count
     assertThat(result.content())
         .extracting(ChargePoint::id)
-        .containsExactlyInAnyOrder(matching1.getId(), matching2.getId());
+        .containsExactly(matching1.getId(), matching2.getId());
     assertThat(result.totalElements()).isEqualTo(2);
   }
 
@@ -188,14 +182,46 @@ class ChargePointRepositoryAdapterTest {
     persistChargePoint(chargePointDao, configuration, "other");
 
     // When the second page of size 1 is requested with a descending sort
-    PageResult<ChargePoint> result =
-        adapter.findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-            new PageQuery(1, 1, Sort.DESC), "client");
+    PageResult<ChargePoint> result = adapter.search("client", new PageQuery(1, 1, Sort.DESC));
 
     // Then only the second matching charge point is returned, but the total stays 2
     assertThat(result.content()).extracting(ChargePoint::id).containsExactly(matching1.getId());
     assertThat(result.totalElements()).isEqualTo(2);
     assertThat(result.page()).isEqualTo(1);
     assertThat(result.size()).isEqualTo(1);
+  }
+
+  @Test
+  void should_find_paginated_charge_points_ordered_by_id() {
+    // Given three persisted charge points
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    persistChargePoint(chargePointDao, configuration);
+    var second = persistChargePoint(chargePointDao, configuration);
+    var third = persistChargePoint(chargePointDao, configuration);
+
+    // When the first page of size 2 is requested, descending
+    PageResult<ChargePoint> result =
+        adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
+
+    // Then the two newest charge points are returned with the total count
+    assertThat(result.content())
+        .extracting(ChargePoint::id)
+        .containsExactly(third.getId(), second.getId());
+    assertThat(result.totalElements()).isEqualTo(3);
+  }
+
+  @Test
+  void should_count_charge_points_with_and_without_filter() {
+    // Given three charge points, two of them matching the filter
+    var configuration = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);
+    persistChargePoint(chargePointDao, configuration, "Client-A");
+    persistChargePoint(chargePointDao, configuration, "CLIENT-2");
+    persistChargePoint(chargePointDao, configuration, "other");
+
+    // When counting all and filtered charge points
+    // Then the counts match the corresponding rows
+    assertThat(adapter.count()).isEqualTo(3);
+    assertThat(adapter.count("client")).isEqualTo(2);
+    assertThat(adapter.count("zzz")).isZero();
   }
 }

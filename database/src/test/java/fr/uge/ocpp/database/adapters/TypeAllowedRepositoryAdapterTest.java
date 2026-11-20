@@ -5,6 +5,9 @@ import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowedWitho
 import static org.assertj.core.api.Assertions.assertThat;
 
 import fr.uge.ocpp.database.dao.TypeAllowedDao;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import java.util.Optional;
@@ -26,6 +29,24 @@ class TypeAllowedRepositoryAdapterTest {
   @BeforeEach
   void setUp() {
     adapter = new TypeAllowedRepositoryAdapter(typeAllowedDao);
+  }
+
+  @Test
+  void should_find_paginated_allowed_types_ordered_by_id_desc() {
+    // Given three persisted allowed types
+    var first = persistTypeAllowed(typeAllowedDao);
+    var second = persistTypeAllowed(typeAllowedDao);
+    var third = persistTypeAllowed(typeAllowedDao);
+
+    // When the first page of size 2 is requested, descending
+    PageResult<TypeAllowed> result =
+        adapter.findAllByOrderByIdDesc(new PageQuery(0, 2, Sort.DESC));
+
+    // Then the two newest allowed types are returned with the total count
+    assertThat(result.content())
+        .extracting(TypeAllowed::id)
+        .containsExactly(third.getId(), second.getId());
+    assertThat(result.totalElements()).isEqualTo(3);
   }
 
   @Test

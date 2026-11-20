@@ -10,6 +10,8 @@ import fr.uge.ocpp.domain.exceptions.FirmwareAlreadyExistingException;
 import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.exceptions.TypeAllowedNotFoundException;
 import fr.uge.ocpp.domain.models.Firmware;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 import fr.uge.ocpp.domain.ports.spi.FirmwareRepositoryStub;
@@ -85,6 +87,17 @@ class FirmwareServiceAdapterTest {
   @Test
   void should_not_find_by_id_when_firmware_not_found() {
     assertThatThrownBy(() -> adapter.findById(42L)).isInstanceOf(FirmwareNotFoundException.class);
+  }
+
+  @Test
+  void should_find_all_paginated() {
+    firmwareRepository.add(dummyFirmware().withId(1L));
+    firmwareRepository.add(dummyFirmware().withId(2L).withVersion("2.0.0"));
+
+    var result = adapter.findAll(new PageQuery(0, 1, Sort.DESC));
+
+    assertThat(result.content()).extracting(Firmware::id).containsExactly(2L);
+    assertThat(result.totalElements()).isEqualTo(2);
   }
 
   @Test

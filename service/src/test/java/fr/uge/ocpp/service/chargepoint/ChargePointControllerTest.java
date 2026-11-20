@@ -12,9 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.ocpp.domain.exceptions.ChargePointNotFoundException;
 import fr.uge.ocpp.domain.models.ChargePoint;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.StatusProcess;
 import fr.uge.ocpp.domain.models.Step;
 import fr.uge.ocpp.domain.ports.api.ChargePointService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -63,6 +65,29 @@ class ChargePointControllerTest {
     when(chargePointService.findById(42L)).thenThrow(new ChargePointNotFoundException("not found"));
 
     mockMvc.perform(get("/api/chargepoint/{id}", 42L)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  void should_return_paginated_filtered_charge_points() throws Exception {
+    var chargePoint =
+        new ChargePoint(
+            1L, "serial", "Type", "Const", "client-id", null, "", false, Step.FIRMWARE,
+            StatusProcess.PENDING, null);
+    when(chargePointService.findAll(any(), any()))
+        .thenReturn(new PageResult<>(List.of(chargePoint), 0, 20, 1));
+
+    mockMvc
+        .perform(
+            get("/api/chargepoint/all")
+                .param("page", "0")
+                .param("size", "20")
+                .param("sort", "DESC")
+                .param("request", "serial"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content[0].serialNumberChargepoint").value("serial"))
+        .andExpect(jsonPath("$.totalElements").value(1))
+        .andExpect(jsonPath("$.page").value(0))
+        .andExpect(jsonPath("$.size").value(20));
   }
 
   @Test

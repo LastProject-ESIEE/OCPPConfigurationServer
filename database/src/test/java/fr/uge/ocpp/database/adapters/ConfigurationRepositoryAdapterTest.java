@@ -40,6 +40,25 @@ class ConfigurationRepositoryAdapterTest {
   }
 
   @Test
+  void should_search_configurations_by_request_and_count() {
+    // Given two persisted configurations with distinct names
+    var firmware = persistFirmware(firmwareDao, persistTypeAllowed(typeAllowedDao));
+    var first = persistConfiguration(configurationDao, firmware);
+    var second = persistConfiguration(configurationDao, firmware);
+    first.setName("alpha");
+    second.setName("beta");
+
+    // When searching by name and counting
+    PageResult<Configuration> result = adapter.search("alp", new PageQuery(0, 10, Sort.DESC));
+
+    // Then only the matching configuration is returned, with the matching count
+    assertThat(result.content()).extracting(Configuration::name).containsExactly("alpha");
+    assertThat(result.totalElements()).isEqualTo(1);
+    assertThat(adapter.count("alp")).isEqualTo(1);
+    assertThat(adapter.count("")).isEqualTo(2);
+  }
+
+  @Test
   void should_find_all_configurations_ordered_by_id_desc() {
     // Given two persisted configurations
     var first = persistConfiguration(configurationDao, firmwareDao, typeAllowedDao);

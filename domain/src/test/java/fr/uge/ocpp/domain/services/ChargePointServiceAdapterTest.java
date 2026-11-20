@@ -12,6 +12,8 @@ import fr.uge.ocpp.domain.exceptions.ChargePointNotFoundException;
 import fr.uge.ocpp.domain.exceptions.ConfigurationNotFoundException;
 import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.Configuration;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.ports.spi.ChargePointRepositoryStub;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepositoryStub;
 import java.time.Clock;
@@ -77,6 +79,29 @@ class ChargePointServiceAdapterTest {
   void should_not_find_by_id_when_charge_point_not_found() {
     assertThatThrownBy(() -> adapter.findById(42L))
         .isInstanceOf(ChargePointNotFoundException.class);
+  }
+
+  @Test
+  void should_find_all_paginated() {
+    chargePointRepository.add(dummyChargePoint().withId(1L));
+    chargePointRepository.add(dummyChargePoint().withId(2L));
+
+    var result = adapter.findAll(null, new PageQuery(0, 1, Sort.DESC));
+
+    assertThat(result.content()).extracting(ChargePoint::id).containsExactly(2L);
+    assertThat(result.totalElements()).isEqualTo(2);
+  }
+
+  @Test
+  void should_filter_by_request_when_searching() {
+    chargePointRepository.add(dummyChargePoint().withId(1L).withClientId("alpha"));
+    chargePointRepository.add(dummyChargePoint().withId(2L).withClientId("beta"));
+
+    var result = adapter.findAll("ALP", new PageQuery(0, 10, Sort.DESC));
+
+    assertThat(result.content()).extracting(ChargePoint::clientId).containsExactly("alpha");
+    assertThat(adapter.countTotalWithFilter("ALP")).isEqualTo(1);
+    assertThat(adapter.count()).isEqualTo(2);
   }
 
   @Test
