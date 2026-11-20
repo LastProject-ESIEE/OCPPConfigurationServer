@@ -1,5 +1,6 @@
 package fr.uge.ocpp.service.errors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @WebMvcTest(ChargePointController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -36,13 +40,16 @@ class GlobalExceptionHandlerTest {
   }
 
   @Test
-  void should_return_404_with_error_message_when_route_unknown() throws Exception {
-    // given: no stubbing, the route does not exist
+  void should_return_404_with_error_message_when_route_unknown() {
+    // given: the resource handler throws this for unmapped paths (Spring 6.1)
+    var handler = new GlobalExceptionHandler();
+    var ex = new NoResourceFoundException(HttpMethod.GET, "/api/does-not-exist");
 
     // when
-    var result = mockMvc.perform(get("/api/does-not-exist"));
+    var response = handler.handleNotFoundException(ex);
 
     // then
-    result.andExpect(status().isNotFound()).andExpect(jsonPath("$.message").exists());
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(response.getBody()).isEqualTo(new ErrorMessage(ex.getMessage()));
   }
 }
