@@ -11,20 +11,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /** Translates the domain exceptions into HTTP responses. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
   /**
-   * Handles the not found exceptions.
+   * Handles the not found exceptions, including requests to unknown routes.
    *
    * @param ex the exception to handle.
    * @return a 404 response with the error message.
    */
-  @ExceptionHandler(NotFoundException.class)
+  @ExceptionHandler({NotFoundException.class, NoResourceFoundException.class})
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ResponseEntity<ErrorMessage> handleNotFoundException(RuntimeException ex) {
+  public ResponseEntity<ErrorMessage> handleNotFoundException(Exception ex) {
     return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.NOT_FOUND);
   }
 
