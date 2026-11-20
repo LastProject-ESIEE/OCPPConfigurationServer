@@ -18,30 +18,15 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class GlobalExceptionHandler {
 
   /**
-   * Handles the not found exceptions.
+   * Handles the not found exceptions, including requests to unknown routes.
    *
    * @param ex the exception to handle.
    * @return a 404 response with the error message.
    */
-  @ExceptionHandler(NotFoundException.class)
+  @ExceptionHandler({NotFoundException.class, NoResourceFoundException.class})
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ResponseEntity<ErrorMessage> handleNotFoundException(RuntimeException ex) {
     return new ResponseEntity<>(new ErrorMessage(ex.getMessage()), HttpStatus.NOT_FOUND);
-  }
-
-  /**
-   * Handles requests to unknown routes, so they return the API error format.
-   *
-   * @param ex the exception to handle.
-   * @return a 404 response with the error message.
-   */
-  @ExceptionHandler(NoResourceFoundException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ResponseEntity<ErrorMessage> handleNoResourceFoundException(
-      NoResourceFoundException ex) {
-    return new ResponseEntity<>(
-        new ErrorMessage("Ressource introuvable : " + ex.getResourcePath()),
-        HttpStatus.NOT_FOUND);
   }
 
   /**
