@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -88,10 +89,10 @@ public class ChargePointEntity {
         chargePoint.constructor(),
         chargePoint.clientId(),
         chargePoint.lastUpdate(),
-        chargePoint.error() == null ? "" : chargePoint.error(),
+        Objects.requireNonNullOrElse(chargePoint.error(), ""),
         chargePoint.state(),
-        chargePoint.step() == null ? Step.FIRMWARE : chargePoint.step(),
-        chargePoint.statusProcess() == null ? StatusProcess.PENDING : chargePoint.statusProcess(),
+        Objects.requireNonNullOrElse(chargePoint.step(), Step.FIRMWARE),
+        Objects.requireNonNullOrElse(chargePoint.statusProcess(), StatusProcess.PENDING),
         chargePoint.configuration() == null
             ? null
             : ConfigurationEntity.fromDomain(chargePoint.configuration()));
