@@ -13,8 +13,10 @@ import fr.uge.ocpp.database.dao.FirmwareDao;
 import fr.uge.ocpp.database.dao.TypeAllowedDao;
 import fr.uge.ocpp.database.dao.UserDao;
 import fr.uge.ocpp.database.entities.UserEntity;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
  * Integration tests of the REST endpoints: full application context, real security chain (JWT
  * login) and real database (in-memory H2 in PostgreSQL compatibility mode).
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(
     properties = {
       "spring.datasource.url=jdbc:h2:mem:ocpp-it;MODE=PostgreSQL;DB_CLOSE_DELAY=-1",
@@ -59,16 +62,21 @@ class ApiEndpointsIntegrationTest {
 
   @Autowired private PasswordEncoder passwordEncoder;
 
+  @BeforeAll
+  void seedUsers() {
+    // Users are soft-deleted (@SQLDelete on UserEntity), so they are seeded once per class:
+    // re-inserting the same emails would violate the unique constraint on the email column.
+    saveUser("viewer@it", UserEntity.Role.VISUALIZER);
+    saveUser("editor@it", UserEntity.Role.EDITOR);
+    saveUser("admin@it", UserEntity.Role.ADMINISTRATOR);
+  }
+
   @BeforeEach
-  void setUp() {
+  void cleanDatabase() {
     chargePointDao.deleteAll();
     configurationDao.deleteAll();
     firmwareDao.deleteAll();
     typeAllowedDao.deleteAll();
-    userDao.deleteAll();
-    saveUser("viewer@it", UserEntity.Role.VISUALIZER);
-    saveUser("editor@it", UserEntity.Role.EDITOR);
-    saveUser("admin@it", UserEntity.Role.ADMINISTRATOR);
   }
 
   @Test
@@ -161,7 +169,7 @@ class ApiEndpointsIntegrationTest {
   @Test
   void should_allow_administrator_to_update_charge_point() throws Exception {
     var admin = login("admin@it");
-    var chargePointId = createChargePoint(admin, null);
+    var chargePointId = createChargePoint(admin, createConfigurationTree(admin));
 
     mockMvc
         .perform(
@@ -176,7 +184,7 @@ class ApiEndpointsIntegrationTest {
   @Test
   void should_return_409_when_serial_number_already_exists() throws Exception {
     var editor = login("editor@it");
-    createChargePoint(editor, null);
+    createChargePoint(editor, createConfigurationTree(editor));
 
     mockMvc
         .perform(
@@ -212,6 +220,12 @@ class ApiEndpointsIntegrationTest {
 
   private static String bearer(String token) {
     return "Bearer " + token;
+  }
+
+  private long createConfigurationTree(String token) throws Exception {
+    var typeId = createAllowedType(token);
+    var firmwareId = createFirmware(token, typeId);
+    return createConfiguration(token, firmwareId);
   }
 
   private long createAllowedType(String editor) throws Exception {
