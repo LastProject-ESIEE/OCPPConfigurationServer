@@ -20,6 +20,14 @@
             <artifactId>domain</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Test factories and stubs of the domain module, shared through its test-jar -->
+        <dependency>
+            <groupId>fr.uge.ocpp</groupId>
+            <artifactId>domain</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>fr.uge.ocpp</groupId>
             <artifactId>database</artifactId>
