@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.ocpp.database.dao.UserDao;
 import fr.uge.ocpp.database.entities.UserEntity;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Integration tests of the REST endpoints: full application context, real security chain (JWT
  * login) and real database (in-memory H2 in PostgreSQL compatibility mode).
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Transactional
 @SpringBootTest(
     properties = {
       "spring.datasource.url=jdbc:h2:mem:ocpp-it;MODE=PostgreSQL;DB_CLOSE_DELAY=-1",
@@ -49,8 +49,6 @@ class ApiEndpointsIntegrationTest {
 
   @Autowired private UserDao userDao;
 
-  @Autowired private JdbcTemplate jdbcTemplate;
-
   @Autowired private PasswordEncoder passwordEncoder;
 
   @BeforeAll
@@ -62,16 +60,9 @@ class ApiEndpointsIntegrationTest {
     saveUser("admin@it", UserEntity.Role.ADMINISTRATOR);
   }
 
-  @BeforeEach
-  void cleanDatabase() {
-    // Plain SQL deletes in foreign-key order: repository deleteAll() would load the entities and
-    // FirmwareEntity.hashCode() fails on the lazy typesAllowed collection outside a session.
-    jdbcTemplate.update("DELETE FROM compatibility");
-    jdbcTemplate.update("DELETE FROM charge_point");
-    jdbcTemplate.update("DELETE FROM configuration");
-    jdbcTemplate.update("DELETE FROM firmware");
-    jdbcTemplate.update("DELETE FROM type_allowed");
-  }
+  // Each test runs in a transaction that is rolled back, so the database stays clean between
+  // tests without manual deletes (repository deleteAll() would load entities and trip over the
+  // lazy collections of the entities).
 
   @Test
   void should_return_401_when_calling_endpoint_without_token() throws Exception {
