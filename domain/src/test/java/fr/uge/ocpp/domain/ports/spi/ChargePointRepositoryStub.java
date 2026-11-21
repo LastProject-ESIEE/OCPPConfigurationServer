@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ChargePointRepositoryStub implements ChargePointRepository {
 
@@ -47,17 +48,47 @@ public class ChargePointRepositoryStub implements ChargePointRepository {
   }
 
   @Override
-  public PageResult<ChargePoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-      PageQuery pageQuery, String clientId) {
+  public PageResult<ChargePoint> findAllByOrderByIdDesc(PageQuery pageQuery) {
     List<ChargePoint> result =
         chargePoints.stream()
-            .filter(chargePoint -> chargePoint.clientId().equalsIgnoreCase(clientId))
-            .skip((long) pageQuery.page() * pageQuery.size())
             .sorted(Comparator.comparingLong(ChargePoint::id).reversed())
+            .skip((long) pageQuery.page() * pageQuery.size())
             .limit(pageQuery.size())
             .toList();
 
     return new PageResult<>(result, pageQuery.page(), pageQuery.size(), chargePoints.size());
+  }
+
+  @Override
+  public PageResult<ChargePoint> search(String request, PageQuery pageQuery) {
+    List<ChargePoint> matching = matching(request).toList();
+    List<ChargePoint> result =
+        matching.stream()
+            .sorted(Comparator.comparingLong(ChargePoint::id).reversed())
+            .skip((long) pageQuery.page() * pageQuery.size())
+            .limit(pageQuery.size())
+            .toList();
+
+    return new PageResult<>(result, pageQuery.page(), pageQuery.size(), matching.size());
+  }
+
+  @Override
+  public long count(String request) {
+    return matching(request).count();
+  }
+
+  private Stream<ChargePoint> matching(String request) {
+    if (request == null || request.isBlank()) {
+      return chargePoints.stream();
+    }
+    var pattern = request.toLowerCase();
+    return chargePoints.stream()
+        .filter(
+            chargePoint ->
+                chargePoint.serialNumber().toLowerCase().contains(pattern)
+                    || chargePoint.type().toLowerCase().contains(pattern)
+                    || chargePoint.constructor().toLowerCase().contains(pattern)
+                    || chargePoint.clientId().toLowerCase().contains(pattern));
   }
 
   @Override

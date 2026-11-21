@@ -222,10 +222,42 @@ class ConfigurationServerTest {
     }
 
     @Override
-    public PageResult<ChargePoint> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-        PageQuery pageQuery, String clientId) {
-      var content = store.values().stream().filter(cp -> cp.clientId().contains(clientId)).toList();
-      return new PageResult<>(content, pageQuery.page(), pageQuery.size(), content.size());
+    public PageResult<ChargePoint> findAllByOrderByIdDesc(PageQuery pageQuery) {
+      var content =
+          store.values().stream()
+              .sorted(java.util.Comparator.comparingLong(ChargePoint::id).reversed())
+              .skip((long) pageQuery.page() * pageQuery.size())
+              .limit(pageQuery.size())
+              .toList();
+      return new PageResult<>(content, pageQuery.page(), pageQuery.size(), store.size());
+    }
+
+    @Override
+    public PageResult<ChargePoint> search(String request, PageQuery pageQuery) {
+      var matching = store.values().stream().filter(cp -> matches(cp, request)).toList();
+      var content =
+          matching.stream()
+              .sorted(java.util.Comparator.comparingLong(ChargePoint::id).reversed())
+              .skip((long) pageQuery.page() * pageQuery.size())
+              .limit(pageQuery.size())
+              .toList();
+      return new PageResult<>(content, pageQuery.page(), pageQuery.size(), matching.size());
+    }
+
+    @Override
+    public long count(String request) {
+      return store.values().stream().filter(cp -> matches(cp, request)).count();
+    }
+
+    private static boolean matches(ChargePoint cp, String request) {
+      if (request == null || request.isBlank()) {
+        return true;
+      }
+      var pattern = request.toLowerCase();
+      return cp.serialNumber().toLowerCase().contains(pattern)
+          || cp.type().toLowerCase().contains(pattern)
+          || cp.constructor().toLowerCase().contains(pattern)
+          || cp.clientId().toLowerCase().contains(pattern);
     }
 
     @Override

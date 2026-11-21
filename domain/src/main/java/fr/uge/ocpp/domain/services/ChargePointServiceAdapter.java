@@ -9,6 +9,7 @@ import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.ChargePoints;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.ports.api.ChargePointService;
 import fr.uge.ocpp.domain.ports.spi.ChargePointRepository;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
@@ -71,16 +72,19 @@ public record ChargePointServiceAdapter(
   }
 
   /**
-   * Finds the charge points matching the given request, paginated.
+   * Finds the charge points matching the given request, paginated. A blank request matches all.
    *
    * @param request the search request.
    * @param pageQuery the pagination query.
-   * @return the corresponding charge points.
+   * @return the corresponding page of charge points.
    */
   @Override
-  public ChargePoints findAll(String request, PageQuery pageQuery) {
-    // TODO: add query and request
-    return chargePointRepository.findAllByOrderByIdDesc();
+  public PageResult<ChargePoint> findAll(String request, PageQuery pageQuery) {
+    Objects.requireNonNull(pageQuery);
+    if (request == null || request.isBlank()) {
+      return chargePointRepository.findAllByOrderByIdDesc(pageQuery);
+    }
+    return chargePointRepository.search(request, pageQuery);
   }
 
   /**
@@ -104,7 +108,7 @@ public record ChargePointServiceAdapter(
    */
   @Override
   public long countTotalWithFilter(String request) {
-    return 0;
+    return chargePointRepository.count(request);
   }
 
   /**
@@ -114,7 +118,7 @@ public record ChargePointServiceAdapter(
    */
   @Override
   public long count() {
-    return 0;
+    return chargePointRepository.count(null);
   }
 
   /**

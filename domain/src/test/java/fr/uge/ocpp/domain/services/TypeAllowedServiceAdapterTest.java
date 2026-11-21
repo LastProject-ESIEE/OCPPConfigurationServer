@@ -4,6 +4,8 @@ import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowed;
 import static fr.uge.ocpp.domain.models.TypeAllowedFactory.dummyTypeAllowedWithoutId;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.ports.spi.TypeAllowedRepositoryStub;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +29,17 @@ class TypeAllowedServiceAdapterTest {
     assertThat(adapter.findAll().typesAllowedSet())
         .singleElement()
         .returns("Const", TypeAllowed::constructor);
+  }
+
+  @Test
+  void should_find_all_paginated() {
+    typeAllowedRepository.add(new TypeAllowed(1L, "Const", "Type"));
+    typeAllowedRepository.add(new TypeAllowed(2L, "Const", "Other"));
+
+    var result = adapter.findAll(new PageQuery(0, 1, Sort.DESC));
+
+    assertThat(result.content()).extracting(TypeAllowed::id).containsExactly(2L);
+    assertThat(result.totalElements()).isEqualTo(2);
   }
 
   @Test

@@ -1,7 +1,9 @@
 package fr.uge.ocpp.database.adapters;
 
+import fr.uge.ocpp.database.PageQueries;
 import fr.uge.ocpp.database.dao.ConfigurationDao;
 import fr.uge.ocpp.database.entities.ConfigurationEntity;
+import fr.uge.ocpp.database.specifications.ConfigurationSpecifications;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
 import fr.uge.ocpp.domain.models.PageQuery;
@@ -10,8 +12,6 @@ import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +44,36 @@ public class ConfigurationRepositoryAdapter implements ConfigurationRepository {
    */
   @Override
   public PageResult<Configuration> findAllByOrderByIdDesc(PageQuery pageQuery) {
-    var pageable =
-        PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(Sort.Direction.DESC, "id"));
-    var page = configurationDao.findAllByOrderByIdDesc(pageable);
+    var page = configurationDao.findAllByOrderByIdDesc(PageQueries.byId(pageQuery));
     List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
     return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Finds the configurations matching the given request on name or description, paginated.
+   *
+   * @param request the search request.
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of configurations.
+   */
+  @Override
+  public PageResult<Configuration> search(String request, PageQuery pageQuery) {
+    var page =
+        configurationDao.findAll(
+            ConfigurationSpecifications.request(request), PageQueries.byId(pageQuery));
+    List<Configuration> content = page.stream().map(ConfigurationEntity::toDomain).toList();
+    return new PageResult<>(content, pageQuery.page(), pageQuery.size(), page.getTotalElements());
+  }
+
+  /**
+   * Counts the configurations matching the given request.
+   *
+   * @param request the search request.
+   * @return the number of matching configurations.
+   */
+  @Override
+  public long count(String request) {
+    return configurationDao.count(ConfigurationSpecifications.request(request));
   }
 
   /**

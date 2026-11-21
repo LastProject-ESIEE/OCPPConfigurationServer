@@ -2,6 +2,8 @@ package fr.uge.ocpp.domain.ports.api;
 
 import fr.uge.ocpp.domain.models.Firmware;
 import fr.uge.ocpp.domain.models.Firmwares;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 
 /** API port exposing the firmware use cases. */
 public interface FirmwareService {
@@ -29,6 +31,14 @@ public interface FirmwareService {
    * @return all the firmwares.
    */
   Firmwares findAll();
+
+  /**
+   * Finds all the firmwares, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of firmwares.
+   */
+  PageResult<Firmware> findAll(PageQuery pageQuery);
 
   /**
    * Finds the firmware with the given identifier.

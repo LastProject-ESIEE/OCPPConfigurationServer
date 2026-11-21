@@ -1,15 +1,17 @@
 package fr.uge.ocpp.service.typeallowed;
 
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.ports.api.TypeAllowedService;
+import fr.uge.ocpp.service.pagination.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** The REST endpoints of the allowed type API. */
@@ -41,16 +44,16 @@ public class TypeAllowedController {
    *
    * @return all the allowed types.
    */
-  @Operation(summary = "Get all the allowed types")
+  @Operation(summary = "Get all the allowed types, paginated")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Found all the allowed types",
+            description = "Found the requested page of allowed types",
             content =
                 @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = TypeAllowedDto.class)))),
+                    schema = @Schema(implementation = PageDto.class))),
         @ApiResponse(
             responseCode = "401",
             description = "Authentication required",
@@ -59,8 +62,12 @@ public class TypeAllowedController {
       })
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('EDITOR')")
-  public List<TypeAllowedDto> getAllTypeAllowed() {
-    return typeAllowedService.findAll().typesAllowedSet().stream().map(TypeAllowedDto::of).toList();
+  public PageDto<TypeAllowedDto> getAllTypeAllowed(
+      @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
+      @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size,
+      @Parameter(description = "Sort direction") @RequestParam(defaultValue = "DESC") Sort sort) {
+    var result = typeAllowedService.findAll(new PageQuery(page, size, sort));
+    return PageDto.of(result, TypeAllowedDto::of);
   }
 
   /**

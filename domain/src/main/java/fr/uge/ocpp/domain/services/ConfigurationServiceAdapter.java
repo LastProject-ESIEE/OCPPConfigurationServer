@@ -6,6 +6,7 @@ import fr.uge.ocpp.domain.exceptions.FirmwareNotFoundException;
 import fr.uge.ocpp.domain.models.Configuration;
 import fr.uge.ocpp.domain.models.Configurations;
 import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.ports.api.ConfigurationService;
 import fr.uge.ocpp.domain.ports.spi.ConfigurationRepository;
 import fr.uge.ocpp.domain.ports.spi.FirmwareRepository;
@@ -96,6 +97,18 @@ public record ConfigurationServiceAdapter(
   }
 
   /**
+   * Finds all the configurations, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of configurations.
+   */
+  @Override
+  public PageResult<Configuration> findAll(PageQuery pageQuery) {
+    Objects.requireNonNull(pageQuery);
+    return configurationRepository.findAllByOrderByIdDesc(pageQuery);
+  }
+
+  /**
    * Finds the configuration with the given identifier.
    *
    * @param id the identifier of the configuration.
@@ -117,7 +130,7 @@ public record ConfigurationServiceAdapter(
    */
   @Override
   public long countTotalWithFilter(String request) {
-    return 0;
+    return configurationRepository.count(request);
   }
 
   /**
@@ -128,8 +141,11 @@ public record ConfigurationServiceAdapter(
    * @return the corresponding configurations.
    */
   @Override
-  public Configurations search(String request, PageQuery pageQuery) {
-    // TODO: add query and request
-    return Configurations.empty();
+  public PageResult<Configuration> search(String request, PageQuery pageQuery) {
+    Objects.requireNonNull(pageQuery);
+    if (request == null || request.isBlank()) {
+      return configurationRepository.findAllByOrderByIdDesc(pageQuery);
+    }
+    return configurationRepository.search(request, pageQuery);
   }
 }

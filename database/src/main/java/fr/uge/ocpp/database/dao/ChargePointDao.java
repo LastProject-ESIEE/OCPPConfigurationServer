@@ -3,8 +3,6 @@ package fr.uge.ocpp.database.dao;
 import fr.uge.ocpp.database.entities.ChargePointEntity;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -28,14 +26,4 @@ public interface ChargePointDao
    * @return all the charge points.
    */
   List<ChargePointEntity> findAllByOrderByIdDesc();
-
-  /**
-   * Finds the charge points with a client id containing the given one, paginated.
-   *
-   * @param pageable the pagination information.
-   * @param clientId the client id filter.
-   * @return the corresponding page of charge points.
-   */
-  Page<ChargePointEntity> findAllByClientIdContainingIgnoreCaseOrderByIdDesc(
-      Pageable pageable, String clientId);
 }

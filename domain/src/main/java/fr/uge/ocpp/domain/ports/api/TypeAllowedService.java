@@ -1,5 +1,7 @@
 package fr.uge.ocpp.domain.ports.api;
 
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.PageResult;
 import fr.uge.ocpp.domain.models.TypeAllowed;
 import fr.uge.ocpp.domain.models.TypesAllowed;
 
@@ -12,6 +14,14 @@ public interface TypeAllowedService {
    * @return all the allowed types.
    */
   TypesAllowed findAll();
+
+  /**
+   * Finds all the allowed types, paginated.
+   *
+   * @param pageQuery the pagination query.
+   * @return the corresponding page of allowed types.
+   */
+  PageResult<TypeAllowed> findAll(PageQuery pageQuery);
 
   /**
    * Creates an allowed type.

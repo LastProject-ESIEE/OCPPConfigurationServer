@@ -1,16 +1,17 @@
 package fr.uge.ocpp.service.firmware;
 
 import fr.uge.ocpp.domain.models.Firmware;
+import fr.uge.ocpp.domain.models.PageQuery;
+import fr.uge.ocpp.domain.models.Sort;
 import fr.uge.ocpp.domain.ports.api.FirmwareService;
+import fr.uge.ocpp.service.pagination.PageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** The REST endpoints of the firmware API. */
@@ -44,16 +46,16 @@ public class FirmwareController {
    *
    * @return all the firmwares.
    */
-  @Operation(summary = "Get all the firmwares")
+  @Operation(summary = "Get all the firmwares, paginated")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Found all the firmwares",
+            description = "Found the requested page of firmwares",
             content =
                 @Content(
                     mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = FirmwareDto.class)))),
+                    schema = @Schema(implementation = PageDto.class))),
         @ApiResponse(
             responseCode = "401",
             description = "Authentication required",
@@ -62,8 +64,12 @@ public class FirmwareController {
       })
   @GetMapping(value = "/all")
   @PreAuthorize("hasRole('VISUALIZER')")
-  public List<FirmwareDto> getAllFirmwares() {
-    return firmwareService.findAll().firmwareList().stream().map(FirmwareDto::of).toList();
+  public PageDto<FirmwareDto> getAllFirmwares(
+      @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
+      @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size,
+      @Parameter(description = "Sort direction") @RequestParam(defaultValue = "DESC") Sort sort) {
+    var result = firmwareService.findAll(new PageQuery(page, size, sort));
+    return PageDto.of(result, FirmwareDto::of);
   }
 
   /**
