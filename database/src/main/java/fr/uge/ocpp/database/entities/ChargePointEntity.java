@@ -88,11 +88,13 @@ public class ChargePointEntity {
         chargePoint.constructor(),
         chargePoint.clientId(),
         chargePoint.lastUpdate(),
-        chargePoint.error(),
+        chargePoint.error() == null ? "" : chargePoint.error(),
         chargePoint.state(),
-        chargePoint.step(),
-        chargePoint.statusProcess(),
-        ConfigurationEntity.fromDomain(chargePoint.configuration()));
+        chargePoint.step() == null ? Step.FIRMWARE : chargePoint.step(),
+        chargePoint.statusProcess() == null ? StatusProcess.PENDING : chargePoint.statusProcess(),
+        chargePoint.configuration() == null
+            ? null
+            : ConfigurationEntity.fromDomain(chargePoint.configuration()));
   }
 
   public ChargePoint toDomain() {
@@ -107,7 +109,7 @@ public class ChargePointEntity {
         .state(state)
         .step(step)
         .statusProcess(status)
-        .configuration(configuration.toDomain())
+        .configuration(configuration == null ? null : configuration.toDomain())
         .build();
   }
 }
