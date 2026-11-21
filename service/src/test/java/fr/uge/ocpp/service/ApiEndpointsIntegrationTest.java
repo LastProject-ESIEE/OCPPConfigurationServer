@@ -7,10 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.uge.ocpp.database.dao.ChargePointDao;
-import fr.uge.ocpp.database.dao.ConfigurationDao;
-import fr.uge.ocpp.database.dao.FirmwareDao;
-import fr.uge.ocpp.database.dao.TypeAllowedDao;
 import fr.uge.ocpp.database.dao.UserDao;
 import fr.uge.ocpp.database.entities.UserEntity;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -52,13 +49,7 @@ class ApiEndpointsIntegrationTest {
 
   @Autowired private UserDao userDao;
 
-  @Autowired private ChargePointDao chargePointDao;
-
-  @Autowired private ConfigurationDao configurationDao;
-
-  @Autowired private FirmwareDao firmwareDao;
-
-  @Autowired private TypeAllowedDao typeAllowedDao;
+  @Autowired private JdbcTemplate jdbcTemplate;
 
   @Autowired private PasswordEncoder passwordEncoder;
 
@@ -73,10 +64,13 @@ class ApiEndpointsIntegrationTest {
 
   @BeforeEach
   void cleanDatabase() {
-    chargePointDao.deleteAll();
-    configurationDao.deleteAll();
-    firmwareDao.deleteAll();
-    typeAllowedDao.deleteAll();
+    // Plain SQL deletes in foreign-key order: repository deleteAll() would load the entities and
+    // FirmwareEntity.hashCode() fails on the lazy typesAllowed collection outside a session.
+    jdbcTemplate.update("DELETE FROM compatibility");
+    jdbcTemplate.update("DELETE FROM charge_point");
+    jdbcTemplate.update("DELETE FROM configuration");
+    jdbcTemplate.update("DELETE FROM firmware");
+    jdbcTemplate.update("DELETE FROM type_allowed");
   }
 
   @Test
