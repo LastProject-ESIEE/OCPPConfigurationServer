@@ -80,19 +80,9 @@ public class ChargePointRepositoryAdapter implements ChargePointRepository {
   }
 
   /**
-   * Counts all the charge points.
+   * Counts the charge points matching the given request. A null or blank request counts all.
    *
-   * @return the number of charge points.
-   */
-  @Override
-  public long count() {
-    return chargePointDao.count();
-  }
-
-  /**
-   * Counts the charge points matching the given request.
-   *
-   * @param request the search request.
+   * @param request the search request, or null to count all.
    * @return the number of matching charge points.
    */
   @Override

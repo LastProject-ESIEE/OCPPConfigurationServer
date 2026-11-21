@@ -1,12 +1,12 @@
 package fr.uge.ocpp.database.specifications;
 
 import fr.uge.ocpp.database.entities.ChargePointEntity;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 /** Specifications for the charge point table. */
-public final class ChargePointSpecifications {
-
-  private ChargePointSpecifications() {}
+@UtilityClass
+public class ChargePointSpecifications {
 
   /**
    * Matches the charge points whose serial number, type, constructor or client id contains the
@@ -15,7 +15,7 @@ public final class ChargePointSpecifications {
    * @param request the search request.
    * @return the corresponding specification.
    */
-  public static Specification<ChargePointEntity> request(String request) {
+  public Specification<ChargePointEntity> request(String request) {
     if (request == null || request.isBlank()) {
       return (root, query, cb) -> cb.conjunction();
     }

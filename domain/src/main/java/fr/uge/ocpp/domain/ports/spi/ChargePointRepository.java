@@ -45,16 +45,9 @@ public interface ChargePointRepository {
   PageResult<ChargePoint> search(String request, PageQuery pageQuery);
 
   /**
-   * Counts all the charge points.
+   * Counts the charge points matching the given request. A null or blank request counts all.
    *
-   * @return the number of charge points.
-   */
-  long count();
-
-  /**
-   * Counts the charge points matching the given request.
-   *
-   * @param request the search request.
+   * @param request the search request, or null to count all.
    * @return the number of matching charge points.
    */
   long count(String request);

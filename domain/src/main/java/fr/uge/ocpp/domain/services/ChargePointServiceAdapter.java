@@ -118,7 +118,7 @@ public record ChargePointServiceAdapter(
    */
   @Override
   public long count() {
-    return chargePointRepository.count();
+    return chargePointRepository.count(null);
   }
 
   /**

@@ -219,7 +219,7 @@ class ChargePointRepositoryAdapterTest {
 
     // When counting all and filtered charge points
     // Then the counts match the corresponding rows
-    assertThat(adapter.count()).isEqualTo(3);
+    assertThat(adapter.count(null)).isEqualTo(3);
     assertThat(adapter.count("client")).isEqualTo(2);
     assertThat(adapter.count("zzz")).isZero();
   }

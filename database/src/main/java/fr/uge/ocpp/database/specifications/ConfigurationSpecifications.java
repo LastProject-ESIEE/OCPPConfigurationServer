@@ -1,12 +1,12 @@
 package fr.uge.ocpp.database.specifications;
 
 import fr.uge.ocpp.database.entities.ConfigurationEntity;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 /** Specifications for the configuration table. */
-public final class ConfigurationSpecifications {
-
-  private ConfigurationSpecifications() {}
+@UtilityClass
+public class ConfigurationSpecifications {
 
   /**
    * Matches the configurations whose name or description contains the given request, ignoring case.
@@ -15,7 +15,7 @@ public final class ConfigurationSpecifications {
    * @param request the search request.
    * @return the corresponding specification.
    */
-  public static Specification<ConfigurationEntity> request(String request) {
+  public Specification<ConfigurationEntity> request(String request) {
     if (request == null || request.isBlank()) {
       return (root, query, cb) -> cb.conjunction();
     }

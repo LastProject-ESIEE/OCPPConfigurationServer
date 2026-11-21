@@ -73,11 +73,6 @@ public class ChargePointRepositoryStub implements ChargePointRepository {
   }
 
   @Override
-  public long count() {
-    return chargePoints.size();
-  }
-
-  @Override
   public long count(String request) {
     return matching(request).count();
   }

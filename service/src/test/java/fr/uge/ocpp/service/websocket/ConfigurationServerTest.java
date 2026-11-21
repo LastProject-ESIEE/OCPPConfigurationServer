@@ -245,11 +245,6 @@ class ConfigurationServerTest {
     }
 
     @Override
-    public long count() {
-      return store.size();
-    }
-
-    @Override
     public long count(String request) {
       return store.values().stream().filter(cp -> matches(cp, request)).count();
     }
