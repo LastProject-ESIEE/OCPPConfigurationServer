@@ -1,5 +1,6 @@
 package fr.uge.ocpp.service.security;
 
+import static fr.uge.ocpp.domain.models.ChargePointFactory.dummyChargePointWithoutConfiguration;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,8 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.uge.ocpp.database.dao.UserDao;
 import fr.uge.ocpp.domain.models.ChargePoint;
 import fr.uge.ocpp.domain.models.PageResult;
-import fr.uge.ocpp.domain.models.StatusProcess;
-import fr.uge.ocpp.domain.models.Step;
 import fr.uge.ocpp.domain.ports.api.ChargePointService;
 import fr.uge.ocpp.service.chargepoint.ChargePointController;
 import fr.uge.ocpp.service.chargepoint.CreateChargePointDto;
@@ -39,21 +38,6 @@ class EndpointAuthorizationTest {
 
   @MockBean private UserDao userDao;
 
-  private static ChargePoint dummyChargePoint() {
-    return new ChargePoint(
-        1L,
-        "serial",
-        "Type",
-        "Const",
-        "client-id",
-        null,
-        "",
-        false,
-        Step.FIRMWARE,
-        StatusProcess.PENDING,
-        null);
-  }
-
   @Test
   void should_return_401_when_not_authenticated() throws Exception {
     mockMvc.perform(get("/api/chargepoint/all")).andExpect(status().isUnauthorized());
@@ -63,7 +47,7 @@ class EndpointAuthorizationTest {
   @WithMockUser(roles = "VISUALIZER")
   void should_allow_visualizer_to_read_charge_points() throws Exception {
     when(chargePointService.findAll(any(), any()))
-        .thenReturn(new PageResult<>(List.of(dummyChargePoint()), 0, 20, 1));
+        .thenReturn(new PageResult<>(List.of(dummyChargePointWithoutConfiguration()), 0, 20, 1));
 
     mockMvc.perform(get("/api/chargepoint/all")).andExpect(status().isOk());
   }
@@ -72,7 +56,7 @@ class EndpointAuthorizationTest {
   @WithMockUser(roles = "EDITOR")
   void should_allow_editor_to_read_charge_points() throws Exception {
     when(chargePointService.findAll(any(), any()))
-        .thenReturn(new PageResult<>(List.of(dummyChargePoint()), 0, 20, 1));
+        .thenReturn(new PageResult<>(List.of(dummyChargePointWithoutConfiguration()), 0, 20, 1));
 
     mockMvc.perform(get("/api/chargepoint/all")).andExpect(status().isOk());
   }
@@ -81,7 +65,7 @@ class EndpointAuthorizationTest {
   @WithMockUser(roles = "ADMINISTRATOR")
   void should_allow_administrator_to_read_charge_points() throws Exception {
     when(chargePointService.findAll(any(), any()))
-        .thenReturn(new PageResult<>(List.of(dummyChargePoint()), 0, 20, 1));
+        .thenReturn(new PageResult<>(List.of(dummyChargePointWithoutConfiguration()), 0, 20, 1));
 
     mockMvc.perform(get("/api/chargepoint/all")).andExpect(status().isOk());
   }
@@ -102,7 +86,8 @@ class EndpointAuthorizationTest {
   @Test
   @WithMockUser(roles = "EDITOR")
   void should_allow_editor_to_create_charge_point() throws Exception {
-    when(chargePointService.save(any(ChargePoint.class))).thenReturn(dummyChargePoint());
+    when(chargePointService.save(any(ChargePoint.class)))
+        .thenReturn(dummyChargePointWithoutConfiguration());
     var body =
         objectMapper.writeValueAsString(
             new CreateChargePointDto("serial", "Type", "Const", "client-id", null));
@@ -116,7 +101,8 @@ class EndpointAuthorizationTest {
   @Test
   @WithMockUser(roles = "ADMINISTRATOR")
   void should_allow_administrator_to_create_charge_point() throws Exception {
-    when(chargePointService.save(any(ChargePoint.class))).thenReturn(dummyChargePoint());
+    when(chargePointService.save(any(ChargePoint.class)))
+        .thenReturn(dummyChargePointWithoutConfiguration());
     var body =
         objectMapper.writeValueAsString(
             new CreateChargePointDto("serial", "Type", "Const", "client-id", null));
