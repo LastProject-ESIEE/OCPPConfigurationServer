@@ -41,11 +41,13 @@ public class WebSecurityConfig {
    */
   @Bean
   static RoleHierarchy roleHierarchy() {
-    return RoleHierarchyImpl.fromHierarchy(
+    var roleHierarchy = new RoleHierarchyImpl();
+    roleHierarchy.setHierarchy(
         """
         ROLE_ADMINISTRATOR > ROLE_EDITOR
         ROLE_EDITOR > ROLE_VISUALIZER
         """);
+    return roleHierarchy;
   }
 
   /**
