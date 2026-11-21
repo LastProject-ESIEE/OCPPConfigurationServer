@@ -89,10 +89,10 @@ public class ChargePointEntity {
         chargePoint.constructor(),
         chargePoint.clientId(),
         chargePoint.lastUpdate(),
-        Objects.requireNonNullOrElse(chargePoint.error(), ""),
+        Objects.requireNonNullElse(chargePoint.error(), ""),
         chargePoint.state(),
-        Objects.requireNonNullOrElse(chargePoint.step(), Step.FIRMWARE),
-        Objects.requireNonNullOrElse(chargePoint.statusProcess(), StatusProcess.PENDING),
+        Objects.requireNonNullElse(chargePoint.step(), Step.FIRMWARE),
+        Objects.requireNonNullElse(chargePoint.statusProcess(), StatusProcess.PENDING),
         chargePoint.configuration() == null
             ? null
             : ConfigurationEntity.fromDomain(chargePoint.configuration()));
