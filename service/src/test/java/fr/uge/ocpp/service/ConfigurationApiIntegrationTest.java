@@ -42,7 +42,9 @@ class ConfigurationApiIntegrationTest extends AbstractApiIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, bearer(editor))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    "{\"name\":\"x\",\"description\":\"d\",\"configuration\":\"{}\",\"firmware\":9999}"))
+                    """
+                    {"name":"x","description":"d","configuration":"{}","firmware":9999}
+                    """))
         .andExpect(status().isNotFound());
   }
 }
