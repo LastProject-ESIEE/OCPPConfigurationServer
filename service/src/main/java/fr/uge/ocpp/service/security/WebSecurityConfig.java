@@ -49,8 +49,9 @@ public class WebSecurityConfig {
   }
 
   /**
-   * Provides the method security expression handler applying the role hierarchy, so that {@code
-   * @PreAuthorize("hasRole('...')")} on the endpoints accepts every role above the required one.
+   * Provides the method security expression handler applying the role hierarchy, so that
+   * {@code @PreAuthorize("hasRole('...')")} on the endpoints accepts every role above the required
+   * one.
    *
    * @param roleHierarchy the role hierarchy.
    * @return the method security expression handler.
