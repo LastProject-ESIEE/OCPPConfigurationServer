@@ -60,10 +60,17 @@ python3 doc/chargepoint_emulator.py --url ws://127.0.0.1:8765 --serial ACE027230
 ## Running program (with a real PostgreSQL database)
 Configuration lives in `service/src/main/resources/application.yml`. Secrets and deployment-specific
 values are injected through environment variables (set them in IntelliJ in the edit project
-configuration, or in your shell):
-- POSTGRESQL_DB_ADDRESS=<*database url, e.g. jdbc:postgresql://localhost:5432/ocpp*>;
-- POSTGRESQL_DB_USERNAME=<*database username*>;
-- POSTGRESQL_DB_PASSWORD=<*database password*>;
+configuration, or in your shell). On Clever Cloud, the database and the FTP file server use the
+dedicated variables of the linked add-ons, so no custom variables have to be maintained:
+- POSTGRESQL_ADDON_HOST=<*PostgreSQL add-on host*>;
+- POSTGRESQL_ADDON_PORT=<*PostgreSQL add-on port*>;
+- POSTGRESQL_ADDON_DB=<*database name*>;
+- POSTGRESQL_ADDON_USER=<*database user*>;
+- POSTGRESQL_ADDON_PASSWORD=<*database password*>;
+- BUCKET_HOST=<*FS Bucket (FTP server) host, used as host of the ftp:// firmware URLs*>;
+- BUCKET_FTP_USERNAME=<*FS Bucket FTP username*>;
+- BUCKET_FTP_PASSWORD=<*FS Bucket FTP password*>;
+- PROJECT_NAME=<*application name, defaults to BRS-Configurator*>;
 - JWT_SECRET=<*HS256 secret, at least 32 bytes; a dev-only default is provided*>;
 - JWT_EXPIRATION_MS=<*token lifetime in ms, defaults to 3600000*>;
 - WEBSOCKET_URL=<*websocket bind ip address, maps to websocket.url*>;

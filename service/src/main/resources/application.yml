@@ -1,9 +1,14 @@
+# Application name, overridable through the environment (used in logs and monitoring).
 spring:
+  application:
+    name: ${PROJECT_NAME:BRS-Configurator}
+  # Datasource credentials come from the dedicated variables of the CleverCloud PostgreSQL
+  # add-on linked to the application, so no custom database variables are needed.
   datasource:
-    url: ${POSTGRESQL_DB_ADDRESS}
+    url: jdbc:postgresql://${POSTGRESQL_ADDON_HOST}:${POSTGRESQL_ADDON_PORT}/${POSTGRESQL_ADDON_DB}
     driver-class-name: org.postgresql.Driver
-    username: ${POSTGRESQL_DB_USERNAME}
-    password: ${POSTGRESQL_DB_PASSWORD}
+    username: ${POSTGRESQL_ADDON_USER}
+    password: ${POSTGRESQL_ADDON_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
