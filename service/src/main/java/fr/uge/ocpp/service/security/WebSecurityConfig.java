@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -27,6 +31,40 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
+
+  /**
+   * Provides the role hierarchy of the application: an administrator can do everything an editor
+   * can, and an editor everything a visualizer can. It makes the {@code @PreAuthorize} role checks
+   * on the endpoints accept every role above the required one.
+   *
+   * @return the role hierarchy.
+   */
+  @Bean
+  static RoleHierarchy roleHierarchy() {
+    var roleHierarchy = new RoleHierarchyImpl();
+    roleHierarchy.setHierarchy(
+        """
+        ROLE_ADMINISTRATOR > ROLE_EDITOR
+        ROLE_EDITOR > ROLE_VISUALIZER
+        """);
+    return roleHierarchy;
+  }
+
+  /**
+   * Provides the method security expression handler applying the role hierarchy, so that
+   * {@code @PreAuthorize("hasRole('...')")} on the endpoints accepts every role above the required
+   * one.
+   *
+   * @param roleHierarchy the role hierarchy.
+   * @return the method security expression handler.
+   */
+  @Bean
+  static MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+      RoleHierarchy roleHierarchy) {
+    var expressionHandler = new DefaultMethodSecurityExpressionHandler();
+    expressionHandler.setRoleHierarchy(roleHierarchy);
+    return expressionHandler;
+  }
 
   /**
    * Provides the security filter chain of the H2 console (local profile only). The console is left
